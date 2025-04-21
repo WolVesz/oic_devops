@@ -4,6 +4,7 @@ Base resource module for the OIC DevOps package.
 This module provides the base class for all resource-specific clients.
 """
 
+import json
 import logging
 from typing import Dict, Any, Optional, List, Union
 
@@ -47,17 +48,22 @@ class BaseResource:
             
         return endpoint
     
-    def list(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    def list(self, params: Optional[Dict[str, Any]] = None, raw: Optional[Dict[str, Any]] = False) -> List[Dict[str, Any]]:
         """
         List all resources of this type.
         
         Args:
             params: Optional query parameters.
+            json: Option whether to return primary items or full output json
             
         Returns:
             List[Dict]: List of resources.
+            Json: raw API response of multiple integrations
         """
         response = self.client.get(self._get_endpoint(), params=params)
+
+        if raw:
+            return response
         
         # Different API endpoints might return the items in different ways
         # Check for common patterns and extract the items

@@ -6,6 +6,7 @@ This module provides functionality for managing OIC integrations.
 
 import os
 import logging
+from datetime import datetime
 from typing import Dict, Any, Optional, List, Union, BinaryIO
 import pandas as pd
 
@@ -48,11 +49,11 @@ class IntegrationsResource(BaseResource):
         Returns:
             List[Dict]: List of integrations.
         """
-        return super().list(params)
+        return super().list(params, raw=True)
 
-    def df_list(self, params: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
+    def list_all(self, params: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
         """
-        List all integrations and place them into a pd.DataFrame
+        Automatically paginates through the API to provide the complete list of integrations.
 
         Args:
             params: Optional query parameters such as:
@@ -66,8 +67,70 @@ class IntegrationsResource(BaseResource):
         Returns:
             List[Dict]: List of integrations.
         """
-        return pd.DataFrame()
-    
+
+        has_more = True
+        output = []
+        pages = 0
+
+        if not params:
+            params = dict()
+
+        while has_more is True:
+            params['offset'] = pages
+            content = self.list(params=params)
+            output.extend(content['items'])
+            has_more = content['hasMore']
+            pages += 100
+            self.logger.info(f'Number of Integrations Acquired in List: {pages}')
+
+        return output
+
+    def df(self, **kwargs):
+        """
+        Creates a pandas Dataframe with the full contents of list_all.
+
+        Args:
+            params: Optional query parameters such as:
+                - limit: Maximum number of items to return.
+                - offset: Number of items to skip.
+                - fields: Comma-separated list of fields to include.
+                - q: Search query.
+                - orderBy: Field to order by.
+                - status: Filter by status (e.g., "ACTIVATED", "CONFIGURED").
+            update:
+
+        Returns:
+            List[Dict]: List of integrations.
+        """
+
+        output = self.list_all(**kwargs)
+
+        values = []
+        for item in output:
+            for endpoint in item['endPoints']:
+                connection = endpoint['connection']
+                values.append(
+                    {
+                        "integration_id": item['id'],
+                        "integration_name": item['name'],
+                        "integration_version": item['version'],
+                        'integration_code': item['code'],
+                        'integration_status': item['status'],
+                        'integration_is_locked': item['lockedFlag'],
+                        'integration_pattern': item['patternDescription'],
+                        'integration_last_updated': item['lastUpdated'],
+                        'integration_last_updated_user': item['lastUpdatedBy'],
+                        'integration_created_date': item['created'],
+                        'integration_created_user': item['createdBy'],
+                        'connection_role': endpoint['name'] if 'name' in endpoint.keys() else None,
+                        'connection_id': connection['id']}
+                )
+
+        df = pd.DataFrame(values)
+        df['integrations_acquired_at'] = datetime.now()
+        df['integrations_acquired_at'] = pd.to_datetime(df['integrations_acquired_at'])
+        return df
+
     def get(self, integration_id: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Get a specific integration by ID.
