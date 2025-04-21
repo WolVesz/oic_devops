@@ -1,0 +1,259 @@
+"""
+Lookups resource module for the OIC DevOps package.
+
+This module provides functionality for managing OIC lookups.
+"""
+
+import os
+import logging
+from typing import Dict, Any, Optional, List, Union, BinaryIO
+
+from oic_devops.resources.base import BaseResource
+from oic_devops.exceptions import OICValidationError, OICAPIError
+
+
+class LookupsResource(BaseResource):
+    """
+    Class for managing OIC lookups.
+    
+    Provides methods for listing, retrieving, creating, updating, and
+    deleting lookups, as well as importing and exporting lookups.
+    """
+    
+    def __init__(self, client):
+        """
+        Initialize the lookups resource client.
+        
+        Args:
+            client: The parent OICClient instance.
+        """
+        super().__init__(client)
+        self.base_path = "/ic/api/integration/v1/lookups"
+    
+    def list(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        """
+        List all lookups.
+        
+        Args:
+            params: Optional query parameters such as:
+                - limit: Maximum number of items to return.
+                - offset: Number of items to skip.
+                - fields: Comma-separated list of fields to include.
+                - q: Search query.
+                - orderBy: Field to order by.
+                
+        Returns:
+            List[Dict]: List of lookups.
+        """
+        return super().list(params)
+    
+    def get(self, lookup_id: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Get a specific lookup by ID.
+        
+        Args:
+            lookup_id: ID of the lookup to retrieve.
+            params: Optional query parameters.
+                
+        Returns:
+            Dict: The lookup data.
+        """
+        return super().get(lookup_id, params)
+    
+    def create(self, data: Dict[str, Any], params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Create a new lookup.
+        
+        Args:
+            data: Lookup data, including:
+                - name: Name of the lookup.
+                - identifier: Unique identifier for the lookup.
+                - columns: List of column definitions.
+                - rows: List of row data.
+                - ... and other lookup-specific properties.
+            params: Optional query parameters.
+                
+        Returns:
+            Dict: The created lookup data.
+            
+        Raises:
+            OICValidationError: If required fields are missing.
+        """
+        # Validate required fields
+        required_fields = ["name", "identifier", "columns"]
+        for field in required_fields:
+            if field not in data:
+                raise OICValidationError(f"Missing required field for lookup creation: {field}")
+        
+        return super().create(data, params)
+    
+    def update(
+        self,
+        lookup_id: str,
+        data: Dict[str, Any],
+        params: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Update a specific lookup.
+        
+        Args:
+            lookup_id: ID of the lookup to update.
+            data: Updated lookup data.
+            params: Optional query parameters.
+                
+        Returns:
+            Dict: The updated lookup data.
+        """
+        return super().update(lookup_id, data, params)
+    
+    def delete(
+        self,
+        lookup_id: str,
+        params: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Delete a specific lookup.
+        
+        Args:
+            lookup_id: ID of the lookup to delete.
+            params: Optional query parameters.
+                
+        Returns:
+            Dict: The response data.
+        """
+        return super().delete(lookup_id, params)
+    
+    def export(
+        self,
+        lookup_id: str,
+        file_path: str,
+        params: Optional[Dict[str, Any]] = None,
+    ) -> str:
+        """
+        Export a specific lookup to a file.
+        
+        Args:
+            lookup_id: ID of the lookup to export.
+            file_path: Path to save the exported lookup file.
+            params: Optional query parameters.
+                
+        Returns:
+            str: Path to the exported lookup file.
+            
+        Raises:
+            OICAPIError: If the export fails.
+        """
+        # Set custom headers for binary content
+        headers = {
+            "Accept": "application/octet-stream",
+        }
+        
+        # Make the export request
+        response = self.client.request(
+            "GET",
+            self._get_endpoint(lookup_id, "export"),
+            params=params,
+            headers=headers,
+        )
+        
+        # Check if the response contains binary content
+        if "content" in response and isinstance(response["content"], bytes):
+            # Write the content to the file
+            try:
+                with open(file_path, "wb") as f:
+                    f.write(response["content"])
+                self.logger.info(f"Lookup exported to {file_path}")
+                return file_path
+            except Exception as e:
+                raise OICAPIError(f"Failed to write export file: {str(e)}")
+        else:
+            raise OICAPIError("Export response did not contain binary content")
+    
+    def import_lookup(
+        self,
+        file_path: str,
+        data: Optional[Dict[str, Any]] = None,
+        params: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Import a lookup from a file.
+        
+        Args:
+            file_path: Path to the lookup file to import.
+            data: Optional import data.
+            params: Optional query parameters.
+                
+        Returns:
+            Dict: The import result data.
+            
+        Raises:
+            OICValidationError: If the file does not exist.
+            OICAPIError: If the import fails.
+        """
+        # Validate the file exists
+        if not os.path.exists(file_path):
+            raise OICValidationError(f"Lookup file not found: {file_path}")
+        
+        # Set up the file for upload
+        try:
+            with open(file_path, "rb") as f:
+                files = {"file": (os.path.basename(file_path), f, "application/octet-stream")}
+                
+                # Make the import request with data as form fields
+                headers = {"Accept": "application/json"}
+                
+                # Make a custom request that includes both files and form data
+                return self.client.request(
+                    "POST",
+                    self._get_endpoint(action="import"),
+                    data=data,
+                    params=params,
+                    files=files,
+                    headers=headers,
+                )
+        except Exception as e:
+            raise OICAPIError(f"Failed to import lookup: {str(e)}")
+    
+    def get_data(
+        self,
+        lookup_id: str,
+        params: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Get the data for a specific lookup.
+        
+        Args:
+            lookup_id: ID of the lookup to get data for.
+            params: Optional query parameters.
+                
+        Returns:
+            Dict: The lookup data.
+        """
+        return self.execute_action("data", lookup_id, params=params, method="GET")
+    
+    def update_data(
+        self,
+        lookup_id: str,
+        data: Dict[str, Any],
+        params: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Update the data for a specific lookup.
+        
+        Args:
+            lookup_id: ID of the lookup to update data for.
+            data: Updated lookup data, including:
+                - rows: List of row data.
+            params: Optional query parameters.
+                
+        Returns:
+            Dict: The updated lookup data.
+            
+        Raises:
+            OICValidationError: If required fields are missing.
+        """
+        # Validate required fields
+        if "rows" not in data:
+            raise OICValidationError("Missing required field for lookup data update: rows")
+        
+        return self.execute_action("data", lookup_id, data=data, params=params, method="PUT")
