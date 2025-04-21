@@ -53,7 +53,7 @@ client = OICClient()
 client = OICClient(profile="dev")
 
 # Or specify a custom configuration file
-client = OICClient(config_file="/path/to/config.yaml", profile="prod")
+client = OICClient(config_file="/path/to/config-template.yaml", profile="prod")
 
 # Working with integrations
 integrations = client.integrations.list()
