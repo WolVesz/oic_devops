@@ -7,6 +7,7 @@ This module provides functionality for managing OIC integrations.
 import os
 import logging
 from typing import Dict, Any, Optional, List, Union, BinaryIO
+import pandas as pd
 
 from oic_devops.resources.base import BaseResource
 from oic_devops.exceptions import OICValidationError, OICAPIError
@@ -48,6 +49,24 @@ class IntegrationsResource(BaseResource):
             List[Dict]: List of integrations.
         """
         return super().list(params)
+
+    def df_list(self, params: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
+        """
+        List all integrations and place them into a pd.DataFrame
+
+        Args:
+            params: Optional query parameters such as:
+                - limit: Maximum number of items to return.
+                - offset: Number of items to skip.
+                - fields: Comma-separated list of fields to include.
+                - q: Search query.
+                - orderBy: Field to order by.
+                - status: Filter by status (e.g., "ACTIVATED", "CONFIGURED").
+
+        Returns:
+            List[Dict]: List of integrations.
+        """
+        return pd.DataFrame()
     
     def get(self, integration_id: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """

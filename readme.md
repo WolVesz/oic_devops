@@ -12,7 +12,7 @@ pip install oic-devops
 
 Before using the package, you need to set up a configuration file with your OIC credentials.
 
-Create a file named `.oic_config.yaml` in your home directory or at a custom location using the following template:
+Create a file named `config.yaml` in your home directory or at a custom location using the following template:
 
 ```yaml
 default:
@@ -53,7 +53,7 @@ client = OICClient()
 client = OICClient(profile="dev")
 
 # Or specify a custom configuration file
-client = OICClient(config_file="/path/to/config-template.yaml", profile="prod")
+client = OICClient(config_file="/path/to/config.yaml", profile="prod")
 
 # Working with integrations
 integrations = client.integrations.list()

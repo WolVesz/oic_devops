@@ -18,9 +18,10 @@ CONFIG_SCHEMA = {
     "type": "object",
     "additionalProperties": {
         "type": "object",
-        "required": ["instance_url", "identity_domain", "username", "password"],
+        "required": ["instance_url", "auth_url", "identity_domain", "username", "password"],
         "properties": {
             "instance_url": {"type": "string", "format": "uri"},
+            "auth_url": {"type": "string", "format": "uri"},
             "identity_domain": {"type": "string"},
             "username": {"type": "string"},
             "password": {"type": "string"},
@@ -33,8 +34,8 @@ CONFIG_SCHEMA = {
 }
 
 DEFAULT_CONFIG_PATHS = [
-    os.path.join(os.path.expanduser("~"), ".oic_config.yaml"),
-    os.path.join(os.getcwd(), ".oic_config.yaml"),
+    os.path.join(os.path.expanduser("~"), "config.yaml"),
+    os.path.join(os.getcwd(), "config.yaml"),
 ]
 
 class OICConfig:
@@ -104,9 +105,9 @@ class OICConfig:
                     raise OICConfigurationError(f"Error loading configuration file {path}: {str(e)}")
         
         # If no configuration file is found, provide helpful error
-        template_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config_template.yaml")
+        template_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.yaml")
         raise OICConfigurationError(
-            "No configuration file found. Please create a .oic_config.yaml file in your home directory "
+            "No configuration file found. Please create a config.yaml file in your home directory "
             f"or current working directory. See {template_path} for a template."
         )
     
@@ -160,7 +161,12 @@ class OICConfig:
     def instance_url(self) -> str:
         """Get the instance URL for the current profile."""
         return self.profile_config["instance_url"]
-    
+
+    @property
+    def auth_url(self) -> str:
+        """Get the auth url for the current profile."""
+        return self.profile_config["auth_url"]
+
     @property
     def identity_domain(self) -> str:
         """Get the identity domain for the current profile."""

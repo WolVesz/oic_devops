@@ -62,13 +62,11 @@ class OICClient:
         # Prepare session
         self.session = requests.Session()
         self.session.verify = self.config.verify_ssl
-        
+        self.authenticate()
+
         # Initialize resources
         self._init_resources()
-        
-        # Set authentication token to None initially
-        self._auth_token = None
-    
+
     def _init_resources(self):
         """Initialize resource-specific clients."""
         self.connections = ConnectionsResource(self)
@@ -89,51 +87,44 @@ class OICClient:
             OICAuthenticationError: If authentication fails.
         """
         self.logger.debug("Authenticating with OIC REST API")
-        
-        # Basic authentication header
-        auth_string = f"{self.config.identity_domain}.{self.config.username}:{self.config.password}"
-        auth_bytes = auth_string.encode("ascii")
-        base64_bytes = base64.b64encode(auth_bytes)
-        base64_auth = base64_bytes.decode("ascii")
-        
-        # Prepare headers and data
-        headers = {
-            "Authorization": f"Basic {base64_auth}",
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        }
-        
-        # Prepare the auth URL
-        url = f"{self.config.instance_url}/ic/api/common/1.0/oauth2/token"
-        
+
         # Prepare the request body
         data = {
             "grant_type": "client_credentials",
             "scope": self.config.scope if self.config.scope else "",
         }
-        
+
         try:
             response = self.session.post(
-                url,
-                headers=headers,
-                json=data,
+                self.config.auth_url,
+                data=data,
+                auth=(self.config.username, self.config.password),
                 timeout=self.config.timeout,
             )
-            
+
             if response.status_code == 200:
                 auth_data = response.json()
                 self._auth_token = auth_data.get("access_token")
+                self.auth_expiration_time = auth_data.get('expires_in')
+
                 if not self._auth_token:
                     raise OICAuthenticationError("No access token in authentication response")
-                
+
+                self.session.headers.update({
+                    "Authorization": f"Bearer {self._auth_token}",
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                })
                 self.logger.debug("Authentication successful")
-                return self._auth_token
+                return
             else:
                 error_msg = f"Authentication failed with status code {response.status_code}"
                 try:
                     error_data = response.json()
                     if "detail" in error_data:
                         error_msg += f": {error_data['detail']}"
+                    else:
+                        error_msg += f": {response.text}"
                 except ValueError:
                     error_msg += f": {response.text}"
                 
@@ -141,28 +132,28 @@ class OICClient:
                 
         except RequestException as e:
             raise OICAuthenticationError(f"Authentication request failed: {str(e)}")
-    
+
     def get_auth_token(self) -> str:
         """
         Get the authentication token, authenticating if necessary.
-        
+
         Returns:
             str: The authentication token.
-            
+
         Raises:
             OICAuthenticationError: If authentication fails.
         """
         if not self._auth_token:
             return self.authenticate()
         return self._auth_token
-    
+
     def _prepare_headers(self, custom_headers: Optional[Dict[str, str]] = None) -> Dict[str, str]:
         """
         Prepare request headers, including authentication.
-        
+
         Args:
             custom_headers: Additional headers to include.
-            
+
         Returns:
             Dict: Prepared headers.
         """
@@ -171,10 +162,10 @@ class OICClient:
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
-        
+
         if custom_headers:
             headers.update(custom_headers)
-            
+
         return headers
     
     def request(
@@ -214,7 +205,12 @@ class OICClient:
         
         # Prepare headers
         request_headers = self._prepare_headers(headers)
-        
+
+        # Extend Params for constant values
+        if not params:
+            params = dict()
+        params['integrationInstance'] = self.config.identity_domain
+
         # Prepare request
         try:
             self.logger.debug(f"Making {method} request to {url}")
@@ -251,7 +247,7 @@ class OICClient:
             
             # Handle response
             if response.status_code == 404:
-                raise OICResourceNotFoundError(f"Resource not found: {url}")
+                raise OICResourceNotFoundError(f"Resource not found: {response.request.url}")
             
             if response.status_code >= 400:
                 error_msg = f"API request failed with status code {response.status_code}"
