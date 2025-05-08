@@ -82,7 +82,7 @@ class ConnectionWorkflows(BaseWorkflow):
         # Get current connection details
         try:
             self.logger.info(f"Getting current configuration for connection {connection_id}")
-            connection = self.client.connections.get(connection_id)
+            connection = self.client.connections.get(connection_id, raw = True)
             result.add_resource("connection", connection_id, {"name": connection.get("name", "Unknown")})
             
         except OICError as e:

@@ -48,19 +48,20 @@ class BaseResource:
             
         return endpoint
     
-    def list(self, params: Optional[Dict[str, Any]] = None, raw: Optional[Dict[str, Any]] = False) -> List[Dict[str, Any]]:
+    def list(self, params: Optional[Dict[str, Any]] = None, raw: Optional[Dict[str, Any]] = False, **kwargs) -> List[Dict[str, Any]]:
         """
         List all resources of this type.
         
         Args:
             params: Optional query parameters.
             json: Option whether to return primary items or full output json
+            **kwargs: Passed to self._get_endpoint
             
         Returns:
             List[Dict]: List of resources.
             Json: raw API response of multiple integrations
         """
-        response = self.client.get(self._get_endpoint(), params=params)
+        response = self.client.get(self._get_endpoint(**kwargs), params=params)
 
         if raw:
             return response
@@ -76,7 +77,55 @@ class BaseResource:
         else:
             self.logger.warning(f"Unexpected response format from list endpoint: {response.keys() if isinstance(response, dict) else type(response)}")
             return []
-    
+
+    def list_all(self, resource_id: str, params: Optional[Dict[str, Any]] = None) -> List:
+        """
+        Automatically paginates through the API to provide the complete list of integrations.
+
+        Args:
+            params: Optional query parameters such as:
+                - limit: Maximum number of items to return.
+                - offset: Number of items to skip.
+                - fields: Comma-separated list of fields to include.
+                - q: Search query.
+                - orderBy: Field to order by.
+                - status: Filter by status (e.g., "ACTIVATED", "CONFIGURED").
+
+        Returns:
+            List[Dict]: List of integrations.
+        """
+
+        has_more = True
+        output = []
+        pages = 0
+
+        if not params:
+            params = dict()
+
+        while has_more is True:
+            params['offset'] = pages
+            response = self.client.get(self._get_endpoint(resource_id), params=params)
+
+            # Different API endpoints might return the items in different ways
+            # Check for common patterns and extract the items
+            if "items" in response:
+                content_type = "items"
+            elif "elements" in response:
+                content_type = "elements"
+            elif isinstance(response, list):
+                content_type = "items"
+            else:
+                self.logger.warning(
+                    f"Unexpected response format from list endpoint: {response.keys() if isinstance(response, dict) else type(response)}")
+                return []
+
+            output.extend(response['items'])
+            has_more = response['hasMore']
+            pages += 100
+            self.logger.info(f'Number of Integrations Acquired in List: {pages}')
+
+        return output
+
     def get(self, resource_id: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Get a specific resource by ID.

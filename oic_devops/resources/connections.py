@@ -77,7 +77,7 @@ class ConnectionsResource(BaseResource):
             content = self.list(params=params)
             output.extend(content['items'])
             has_more = content['hasMore']
-            pages += 100
+            pages += content['totalResults']
             self.logger.info(f'Number of Connections Acquired in List: {pages}')
 
         return output

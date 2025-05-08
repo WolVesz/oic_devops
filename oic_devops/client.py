@@ -257,6 +257,8 @@ class OICClient:
                         error_msg += f": {error_data['detail']}"
                     elif "message" in error_data:
                         error_msg += f": {error_data['message']}"
+                    elif "title" in error_data:
+                        error_msg += f": {error_data['title']}"
                 except ValueError:
                     error_msg += f": {response.text}"
                 

@@ -5,11 +5,14 @@ This module provides functionality for monitoring OIC resources.
 """
 
 import logging
+from logging import exception
 from typing import Dict, Any, Optional, List, Union
-from datetime import datetime, timedelta
+from datetime import datetime
+
+import pandas as pd
 
 from oic_devops.resources.base import BaseResource
-from oic_devops.exceptions import OICValidationError
+from oic_devops.exceptions import OICValidationError, OICAPIError
 
 
 class MonitoringResource(BaseResource):
@@ -29,28 +32,84 @@ class MonitoringResource(BaseResource):
         """
         super().__init__(client)
         self.base_path = "/ic/api/integration/v1/monitoring"
-    
-    def get_instance_stats(
-        self,
-        params: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+
+
+    def df(self, **kwargs) -> pd.DataFrame:
+        output = self.list_all(**kwargs)
+
+        values = []
+        for item in output:
+            values.append(
+                {
+                    "instance_creation_date": item.get('creationDate'),
+                    "instance_date": item.get('date'),
+                    'instance_duration': item.get('duration'),
+                    'instance_fifo': item.get('fifo'),
+                    'instance_flowType': item.get('flowType'),
+                    'instance_has_recoverable_faults': item.get('hasRecoverableFaults'),
+                    'instance_id': item.get('id'),
+                    'instance_instance_id': item.get('instanceId'),
+                    'instance_instance_reporting_level': item.get('instanceReportingLevel'),
+                    'instance_integration': item.get('integration'),
+                    'instance_integration_id': item.get('integrationId'),
+                    'instance_integration_name': item.get('integrationName'),
+                    'instance_integration_version': item.get('integrationVersion'),
+                    'instance_invoked_by': item.get('invokedBy'),
+                    'instance_is_data_accurate': item.get('isDataAccurate'),
+                    'instance_is_litmus_flow': item.get('isLitmusFlow'),
+                    'instance_is_litmus_supported': item.get('isLitmusSupported'),
+                    'instance_is_purged': item.get('isPurged'),
+                    'instance_last_tracked_time': item.get('lastTrackedTime'),
+                    'instance_litmus_result_status': item.get('litmusResultStatus'),
+                    'instance_mep_type': item.get('mepType'),
+                    'instance_non_schedule_async': item.get('nonScheduleAsync'),
+                    'instance_opc_request_id': item.get('opcRequestId'),
+                    'instance_outbound_queue_names': item.get('outboundQueueNames'),
+                    'instance_processing_end_date': item.get('processingEndDate'),
+                    'instance_project_found': item.get('projectFound'),
+                    'instance_received_date': item.get('receivedDate'),
+                    'instance_replayable': item.get('replayable'),
+                    'instance_replayed': item.get('replayed'),
+                    'instance_status': item.get('status'),
+                    'instance_tracking': item.get('tracking')
+                }
+            )
+
+        df = pd.DataFrame(values)
+        df['instance_acquired_at'] = datetime.now()
+
+        for col in ['instance_creation_date', 'instance_date',
+                    'instance_processing_end_date', 'instance_recieved_date']:
+            if col in df.columns:
+                df[col] = pd.to_datetime(df[col])
+
+        return df
+
+    def list(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
-        Get instance statistics.
-        
+        List all instances.
+
         Args:
-            params: Optional query parameters.
-                
+            params: Optional query parameters such as:
+                - limit: Maximum number of items to return.
+                - offset: Number of items to skip.
+                - fields: Comma-separated list of fields to include.
+                - q: Search query.
+                - orderBy: Field to order by.
+
         Returns:
-            Dict: Instance statistics.
+            List[Dict]: List of connections.
         """
-        return self.client.get(f"{self.base_path}/instanceStats", params=params)
-    
-    def get_instances(
+        return super().list(params, raw=True, resource_id = 'instances')
+
+    def list_all(
         self,
         integration_id: Optional[str] = None,
         status: Optional[str] = None,
+        timewindow: Optional[str] = 'RETENTIONPERIOD',
         start_time: Optional[Union[datetime, str]] = None,
         end_time: Optional[Union[datetime, str]] = None,
+        limit: Optional[int] = 50,
         params: Optional[Dict[str, Any]] = None,
     ) -> List[Dict[str, Any]]:
         """
@@ -59,21 +118,28 @@ class MonitoringResource(BaseResource):
         Args:
             integration_id: Optional integration ID to filter by.
             status: Optional status to filter by (e.g., "COMPLETED", "FAILED").
+            timewindow: 1h, 6h, 1d, 2d, 3d, RETENTIONPERIOD
             start_time: Optional start time to filter by.
             end_time: Optional end time to filter by.
+            limit: number of rows returned in a call.
             params: Optional additional query parameters.
                 
         Returns:
             List[Dict]: List of integration instances.
         """
+        has_more = True
+        output = []
+        pages = 0
+        expected_records = 9999999
+
         # Initialize parameters if None
         if params is None:
-            params = {}
-        
+            params = dict()
+
         # Add filters to parameters
         if integration_id:
             params["integrationId"] = integration_id
-        
+
         if status:
             params["status"] = status
         
@@ -81,28 +147,45 @@ class MonitoringResource(BaseResource):
         if start_time:
             if isinstance(start_time, datetime):
                 params["startTime"] = start_time.isoformat()
-            else:
-                params["startTime"] = start_time
-        
+
         if end_time:
             if isinstance(end_time, datetime):
                 params["endTime"] = end_time.isoformat()
-            else:
-                params["endTime"] = end_time
+
+
+        while has_more is True:
+            try:
+                params['offset'] = pages
+                print(params)
+                content = self.list(params=params)
+                output.extend(content['items'])
+                pages += content['totalResults']
+                expected_records = content['totalRecordsCount']
+                self.logger.info(f'Number of Instances Acquired in List: {pages}')
+
+            except OICAPIError as excp:
+                # has_more = content['hasMore'] #Rest API is borked here.
+                if len(output) == expected_records:
+                    has_more = True
+                elif len(output) > expected_records:
+                    has_more = True
+                    output = list(set(output))
+                elif excp.status_code == 400:
+                            self.logger.info(f"""
+                            
+                            Monitoring.List_All has failed due to a 400 error code. 
+                            
+                            This is expected due to non-disclosed limitations of the monitor/instances api. You can 
+                            only have a max of a 500 offset, 50 limit, and has_more is always false. 
+                            
+                            You recieved {len(output)} out of an expected: {expected_records}""")
+                            return output
+                else:
+                    raise excp
+
+        return output
         
-        # Make the request
-        response = self.client.get(f"{self.base_path}/instances", params=params)
-        
-        # Extract instances from the response
-        if "items" in response:
-            return response["items"]
-        elif "elements" in response:
-            return response["elements"]
-        elif isinstance(response, list):
-            return response
-        else:
-            self.logger.warning(f"Unexpected response format from get_instances endpoint: {response.keys() if isinstance(response, dict) else type(response)}")
-            return []
+
     
     def get_instance(
         self,

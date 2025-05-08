@@ -80,7 +80,7 @@ class IntegrationsResource(BaseResource):
             content = self.list(params=params)
             output.extend(content['items'])
             has_more = content['hasMore']
-            pages += 100
+            pages += content['totalResults']
             self.logger.info(f'Number of Integrations Acquired in List: {pages}')
 
         return output
