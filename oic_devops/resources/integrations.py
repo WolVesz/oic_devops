@@ -270,7 +270,7 @@ class IntegrationsResource(BaseResource):
         # Make the export request
         response = self.client.request(
             "GET",
-            self._get_endpoint(integration_id, "export"),
+            self._get_endpoint(integration_id, "archive"),
             params=params,
             headers=headers,
         )
