@@ -13,6 +13,7 @@ import pandas as pd
 
 from oic_devops.resources.base import BaseResource
 from oic_devops.exceptions import OICValidationError, OICAPIError
+from oic_devops.utils.str import camel_to_snake
 
 
 class MonitoringResource(BaseResource):
@@ -37,45 +38,9 @@ class MonitoringResource(BaseResource):
     def df(self, **kwargs) -> pd.DataFrame:
         output = self.list_all(**kwargs)
 
-        values = []
-        for item in output:
-            values.append(
-                {
-                    "instance_creation_date": item.get('creationDate'),
-                    "instance_date": item.get('date'),
-                    'instance_duration': item.get('duration'),
-                    'instance_fifo': item.get('fifo'),
-                    'instance_flowType': item.get('flowType'),
-                    'instance_has_recoverable_faults': item.get('hasRecoverableFaults'),
-                    'instance_id': item.get('id'),
-                    'instance_instance_id': item.get('instanceId'),
-                    'instance_instance_reporting_level': item.get('instanceReportingLevel'),
-                    'instance_integration': item.get('integration'),
-                    'instance_integration_id': item.get('integrationId'),
-                    'instance_integration_name': item.get('integrationName'),
-                    'instance_integration_version': item.get('integrationVersion'),
-                    'instance_invoked_by': item.get('invokedBy'),
-                    'instance_is_data_accurate': item.get('isDataAccurate'),
-                    'instance_is_litmus_flow': item.get('isLitmusFlow'),
-                    'instance_is_litmus_supported': item.get('isLitmusSupported'),
-                    'instance_is_purged': item.get('isPurged'),
-                    'instance_last_tracked_time': item.get('lastTrackedTime'),
-                    'instance_litmus_result_status': item.get('litmusResultStatus'),
-                    'instance_mep_type': item.get('mepType'),
-                    'instance_non_schedule_async': item.get('nonScheduleAsync'),
-                    'instance_opc_request_id': item.get('opcRequestId'),
-                    'instance_outbound_queue_names': item.get('outboundQueueNames'),
-                    'instance_processing_end_date': item.get('processingEndDate'),
-                    'instance_project_found': item.get('projectFound'),
-                    'instance_received_date': item.get('receivedDate'),
-                    'instance_replayable': item.get('replayable'),
-                    'instance_replayed': item.get('replayed'),
-                    'instance_status': item.get('status'),
-                    'instance_tracking': item.get('tracking')
-                }
-            )
+        df = pd.DataFrame(output)
+        df.columns = [camel_to_snake(col) for col in df.columns]
 
-        df = pd.DataFrame(values)
         df['instance_acquired_at'] = datetime.now()
 
         for col in ['instance_creation_date', 'instance_date',

@@ -12,6 +12,7 @@ import pandas as pd
 
 from oic_devops.resources.base import BaseResource
 from oic_devops.exceptions import OICValidationError, OICAPIError
+from oic_devops.utils.str import  camel_to_snake
 
 
 class IntegrationsResource(BaseResource):
@@ -80,7 +81,9 @@ class IntegrationsResource(BaseResource):
             content = self.list(params=params)
             output.extend(content['items'])
             has_more = content['hasMore']
-            pages += content['totalResults']
+            if not content.get('limit'):
+                continue
+            pages += content['limit']
             self.logger.info(f'Number of Integrations Acquired in List: {pages}')
 
         return output
@@ -105,30 +108,13 @@ class IntegrationsResource(BaseResource):
 
         output = self.list_all(**kwargs)
 
-        values = []
-        for item in output:
-            for endpoint in item['endPoints']:
-                connection = endpoint['connection']
-                values.append(
-                    {
-                        "integration_id": item['id'],
-                        "integration_name": item['name'],
-                        "integration_version": item['version'],
-                        'integration_code': item['code'],
-                        'integration_status': item['status'],
-                        'integration_is_locked': item['lockedFlag'],
-                        'integration_pattern': item['patternDescription'],
-                        'integration_last_updated': item['lastUpdated'],
-                        'integration_last_updated_user': item['lastUpdatedBy'],
-                        'integration_created_date': item['created'],
-                        'integration_created_user': item['createdBy'],
-                        'connection_role': endpoint['name'] if 'name' in endpoint.keys() else None,
-                        'connection_id': connection['id']}
-                )
+        df = pd.DataFrame(output)
+        df.columns = [camel_to_snake(col) for col in df.columns]
 
-        df = pd.DataFrame(values)
         df['integrations_acquired_at'] = datetime.now()
         df['integrations_acquired_at'] = pd.to_datetime(df['integrations_acquired_at'])
+        df = df.explode('end_points')
+        df['connection_id'] = df['end_points'].apply(lambda x: x.get('connection').get('id'))
         return df
 
     def get(self, integration_id: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:

@@ -11,6 +11,7 @@ from typing import Dict, Any, Optional, List, Union
 
 from oic_devops.resources.base import BaseResource
 from oic_devops.exceptions import OICValidationError
+from oic_devops.utils.str import camel_to_snake
 
 
 class ConnectionsResource(BaseResource):
@@ -77,7 +78,9 @@ class ConnectionsResource(BaseResource):
             content = self.list(params=params)
             output.extend(content['items'])
             has_more = content['hasMore']
-            pages += content['totalResults']
+            if not content.get('limit'):
+                continue
+            pages += content['limit']
             self.logger.info(f'Number of Connections Acquired in List: {pages}')
 
         return output
@@ -102,25 +105,8 @@ class ConnectionsResource(BaseResource):
 
         output = self.list_all(**kwargs)
 
-        values = []
-        for item in output:
-            values.append(
-                {
-                    "connection_id": item['id'],
-                    "connection_name": item['name'],
-                    'connection_status': item['status'],
-                    'connection_is_locked': item['lockedFlag'],
-                    'connection_adapter': item['adapterType']['displayName'],
-                    'connection_adapter_type': item['adapterType']['type'],
-                    'connection_role': item['role'],
-                    'connection_security_policy': item['securityPolicy'],
-                    'connection_created_date': item['created'],
-                    'connection_updated_date': item['lastUpdated'],
-                    'connection_updated_by': item['lastUpdatedBy'],
-                }
-            )
-
-        df = pd.DataFrame(values)
+        df = pd.DataFrame(output)
+        df.columns = [camel_to_snake(col) for col in df.columns]
         df['connection_acquired_at'] = datetime.now()
         df['connection_acquired_at'] = pd.to_datetime(df['connection_acquired_at'])
         return df
@@ -177,32 +163,6 @@ class ConnectionsResource(BaseResource):
 
         return pd.Series(struct_output)
 
-    def create(self, data: Dict[str, Any], params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """
-        Create a new connection.
-        
-        Args:
-            data: Connection data, including:
-                - name: Name of the connection.
-                - identifier: Unique identifier for the connection.
-                - connectionType: Type of the connection (e.g., "REST", "SOAP").
-                - ... and other connection-specific properties.
-            params: Optional query parameters.
-                
-        Returns:
-            Dict: The created connection data.
-            
-        Raises:
-            OICValidationError: If required fields are missing.
-        """
-        # Validate required fields
-        required_fields = ["name", "identifier", "connectionType"]
-        for field in required_fields:
-            if field not in data:
-                raise OICValidationError(f"Missing required field for connection creation: {field}")
-        
-        return super().create(data, params)
-    
     def update(
         self,
         connection_id: str,
@@ -255,37 +215,28 @@ class ConnectionsResource(BaseResource):
             Dict: The test result data.
         """
         return self.execute_action("test", connection_id, params=params, method="POST")
-    
-    def clone(
-        self,
+
+    def validate(self,
         connection_id: str,
-        data: Dict[str, Any],
         params: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
-        Clone a specific connection.
-        
+        Test a specific connection.
+
         Args:
-            connection_id: ID of the connection to clone.
-            data: Data for the cloned connection, including:
-                - name: Name of the cloned connection.
-                - identifier: Unique identifier for the cloned connection.
+            connection_id: ID of the connection to test.
             params: Optional query parameters.
-                
+
         Returns:
-            Dict: The cloned connection data.
-            
-        Raises:
-            OICValidationError: If required fields are missing.
+            Dict: The test result data.
         """
-        # Validate required fields
-        required_fields = ["name", "identifier"]
-        for field in required_fields:
-            if field not in data:
-                raise OICValidationError(f"Missing required field for connection cloning: {field}")
-        
-        return self.execute_action("clone", connection_id, data=data, params=params, method="POST")
-    
+        if not params:
+            params = {}
+
+        params["Content-Type"] = 'multipart/form-data'
+
+        return self.execute_action("validate", connection_id, params=params, method="POST")
+
     def get_types(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         Get all available connection types.

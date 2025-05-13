@@ -8,6 +8,8 @@ import logging
 import time
 from typing import Dict, Any, List, Optional, Union
 
+import pandas as pd
+
 from oic_devops.client import OICClient
 from oic_devops.exceptions import OICError
 from oic_devops.workflows.base import BaseWorkflow, WorkflowResult
@@ -27,7 +29,7 @@ class ConnectionWorkflows(BaseWorkflow):
         Execute the specified connection workflow.
         
         This is a dispatcher method that calls the appropriate workflow
-        based on the operation argument.
+        based on the operation argument for CLI purposes.
         
         Args:
             operation: The workflow operation to execute.
@@ -54,28 +56,35 @@ class ConnectionWorkflows(BaseWorkflow):
     def update_credentials(
         self,
         connection_id: str,
-        credentials: Dict[str, Any],
-        test_connection: bool = True
+        security_properties: list[dict],
+        test_connection: bool = True,
+        **kwargs
     ) -> WorkflowResult:
         """
         Update credentials for a connection.
         
         This workflow:
         1. Gets the current connection configuration
-        2. Updates the credentials
+        2. Updates the credentials - must contain at least the propertyName and propertyValue
         3. Updates the connection
         4. Optionally tests the connection
-        
+
         Args:
             connection_id: ID of the connection to update.
-            credentials: Dict containing credential fields to update.
+            security_properties: Dict containing credential fields to update.
                 Keys depend on the connection type but typically include
                 'password', 'securityToken', etc.
             test_connection: Whether to test the connection after updating.
+            **kwargs: connected to update function
             
         Returns:
             WorkflowResult: The workflow execution result.
         """
+
+        assert isinstance(security_properties, list), ("""The input for Connection Update_Credentials Workflow should be"
+                                                        a list of dictionaries to reflect the default Security Properties"
+                                                        schema""")
+
         result = WorkflowResult()
         result.message = f"Updating credentials for connection {connection_id}"
         
@@ -89,75 +98,32 @@ class ConnectionWorkflows(BaseWorkflow):
             self.logger.error(f"Failed to get connection {connection_id}: {str(e)}")
             result.add_error(f"Failed to get connection {connection_id}", e, connection_id)
             return result
-        
-        # Update credentials in connection properties
-        # Handle different connection types with different credential structures
+
+        # Update security properties for each property
+        for _dict in security_properties:
+            for _dict_2 in connection['securityProperties']:
+                if _dict['propertyName'] == _dict_2['propertyName']:
+                    _dict_2.update(_dict)
+
+        update_vals = dict(securityProperties = connection.pop('securityProperties'))
+
+        self.logger.info(f"Updating {connection_id} security properties")
+
         try:
-            # Update credentials based on connection type
-            connection_type = connection.get("connectionType", "")
-            
-            # Check for different property locations based on connection type
-            credential_updated = False
-            
-            # Check in securityProperties
-            if "securityProperties" in connection:
-                for key, value in credentials.items():
-                    if key in connection["securityProperties"]:
-                        self.logger.debug(f"Updating credential '{key}' in securityProperties")
-                        connection["securityProperties"][key] = value
-                        credential_updated = True
-            
-            # Check in connectionProperties
-            if "connectionProperties" in connection:
-                for key, value in credentials.items():
-                    if key in connection["connectionProperties"]:
-                        self.logger.debug(f"Updating credential '{key}' in connectionProperties")
-                        connection["connectionProperties"][key] = value
-                        credential_updated = True
-            
-            # Check in top-level properties for some connection types
-            if "properties" in connection:
-                for key, value in credentials.items():
-                    if key in connection["properties"]:
-                        self.logger.debug(f"Updating credential '{key}' in properties")
-                        connection["properties"][key] = value
-                        credential_updated = True
-            
-            # Generic approach for other property locations
-            for key, value in credentials.items():
-                if key in connection:
-                    self.logger.debug(f"Updating credential '{key}' at top level")
-                    connection[key] = value
-                    credential_updated = True
-            
-            if not credential_updated:
-                error_msg = f"No credential fields were updated. Available fields didn't match provided credentials"
-                self.logger.error(error_msg)
-                result.add_error(error_msg, resource_id=connection_id)
-                return result
-                
+            self.client.connections.update(connection_id, update_vals, **kwargs)
+            result.add_resource("connection", connection_id, {'updated_information': update_vals})
+            self.logger.info(f'Updated {connection_id} security properties')
+            result.success = True
         except Exception as e:
             self.logger.error(f"Failed to update credential values: {str(e)}")
             result.add_error("Failed to update credential values", e, connection_id)
             return result
-        
-        # Update the connection
-        try:
-            self.logger.info(f"Updating connection {connection_id}")
-            update_result = self.client.connections.update(connection_id, connection)
-            result.details["update_result"] = {"status": "success"}
-            
-        except OICError as e:
-            self.logger.error(f"Failed to update connection {connection_id}: {str(e)}")
-            result.add_error(f"Failed to update connection {connection_id}", e, connection_id)
-            return result
-        
-        # Test the connection if requested
+
         if test_connection:
             try:
                 self.logger.info(f"Testing connection {connection_id}")
                 test_result = self.client.connections.test(connection_id)
-                
+
                 # Check test result
                 if test_result.get("status") == "SUCCESS" or test_result.get("state") == "SUCCESS":
                     result.details["test_result"] = {"status": "success"}
@@ -169,32 +135,27 @@ class ConnectionWorkflows(BaseWorkflow):
                     result.message = f"Credentials updated but test failed: {error_msg}"
                     result.add_error("Connection test failed", resource_id=connection_id)
                     result.details["test_result"] = {"status": "failure", "message": error_msg}
-                    
+
             except OICError as e:
                 self.logger.error(f"Failed to test connection {connection_id}: {str(e)}")
                 result.success = False
                 result.message = "Credentials updated but test failed"
                 result.add_error("Failed to test connection", e, connection_id)
                 result.details["test_result"] = {"status": "error", "message": str(e)}
-        
-        if result.success:
-            result.message = f"Successfully updated credentials for connection {connection_id}"
-            if test_connection:
-                result.message += " and verified connection is working"
-                
+
         return result
     
     def test_all_connections(
         self,
-        filter_query: Optional[str] = None,
-        continue_on_error: bool = True
+        continue_on_error: bool = True,
+        **kwargs
     ) -> WorkflowResult:
         """
         Test all connections or a filtered subset of connections.
         
         Args:
-            filter_query: Optional query to filter connections.
             continue_on_error: Whether to continue testing if some tests fail.
+            **kwargs are for list_all
             
         Returns:
             WorkflowResult: The workflow execution result.
@@ -204,17 +165,7 @@ class ConnectionWorkflows(BaseWorkflow):
         
         # Get list of connections
         try:
-            params = {}
-            if filter_query:
-                params["q"] = filter_query
-                
-            self.logger.info("Getting list of connections")
-            connections = self.client.connections.list(params=params)
-            
-            if not connections:
-                result.message = "No connections found to test"
-                return result
-                
+            connections = self.client.connections.list_all(**kwargs)
             result.details["connection_count"] = len(connections)
             self.logger.info(f"Found {len(connections)} connections to test")
             
@@ -236,10 +187,11 @@ class ConnectionWorkflows(BaseWorkflow):
                 continue
                 
             self.logger.info(f"Testing connection {connection_name} ({connection_id})")
-            
+
+            #test
             try:
                 test_result = self.client.connections.test(connection_id)
-                
+
                 # Check if test was successful
                 if test_result.get("status") == "SUCCESS" or test_result.get("state") == "SUCCESS":
                     self.logger.info(f"Connection test successful for {connection_name}")
@@ -261,13 +213,13 @@ class ConnectionWorkflows(BaseWorkflow):
                         "test_result": "failure",
                         "error": error_msg
                     })
-                    
+
                     if not continue_on_error:
                         result.success = False
                         result.message = f"Connection test failed for {connection_name}"
                         result.add_error(f"Connection test failed: {error_msg}", resource_id=connection_id)
                         break
-                        
+
             except OICError as e:
                 self.logger.error(f"Error testing connection {connection_name}: {str(e)}")
                 failed_connections.append({
@@ -280,13 +232,13 @@ class ConnectionWorkflows(BaseWorkflow):
                     "test_result": "error",
                     "error": str(e)
                 })
-                
+
                 if not continue_on_error:
                     result.success = False
                     result.message = f"Error testing connection {connection_name}"
                     result.add_error(f"Error testing connection", e, connection_id)
                     break
-        
+
         # Update result message and details
         if result.success:
             if not failed_connections:
@@ -304,7 +256,8 @@ class ConnectionWorkflows(BaseWorkflow):
     def find_dependent_integrations(
         self,
         connection_id: str,
-        check_active_only: bool = False
+        check_active_only: bool = False,
+        fast_and_dirty: bool = True
     ) -> WorkflowResult:
         """
         Find all integrations that depend on a specific connection.
@@ -317,63 +270,90 @@ class ConnectionWorkflows(BaseWorkflow):
         Args:
             connection_id: ID of the connection to check for dependencies.
             check_active_only: Whether to check only active integrations.
+            fast_and_dirty: does not dive deep into connections and relies on df versions of both connection & integrations
             
         Returns:
             WorkflowResult: The workflow execution result with dependent integrations.
         """
+
         result = WorkflowResult()
+        result.success = False
+
+        params = {}
+        if check_active_only:
+            params["status"] = "ACTIVATED"
+
+        if fast_and_dirty:
+            try:
+                integrations = self.client.integrations.df(params = params)
+                integrations.columns = [f'integration_{x}' if 'connection' not in x and 'integration' not in x else x for x in
+                                        integrations.columns]
+
+                integrations = integrations[integrations['connection_id'] == connection_id]
+
+                result.success = True
+                result.add_resource("connection", connection_id, integrations)
+
+                if len(integrations) == 0:
+                    result.message = f"No integrations found that could depend on connection {connection_id}"
+
+                return result
+            except OICError as e:
+                self.logger.error(f"Failed to identify integrations: {e}")
+                result.add_error(f"Failed to identify integrations: {e}")
+                return result
+
+
         result.message = f"Finding integrations dependent on connection {connection_id}"
         
         # Get the connection details first to verify it exists
         try:
             self.logger.info(f"Getting details for connection {connection_id}")
-            connection = self.client.connections.get(connection_id)
+            connection = self.client.connections.get(connection_id, raw = True)
             connection_name = connection.get("name", "Unknown")
-            
+
             result.add_resource("connection", connection_id, {"name": connection_name})
             result.details["connection_name"] = connection_name
-            
+
         except OICError as e:
             self.logger.error(f"Failed to get connection {connection_id}: {str(e)}")
             result.add_error(f"Failed to get connection {connection_id}", e, connection_id)
             return result
-        
+
         # Get list of integrations
         try:
-            params = {}
-            if check_active_only:
-                params["status"] = "ACTIVATED"
-                
+
             self.logger.info("Getting list of integrations")
-            integrations = self.client.integrations.list(params=params)
-            
+            integrations = self.client.integrations.list_all(params=params)
+
+
             if not integrations:
                 result.message = f"No integrations found that could depend on connection {connection_name}"
                 return result
-                
+
             self.logger.info(f"Found {len(integrations)} integrations to check")
-            
+
         except OICError as e:
             self.logger.error(f"Failed to get integrations list: {str(e)}")
             result.add_error("Failed to get integrations list", e)
             return result
-        
+
         # Check each integration for dependencies
         dependent_integrations = []
-        
+
         for integration in integrations:
             integration_id = integration.get("id")
             integration_name = integration.get("name", "Unknown")
-            
+
             if not integration_id:
                 self.logger.warning(f"Skipping integration with no ID: {integration_name}")
                 continue
-                
+
             self.logger.debug(f"Checking integration {integration_name} ({integration_id})")
             
             try:
                 # Get detailed integration information to check for connections
-                integration_detail = self.client.integrations.get(integration_id)
+                integration_detail = self.client.integrations.get(integration_id, raw = True)
                 
                 # Check various places where connection references might be stored
                 # This depends on the structure of the integration JSON from the OIC API
