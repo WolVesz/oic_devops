@@ -157,6 +157,7 @@ class BaseResource:
         resource_id: str,
         data: Dict[str, Any],
         params: Optional[Dict[str, Any]] = None,
+        headers: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """
         Update a specific resource.
@@ -165,11 +166,13 @@ class BaseResource:
             resource_id: ID of the resource to update.
             data: Updated resource data.
             params: Optional query parameters.
-            
+            headers: Optional request header information
+
         Returns:
             Dict: The updated resource data.
         """
-        return self.client.put(self._get_endpoint(resource_id), data=data, params=params)
+        return self.client.post(self._get_endpoint(resource_id = resource_id), data=data, params=params,
+                                headers=headers)
     
     def delete(
         self,

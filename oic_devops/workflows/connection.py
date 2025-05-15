@@ -478,8 +478,8 @@ class ConnectionWorkflows(BaseWorkflow):
         self.logger.info(f"Finding integrations dependent on connection {connection_id}")
         dependent_result = self.find_dependent_integrations(
             connection_id=connection_id,
-            check_active_only=(restart_scope == "active")
-        )
+            check_active_only=(restart_scope == "active"),
+            fast_and_dirty = False)
         
         # Merge results
         result.merge(dependent_result)

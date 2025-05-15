@@ -9,6 +9,8 @@ import pandas as pd
 from datetime import datetime
 from typing import Dict, Any, Optional, List, Union
 
+from pandas import Series
+
 from oic_devops.resources.base import BaseResource
 from oic_devops.exceptions import OICValidationError
 from oic_devops.utils.str import camel_to_snake
@@ -111,7 +113,7 @@ class ConnectionsResource(BaseResource):
         df['connection_acquired_at'] = pd.to_datetime(df['connection_acquired_at'])
         return df
 
-    def get(self, connection_id: str, params: Optional[Dict[str, Any]] = None, raw = False) -> Dict[str, Any]:
+    def get(self, connection_id: str, params: Optional[Dict[str, Any]] = None, raw = False) -> dict[str, Any] | Series:
         """
         Get a specific connection by ID.
         
@@ -176,11 +178,16 @@ class ConnectionsResource(BaseResource):
             connection_id: ID of the connection to update.
             data: Updated connection data.
             params: Optional query parameters.
-                
+
         Returns:
             Dict: The updated connection data.
         """
-        return super().update(connection_id, data, params)
+
+        headers = {
+            'X-HTTP-Method-Override': 'PATCH'
+        }
+
+        return super().update(connection_id, data=data, params=params, headers = headers)
     
     def delete(
         self,
@@ -223,6 +230,8 @@ class ConnectionsResource(BaseResource):
         """
         Test a specific connection.
 
+        SPECIFIC TO ATTACHMENT DEPENDENT OIC Connections
+
         Args:
             connection_id: ID of the connection to test.
             params: Optional query parameters.
@@ -235,7 +244,7 @@ class ConnectionsResource(BaseResource):
 
         params["Content-Type"] = 'multipart/form-data'
 
-        return self.execute_action("validate", connection_id, params=params, method="POST")
+        return self.execute_action("testWithAttachments", connection_id, params=params, method="POST")
 
     def get_types(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
