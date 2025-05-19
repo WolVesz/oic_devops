@@ -349,3 +349,59 @@ class LookupsResource(BaseResource):
         
         return self.execute_action("data", lookup_id, data=data, params=params, method="PUT")
 
+    def get_usage(
+            self,
+            lookup_id: str,
+            params: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Get the usage for a specific lookup.
+
+        Args:
+            lookup_id: ID of the lookup to get data for.
+            params: Optional query parameters. --No Optional parameters exist. //TODO should it be removed?
+
+        Returns:
+            Dict: The lookup usage.
+        """
+
+        return self.execute_action(action="usage", resource_id=lookup_id, params=params, method="GET")
+
+    def get_usage_all(
+            self,
+            params: Optional[Dict[str, Any]] = None,
+    ) -> List[Dict[str, Any]]:
+        """
+        Get usage information for all lookups.
+
+        Args:
+            params: Optional query parameters.
+
+        Returns:
+            List[Dict]: A list of usage data for each lookup.
+
+        Raises:
+            OICValidationError: If 'integrationInstance' is not provided.
+            OICAPIError: If any usage retrieval fails.
+        """
+
+        lookups = self.list_all(params)
+        usage_data = []
+
+        for lookup in lookups:
+            lookup_id = lookup.get("id")
+            if not lookup_id:
+                self.logger.warning(f"Skipping lookup with missing ID: {lookup}")
+                continue
+            try:
+                usage = self.get_usage(lookup_id, params=params)
+                usage_data.append({
+                    "lookup_id": lookup_id,
+                    "name": lookup.get("name"),
+                    "usage": usage
+                })
+            except OICAPIError as e:
+                self.logger.error(f"Failed to retrieve usage for lookup {lookup_id}: {str(e)}")
+                continue
+
+        return usage_data
