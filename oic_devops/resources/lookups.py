@@ -8,6 +8,8 @@ import os
 import logging
 from typing import Dict, Any, Optional, List, Union, BinaryIO
 
+import pandas as pd
+
 from oic_devops.resources.base import BaseResource
 from oic_devops.exceptions import OICValidationError, OICAPIError
 
@@ -168,7 +170,61 @@ class LookupsResource(BaseResource):
                 raise OICAPIError(f"Failed to write export file: {str(e)}")
         else:
             raise OICAPIError("Export response did not contain binary content")
-    
+
+    def export_all(
+            self,
+            directory_path: str,
+            params: Optional[Dict[str, Any]] = None,
+    ) -> List[str]:
+        """
+        Export all lookup tables to a specified directory.
+
+        Args:
+            directory_path: Path to the directory where lookup files will be saved.
+            params: Optional query parameters for listing and exporting lookups.
+
+        Returns:
+            List[str]: List of paths to the exported lookup files.
+
+        Raises:
+            OICValidationError: If the directory does not exist or is not writable.
+            OICAPIError: If any export operation fails.
+        """
+        # Validate the directory
+        if not os.path.exists(directory_path):
+            try:
+                os.makedirs(directory_path)
+            except Exception as e:
+                raise OICValidationError(f"Failed to create directory {directory_path}: {str(e)}")
+
+        if not os.access(directory_path, os.W_OK):
+            raise OICValidationError(f"Directory {directory_path} is not writable")
+
+        # Get the list of lookups
+        lookups = self.list_all(params)
+        exported_files = []
+
+        # Export each lookup
+        for lookup in lookups:
+            lookup_id = lookup.get("id")
+            if not lookup_id:
+                self.logger.warning(f"Skipping lookup with missing identifier: {lookup}")
+                continue
+
+            # Create a safe filename from the lookup identifier
+            safe_filename = "".join(c if c.isalnum() or c in "-_." else "_" for c in lookup_id)
+            file_path = os.path.join(directory_path, f"{safe_filename}.csv")
+
+            try:
+                exported_path = self.export(lookup_id, file_path, params)
+                exported_files.append(exported_path)
+                self.logger.info(f"Successfully exported lookup {lookup_id} to {exported_path}")
+            except OICAPIError as e:
+                self.logger.error(f"Failed to export lookup {lookup_id}: {str(e)}")
+                raise
+
+        return exported_files
+
     def import_lookup(
         self,
         file_path: str,
@@ -224,13 +280,48 @@ class LookupsResource(BaseResource):
         
         Args:
             lookup_id: ID of the lookup to get data for.
-            params: Optional query parameters.
+            params: Optional query parameters. expand=datarow is defaulted if not expand specified
                 
         Returns:
             Dict: The lookup data.
         """
-        return self.execute_action("data", lookup_id, params=params, method="GET")
-    
+        if not params:
+            params = dict(expand="datarow")
+        elif "expand" not in params:
+            params.update(dict(expand="datarow"))
+
+        return self.execute_action(action="", resource_id=lookup_id, params=params, method="GET")
+
+    def get_data_all(
+            self,
+            params: Optional[Dict[str, Any]] = None,
+    ) -> pd.DataFrame:
+        """
+        Get the data for all lookups.
+
+        Args:
+            params: Optional query parameter such as:
+                    - expand: Expand the lookup resource by adding related resources. values are 'datarow' or 'adapter'.
+                             'datarow' is defaulted if not expand specified
+
+        Returns:
+            List[Dict]: List of lookups with their data.
+        """
+        # Get the list of lookups
+        lookups = self.list_all(params)
+        output = pd.DataFrame()
+
+        # Export each lookup
+        for lookup in lookups:
+            lookup_id = lookup.get("id")
+            if not lookup_id:
+                self.logger.warning(f"Skipping lookup with missing identifier: {lookup}")
+                continue
+            data_rows = self.get_data(lookup_id, params)
+            output[lookup_id] = data_rows
+
+        return output
+
     def update_data(
         self,
         lookup_id: str,
@@ -258,56 +349,3 @@ class LookupsResource(BaseResource):
         
         return self.execute_action("data", lookup_id, data=data, params=params, method="PUT")
 
-    def export_all(
-            self,
-            directory_path: str,
-            params: Optional[Dict[str, Any]] = None,
-    ) -> List[str]:
-        """
-        Export all lookup tables to a specified directory.
-
-        Args:
-            directory_path: Path to the directory where lookup files will be saved.
-            params: Optional query parameters for listing and exporting lookups.
-
-        Returns:
-            List[str]: List of paths to the exported lookup files.
-
-        Raises:
-            OICValidationError: If the directory does not exist or is not writable.
-            OICAPIError: If any export operation fails.
-        """
-        # Validate the directory
-        if not os.path.exists(directory_path):
-            try:
-                os.makedirs(directory_path)
-            except Exception as e:
-                raise OICValidationError(f"Failed to create directory {directory_path}: {str(e)}")
-
-        if not os.access(directory_path, os.W_OK):
-            raise OICValidationError(f"Directory {directory_path} is not writable")
-
-        # Get the list of lookups
-        lookups = self.list(params)
-        exported_files = []
-
-        # Export each lookup
-        for lookup in lookups:
-            lookup_id = lookup.get("id")
-            if not lookup_id:
-                self.logger.warning(f"Skipping lookup with missing identifier: {lookup}")
-                continue
-
-            # Create a safe filename from the lookup identifier
-            safe_filename = "".join(c if c.isalnum() or c in "-_." else "_" for c in lookup_id)
-            file_path = os.path.join(directory_path, f"{safe_filename}.csv")
-
-            try:
-                exported_path = self.export(lookup_id, file_path, params)
-                exported_files.append(exported_path)
-                self.logger.info(f"Successfully exported lookup {lookup_id} to {exported_path}")
-            except OICAPIError as e:
-                self.logger.error(f"Failed to export lookup {lookup_id}: {str(e)}")
-                raise
-
-        return exported_files
