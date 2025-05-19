@@ -359,7 +359,7 @@ class LookupsResource(BaseResource):
 
         Args:
             lookup_id: ID of the lookup to get data for.
-            params: Optional query parameters. --No Optional parameters exist. //TODO should it be removed?
+            params: Optional query parameters.
 
         Returns:
             Dict: The lookup usage.
