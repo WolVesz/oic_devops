@@ -7,6 +7,7 @@ This module provides workflow operations for managing connections.
 import logging
 import time
 from typing import Dict, Any, List, Optional, Union
+from tqdm import tqdm
 
 import pandas as pd
 
@@ -56,18 +57,29 @@ class ConnectionWorkflows(BaseWorkflow):
     def update_credentials(
         self,
         connection_id: str,
-        security_properties: list[dict],
+        security_properties: dict,
         test_connection: bool = True,
         **kwargs
     ) -> WorkflowResult:
         """
-        Update credentials for a connection.
+        Update credentials for a connection.Generally from securityProperties in
+        the connection object.
         
         This workflow:
         1. Gets the current connection configuration
         2. Updates the credentials - must contain at least the propertyName and propertyValue
         3. Updates the connection
         4. Optionally tests the connection
+
+        Example: Basic Auth
+        {"securityProperties":[
+                {"propertyName":"username",
+                 "propertyValue":"new_username"},
+                {"propertyName":"password",
+                 "propertyValue":"new_password"}
+                 ]
+        }
+
 
         Args:
             connection_id: ID of the connection to update.
@@ -81,36 +93,12 @@ class ConnectionWorkflows(BaseWorkflow):
             WorkflowResult: The workflow execution result.
         """
 
-        assert isinstance(security_properties, list), ("""The input for Connection Update_Credentials Workflow should be"
-                                                        a list of dictionaries to reflect the default Security Properties"
-                                                        schema""")
-
         result = WorkflowResult()
         result.message = f"Updating credentials for connection {connection_id}"
-        
-        # Get current connection details
-        try:
-            self.logger.info(f"Getting current configuration for connection {connection_id}")
-            connection = self.client.connections.get(connection_id, raw = True)
-            result.add_resource("connection", connection_id, {"name": connection.get("name", "Unknown")})
-            
-        except OICError as e:
-            self.logger.error(f"Failed to get connection {connection_id}: {str(e)}")
-            result.add_error(f"Failed to get connection {connection_id}", e, connection_id)
-            return result
-
-        # Update security properties for each property
-        for _dict in security_properties:
-            for _dict_2 in connection['securityProperties']:
-                if _dict['propertyName'] == _dict_2['propertyName']:
-                    _dict_2.update(_dict)
-
-        update_vals = dict(securityProperties = connection.pop('securityProperties'))
-
         self.logger.info(f"Updating {connection_id} security properties")
 
         try:
-            self.client.connections.update(connection_id, update_vals, **kwargs)
+            self.client.connections.update(connection_id, security_properties, **kwargs)
             result.add_resource("connection", connection_id, {'updated_information': update_vals})
             self.logger.info(f'Updated {connection_id} security properties')
             result.success = True
@@ -341,7 +329,7 @@ class ConnectionWorkflows(BaseWorkflow):
         # Check each integration for dependencies
         dependent_integrations = []
 
-        for integration in integrations:
+        for integration in tqdm(integrations):
             integration_id = integration.get("id")
             integration_name = integration.get("name", "Unknown")
 
@@ -353,7 +341,7 @@ class ConnectionWorkflows(BaseWorkflow):
             
             try:
                 # Get detailed integration information to check for connections
-                integration_detail = self.client.integrations.get(integration_id, raw = True)
+                integration_detail = self.client.integrations.get(integration_id)
                 
                 # Check various places where connection references might be stored
                 # This depends on the structure of the integration JSON from the OIC API

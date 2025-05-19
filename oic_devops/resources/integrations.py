@@ -105,6 +105,7 @@ class IntegrationsResource(BaseResource):
         Returns:
             List[Dict]: List of integrations.
         """
+        import numpy as np
 
         output = self.list_all(**kwargs)
 
@@ -114,9 +115,11 @@ class IntegrationsResource(BaseResource):
         df['integrations_acquired_at'] = datetime.now()
         df['integrations_acquired_at'] = pd.to_datetime(df['integrations_acquired_at'])
         df = df.explode('end_points')
-        df['connection_id'] = df['end_points'].apply(lambda x: x.get('connection').get('id'))
+        df['end_points'] = df['end_points'].fillna({})
+        df['connection_id'] = df['end_points'].apply(lambda x: x.get('connection', {}).get('id', None) if isinstance(x, dict) else None)
         return df
 
+    # TODO: setup async for workflow speed ups
     def get(self, integration_id: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Get a specific integration by ID.
