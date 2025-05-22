@@ -6,26 +6,26 @@ for managing integration tasks including Connections, Integrations, Libraries, L
 Monitoring, and Packages.
 """
 
-__version__ = "0.1.0"
-__author__ = "Your Name"
-__email__ = "your.email@example.com"
+__version__ = '0.1.0'
+__author__ = 'Your Name'
+__email__ = 'your.email@example.com'
 
 from oic_devops.client import OICClient
 from oic_devops.exceptions import (
-    OICError,
-    OICAuthenticationError,
-    OICResourceNotFoundError,
-    OICConfigurationError,
-    OICValidationError,
-    OICAPIError,
+	OICAPIError,
+	OICAuthenticationError,
+	OICConfigurationError,
+	OICError,
+	OICResourceNotFoundError,
+	OICValidationError,
 )
 
 __all__ = [
-    "OICClient",
-    "OICError",
-    "OICAuthenticationError",
-    "OICResourceNotFoundError",
-    "OICConfigurationError",
-    "OICValidationError",
-    "OICAPIError",
+	'OICAPIError',
+	'OICAuthenticationError',
+	'OICClient',
+	'OICConfigurationError',
+	'OICError',
+	'OICResourceNotFoundError',
+	'OICValidationError',
 ]
