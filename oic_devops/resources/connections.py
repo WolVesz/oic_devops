@@ -102,7 +102,7 @@ class ConnectionsResource(BaseResource):
             update:
 
         Returns:
-            List[Dict]: List of integrations.
+            List[Dict]: List of connections.
         """
 
         output = self.list_all(**kwargs)
