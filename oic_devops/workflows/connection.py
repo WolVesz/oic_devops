@@ -387,8 +387,12 @@ class ConnectionWorkflows(BaseWorkflow):
 			connection_id=connection_id, check_active_only=(restart_scope == 'active')
 		)
 
-		dependent_result_output = dependent_result.resources['connection'][connection_id]
-		dependent_result_output = dependent_result_output[dependent_result_output['connection_id'] == connection_id]
+		dependent_result_output = dependent_result.resources['connection'][
+			connection_id
+		]
+		dependent_result_output = dependent_result_output[
+			dependent_result_output['connection_id'] == connection_id
+		]
 		current_versions = (
 			dependent_result_output.sort_values(
 				by='integration_version', ascending=False
@@ -397,13 +401,19 @@ class ConnectionWorkflows(BaseWorkflow):
 			.first()
 			.reset_index()
 		)
-		dependent_result_output = dependent_result_output[dependent_result_output['integration_id'].isin(
-			current_versions['integration_id'])][['integration_name',
-												  'integration_id',
-												  'integration_status',
-												  'integration_pattern',
-												  'integration_version'
-												]].drop_duplicates()
+		dependent_result_output = dependent_result_output[
+			dependent_result_output['integration_id'].isin(
+				current_versions['integration_id']
+			)
+		][
+			[
+				'integration_name',
+				'integration_id',
+				'integration_status',
+				'integration_pattern',
+				'integration_version',
+			]
+		].drop_duplicates()
 
 		# Merge results
 		result.merge(dependent_result)
