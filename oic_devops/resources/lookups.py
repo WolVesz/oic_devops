@@ -5,6 +5,7 @@ This module provides functionality for managing OIC lookups.
 """
 
 import os
+import pandas as pd
 import logging
 from typing import Dict, Any, Optional, List, Union, BinaryIO
 
@@ -12,7 +13,8 @@ import pandas as pd
 
 from oic_devops.resources.base import BaseResource
 from oic_devops.exceptions import OICValidationError, OICAPIError
-
+from oic_devops.utils.str import camel_to_snake
+from datetime import datetime
 
 class LookupsResource(BaseResource):
     """
@@ -225,6 +227,34 @@ class LookupsResource(BaseResource):
 
         return exported_files
 
+    def df(self, **kwargs):
+        """
+        Creates a pandas Dataframe with the full contents of list_all.
+
+        Args:
+            params: Optional query parameters such as:
+                - expand: Includes additional details in the response about the adapters used in the lookups. Valid value: adapter
+                - limit: Maximum number of items to return.
+                - offset: Number of items to skip.
+                - q: Search query. valid parameters: name | status E.gs
+                        - Exact match: q={name:'MyLookup'}
+                        - Contains:  q={name: /MyLookup/}
+                - oderBy: Valid value: name. Example orderBy=name
+
+            https://docs.oracle.com/en/cloud/paas/application-integration/rest-api/op-ic-api-integration-v1-lookups-get.html
+
+        Returns:
+            List[Dict]: List of lookups.
+        """
+
+        output = self.get_data_all(**kwargs)
+
+        df = pd.DataFrame(output)
+        df.columns = [camel_to_snake(col) for col in df.columns]
+        df['lookup_acquired_at'] = datetime.now()
+        df['lookup_acquired_at'] = pd.to_datetime(df['lookup_acquired_at'])
+        return df
+
     def import_lookup(
         self,
         file_path: str,
@@ -405,3 +435,26 @@ class LookupsResource(BaseResource):
                 continue
 
         return usage_data
+
+    def df(self, **kwargs):
+        """
+        Creates a pandas Dataframe with the full contents of get_data_all.
+
+        Args:
+            params: Optional query parameters such as:
+                - limit: Maximum number of items to return.
+                - offset: Number of items to skip.
+                - q: Filters lookups by name and status. q={name:'MyLookup'} for exact match. q={name: /MyLookup/} for contains. q={name : /Lookup/, status : 'LOCKED'}
+                - orderBy: Lists lookups ordered by name.Example orderBy=name       - defaulted
+
+        Returns:
+            List[Dict]: List of lookups.
+        """
+
+        output = self.get_data_all(**kwargs)
+
+        df = pd.DataFrame(output)
+        df.columns = [camel_to_snake(col) for col in df.columns]
+        df['lookups_acquired_at'] = datetime.now()
+        df['lookups_acquired_at'] = pd.to_datetime(df['lookups_acquired_at'])
+        return df
