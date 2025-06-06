@@ -435,26 +435,3 @@ class LookupsResource(BaseResource):
                 continue
 
         return usage_data
-
-    def df(self, **kwargs):
-        """
-        Creates a pandas Dataframe with the full contents of get_data_all.
-
-        Args:
-            params: Optional query parameters such as:
-                - limit: Maximum number of items to return.
-                - offset: Number of items to skip.
-                - q: Filters lookups by name and status. q={name:'MyLookup'} for exact match. q={name: /MyLookup/} for contains. q={name : /Lookup/, status : 'LOCKED'}
-                - orderBy: Lists lookups ordered by name.Example orderBy=name       - defaulted
-
-        Returns:
-            List[Dict]: List of lookups.
-        """
-
-        output = self.get_data_all(**kwargs)
-
-        df = pd.DataFrame(output)
-        df.columns = [camel_to_snake(col) for col in df.columns]
-        df['lookups_acquired_at'] = datetime.now()
-        df['lookups_acquired_at'] = pd.to_datetime(df['lookups_acquired_at'])
-        return df
