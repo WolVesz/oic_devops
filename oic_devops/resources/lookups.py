@@ -262,9 +262,6 @@ class LookupsResource(BaseResource):
         # Export each lookup
         for lookup in lookups:
             lookup_id = lookup.get("id")
-            if not lookup_id:
-                self.logger.warning(f"Skipping lookup with missing identifier: {lookup}")
-                continue
             data_rows = self.get_data(lookup_id, params)
             output[lookup_id] = data_rows
 
@@ -333,9 +330,6 @@ class LookupsResource(BaseResource):
         # Export each lookup
         for lookup in lookups:
             lookup_id = lookup.get("id")
-            if not lookup_id:
-                self.logger.warning(f"Skipping lookup with missing identifier: {lookup}")
-                continue
 
             # Create a safe filename from the lookup identifier
             safe_filename = "".join(c if c.isalnum() or c in "-_." else "_" for c in lookup_id)
@@ -393,19 +387,10 @@ class LookupsResource(BaseResource):
 
         for lookup in lookups:
             lookup_id = lookup.get("id")
-            if not lookup_id:
-                self.logger.warning(f"Skipping lookup with missing ID: {lookup}")
-                continue
-            try:
-                usage = self.get_usage(lookup_id, params=params)
-                usage_data.append({
-                    "lookup_id": lookup_id,
-                    "usage": usage
-                })
-
-
-            except OICAPIError as e:
-                self.logger.error(f"Failed to retrieve usage for lookup {lookup_id}: {str(e)}")
-                continue
+            usage = self.get_usage(lookup_id, params=params)
+            usage_data.append({
+                "lookup_id": lookup_id,
+                "usage": usage
+            })
 
         return usage_data
