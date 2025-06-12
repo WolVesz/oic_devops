@@ -173,88 +173,6 @@ class LookupsResource(BaseResource):
         else:
             raise OICAPIError("Export response did not contain binary content")
 
-    def export_all(
-            self,
-            directory_path: str,
-            params: Optional[Dict[str, Any]] = None,
-    ) -> List[str]:
-        """
-        Export all lookup tables to a specified directory.
-
-        Args:
-            directory_path: Path to the directory where lookup files will be saved.
-            params: Optional query parameters for listing and exporting lookups.
-
-        Returns:
-            List[str]: List of paths to the exported lookup files.
-
-        Raises:
-            OICValidationError: If the directory does not exist or is not writable.
-            OICAPIError: If any export operation fails.
-        """
-        # Validate the directory
-        if not os.path.exists(directory_path):
-            try:
-                os.makedirs(directory_path)
-            except Exception as e:
-                raise OICValidationError(f"Failed to create directory {directory_path}: {str(e)}")
-
-        if not os.access(directory_path, os.W_OK):
-            raise OICValidationError(f"Directory {directory_path} is not writable")
-
-        # Get the list of lookups
-        lookups = self.list_all(params)
-        exported_files = []
-
-        # Export each lookup
-        for lookup in lookups:
-            lookup_id = lookup.get("id")
-            if not lookup_id:
-                self.logger.warning(f"Skipping lookup with missing identifier: {lookup}")
-                continue
-
-            # Create a safe filename from the lookup identifier
-            safe_filename = "".join(c if c.isalnum() or c in "-_." else "_" for c in lookup_id)
-            file_path = os.path.join(directory_path, f"{safe_filename}.csv")
-
-            try:
-                exported_path = self.export(lookup_id, file_path, params)
-                exported_files.append(exported_path)
-                self.logger.info(f"Successfully exported lookup {lookup_id} to {exported_path}")
-            except OICAPIError as e:
-                self.logger.error(f"Failed to export lookup {lookup_id}: {str(e)}")
-                raise
-
-        return exported_files
-
-    def df(self, **kwargs):
-        """
-        Creates a pandas Dataframe with the full contents of list_all.
-
-        Args:
-            params: Optional query parameters such as:
-                - expand: Includes additional details in the response about the adapters used in the lookups. Valid value: adapter
-                - limit: Maximum number of items to return.
-                - offset: Number of items to skip.
-                - q: Search query. valid parameters: name | status E.gs
-                        - Exact match: q={name:'MyLookup'}
-                        - Contains:  q={name: /MyLookup/}
-                - oderBy: Valid value: name. Example orderBy=name
-
-            https://docs.oracle.com/en/cloud/paas/application-integration/rest-api/op-ic-api-integration-v1-lookups-get.html
-
-        Returns:
-            List[Dict]: List of lookups.
-        """
-
-        output = self.get_data_all(**kwargs)
-
-        df = pd.DataFrame(output)
-        df.columns = [camel_to_snake(col) for col in df.columns]
-        df['lookup_acquired_at'] = datetime.now()
-        df['lookup_acquired_at'] = pd.to_datetime(df['lookup_acquired_at'])
-        return df
-
     def import_lookup(
         self,
         file_path: str,
@@ -379,6 +297,61 @@ class LookupsResource(BaseResource):
         
         return self.execute_action("data", lookup_id, data=data, params=params, method="PUT")
 
+    def export_all(
+            self,
+            directory_path: str,
+            params: Optional[Dict[str, Any]] = None,
+    ) -> List[str]:
+        """
+        Export all lookup tables to a specified directory.
+
+        Args:
+            directory_path: Path to the directory where lookup files will be saved.
+            params: Optional query parameters for listing and exporting lookups.
+
+        Returns:
+            List[str]: List of paths to the exported lookup files.
+
+        Raises:
+            OICValidationError: If the directory does not exist or is not writable.
+            OICAPIError: If any export operation fails.
+        """
+        # Validate the directory
+        if not os.path.exists(directory_path):
+            try:
+                os.makedirs(directory_path)
+            except Exception as e:
+                raise OICValidationError(f"Failed to create directory {directory_path}: {str(e)}")
+
+        if not os.access(directory_path, os.W_OK):
+            raise OICValidationError(f"Directory {directory_path} is not writable")
+
+        # Get the list of lookups
+        lookups = self.list_all(params)
+        exported_files = []
+
+        # Export each lookup
+        for lookup in lookups:
+            lookup_id = lookup.get("id")
+            if not lookup_id:
+                self.logger.warning(f"Skipping lookup with missing identifier: {lookup}")
+                continue
+
+            # Create a safe filename from the lookup identifier
+            safe_filename = "".join(c if c.isalnum() or c in "-_." else "_" for c in lookup_id)
+            file_path = os.path.join(directory_path, f"{safe_filename}.csv")
+
+            try:
+                exported_path = self.export(lookup_id, file_path, params)
+                exported_files.append(exported_path)
+                self.logger.info(f"Successfully exported lookup {lookup_id} to {exported_path}")
+            except OICAPIError as e:
+                self.logger.error(f"Failed to export lookup {lookup_id}: {str(e)}")
+                raise
+
+        return exported_files
+
+
     def get_usage(
             self,
             lookup_id: str,
@@ -427,9 +400,10 @@ class LookupsResource(BaseResource):
                 usage = self.get_usage(lookup_id, params=params)
                 usage_data.append({
                     "lookup_id": lookup_id,
-                    "name": lookup.get("name"),
                     "usage": usage
                 })
+
+
             except OICAPIError as e:
                 self.logger.error(f"Failed to retrieve usage for lookup {lookup_id}: {str(e)}")
                 continue
