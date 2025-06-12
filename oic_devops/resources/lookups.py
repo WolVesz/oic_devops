@@ -243,7 +243,7 @@ class LookupsResource(BaseResource):
     def get_data_all(
             self,
             params: Optional[Dict[str, Any]] = None,
-    ) -> pd.DataFrame:
+    ) -> List[Dict[str, Any]]:
         """
         Get the data for all lookups.
 
@@ -257,13 +257,16 @@ class LookupsResource(BaseResource):
         """
         # Get the list of lookups
         lookups = self.list_all(params)
-        output = pd.DataFrame()
+        output = []
 
         # Export each lookup
         for lookup in lookups:
             lookup_id = lookup.get("id")
             data_rows = self.get_data(lookup_id, params)
-            output[lookup_id] = data_rows
+            output.append({
+                "lookup_id":lookup_id,
+                "data_rows":data_rows
+            })
 
         return output
 
