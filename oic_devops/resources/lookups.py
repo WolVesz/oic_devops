@@ -5,16 +5,11 @@ This module provides functionality for managing OIC lookups.
 """
 
 import os
-import pandas as pd
-import logging
+
 from typing import Dict, Any, Optional, List, Union, BinaryIO
-
-import pandas as pd
-
 from oic_devops.resources.base import BaseResource
 from oic_devops.exceptions import OICValidationError, OICAPIError
-from oic_devops.utils.str import camel_to_snake
-from datetime import datetime
+
 
 class LookupsResource(BaseResource):
     """
