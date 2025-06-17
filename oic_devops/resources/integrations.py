@@ -90,11 +90,12 @@ class IntegrationsResource(BaseResource):
 
 		return output
 
-	def df(self, **kwargs):
+	def df(self, explode = False, **kwargs):
 		"""
 		Creates a pandas Dataframe with the full contents of list_all.
 
 		Args:
+			explode: if you wish to break out integration by all used connections.
 		    params: Optional query parameters such as:
 		        - limit: Maximum number of items to return.
 		        - offset: Number of items to skip.
@@ -115,13 +116,14 @@ class IntegrationsResource(BaseResource):
 
 		df['integrations_acquired_at'] = datetime.now()
 		df['integrations_acquired_at'] = pd.to_datetime(df['integrations_acquired_at'])
-		df = df.explode('end_points')
-		df['end_points'] = df['end_points'].fillna({})
-		df['connection_id'] = df['end_points'].apply(
-			lambda x: x.get('connection', {}).get('id', None)
-			if isinstance(x, dict)
-			else None
-		)
+		if explode:
+			df = df.explode('end_points')
+			df['end_points'] = df['end_points'].fillna({})
+			df['connection_id'] = df['end_points'].apply(
+				lambda x: x.get('connection', {}).get('id', None)
+				if isinstance(x, dict)
+				else None
+			)
 		return df
 
 	# TODO: setup async for workflow speed ups
@@ -310,6 +312,11 @@ class IntegrationsResource(BaseResource):
 		# Check if the response contains binary content
 		if 'content' in response and isinstance(response['content'], bytes):
 			# Write the content to the file
+
+			file_path = file_path.replace('|', '-')
+			if not file_path.endswith('.zip'):
+				file_path = file_path + '.zip'
+
 			try:
 				with open(file_path, 'wb') as f:
 					f.write(response['content'])
