@@ -5,9 +5,8 @@ This module provides functionality for managing OIC lookups.
 """
 
 import os
-import logging
-from typing import Dict, Any, Optional, List, Union, BinaryIO
 
+from typing import Dict, Any, Optional, List, Union, BinaryIO
 from oic_devops.resources.base import BaseResource
 from oic_devops.exceptions import OICValidationError, OICAPIError
 
@@ -168,7 +167,7 @@ class LookupsResource(BaseResource):
                 raise OICAPIError(f"Failed to write export file: {str(e)}")
         else:
             raise OICAPIError("Export response did not contain binary content")
-    
+
     def import_lookup(
         self,
         file_path: str,
@@ -224,13 +223,48 @@ class LookupsResource(BaseResource):
         
         Args:
             lookup_id: ID of the lookup to get data for.
-            params: Optional query parameters.
+            params: Optional query parameters. expand=datarow is defaulted if not expand specified
                 
         Returns:
             Dict: The lookup data.
         """
-        return self.execute_action("data", lookup_id, params=params, method="GET")
-    
+        if not params:
+            params = dict(expand="datarow")
+        elif "expand" not in params:
+            params.update(dict(expand="datarow"))
+
+        return self.execute_action(action="", resource_id=lookup_id, params=params, method="GET")
+
+    def get_data_all(
+            self,
+            params: Optional[Dict[str, Any]] = None,
+    ) -> List[Dict[str, Any]]:
+        """
+        Get the data for all lookups.
+
+        Args:
+            params: Optional query parameter such as:
+                    - expand: Expand the lookup resource by adding related resources. values are 'datarow' or 'adapter'.
+                             'datarow' is defaulted if not expand specified
+
+        Returns:
+            List[Dict]: List of lookups with their data.
+        """
+        # Get the list of lookups
+        lookups = self.list_all(params)
+        output = []
+
+        # Export each lookup
+        for lookup in lookups:
+            lookup_id = lookup.get("id")
+            data_rows = self.get_data(lookup_id, params)
+            output.append({
+                "lookup_id":lookup_id,
+                "data_rows":data_rows
+            })
+
+        return output
+
     def update_data(
         self,
         lookup_id: str,
@@ -288,15 +322,12 @@ class LookupsResource(BaseResource):
             raise OICValidationError(f"Directory {directory_path} is not writable")
 
         # Get the list of lookups
-        lookups = self.list(params)
+        lookups = self.list_all(params)
         exported_files = []
 
         # Export each lookup
         for lookup in lookups:
             lookup_id = lookup.get("id")
-            if not lookup_id:
-                self.logger.warning(f"Skipping lookup with missing identifier: {lookup}")
-                continue
 
             # Create a safe filename from the lookup identifier
             safe_filename = "".join(c if c.isalnum() or c in "-_." else "_" for c in lookup_id)
@@ -311,3 +342,53 @@ class LookupsResource(BaseResource):
                 raise
 
         return exported_files
+
+
+    def get_usage(
+            self,
+            lookup_id: str,
+            params: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Get the usage for a specific lookup.
+
+        Args:
+            lookup_id: ID of the lookup to get data for.
+            params: Optional query parameters.
+
+        Returns:
+            Dict: The lookup usage.
+        """
+
+        return self.execute_action(action="usage", resource_id=lookup_id, params=params, method="GET")
+
+    def get_usage_all(
+            self,
+            params: Optional[Dict[str, Any]] = None,
+    ) -> List[Dict[str, Any]]:
+        """
+        Get usage information for all lookups.
+
+        Args:
+            params: Optional query parameters.
+
+        Returns:
+            List[Dict]: A list of usage data for each lookup.
+
+        Raises:
+            OICValidationError: If 'integrationInstance' is not provided.
+            OICAPIError: If any usage retrieval fails.
+        """
+
+        lookups = self.list_all(params)
+        usage_data = []
+
+        for lookup in lookups:
+            lookup_id = lookup.get("id")
+            usage = self.get_usage(lookup_id, params=params)
+            usage_data.append({
+                "lookup_id": lookup_id,
+                "usage": usage
+            })
+
+        return usage_data
