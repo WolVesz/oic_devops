@@ -13,10 +13,10 @@ from oic_devops.resources.monitoring import MonitoringResource
 from oic_devops.resources.packages import PackagesResource
 
 __all__ = [
-    "ConnectionsResource",
-    "IntegrationsResource",
-    "LibrariesResource",
-    "LookupsResource",
-    "MonitoringResource",
-    "PackagesResource",
+	'ConnectionsResource',
+	'IntegrationsResource',
+	'LibrariesResource',
+	'LookupsResource',
+	'MonitoringResource',
+	'PackagesResource',
 ]
