@@ -7,8 +7,8 @@ Monitoring, and Packages.
 """
 
 __version__ = '0.1.0'
-__author__ = 'Your Name'
-__email__ = 'your.email@example.com'
+__author__ = 'Claude & WolVesz'
+__email__ = 's.com'
 
 from oic_devops.client import OICClient
 from oic_devops.exceptions import (
