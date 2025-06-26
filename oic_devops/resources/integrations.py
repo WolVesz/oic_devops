@@ -451,3 +451,21 @@ class IntegrationsResource(BaseResource):
 
 		"""
 		return self.client.get(f'{self.base_path}/types/{type_id}', params=params)
+
+
+	@staticmethod
+	def search(df: pd.DataFrame, word:str) -> pd.DataFrame:
+		"""
+		Parse an integration dataframe for a specific word. Will query all columns, rows, and substrings for the
+		specified word.
+
+		Args:
+		    df: a pandas dataframe of integrations
+		    word: the word to find, not case-sensitive
+
+		Returns:
+		    Pandas Dataframe: a subset of the initial df
+		"""
+
+		mask = df.astype(str).apply(lambda x: x.str.contains(word, na=False, regex=False, case=False)).any(axis=1)
+		return df[mask]
