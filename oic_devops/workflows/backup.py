@@ -10,6 +10,7 @@ import glob
 import json
 import os
 import shutil
+import pandas as pd
 from typing import List, Optional
 
 from oic_devops.client import OICClient
@@ -2499,3 +2500,62 @@ class BackupWorkflows(BaseWorkflow):
 			sanitized = sanitized[:47] + '...'
 
 		return sanitized
+
+
+def export_active_integrations_all() -> pd.DataFrame:
+    # Initialize client
+    client = OICClient(profile="prod")
+
+    # Fetch integrations
+    df = client.integrations.df()
+
+    # Set export folder with current date
+    extract_to_folder = os.path.join(os.getcwd(), f'exports-{datetime.now().strftime("%m%d%Y")}')
+    os.makedirs(extract_to_folder, exist_ok=True)
+
+    report = []
+    parsed_integration_ids = []
+
+    for key, item in df.iterrows():
+        # Define paths
+        integration_id = item['id'].replace('|', '-')
+        if integration_id in parsed_integration_ids:
+            continue
+        parsed_integration_ids.append(integration_id)
+
+        # zipfile_path = os.path.join(extract_to_folder, f"{integration_id}.zip")
+        folder_path_integration_id = os.path.join(extract_to_folder, integration_id)
+        code_folder = os.path.join(extract_to_folder, "code")
+
+        try:
+            if item['status'] == "ACTIVATED":
+
+                # Export integration
+                # print(f"Exporting {item['id']} to {zipfile_path}")
+                zipfile_exported = client.integrations.export(item['id'], folder_path_integration_id)
+                print(f"Exported {key}: {item['name']} ({item['id']})")
+                report.append({
+                    "status": "Exported",
+                    "integration": f"{item['name']} ({item['id']})",
+                    "integration_status": item['status']
+                })
+
+            else:
+                report.append({
+                    "status": "Skipped",
+                    "integration": f"{item['name']} ({item['id']})",
+                    "integration_status": item['status']
+                })
+
+        except Exception as e:
+            print(f"Error processing {item['id']}: {e}")
+            report.append({
+                "status": "Error",
+                "integration": f"{item['name']} ({item['id']})",
+                "integration_status": item['status'],
+                "error": e
+            })
+            break
+
+    print("++++++++++++++++++++++++++++++++++++++ ============================== +++++++++++++++++++++++++")
+    return pd.DataFrame(report)

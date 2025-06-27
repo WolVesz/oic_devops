@@ -24,7 +24,7 @@ class LookupsResource(BaseResource):
 		Initialize the lookups resource client.
 
 		Args:
-		    client: The parent OICClient instance.
+			client: The parent OICClient instance.
 
 		"""
 		super().__init__(client)
@@ -35,55 +35,55 @@ class LookupsResource(BaseResource):
 		List all lookups.
 
 		Args:
-		    params: Optional query parameters such as:
-		        - limit: Maximum number of items to return.
-		        - offset: Number of items to skip.
-		        - fields: Comma-separated list of fields to include.
-		        - q: Search query.
-		        - orderBy: Field to order by.
+			params: Optional query parameters such as:
+				- limit: Maximum number of items to return.
+				- offset: Number of items to skip.
+				- fields: Comma-separated list of fields to include.
+				- q: Search query.
+				- orderBy: Field to order by.
 
 		Returns:
-		    List[Dict]: List of lookups.
+			List[Dict]: List of lookups.
 
 		"""
 		return super().list(params)
 
 	def get(
-		self, lookup_id: str, params: Optional[Dict[str, Any]] = None
+			self, lookup_id: str, params: Optional[Dict[str, Any]] = None
 	) -> Dict[str, Any]:
 		"""
 		Get a specific lookup by ID.
 
 		Args:
-		    lookup_id: ID of the lookup to retrieve.
-		    params: Optional query parameters.
+			lookup_id: ID of the lookup to retrieve.
+			params: Optional query parameters.
 
 		Returns:
-		    Dict: The lookup data.
+			Dict: The lookup data.
 
 		"""
 		return super().get(lookup_id, params)
 
 	def create(
-		self, data: Dict[str, Any], params: Optional[Dict[str, Any]] = None
+			self, data: Dict[str, Any], params: Optional[Dict[str, Any]] = None
 	) -> Dict[str, Any]:
 		"""
 		Create a new lookup.
 
 		Args:
-		    data: Lookup data, including:
-		        - name: Name of the lookup.
-		        - identifier: Unique identifier for the lookup.
-		        - columns: List of column definitions.
-		        - rows: List of row data.
-		        - ... and other lookup-specific properties.
-		    params: Optional query parameters.
+			data: Lookup data, including:
+				- name: Name of the lookup.
+				- identifier: Unique identifier for the lookup.
+				- columns: List of column definitions.
+				- rows: List of row data.
+				- ... and other lookup-specific properties.
+			params: Optional query parameters.
 
 		Returns:
-		    Dict: The created lookup data.
+			Dict: The created lookup data.
 
 		Raises:
-		    OICValidationError: If required fields are missing.
+			OICValidationError: If required fields are missing.
 
 		"""
 		# Validate required fields
@@ -97,57 +97,57 @@ class LookupsResource(BaseResource):
 		return super().create(data, params)
 
 	def update(
-		self,
-		lookup_id: str,
-		data: Dict[str, Any],
-		params: Optional[Dict[str, Any]] = None,
+			self,
+			lookup_id: str,
+			data: Dict[str, Any],
+			params: Optional[Dict[str, Any]] = None,
 	) -> Dict[str, Any]:
 		"""
 		Update a specific lookup.
 
 		Args:
-		    lookup_id: ID of the lookup to update.
-		    data: Updated lookup data.
-		    params: Optional query parameters.
+			lookup_id: ID of the lookup to update.
+			data: Updated lookup data.
+			params: Optional query parameters.
 
 		Returns:
-		    Dict: The updated lookup data.
+			Dict: The updated lookup data.
 
 		"""
 		return super().update(lookup_id, data, params)
 
 	def delete(
-		self, lookup_id: str, params: Optional[Dict[str, Any]] = None
+			self, lookup_id: str, params: Optional[Dict[str, Any]] = None
 	) -> Dict[str, Any]:
 		"""
 		Delete a specific lookup.
 
 		Args:
-		    lookup_id: ID of the lookup to delete.
-		    params: Optional query parameters.
+			lookup_id: ID of the lookup to delete.
+			params: Optional query parameters.
 
 		Returns:
-		    Dict: The response data.
+			Dict: The response data.
 
 		"""
 		return super().delete(lookup_id, params)
 
 	def export(
-		self, lookup_id: str, file_path: str, params: Optional[Dict[str, Any]] = None
+			self, lookup_id: str, file_path: str, params: Optional[Dict[str, Any]] = None
 	) -> str:
 		"""
 		Export a specific lookup to a file.
 
 		Args:
-		    lookup_id: ID of the lookup to export.
-		    file_path: Path to save the exported lookup file.
-		    params: Optional query parameters.
+			lookup_id: ID of the lookup to export.
+			file_path: Path to save the exported lookup file.
+			params: Optional query parameters.
 
 		Returns:
-		    str: Path to the exported lookup file.
+			str: Path to the exported lookup file.
 
 		Raises:
-		    OICAPIError: If the export fails.
+			OICAPIError: If the export fails.
 
 		"""
 		# Set custom headers for binary content
@@ -175,25 +175,25 @@ class LookupsResource(BaseResource):
 			raise OICAPIError('Export response did not contain binary content')
 
 	def import_lookup(
-		self,
-		file_path: str,
-		data: Optional[Dict[str, Any]] = None,
-		params: Optional[Dict[str, Any]] = None,
+			self,
+			file_path: str,
+			data: Optional[Dict[str, Any]] = None,
+			params: Optional[Dict[str, Any]] = None,
 	) -> Dict[str, Any]:
 		"""
 		Import a lookup from a file.
 
 		Args:
-		    file_path: Path to the lookup file to import.
-		    data: Optional import data.
-		    params: Optional query parameters.
+			file_path: Path to the lookup file to import.
+			data: Optional import data.
+			params: Optional query parameters.
 
 		Returns:
-		    Dict: The import result data.
+			Dict: The import result data.
 
 		Raises:
-		    OICValidationError: If the file does not exist.
-		    OICAPIError: If the import fails.
+			OICValidationError: If the file does not exist.
+			OICAPIError: If the import fails.
 
 		"""
 		# Validate the file exists
@@ -222,42 +222,80 @@ class LookupsResource(BaseResource):
 		except Exception as e:
 			raise OICAPIError(f'Failed to import lookup: {e!s}')
 
+
 	def get_data(
-		self, lookup_id: str, params: Optional[Dict[str, Any]] = None
+			self,
+			lookup_id: str,
+			params: Optional[Dict[str, Any]] = None,
 	) -> Dict[str, Any]:
 		"""
 		Get the data for a specific lookup.
 
 		Args:
-		    lookup_id: ID of the lookup to get data for.
-		    params: Optional query parameters.
+			lookup_id: ID of the lookup to get data for.
+			params: Optional query parameters. expand=datarow is defaulted if not expand specified
 
 		Returns:
-		    Dict: The lookup data.
-
+			Dict: The lookup data.
 		"""
-		return self.execute_action('data', lookup_id, params=params, method='GET')
+		if not params:
+			params = dict(expand="datarow")
+		elif "expand" not in params:
+			params.update(dict(expand="datarow"))
+
+		return self.execute_action(action="", resource_id=lookup_id, params=params, method="GET")
+
+
+	def get_data_all(
+			self,
+			params: Optional[Dict[str, Any]] = None,
+	) -> List[Dict[str, Any]]:
+		"""
+		Get the data for all lookups.
+
+		Args:
+			params: Optional query parameter such as:
+					- expand: Expand the lookup resource by adding related resources. values are 'datarow' or 'adapter'.
+							 'datarow' is defaulted if not expand specified
+
+		Returns:
+			List[Dict]: List of lookups with their data.
+		"""
+		# Get the list of lookups
+		lookups = self.list_all(params)
+		output = []
+
+		# Export each lookup
+		for lookup in lookups:
+			lookup_id = lookup.get("id")
+			data_rows = self.get_data(lookup_id, params)
+			output.append({
+				"lookup_id": lookup_id,
+				"data_rows": data_rows
+			})
+
+		return output
 
 	def update_data(
-		self,
-		lookup_id: str,
-		data: Dict[str, Any],
-		params: Optional[Dict[str, Any]] = None,
+			self,
+			lookup_id: str,
+			data: Dict[str, Any],
+			params: Optional[Dict[str, Any]] = None,
 	) -> Dict[str, Any]:
 		"""
 		Update the data for a specific lookup.
 
 		Args:
-		    lookup_id: ID of the lookup to update data for.
-		    data: Updated lookup data, including:
-		        - rows: List of row data.
-		    params: Optional query parameters.
+			lookup_id: ID of the lookup to update data for.
+			data: Updated lookup data, including:
+				- rows: List of row data.
+			params: Optional query parameters.
 
 		Returns:
-		    Dict: The updated lookup data.
+			Dict: The updated lookup data.
 
 		Raises:
-		    OICValidationError: If required fields are missing.
+			OICValidationError: If required fields are missing.
 
 		"""
 		# Validate required fields
@@ -271,21 +309,21 @@ class LookupsResource(BaseResource):
 		)
 
 	def export_all(
-		self, directory_path: str, params: Optional[Dict[str, Any]] = None
+			self, directory_path: str, params: Optional[Dict[str, Any]] = None
 	) -> List[str]:
 		"""
 		Export all lookup tables to a specified directory.
 
 		Args:
-		    directory_path: Path to the directory where lookup files will be saved.
-		    params: Optional query parameters for listing and exporting lookups.
+			directory_path: Path to the directory where lookup files will be saved.
+			params: Optional query parameters for listing and exporting lookups.
 
 		Returns:
-		    List[str]: List of paths to the exported lookup files.
+			List[str]: List of paths to the exported lookup files.
 
 		Raises:
-		    OICValidationError: If the directory does not exist or is not writable.
-		    OICAPIError: If any export operation fails.
+			OICValidationError: If the directory does not exist or is not writable.
+			OICAPIError: If any export operation fails.
 
 		"""
 		# Validate the directory
@@ -301,7 +339,7 @@ class LookupsResource(BaseResource):
 			raise OICValidationError(f'Directory {directory_path} is not writable')
 
 		# Get the list of lookups
-		lookups = self.list(params)
+		lookups = self.list_all(params)
 		exported_files = []
 
 		# Export each lookup
@@ -330,3 +368,54 @@ class LookupsResource(BaseResource):
 				raise
 
 		return exported_files
+
+
+	def get_usage(
+			self,
+			lookup_id: str,
+			params: Optional[Dict[str, Any]] = None,
+	) -> Dict[str, Any]:
+		"""
+		Get the usage for a specific lookup.
+
+		Args:
+			lookup_id: ID of the lookup to get data for.
+			params: Optional query parameters.
+
+		Returns:
+			Dict: The lookup usage.
+		"""
+
+		return self.execute_action(action="usage", resource_id=lookup_id, params=params, method="GET")
+
+
+	def get_usage_all(
+			self,
+			params: Optional[Dict[str, Any]] = None,
+	) -> List[Dict[str, Any]]:
+		"""
+		Get usage information for all lookups.
+
+		Args:
+			params: Optional query parameters.
+
+		Returns:
+			List[Dict]: A list of usage data for each lookup.
+
+		Raises:
+			OICValidationError: If 'integrationInstance' is not provided.
+			OICAPIError: If any usage retrieval fails.
+		"""
+
+		lookups = self.list_all(params)
+		usage_data = []
+
+		for lookup in lookups:
+			lookup_id = lookup.get("id")
+			usage = self.get_usage(lookup_id, params=params)
+			usage_data.append({
+				"lookup_id": lookup_id,
+				"usage": usage
+			})
+
+		return usage_data
