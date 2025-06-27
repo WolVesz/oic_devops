@@ -260,15 +260,15 @@ class IntegrationsResource(BaseResource):
             params=params,
             headers=headers,
         )
-        
+        zip_file_path = file_path+'.zip'
         # Check if the response contains binary content
         if "content" in response and isinstance(response["content"], bytes):
             # Write the content to the file
             try:
-                with open(file_path, "wb") as f:
+                with open(zip_file_path, "wb") as f:
                     f.write(response["content"])
-                self.logger.info(f"Integration exported to {file_path}")
-                return file_path
+                self.logger.info(f"Integration exported to {zip_file_path}")
+                return zip_file_path
             except Exception as e:
                 raise OICAPIError(f"Failed to write export file: {str(e)}")
         else:
