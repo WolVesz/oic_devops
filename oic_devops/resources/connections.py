@@ -4,279 +4,292 @@ Connections resource module for the OIC DevOps package.
 This module provides functionality for managing OIC connections.
 """
 
-import logging
-import pandas as pd
 from datetime import datetime
-from typing import Dict, Any, Optional, List, Union
+from typing import Any, Dict, List, Optional
 
+import pandas as pd
 from pandas import Series
 
 from oic_devops.resources.base import BaseResource
-from oic_devops.exceptions import OICValidationError
 from oic_devops.utils.str import camel_to_snake
 
 
 class ConnectionsResource(BaseResource):
-    """
-    Class for managing OIC connections.
-    
-    Provides methods for listing, retrieving, creating, updating,
-    and deleting connections, as well as testing connections.
-    """
-    
-    def __init__(self, client):
-        """
-        Initialize the connections resource client.
-        
-        Args:
-            client: The parent OICClient instance.
-        """
-        super().__init__(client)
-        self.base_path = "/ic/api/integration/v1/connections"
-    
-    def list(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
-        """
-        List all connections.
-        
-        Args:
-            params: Optional query parameters such as:
-                - limit: Maximum number of items to return.
-                - offset: Number of items to skip.
-                - fields: Comma-separated list of fields to include.
-                - q: Search query.
-                - orderBy: Field to order by.
-                
-        Returns:
-            List[Dict]: List of connections.
-        """
-        return super().list(params, raw=True)
+	"""
+	Class for managing OIC connections.
 
-    def list_all(self, params: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
-        """
-        Automatically paginates through the API to provide the complete list of connections.
+	Provides methods for listing, retrieving, creating, updating,
+	and deleting connections, as well as testing connections.
+	"""
 
-        Args:
-            params: Optional query parameters such as:
-                - limit: Maximum number of items to return.
-                - offset: Number of items to skip.
-                - fields: Comma-separated list of fields to include.
-                - q: Search query.
-                - orderBy: Field to order by.
-                - status: Filter by status (e.g., "ACTIVATED", "CONFIGURED").
+	def __init__(self, client):
+		"""
+		Initialize the connections resource client.
 
-        Returns:
-            List[Dict]: List of integrations.
-        """
+		Args:
+		    client: The parent OICClient instance.
 
-        has_more = True
-        output = []
-        pages = 0
+		"""
+		super().__init__(client)
+		self.base_path = '/ic/api/integration/v1/connections'
 
-        if not params:
-            params = dict()
+	def list(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+		"""
+		List all connections.
 
-        while has_more is True:
-            params['offset'] = pages
-            content = self.list(params=params)
-            output.extend(content['items'])
-            has_more = content['hasMore']
-            if not content.get('limit'):
-                continue
-            pages += content['limit']
-            self.logger.info(f'Number of Connections Acquired in List: {pages}')
+		Args:
+		    params: Optional query parameters such as:
+		        - limit: Maximum number of items to return.
+		        - offset: Number of items to skip.
+		        - fields: Comma-separated list of fields to include.
+		        - q: Search query.
+		        - orderBy: Field to order by.
 
-        return output
+		Returns:
+		    List[Dict]: List of connections.
 
-    def df(self, **kwargs):
-        """
-        Creates a pandas Dataframe with the full contents of list_all.
+		"""
+		return super().list(params, raw=True)
 
-        Args:
-            params: Optional query parameters such as:
-                - limit: Maximum number of items to return.
-                - offset: Number of items to skip.
-                - fields: Comma-separated list of fields to include.
-                - q: Search query.
-                - orderBy: Field to order by.
-                - status: Filter by status (e.g., "ACTIVATED", "CONFIGURED").
-            update:
+	def list_all(self, params: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
+		"""
+		Automatically paginates through the API to provide the complete list of connections.
 
-        Returns:
-            List[Dict]: List of connections.
-        """
+		Args:
+		    params: Optional query parameters such as:
+		        - limit: Maximum number of items to return.
+		        - offset: Number of items to skip.
+		        - fields: Comma-separated list of fields to include.
+		        - q: Search query.
+		        - orderBy: Field to order by.
+		        - status: Filter by status (e.g., "ACTIVATED", "CONFIGURED").
 
-        output = self.list_all(**kwargs)
+		Returns:
+		    List[Dict]: List of integrations.
 
-        df = pd.DataFrame(output)
-        df.columns = [camel_to_snake(col) for col in df.columns]
-        df['connection_acquired_at'] = datetime.now()
-        df['connection_acquired_at'] = pd.to_datetime(df['connection_acquired_at'])
-        return df
+		"""
+		has_more = True
+		output = []
+		pages = 0
 
-    def get(self, connection_id: str, params: Optional[Dict[str, Any]] = None, raw = False) -> dict[str, Any] | Series:
-        """
-        Get a specific connection by ID.
-        
-        Args:
-            connection_id: ID of the connection to retrieve.
-            params: Optional query parameters.
-            raw: to return the raw json or provide as a pd.Series
-                
-        Returns:
-            Dict or pd.Series: The connection data
-        """
-        data = super().get(connection_id, params)
+		if not params:
+			params = dict()
 
-        if raw:
-            return data
+		while has_more is True:
+			params['offset'] = pages
+			content = self.list(params=params)
+			output.extend(content['items'])
+			has_more = content['hasMore']
+			if not content.get('limit'):
+				continue
+			pages += content['limit']
+			self.logger.info(f'Number of Connections Acquired in List: {pages}')
 
-        # Builds structured output
-        struct_output = {
-            'connection_id': connection_id,
-            'is_locked': data['lockedFlag'],
-            'lock_date': data['lockedDate'] if 'LockedData' in data.keys() else None,
-            'locked_by': data['lockedBy'] if 'LockedData' in data.keys() else None,
-            'last_update_user': data['lastUpdatedBy'],
-            'created_user': data['createdBy']
-        }
+		return output
 
-        # optional extended fields
-        struct_output.update({
-            'adapter_type': None,
-            'user_property_value': None,
-            'user_property_name': None,
-            'created_user': None,
-            'last_update_user': None
-        })
+	def df(self, **kwargs):
+		"""
+		Creates a pandas Dataframe with the full contents of list_all.
 
-        if 'adapterType' in data.keys():
-            struct_output['adapter_name'] = data['adapterType']['displayName']
-            struct_output['adapter_type'] = data['adapterType']['type']
+		Args:
+		    params: Optional query parameters such as:
+		        - limit: Maximum number of items to return.
+		        - offset: Number of items to skip.
+		        - fields: Comma-separated list of fields to include.
+		        - q: Search query.
+		        - orderBy: Field to order by.
+		        - status: Filter by status (e.g., "ACTIVATED", "CONFIGURED").
+		    update:
 
-        if 'securityProperties' in data.keys():
-            for value in data['securityProperties']:
-                if value['displayName'].upper().strip() == 'USERNAME' or value['displayName'].upper().strip() == 'USER NAME':
-                    if 'propertyValue' in value.keys():
-                        struct_output['user_property_value'] = value['propertyValue']
-                    if 'propertyName' in value.keys():
-                        struct_output['user_property_name'] = value['propertyName']
-                    else:
-                        raise Exception("new way to get a username:")
+		Returns:
+		    List[Dict]: List of integrations.
 
-        return pd.Series(struct_output)
+		"""
+		output = self.list_all(**kwargs)
 
-    def update(
-        self,
-        connection_id: str,
-        data: Dict[str, Any],
-        params: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
-        """
-        Update a specific connection.
-        
-        Args:
-            connection_id: ID of the connection to update.
-            data: Updated connection data.
-            params: Optional query parameters.
+		df = pd.DataFrame(output)
+		df.columns = [camel_to_snake(col) for col in df.columns]
+		df['connection_acquired_at'] = datetime.now()
+		df['connection_acquired_at'] = pd.to_datetime(df['connection_acquired_at'])
+		return df
 
-        Returns:
-            Dict: The updated connection data.
-        """
+	def get(
+		self, connection_id: str, params: Optional[Dict[str, Any]] = None, raw=False
+	) -> dict[str, Any] | Series:
+		"""
+		Get a specific connection by ID.
 
-        headers = {
-            'X-HTTP-Method-Override': 'PATCH'
-        }
+		Args:
+		    connection_id: ID of the connection to retrieve.
+		    params: Optional query parameters.
+		    raw: to return the raw json or provide as a pd.Series
 
-        return super().update(connection_id, data=data, params=params, headers = headers)
-    
-    def delete(
-        self,
-        connection_id: str,
-        params: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
-        """
-        Delete a specific connection.
-        
-        Args:
-            connection_id: ID of the connection to delete.
-            params: Optional query parameters.
-                
-        Returns:
-            Dict: The response data.
-        """
-        return super().delete(connection_id, params)
-    
-    def test(
-        self,
-        connection_id: str,
-        params: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
-        """
-        Test a specific connection.
-        
-        Args:
-            connection_id: ID of the connection to test.
-            params: Optional query parameters.
-                
-        Returns:
-            Dict: The test result data.
-        """
-        return self.execute_action("test", connection_id, params=params, method="POST")
+		Returns:
+		    Dict or pd.Series: The connection data
 
-    def validate(self,
-        connection_id: str,
-        params: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
-        """
-        Test a specific connection.
+		"""
+		data = super().get(connection_id, params)
 
-        SPECIFIC TO ATTACHMENT DEPENDENT OIC Connections
+		if raw:
+			return data
 
-        Args:
-            connection_id: ID of the connection to test.
-            params: Optional query parameters.
+		# Builds structured output
+		struct_output = {
+			'connection_id': connection_id,
+			'is_locked': data['lockedFlag'],
+			'lock_date': data['lockedDate'] if 'LockedData' in data.keys() else None,
+			'locked_by': data['lockedBy'] if 'LockedData' in data.keys() else None,
+			'last_update_user': data['lastUpdatedBy'],
+			'created_user': data['createdBy'],
+		}
 
-        Returns:
-            Dict: The test result data.
-        """
-        if not params:
-            params = {}
+		# optional extended fields
+		struct_output.update(
+			{
+				'adapter_type': None,
+				'user_property_value': None,
+				'user_property_name': None,
+				'created_user': None,
+				'last_update_user': None,
+			}
+		)
 
-        params["Content-Type"] = 'multipart/form-data'
+		if 'adapterType' in data.keys():
+			struct_output['adapter_name'] = data['adapterType']['displayName']
+			struct_output['adapter_type'] = data['adapterType']['type']
 
-        return self.execute_action("testWithAttachments", connection_id, params=params, method="POST")
+		if 'securityProperties' in data.keys():
+			for value in data['securityProperties']:
+				if (
+					value['displayName'].upper().strip() == 'USERNAME'
+					or value['displayName'].upper().strip() == 'USER NAME'
+				):
+					if 'propertyValue' in value.keys():
+						struct_output['user_property_value'] = value['propertyValue']
+					if 'propertyName' in value.keys():
+						struct_output['user_property_name'] = value['propertyName']
+					else:
+						raise Exception('new way to get a username:')
 
-    def get_types(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
-        """
-        Get all available connection types.
-        
-        Args:
-            params: Optional query parameters.
-                
-        Returns:
-            List[Dict]: List of connection types.
-        """
-        response = self.client.get(f"{self.base_path}/types", params=params)
-        
-        if "items" in response:
-            return response["items"]
-        elif "elements" in response:
-            return response["elements"]
-        elif isinstance(response, list):
-            return response
-        else:
-            self.logger.warning(f"Unexpected response format from get_types endpoint: {response.keys() if isinstance(response, dict) else type(response)}")
-            return []
-    
-    def get_type(self, type_id: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """
-        Get a specific connection type by ID.
-        
-        Args:
-            type_id: ID of the connection type to retrieve.
-            params: Optional query parameters.
-                
-        Returns:
-            Dict: The connection type data.
-        """
-        return self.client.get(f"{self.base_path}/types/{type_id}", params=params)
+		return pd.Series(struct_output)
+
+	def update(
+		self,
+		connection_id: str,
+		data: Dict[str, Any],
+		params: Optional[Dict[str, Any]] = None,
+	) -> Dict[str, Any]:
+		"""
+		Update a specific connection.
+
+		Args:
+		    connection_id: ID of the connection to update.
+		    data: Updated connection data.
+		    params: Optional query parameters.
+
+		Returns:
+		    Dict: The updated connection data.
+
+		"""
+		headers = {'X-HTTP-Method-Override': 'PATCH'}
+
+		return super().update(connection_id, data=data, params=params, headers=headers)
+
+	def delete(
+		self, connection_id: str, params: Optional[Dict[str, Any]] = None
+	) -> Dict[str, Any]:
+		"""
+		Delete a specific connection.
+
+		Args:
+		    connection_id: ID of the connection to delete.
+		    params: Optional query parameters.
+
+		Returns:
+		    Dict: The response data.
+
+		"""
+		return super().delete(connection_id, params)
+
+	def test(
+		self, connection_id: str, params: Optional[Dict[str, Any]] = None
+	) -> Dict[str, Any]:
+		"""
+		Test a specific connection.
+
+		Args:
+		    connection_id: ID of the connection to test.
+		    params: Optional query parameters.
+
+		Returns:
+		    Dict: The test result data.
+
+		"""
+		return self.execute_action('test', connection_id, params=params, method='POST')
+
+	def validate(
+		self, connection_id: str, params: Optional[Dict[str, Any]] = None
+	) -> Dict[str, Any]:
+		"""
+		Test a specific connection.
+
+		SPECIFIC TO ATTACHMENT DEPENDENT OIC Connections
+
+		Args:
+		    connection_id: ID of the connection to test.
+		    params: Optional query parameters.
+
+		Returns:
+		    Dict: The test result data.
+
+		"""
+		if not params:
+			params = {}
+
+		params['Content-Type'] = 'multipart/form-data'
+
+		return self.execute_action(
+			'testWithAttachments', connection_id, params=params, method='POST'
+		)
+
+	def get_types(
+		self, params: Optional[Dict[str, Any]] = None
+	) -> List[Dict[str, Any]]:
+		"""
+		Get all available connection types.
+
+		Args:
+		    params: Optional query parameters.
+
+		Returns:
+		    List[Dict]: List of connection types.
+
+		"""
+		response = self.client.get(f'{self.base_path}/types', params=params)
+
+		if 'items' in response:
+			return response['items']
+		if 'elements' in response:
+			return response['elements']
+		if isinstance(response, list):
+			return response
+		self.logger.warning(
+			f'Unexpected response format from get_types endpoint: {response.keys() if isinstance(response, dict) else type(response)}'
+		)
+		return []
+
+	def get_type(
+		self, type_id: str, params: Optional[Dict[str, Any]] = None
+	) -> Dict[str, Any]:
+		"""
+		Get a specific connection type by ID.
+
+		Args:
+		    type_id: ID of the connection type to retrieve.
+		    params: Optional query parameters.
+
+		Returns:
+		    Dict: The connection type data.
+
+		"""
+		return self.client.get(f'{self.base_path}/types/{type_id}', params=params)
