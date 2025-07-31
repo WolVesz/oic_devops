@@ -1141,7 +1141,7 @@ class BackupWorkflows(BaseWorkflow):
 
 			# Back up each integration
 			for integration in integrations:
-				integration_id = integration.get('id')
+				integration_id = integration.get('code')
 				integration_name = integration.get('name', 'Unknown')
 
 				if not integration_id:
