@@ -27,7 +27,7 @@ class ConnectionsResource(BaseResource):
 		Initialize the connections resource client.
 
 		Args:
-		    client: The parent OICClient instance.
+			client: The parent OICClient instance.
 
 		"""
 		super().__init__(client)
@@ -38,36 +38,49 @@ class ConnectionsResource(BaseResource):
 		List all connections.
 
 		Args:
-		    params: Optional query parameters such as:
-		        - limit: Maximum number of items to return.
-		        - offset: Number of items to skip.
-		        - fields: Comma-separated list of fields to include.
-		        - q: Search query.
-		        - orderBy: Field to order by.
+			params: Optional query parameters such as:
+				- limit: Maximum number of items to return.
+				- offset: Number of items to skip.
+				- fields: Comma-separated list of fields to include.
+				- q: Search query.
+				- orderBy: Field to order by.
 
 		Returns:
-		    List[Dict]: List of connections.
+			List[Dict]: List of connections.
 
 		"""
 		return super().list(params, raw=True)
 
-	def list_all(self, params: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
+	def list_all(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+
+		"""
+			DEPRECATED: Use list_enriched() instead.
+			"""
 		"""
 		Automatically paginates through the API to provide the complete list of connections.
 
 		Args:
-		    params: Optional query parameters such as:
-		        - limit: Maximum number of items to return.
-		        - offset: Number of items to skip.
-		        - fields: Comma-separated list of fields to include.
-		        - q: Search query.
-		        - orderBy: Field to order by.
-		        - status: Filter by status (e.g., "ACTIVATED", "CONFIGURED").
+			params: Optional query parameters such as:
+				- limit: Maximum number of items to return.
+				- offset: Number of items to skip.
+				- fields: Comma-separated list of fields to include.
+				- q: Search query.
+				- orderBy: Field to order by.
+				- status: Filter by status (e.g., "ACTIVATED", "CONFIGURED").
 
 		Returns:
-		    List[Dict]: List of integrations.
+			List[Dict]: List of integrations.
 
 		"""
+
+		import warnings
+
+		warnings.warn(
+			"list_all() is deprecated. Use list_enriched() which includes enrichment.",
+			DeprecationWarning,
+			stacklevel=2
+		)
+
 		has_more = True
 		output = []
 		pages = 0
@@ -92,17 +105,17 @@ class ConnectionsResource(BaseResource):
 		Creates a pandas Dataframe with the full contents of list_all.
 
 		Args:
-		    params: Optional query parameters such as:
-		        - limit: Maximum number of items to return.
-		        - offset: Number of items to skip.
-		        - fields: Comma-separated list of fields to include.
-		        - q: Search query.
-		        - orderBy: Field to order by.
-		        - status: Filter by status (e.g., "ACTIVATED", "CONFIGURED").
-		    update:
+			params: Optional query parameters such as:
+				- limit: Maximum number of items to return.
+				- offset: Number of items to skip.
+				- fields: Comma-separated list of fields to include.
+				- q: Search query.
+				- orderBy: Field to order by.
+				- status: Filter by status (e.g., "ACTIVATED", "CONFIGURED").
+			update:
 
 		Returns:
-		    List[Dict]: List of integrations.
+			List[Dict]: List of integrations.
 
 		"""
 		output = self.list_all(**kwargs)
@@ -120,12 +133,12 @@ class ConnectionsResource(BaseResource):
 		Get a specific connection by ID.
 
 		Args:
-		    connection_id: ID of the connection to retrieve.
-		    params: Optional query parameters.
-		    raw: to return the raw json or provide as a pd.Series
+			connection_id: ID of the connection to retrieve.
+			params: Optional query parameters.
+			raw: to return the raw json or provide as a pd.Series
 
 		Returns:
-		    Dict or pd.Series: The connection data
+			Dict or pd.Series: The connection data
 
 		"""
 		data = super().get(connection_id, params)
@@ -183,12 +196,12 @@ class ConnectionsResource(BaseResource):
 		Update a specific connection.
 
 		Args:
-		    connection_id: ID of the connection to update.
-		    data: Updated connection data.
-		    params: Optional query parameters.
+			connection_id: ID of the connection to update.
+			data: Updated connection data.
+			params: Optional query parameters.
 
 		Returns:
-		    Dict: The updated connection data.
+			Dict: The updated connection data.
 
 		"""
 		headers = {'X-HTTP-Method-Override': 'PATCH'}
@@ -202,11 +215,11 @@ class ConnectionsResource(BaseResource):
 		Delete a specific connection.
 
 		Args:
-		    connection_id: ID of the connection to delete.
-		    params: Optional query parameters.
+			connection_id: ID of the connection to delete.
+			params: Optional query parameters.
 
 		Returns:
-		    Dict: The response data.
+			Dict: The response data.
 
 		"""
 		return super().delete(connection_id, params)
@@ -218,11 +231,11 @@ class ConnectionsResource(BaseResource):
 		Test a specific connection.
 
 		Args:
-		    connection_id: ID of the connection to test.
-		    params: Optional query parameters.
+			connection_id: ID of the connection to test.
+			params: Optional query parameters.
 
 		Returns:
-		    Dict: The test result data.
+			Dict: The test result data.
 
 		"""
 		return self.execute_action('test', connection_id, params=params, method='POST')
@@ -236,11 +249,11 @@ class ConnectionsResource(BaseResource):
 		SPECIFIC TO ATTACHMENT DEPENDENT OIC Connections
 
 		Args:
-		    connection_id: ID of the connection to test.
-		    params: Optional query parameters.
+			connection_id: ID of the connection to test.
+			params: Optional query parameters.
 
 		Returns:
-		    Dict: The test result data.
+			Dict: The test result data.
 
 		"""
 		if not params:
@@ -259,10 +272,10 @@ class ConnectionsResource(BaseResource):
 		Get all available connection types.
 
 		Args:
-		    params: Optional query parameters.
+			params: Optional query parameters.
 
 		Returns:
-		    List[Dict]: List of connection types.
+			List[Dict]: List of connection types.
 
 		"""
 		response = self.client.get(f'{self.base_path}/types', params=params)
@@ -285,11 +298,86 @@ class ConnectionsResource(BaseResource):
 		Get a specific connection type by ID.
 
 		Args:
-		    type_id: ID of the connection type to retrieve.
-		    params: Optional query parameters.
+			type_id: ID of the connection type to retrieve.
+			params: Optional query parameters.
 
 		Returns:
-		    Dict: The connection type data.
+			Dict: The connection type data.
 
 		"""
 		return self.client.get(f'{self.base_path}/types/{type_id}', params=params)
+
+
+	def _enrich_item(self, item: Dict[str, Any]) -> Dict[str, Any]:
+		"""
+		Enrich a single connection item with securityPolicy and filtered securityProperties.
+
+		Args:
+			item: Raw connection dict from API.
+
+		Returns:
+			Dict: Enriched connection (no 'attachment' in securityProperties).
+		"""
+		connection_id = item.get('id')
+		if not connection_id:
+			self.logger.warning(f"Connection missing 'id': {item}")
+			return item
+
+		try:
+			full_detail = self.get(connection_id=connection_id, raw=True)
+		except Exception as exc:
+			self.logger.error(f"Failed to enrich connection {connection_id}: {exc}")
+			return item  # fallback
+
+		enriched = {**item}
+
+		if 'securityPolicy' in full_detail:
+			enriched['securityPolicy'] = full_detail['securityPolicy']
+
+		if 'securityProperties' in full_detail:
+			filtered = [
+				p for p in full_detail['securityProperties']
+				if p.get('propertyName') != 'attachment'
+			]
+			enriched['securityProperties'] = filtered
+
+		return enriched
+
+
+	def list_enriched(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+		"""
+		Return **ALL** connections with full enrichment (securityPolicy + no attachment).
+
+		Automatically paginates using `list()` and enriches each item via `_enrich_item()`.
+
+		Args:
+			params: Query parameters (q, limit, orderBy, etc.)
+
+		Returns:
+			List[Dict]: Complete list of enriched connections.
+		"""
+		if params is None:
+			params = {}
+
+		page_params = params.copy()
+		page_params['offset'] = 0
+		page_params.setdefault('limit', 100)
+
+		enriched_items: List[Dict[str, Any]] = []
+		has_more = True
+		total = 0
+
+		while has_more:
+			response = self.list(params=page_params)
+			items = response.get('items', [])
+			has_more = response.get('hasMore', False)
+			limit = response.get('limit', len(items))
+
+			for item in items:
+				enriched_items.append(self._enrich_item(item))
+
+			total += len(items)
+			page_params['offset'] += limit
+			self.logger.info(f"Fetched {total} enriched connections...")
+
+		return enriched_items
