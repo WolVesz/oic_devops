@@ -5,7 +5,7 @@ This module provides workflow operations for managing connections.
 """
 import time
 from typing import Any, Dict, List
-from oic_devops.exceptions import OICError, OICAPIError
+from oic_devops.exceptions import OICError, OICAPIError, OICResourceNotFoundError
 from oic_devops.workflows.base import BaseWorkflow, WorkflowResult
 
 class ConnectionWorkflows(BaseWorkflow):
@@ -615,6 +615,7 @@ class ConnectionWorkflows(BaseWorkflow):
         # TODO: 1. Loop through the target_usernames[username, password]
         #  1. For each user, get connection Ids  calling  _get_connection_ids_using_username(). Concentrate in a connections_dictionary: Dictionary[connection_id, {username:str, integrations:List[integration_id:str]]
         connections_dictionary: Dict[str, Dict[str, Any]] = {}
+        integrations_original_status: Dict[str, Dict[str, Any]] = {}
         if self.connections_dictionary:
             connections_dictionary = self.connections_dictionary
         else:
@@ -622,31 +623,88 @@ class ConnectionWorkflows(BaseWorkflow):
                 connection_ids =  self.get_connection_ids_using_username(target_username)
             # 1.1 For each connection Id, get the list of integrations using that connection.
                 for connection_id in connection_ids:
+                    # TODO: Remove - it's just to reduce the sample
+                    if connection_id.startswith("Psswrd") == False:
+                        continue
+
                     connections_dictionary[connection_id] = {"username":target_username, "integrations":[]}
                     #  1.1.1 Call client.connection.usage(connection_id=connection_id, raw=False).
                     connection_usage_df = self.client.connections.usage(connection_id=connection_id, raw=False)
                     #  1.1.2 Add integration_id to connections_dictionary if the status == "ACTIVATED"
                     integration_ids = []
                     for integration in connection_usage_df:
-                        integration_ids.append(integration['integration_id'])
-                        # print(f"Connection {connection_id} uses integration: {integration['integration_id']}")
+                        if integration["status"] == "ACTIVATED":
+                            integration_ids.append(integration['integration_id'])
+                            integrations_original_status[integration['integration_id']] = {}
+                            # print(f"Connection {connection_id} uses integration: {integration['integration_id']}")
                     connections_dictionary[connection_id]["integrations"] = integration_ids
                     # print(f"Connections: {connection_id} \tIntegrations: {integration_ids}")
         self.connections_dictionary = connections_dictionary
 
-        #  1.2 For each integration generate a list of integrations with active schedulers:
+        # Get integration original status
+        for integration_id in integrations_original_status.keys():
+            try:
+                integrations_original_status[integration_id] = self.client.integrations.get(integration_id=integration_id)
+            except OICAPIError as exc:
+                message = f"FAILED to fetch integration {integration_id}: {exc.title}"
+                print(f"\t -{message}")
+                result.success = False
+                result.add_error(resource_id=integration_id, message=exc.title, error=exc)
+                result.add_resource(resource_type='integration', resource_id=integration_id, data={"status":message})
 
-        #  1.2.1 example: integration_id ="TSGT_ORAC_UTIL_HCM_WACS_EMP_ASSG|01.22.2003"
-        #                 integration = client.integrations.get(integration_id=integration_id)
-        #                 if integration["pattern"] == "Scheduled":
-        #                   # Append to scheduled_integrations list
-        #  1.3 For each schedule integration, gather when is the next run and if any runs are in process
+        #  1.2 Get list of integrations with active schedulers:
+        schedule_integrations = [
+            integration_id
+            for integration_id, info in integrations_original_status.items()
+            if info.get("pattern") == "Scheduled"
+        ]
+        schedule_integrations = list(set(schedule_integrations)) # remove duplicates
+        schedule_integrations_without_schedule = []
+        for integration_id in schedule_integrations:
+            try:
+                integration_schedule = self.client.integrations.get_schedule(integration_id=integration_id)
+                integrations_original_status[integration_id]={"SCHEDULE":integration_schedule}
+            except OICAPIError as exc:
+                message = f"FAILED to fetch Schedule for {integration_id}: {exc.title}"
+                print(f"\t -{message}")
+                result.success = False
+                result.add_error(resource_id=integration_id, message=exc.title, error=exc)
+                result.add_resource(resource_type='schedule', resource_id=integration_id, data={"status":message})
+            except OICResourceNotFoundError as not_found_error:
+                print(f"INFO - {integration_id}  - Schedule not found: {not_found_error}")
+                schedule_integrations_without_schedule.append(integration_id)
+        # Remove integrations without schedule from list
+
+
+        # TODO:  1.3 For each schedule integration, gather when is the next run and if any runs are in process
 
         # # TODO: 2. Prompt user for proceed confirmation showing the schedule integrations with their running state and next run date
         # # 2.1 upon negative answer exit
         #
         # # TODO: 3. Stop schedules of schedule integrations. Keep track of them because they will need to be re-started
         # # 3.1 upon failure, re-start the stopped schedulers
+        for integration_id in schedule_integrations:
+            try:
+                if integration_id.startswith("PSSWRD"):
+                    if integrations_original_status[integration_id]['SCHEDULE']['state'] == "ACTIVE":
+                        print("Stopping Scheduler for: ", integration_id)
+                        stop_response = self.client.integrations.stop_schedule(integration_id)
+
+            except OICAPIError as exc:
+                message = f"FAILED to STOP Schedule for {integration_id}: {exc.title}"
+                print(f"\t -{message}")
+                result.success = False
+                result.add_error(resource_id=integration_id, message=exc.title, error=exc)
+                result.add_resource(resource_type='schedule', resource_id=integration_id, data={"STOP_SCHEDULE":message})
+            except OICResourceNotFoundError as not_found_error:
+                print(f"\n\t{integration_id} not found: {not_found_error}")
+                result.success = False
+                result.add_error(resource_id=integration_id,  error=not_found_error)
+                result.add_resource(resource_type='schedule', resource_id=integration_id,
+                                    data={"STOP_SCHEDULE": "Not Found"})
+
+
+
         #
         # # TODO: 4. Deactivate integrations.
         # #  4.1 Wait until all integrations go into CONFIGURED state. Time out after 5 minutes, include the integrations de-activated in response
@@ -656,7 +714,7 @@ class ConnectionWorkflows(BaseWorkflow):
 
         for connection_id in connections_dictionary.keys():
             username = connections_dictionary[connection_id]['username']
-            print(f"\tUpdating {username} password for: {connection_id} ")
+            # print(f"\tUpdating {username} password for: {connection_id} ")
             password = target_usernames[username]
             params = {'patchAttachments':True}
             data = {
@@ -692,7 +750,7 @@ class ConnectionWorkflows(BaseWorkflow):
                     print(f"\t -{message}")
                     result.success = False
                     result.add_error(resource_id=connection_id, message=exc.title, error=exc)
-                    result.add_resource(resource_type='connection', resource_id=connection_id,data= message)
+                    result.add_resource(resource_type='connection', resource_id=connection_id,data={"status":message})
 
 
         return result
