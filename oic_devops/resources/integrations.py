@@ -232,6 +232,11 @@ class IntegrationsResource(BaseResource):
 
         return self.update(integration_id, data=body, params=params, headers=headers)
 
+    def get_schedule (self, integration_id: str) -> Dict[str, Dict[str,Any]]:
+        return self.client.request(
+            'GET',
+            self._get_endpoint(resource_id=integration_id, action='schedule'),
+        )
     def resume_schedule(self, integration_id: str) -> Dict[str, Any]:
         """
         Resume a specific integration schedule.
