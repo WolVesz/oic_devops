@@ -15,369 +15,420 @@ from oic_devops.utils.str import camel_to_snake
 
 
 class ConnectionsResource(BaseResource):
-	"""
-	Class for managing OIC connections.
-
-	Provides methods for listing, retrieving, creating, updating,
-	and deleting connections, as well as testing connections.
-	"""
-
-	def __init__(self, client):
-		"""
-		Initialize the connections resource client.
-
-		Args:
-			client: The parent OICClient instance.
-
-		"""
-		super().__init__(client)
-		self.base_path = '/ic/api/integration/v1/connections'
-
-	def list(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
-		"""
-		List all connections.
-
-		Args:
-			params: Optional query parameters such as:
-				- limit: Maximum number of items to return.
-				- offset: Number of items to skip.
-				- fields: Comma-separated list of fields to include.
-				- q: Search query.
-				- orderBy: Field to order by.
-
-		Returns:
-			List[Dict]: List of connections.
-
-		"""
-		return super().list(params, raw=True)
-
-	def list_all(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
-
-		"""
-			DEPRECATED: Use list_enriched() instead.
-			"""
-		"""
-		Automatically paginates through the API to provide the complete list of connections.
-
-		Args:
-			params: Optional query parameters such as:
-				- limit: Maximum number of items to return.
-				- offset: Number of items to skip.
-				- fields: Comma-separated list of fields to include.
-				- q: Search query.
-				- orderBy: Field to order by.
-				- status: Filter by status (e.g., "ACTIVATED", "CONFIGURED").
-
-		Returns:
-			List[Dict]: List of integrations.
-
-		"""
-
-		import warnings
-
-		warnings.warn(
-			"list_all() is deprecated. Use list_enriched() which includes enrichment.",
-			DeprecationWarning,
-			stacklevel=2
-		)
-
-		has_more = True
-		output = []
-		pages = 0
-
-		if not params:
-			params = dict()
-
-		while has_more is True:
-			params['offset'] = pages
-			content = self.list(params=params)
-			output.extend(content['items'])
-			has_more = content['hasMore']
-			if not content.get('limit'):
-				continue
-			pages += content['limit']
-			self.logger.info(f'Number of Connections Acquired in List: {pages}')
-
-		return output
-
-	def df(self, **kwargs):
-		"""
-		Creates a pandas Dataframe with the full contents of list_all.
-
-		Args:
-			params: Optional query parameters such as:
-				- limit: Maximum number of items to return.
-				- offset: Number of items to skip.
-				- fields: Comma-separated list of fields to include.
-				- q: Search query.
-				- orderBy: Field to order by.
-				- status: Filter by status (e.g., "ACTIVATED", "CONFIGURED").
-			update:
-
-		Returns:
-			List[Dict]: List of integrations.
-
-		"""
-		output = self.list_all(**kwargs)
-
-		df = pd.DataFrame(output)
-		df.columns = [camel_to_snake(col) for col in df.columns]
-		df['connection_acquired_at'] = datetime.now()
-		df['connection_acquired_at'] = pd.to_datetime(df['connection_acquired_at'])
-		return df
-
-	def get(
-		self, connection_id: str, params: Optional[Dict[str, Any]] = None, raw=False
-	) -> dict[str, Any] | Series:
-		"""
-		Get a specific connection by ID.
-
-		Args:
-			connection_id: ID of the connection to retrieve.
-			params: Optional query parameters.
-			raw: to return the raw json or provide as a pd.Series
-
-		Returns:
-			Dict or pd.Series: The connection data
-
-		"""
-		data = super().get(connection_id, params)
-
-		if raw:
-			return data
-
-		# Builds structured output
-		struct_output = {
-			'connection_id': connection_id,
-			'is_locked': data['lockedFlag'],
-			'lock_date': data['lockedDate'] if 'LockedData' in data.keys() else None,
-			'locked_by': data['lockedBy'] if 'LockedData' in data.keys() else None,
-			'last_update_user': data['lastUpdatedBy'],
-			'created_user': data['createdBy'],
-		}
-
-		# optional extended fields
-		struct_output.update(
-			{
-				'adapter_type': None,
-				'user_property_value': None,
-				'user_property_name': None,
-				'created_user': None,
-				'last_update_user': None,
-			}
-		)
-
-		if 'adapterType' in data.keys():
-			struct_output['adapter_name'] = data['adapterType']['displayName']
-			struct_output['adapter_type'] = data['adapterType']['type']
-
-		if 'securityProperties' in data.keys():
-			for value in data['securityProperties']:
-				if (
-					value['displayName'].upper().strip() == 'USERNAME'
-					or value['displayName'].upper().strip() == 'USER NAME'
-				):
-					if 'propertyValue' in value.keys():
-						struct_output['user_property_value'] = value['propertyValue']
-					if 'propertyName' in value.keys():
-						struct_output['user_property_name'] = value['propertyName']
-					else:
-						raise Exception('new way to get a username:')
-
-		return pd.Series(struct_output)
-
-	def update(
-		self,
-		connection_id: str,
-		data: Dict[str, Any],
-		params: Optional[Dict[str, Any]] = None,
-	) -> Dict[str, Any]:
-		"""
-		Update a specific connection.
-
-		Args:
-			connection_id: ID of the connection to update.
-			data: Updated connection data.
-			params: Optional query parameters.
-
-		Returns:
-			Dict: The updated connection data.
-
-		"""
-		headers = {'X-HTTP-Method-Override': 'PATCH'}
-
-		return super().update(connection_id, data=data, params=params, headers=headers)
-
-	def delete(
-		self, connection_id: str, params: Optional[Dict[str, Any]] = None
-	) -> Dict[str, Any]:
-		"""
-		Delete a specific connection.
-
-		Args:
-			connection_id: ID of the connection to delete.
-			params: Optional query parameters.
-
-		Returns:
-			Dict: The response data.
-
-		"""
-		return super().delete(connection_id, params)
-
-	def test(
-		self, connection_id: str, params: Optional[Dict[str, Any]] = None
-	) -> Dict[str, Any]:
-		"""
-		Test a specific connection.
-
-		Args:
-			connection_id: ID of the connection to test.
-			params: Optional query parameters.
-
-		Returns:
-			Dict: The test result data.
-
-		"""
-		return self.execute_action('test', connection_id, params=params, method='POST')
-
-	def validate(
-		self, connection_id: str, params: Optional[Dict[str, Any]] = None
-	) -> Dict[str, Any]:
-		"""
-		Test a specific connection.
-
-		SPECIFIC TO ATTACHMENT DEPENDENT OIC Connections
-
-		Args:
-			connection_id: ID of the connection to test.
-			params: Optional query parameters.
-
-		Returns:
-			Dict: The test result data.
-
-		"""
-		if not params:
-			params = {}
-
-		params['Content-Type'] = 'multipart/form-data'
-
-		return self.execute_action(
-			'testWithAttachments', connection_id, params=params, method='POST'
-		)
-
-	def get_types(
-		self, params: Optional[Dict[str, Any]] = None
-	) -> List[Dict[str, Any]]:
-		"""
-		Get all available connection types.
-
-		Args:
-			params: Optional query parameters.
-
-		Returns:
-			List[Dict]: List of connection types.
-
-		"""
-		response = self.client.get(f'{self.base_path}/types', params=params)
-
-		if 'items' in response:
-			return response['items']
-		if 'elements' in response:
-			return response['elements']
-		if isinstance(response, list):
-			return response
-		self.logger.warning(
-			f'Unexpected response format from get_types endpoint: {response.keys() if isinstance(response, dict) else type(response)}'
-		)
-		return []
-
-	def get_type(
-		self, type_id: str, params: Optional[Dict[str, Any]] = None
-	) -> Dict[str, Any]:
-		"""
-		Get a specific connection type by ID.
-
-		Args:
-			type_id: ID of the connection type to retrieve.
-			params: Optional query parameters.
-
-		Returns:
-			Dict: The connection type data.
-
-		"""
-		return self.client.get(f'{self.base_path}/types/{type_id}', params=params)
-
-
-	def _enrich_item(self, item: Dict[str, Any]) -> Dict[str, Any]:
-		"""
-		Enrich a single connection item with securityPolicy and filtered securityProperties.
-
-		Args:
-			item: Raw connection dict from API.
-
-		Returns:
-			Dict: Enriched connection (no 'attachment' in securityProperties).
-		"""
-		connection_id = item.get('id')
-		if not connection_id:
-			self.logger.warning(f"Connection missing 'id': {item}")
-			return item
-
-		try:
-			full_detail = self.get(connection_id=connection_id, raw=True)
-		except Exception as exc:
-			self.logger.error(f"Failed to enrich connection {connection_id}: {exc}")
-			return item  # fallback
-
-		enriched = {**item}
-
-		if 'securityPolicy' in full_detail:
-			enriched['securityPolicy'] = full_detail['securityPolicy']
-
-		if 'securityProperties' in full_detail:
-			filtered = [
-				p for p in full_detail['securityProperties']
-				if p.get('propertyName') != 'attachment'
-			]
-			enriched['securityProperties'] = filtered
-
-		return enriched
-
-
-	def list_enriched(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
-		"""
-		Return **ALL** connections with full enrichment (securityPolicy + no attachment).
-
-		Automatically paginates using `list()` and enriches each item via `_enrich_item()`.
-
-		Args:
-			params: Query parameters (q, limit, orderBy, etc.)
-
-		Returns:
-			List[Dict]: Complete list of enriched connections.
-		"""
-		if params is None:
-			params = {}
-
-		page_params = params.copy()
-		page_params['offset'] = 0
-		page_params.setdefault('limit', 100)
-
-		enriched_items: List[Dict[str, Any]] = []
-		has_more = True
-		total = 0
-
-		while has_more:
-			response = self.list(params=page_params)
-			items = response.get('items', [])
-			has_more = response.get('hasMore', False)
-			limit = response.get('limit', len(items))
-
-			for item in items:
-				enriched_items.append(self._enrich_item(item))
-
-			total += len(items)
-			page_params['offset'] += limit
-			self.logger.info(f"Fetched {total} enriched connections...")
-
-		return enriched_items
+    """
+    Class for managing OIC connections.
+
+    Provides methods for listing, retrieving, creating, updating,
+    and deleting connections, as well as testing connections.
+    """
+
+    def __init__(self, client):
+        """
+        Initialize the connections resource client.
+
+        Args:
+            client: The parent OICClient instance.
+
+        """
+        super().__init__(client)
+        self.base_path = '/ic/api/integration/v1/connections'
+
+    def list(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        """
+        List all connections.
+
+        Args:
+            params: Optional query parameters such as:
+                - limit: Maximum number of items to return.
+                - offset: Number of items to skip.
+                - fields: Comma-separated list of fields to include.
+                - q: Search query.
+                - orderBy: Field to order by.
+
+        Returns:
+            List[Dict]: List of connections.
+
+        """
+        return super().list(params, raw=True)
+
+    def list_all(self, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+
+        """
+            DEPRECATED: Use list_enriched() instead.
+            """
+        """
+        Automatically paginates through the API to provide the complete list of connections.
+
+        Args:
+            params: Optional query parameters such as:
+                - limit: Maximum number of items to return.
+                - offset: Number of items to skip.
+                - fields: Comma-separated list of fields to include.
+                - q: Search query.
+                - orderBy: Field to order by.
+                - status: Filter by status (e.g., "ACTIVATED", "CONFIGURED").
+
+        Returns:
+            List[Dict]: List of integrations.
+
+        """
+
+        import warnings
+
+        warnings.warn(
+            "list_all() is deprecated. Use list_enriched() which includes enrichment.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+
+        has_more = True
+        output = []
+        pages = 0
+
+        if not params:
+            params = dict()
+
+        while has_more is True:
+            params['offset'] = pages
+            content = self.list(params=params)
+            output.extend(content['items'])
+            has_more = content['hasMore']
+            if not content.get('limit'):
+                continue
+            pages += content['limit']
+            self.logger.info(f'Number of Connections Acquired in List: {pages}')
+
+        return output
+
+    def df(self, **kwargs):
+        """
+        Creates a pandas Dataframe with the full contents of list_all.
+
+        Args:
+            params: Optional query parameters such as:
+                - limit: Maximum number of items to return.
+                - offset: Number of items to skip.
+                - fields: Comma-separated list of fields to include.
+                - q: Search query.
+                - orderBy: Field to order by.
+                - status: Filter by status (e.g., "ACTIVATED", "CONFIGURED").
+            update:
+
+        Returns:
+            List[Dict]: List of integrations.
+
+        """
+        output = self.list_all(**kwargs)
+
+        df = pd.DataFrame(output)
+        df.columns = [camel_to_snake(col) for col in df.columns]
+        df['connection_acquired_at'] = datetime.now()
+        df['connection_acquired_at'] = pd.to_datetime(df['connection_acquired_at'])
+        return df
+    def usage( self, connection_id: str, params: Optional[Dict[str, Any]] = None, raw=False
+    ) -> Dict[str, Dict[str,Any]] | Series:
+        """
+        Gets list of integrations using this connection
+        Returns:
+            Dict or pd.Series: The connection data
+        """
+        data = super().usage(connection_id, params)
+        """
+        data Sample:
+        {
+            "connectionUsage": [],
+            "integration_usage": [
+                {
+                    "code": "GET_SECRET_BY_NAME",
+                    "isLocked": false,
+                    "links": [
+                        {
+                            "href": "https://design.integration.us-phoenix-1.ocp.oraclecloud.com/ic/api/integration/v1/integrations/GET_SECRET_BY_NAME%7C01.00.0001?integrationInstance=prod-axeufspbztar-px",
+                            "rel": "self"
+                        }
+                    ],
+                    "name": "Get Secret By Name (1.0.1)",
+                    "status": "ACTIVATED",
+                    "version": "01.00.0001"
+                }
+            ],
+            "links": [
+                {
+                    "href": "https://design.integration.us-phoenix-1.ocp.oraclecloud.com/ic/api/integration/v1/connections/OCI_VAULT_SECRETS?integrationInstance=prod-axeufspbztar-px",
+                    "rel": "self"
+                }
+            ],
+            "name": "OCI Vault Secrets"
+        }
+        """
+        if raw:
+            return data
+
+        # Builds structured output
+        integration_usage: Dict[str, Dict[str,Any]]={}
+        for integration in data['integrationUsage']:
+            integration_usage[integration['code']] = {
+                'integration_code': integration['code'],
+                'is_locked': integration['isLocked'],
+                'name': integration['name'],
+                'status': integration['status'],
+                'version': integration['version'],
+                'integration_id':integration['code'] + '|'+integration['version']
+            }
+
+        return pd.Series(integration_usage)
+
+    def get(
+        self, connection_id: str, params: Optional[Dict[str, Any]] = None, raw=False
+    ) -> dict[str, Any] | Series:
+        """
+        Get a specific connection by ID.
+
+        Args:
+            connection_id: ID of the connection to retrieve.
+            params: Optional query parameters.
+            raw: to return the raw json or provide as a pd.Series
+
+        Returns:
+            Dict or pd.Series: The connection data
+
+        """
+        data = super().get(connection_id, params)
+
+        if raw:
+            return data
+
+        # Builds structured output
+        struct_output = {
+            'connection_id': connection_id,
+            'is_locked': data['lockedFlag'],
+            'lock_date': data['lockedDate'] if 'LockedData' in data.keys() else None,
+            'locked_by': data['lockedBy'] if 'LockedData' in data.keys() else None,
+            'last_update_user': data['lastUpdatedBy'],
+            'created_user': data['createdBy'],
+        }
+
+        # optional extended fields
+        struct_output.update(
+            {
+                'adapter_type': None,
+                'user_property_value': None,
+                'user_property_name': None,
+                'created_user': None,
+                'last_update_user': None,
+            }
+        )
+
+        if 'adapterType' in data.keys():
+            struct_output['adapter_name'] = data['adapterType']['displayName']
+            struct_output['adapter_type'] = data['adapterType']['type']
+
+        if 'securityProperties' in data.keys():
+            for value in data['securityProperties']:
+                if (
+                    value['displayName'].upper().strip() == 'USERNAME'
+                    or value['displayName'].upper().strip() == 'USER NAME'
+                ):
+                    if 'propertyValue' in value.keys():
+                        struct_output['user_property_value'] = value['propertyValue']
+                    if 'propertyName' in value.keys():
+                        struct_output['user_property_name'] = value['propertyName']
+                    else:
+                        raise Exception('new way to get a username:')
+
+        return pd.Series(struct_output)
+
+    def update(
+        self,
+        connection_id: str,
+        data: Dict[str, Any],
+        params: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Update a specific connection.
+
+        Args:
+            connection_id: ID of the connection to update.
+            data: Updated connection data.
+            params: Optional query parameters.
+
+        Returns:
+            Dict: The updated connection data.
+
+        """
+        headers = {'X-HTTP-Method-Override': 'PATCH'}
+
+        return super().update(connection_id, data=data, params=params, headers=headers)
+
+    def delete(
+        self, connection_id: str, params: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Delete a specific connection.
+
+        Args:
+            connection_id: ID of the connection to delete.
+            params: Optional query parameters.
+
+        Returns:
+            Dict: The response data.
+
+        """
+        return super().delete(connection_id, params)
+
+    def test(
+        self, connection_id: str, params: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Test a specific connection.
+
+        Args:
+            connection_id: ID of the connection to test.
+            params: Optional query parameters.
+
+        Returns:
+            Dict: The test result data.
+
+        """
+        return self.execute_action('test', connection_id, params=params, method='POST')
+
+    def validate(
+        self, connection_id: str, params: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Test a specific connection.
+
+        SPECIFIC TO ATTACHMENT DEPENDENT OIC Connections
+
+        Args:
+            connection_id: ID of the connection to test.
+            params: Optional query parameters.
+
+        Returns:
+            Dict: The test result data.
+
+        """
+        if not params:
+            params = {}
+
+        params['Content-Type'] = 'multipart/form-data'
+
+        return self.execute_action(
+            'testWithAttachments', connection_id, params=params, method='POST'
+        )
+
+    def get_types(
+        self, params: Optional[Dict[str, Any]] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Get all available connection types.
+
+        Args:
+            params: Optional query parameters.
+
+        Returns:
+            List[Dict]: List of connection types.
+
+        """
+        response = self.client.get(f'{self.base_path}/types', params=params)
+
+        if 'items' in response:
+            return response['items']
+        if 'elements' in response:
+            return response['elements']
+        if isinstance(response, list):
+            return response
+        self.logger.warning(
+            f'Unexpected response format from get_types endpoint: {response.keys() if isinstance(response, dict) else type(response)}'
+        )
+        return []
+
+    def get_type(
+        self, type_id: str, params: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Get a specific connection type by ID.
+
+        Args:
+            type_id: ID of the connection type to retrieve.
+            params: Optional query parameters.
+
+        Returns:
+            Dict: The connection type data.
+
+        """
+        return self.client.get(f'{self.base_path}/types/{type_id}', params=params)
+
+
+    def _enrich_item(self, item: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Enrich a single connection item with securityPolicy and filtered securityProperties.
+
+        Args:
+            item: Raw connection dict from API.
+
+        Returns:
+            Dict: Enriched connection (no 'attachment' in securityProperties).
+        """
+        connection_id = item.get('id')
+        if not connection_id:
+            self.logger.warning(f"Connection missing 'id': {item}")
+            return item
+
+        try:
+            full_detail = self.get(connection_id=connection_id, raw=True)
+        except Exception as exc:
+            self.logger.error(f"Failed to enrich connection {connection_id}: {exc}")
+            return item  # fallback
+
+        enriched = {**item}
+
+        if 'securityPolicy' in full_detail:
+            enriched['securityPolicy'] = full_detail['securityPolicy']
+
+        if 'securityProperties' in full_detail:
+            filtered = [
+                p for p in full_detail['securityProperties']
+                if p.get('propertyName') != 'attachment'
+            ]
+            enriched['securityProperties'] = filtered
+
+        return enriched
+
+
+    def list_enriched(self, params: Optional[Dict[str, Any]] = None) -> Dict[str, Dict[str, Any]]:
+        """
+        Return **ALL** connections with full enrichment (securityPolicy + no attachment).
+        Automatically paginates using `list()` and enriches each item via `_enrich_item()`.
+
+        Args:
+            params: Query parameters (q, limit, orderBy, etc.)
+
+        Returns:
+             Dict[str, Dict[str, Any]]: Complete list of enriched connections: Dict[id,Dict[property, value]
+        """
+        if params is None:
+            params = {}
+
+        page_params = params.copy()
+        page_params['offset'] = 0
+        page_params.setdefault('limit', 100)
+
+        enriched_items: Dict[str,Dict[str, Any]] = {}
+        has_more = True
+        total = 0
+
+        while has_more:
+            response = self.list(params=page_params)
+            items = response.get('items', [])
+            has_more = response.get('hasMore', False)
+            limit = response.get('limit', len(items))
+
+            for item in items:
+                enriched_items[self._enrich_item(item)['id']] = (self._enrich_item(item))
+
+            total += len(items)
+            page_params['offset'] += limit
+            self.logger.info(f"Fetched {total} enriched connections...")
+
+        return enriched_items

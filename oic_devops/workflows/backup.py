@@ -1153,10 +1153,10 @@ class BackupWorkflows(BaseWorkflow):
             # Track dependencies
             dependencies = {'connections': set(), 'lookups': set()}
 
-			# Back up each integration
-			for integration in integrations:
-				integration_id = integration.get('id')
-				integration_name = integration.get('name', 'Unknown')
+            # Back up each integration
+            for integration in integrations:
+                integration_id = integration.get('id')
+                integration_name = integration.get('name', 'Unknown')
 
                 if not integration_id:
                     continue
