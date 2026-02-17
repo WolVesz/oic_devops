@@ -9,6 +9,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 import pandas as pd
+from openpyxl.styles.builtins import accent_6
 
 from oic_devops.exceptions import OICAPIError, OICValidationError
 from oic_devops.resources.base import BaseResource
@@ -260,13 +261,20 @@ class IntegrationsResource(BaseResource):
         """
 
         headers = {'X-HTTP-Method-Override': 'PATCH'}
-        body ={'stopScheduleForDeactivation':'true'}
-        return self.update(    integration_id=integration_id, data=body, params=params, headers=headers )
+        endpoint = self._get_endpoint(resource_id=integration_id, action='schedule/stop')
+        
+        return self.client.request(
+            method='POST',
+            endpoint= endpoint,
+            headers=headers,
+            data={},
+            params=params
+        )
 
     def deactivate(
         self,
         integration_id: str,
-        stop_schedular: bool = False,
+        delete_event_subscription_flag: bool = False,
         params: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
@@ -274,7 +282,7 @@ class IntegrationsResource(BaseResource):
 
         Args:
             integration_id: ID of the integration to deactivate.
-            stop_schedular: stops an integration's schedule
+            delete_event_subscription_flag: if the integration is an Event Subscriber, True removes subscription
             params: Optional query parameters.
 
         Returns:
@@ -283,10 +291,11 @@ class IntegrationsResource(BaseResource):
         """
         headers = {'X-HTTP-Method-Override': 'PATCH'}
 
-        body = {'status': 'CONFIGURED'}
+        if not params:
+            params: Optional[Dict[str, Any]] = {}
+        params['delete_event_subscription_flag']= delete_event_subscription_flag
 
-        if stop_schedular:
-            body['stopScheduleForDeactivation'] = 'true'
+        body = {'status': 'CONFIGURED'}
 
         return self.update(
             integration_id=integration_id, data=body, params=params, headers=headers

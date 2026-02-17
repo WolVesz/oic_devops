@@ -4,9 +4,12 @@ Connection workflows module for the OIC DevOps package.
 This module provides workflow operations for managing connections.
 """
 import time
+from datetime import datetime
 from typing import Any, Dict, List
+
 from oic_devops.exceptions import OICError, OICAPIError, OICResourceNotFoundError
 from oic_devops.workflows.base import BaseWorkflow, WorkflowResult
+
 
 class ConnectionWorkflows(BaseWorkflow):
     """
@@ -315,278 +318,6 @@ class ConnectionWorkflows(BaseWorkflow):
             result.add_error(f'Failed to identify integrations: {e}')
             return result
 
-    def update_credentials_and_restart_integrations(
-        self,
-        connection_id: str,
-        credentials: Dict[str, Any],
-        restart_scope: str = 'all',  # "all", "active", "none"
-        sequential_restart: bool = True,
-        verify_restart: bool = True,
-        wait_time: int = 20,
-    ) -> WorkflowResult:
-        """
-        Update connection credentials and restart dependent integrations.
-
-        This workflow:
-        1. Updates credentials for the connection
-        2. Finds all dependent integrations
-        3. Deactivates and reactivates each integration to restart them with new credentials
-
-        Args:
-            connection_id: ID of the connection to update.
-            credentials: Dict containing credential fields to update.
-            restart_scope: Which integrations to restart: "all", "active", or "none".
-            sequential_restart: Whether to restart integrations one at a time.
-            verify_restart: Whether to verify integrations are active after restart.
-            wait_time: Time to wait between operations in seconds.
-
-        Returns:
-            WorkflowResult: The workflow execution result.
-
-        """
-        result = WorkflowResult()
-        result.message = f'Updating credentials and restarting integrations for connection {connection_id}'
-
-        # Step 1: Update credentials
-        self.logger.info(f'Updating credentials for connection {connection_id}')
-        update_result = self.update_credentials(
-            connection_id=connection_id,
-            security_properties=credentials,
-            test_connection=True,
-        )
-
-        # Merge results
-        result.merge(update_result)
-
-        # If credential update failed, stop
-        if not update_result.success:
-            self.logger.error('Credential update failed, stopping workflow')
-            result.message = 'Failed to update credentials, integrations not restarted'
-            return result
-
-        # Get connection name for better logging
-        connection_name = 'Unknown'
-        if (
-            'connection' in update_result.resources
-            and connection_id in update_result.resources['connection']
-        ):
-            connection_name = update_result.resources['connection'][connection_id].get(
-                'name', 'Unknown'
-            )
-
-        # Step 2: If no restart needed, we're done
-        if restart_scope == 'none':
-            result.message = f'Successfully updated credentials for connection {connection_name}, no integrations restarted'
-            return result
-
-        # Step 3: Find dependent integrations
-        self.logger.info(
-            f'Finding integrations dependent on connection {connection_id}'
-        )
-        dependent_result = self.find_dependent_integrations(
-            connection_id=connection_id, check_active_only=(restart_scope == 'active')
-        )
-
-        dependent_result_output = dependent_result.resources['connection'][
-            connection_id
-        ]
-        dependent_result_output = dependent_result_output[
-            dependent_result_output['connection_id'] == connection_id
-        ]
-        current_versions = (
-            dependent_result_output.sort_values(
-                by='integration_version', ascending=False
-            )
-            .groupby('integration_name')[['integration_id', 'integration_version']]
-            .first()
-            .reset_index()
-        )
-        dependent_result_output = dependent_result_output[
-            dependent_result_output['integration_id'].isin(
-                current_versions['integration_id']
-            )
-        ][
-            [
-                'integration_name',
-                'integration_id',
-                'integration_status',
-                'integration_pattern',
-                'integration_version',
-            ]
-        ].drop_duplicates()
-
-        # Merge results
-        result.merge(dependent_result)
-
-        # If finding dependents failed, report but continue
-        if not dependent_result.success:
-            self.logger.warning('Error finding dependent integrations, but continuing')
-
-        # If no integrations to restart, we're done
-        if len(dependent_result_output) == 0:
-            self.logger.info('No integrations to restart')
-            result.message = f'Successfully updated credentials for connection {connection_name}, no integrations to restart'
-            return result
-
-        # Step 4: Restart each integration
-        successful_restarts = []
-        failed_restarts = []
-
-        for index, integration in dependent_result_output.iterrows():
-            self.logger.info(
-                f'Restarting {len(integration["integration_id"])} integrations'
-            )
-
-            integration_id = integration['integration_id']
-            integration_name = integration['integration_name']
-            current_status = integration['integration_status']
-            integration_scheduled = integration['integration_pattern'] == 'Scheduled'
-
-            self.logger.info(
-                f'Processing integration: {integration_name} (current status: {current_status})'
-            )
-
-            # Only deactivate if already activated
-            deactivate_needed = current_status == 'ACTIVATED'
-            restart_success = True
-            restart_error = None
-
-            # Step 4a: Deactivate if needed
-            if deactivate_needed:
-                try:
-                    self.logger.info(f'Deactivating integration: {integration_name}')
-
-                    if integration_scheduled:
-                        self.client.integrations.deactivate(
-                            integration_id, stop_schedular=True
-                        )
-                    else:
-                        self.client.integrations.deactivate(
-                            integration_id, stop_schedular=False
-                        )
-
-                    # Wait for deactivation to complete if sequential restart
-                    if sequential_restart:
-                        self.logger.info(
-                            f'Waiting {wait_time}s for deactivation to complete'
-                        )
-                        time.sleep(wait_time)
-
-                        # Verify deactivation if requested
-                        if verify_restart:
-                            integration_status = self.client.integrations.get(
-                                integration_id
-                            )
-                            if integration_status.get('status') != 'CONFIGURED':
-                                self.logger.warning(
-                                    f'Integration {integration_name} not fully deactivated, status: {integration_status.get("status")}'
-                                )
-
-                except OICError as e:
-                    self.logger.error(
-                        f'Failed to deactivate integration {integration_name}: {e!s}'
-                    )
-                    restart_success = False
-                    restart_error = f'Deactivation failed: {e!s}'
-
-            # Step 4b: Activate the integration
-            if restart_success:  # Only if deactivation succeeded or wasn't needed
-                try:
-                    self.logger.info(f'Activating integration: {integration_name}')
-                    self.client.integrations.activate(integration_id)
-
-                    # Wait for activation to complete if sequential restart
-                    if sequential_restart:
-                        self.logger.info(
-                            f'Waiting {wait_time}s for activation to complete'
-                        )
-                        time.sleep(wait_time)
-
-                        # Verify activation if requested
-                        if verify_restart:
-                            integration_status = self.client.integrations.get(
-                                integration_id
-                            )
-                            if integration_status.get('status') != 'ACTIVATED':
-                                self.logger.warning(
-                                    f'Integration {integration_name} not fully activated, status: {integration_status.get("status")}'
-                                )
-                                restart_success = False
-                                restart_error = f'Activation verification failed, status: {integration_status.get("status")}'
-
-                        if integration_scheduled:
-                            self.logger.info(
-                                f'Integration {integration_name} - Resuming Schedule'
-                            )
-                            schedule_status = self.client.integrations.resume_schedule(
-                                integration_id
-                            )
-                            self.logger.info(
-                                f'Integration {integration_name} - Schedule Activated'
-                            )
-
-                except OICError as e:
-                    self.logger.error(
-                        f'Failed to activate integration {integration_name}: {e!s}'
-                    )
-                    restart_success = False
-                    restart_error = f'Activation failed: {e!s}'
-
-            # Record the result
-            if restart_success:
-                successful_restarts.append(
-                    {'id': integration_id, 'name': integration_name}
-                )
-                result.add_resource(
-                    'restarted_integration',
-                    integration_id,
-                    {'name': integration_name, 'result': 'success'},
-                )
-            else:
-                failed_restarts.append(
-                    {
-                        'id': integration_id,
-                        'name': integration_name,
-                        'error': restart_error,
-                    }
-                )
-                result.add_error(
-                    f'Failed to restart integration {integration_name}',
-                    resource_id=integration_id,
-                )
-                result.add_resource(
-                    'restarted_integration',
-                    integration_id,
-                    {
-                        'name': integration_name,
-                        'result': 'failure',
-                        'error': restart_error,
-                    },
-                )
-
-        # Update overall workflow status
-        if failed_restarts:
-            result.success = False
-            result.message = (
-                f'Updated credentials for connection {connection_name}, '
-                f'but {len(failed_restarts)} of {len(dependent_result_output)} integration restarts failed'
-            )
-        else:
-            result.message = (
-                f'Successfully updated credentials for connection {connection_name} '
-                f'and restarted {len(successful_restarts)} integrations'
-            )
-
-        # Add details to the result
-        result.details['restart_results'] = {
-            'successful_count': len(successful_restarts),
-            'failed_count': len(failed_restarts),
-            'successful_restarts': successful_restarts,
-            'failed_restarts': failed_restarts,
-        }
-
-        return result
-
     def get_connection_ids_using_username(self, target_username: str)-> List[str]:
         # Get the connections info
         if not self.connections_configured_enriched:
@@ -610,23 +341,19 @@ class ConnectionWorkflows(BaseWorkflow):
         result.message = f'Updating password and restarting integrations'
         # Clean staged data
         if refresh_xref:
-            self.connections_dictionary = None
+            self.connections_dictionary = Dict[str, Dict[str, Any]] = {}
 
         # TODO: 1. Loop through the target_usernames[username, password]
         #  1. For each user, get connection Ids  calling  _get_connection_ids_using_username(). Concentrate in a connections_dictionary: Dictionary[connection_id, {username:str, integrations:List[integration_id:str]]
         connections_dictionary: Dict[str, Dict[str, Any]] = {}
         integrations_original_status: Dict[str, Dict[str, Any]] = {}
-        if self.connections_dictionary:
+        if  self.connections_dictionary:
             connections_dictionary = self.connections_dictionary
         else:
             for target_username in target_usernames.keys():
                 connection_ids =  self.get_connection_ids_using_username(target_username)
             # 1.1 For each connection Id, get the list of integrations using that connection.
                 for connection_id in connection_ids:
-                    # TODO: Remove - it's just to reduce the sample
-                    if connection_id.startswith("Psswrd") == False:
-                        continue
-
                     connections_dictionary[connection_id] = {"username":target_username, "integrations":[]}
                     #  1.1.1 Call client.connection.usage(connection_id=connection_id, raw=False).
                     connection_usage_df = self.client.connections.usage(connection_id=connection_id, raw=False)
@@ -651,6 +378,9 @@ class ConnectionWorkflows(BaseWorkflow):
                 result.success = False
                 result.add_error(resource_id=integration_id, message=exc.title, error=exc)
                 result.add_resource(resource_type='integration', resource_id=integration_id, data={"status":message})
+            except OICResourceNotFoundError as not_found_error:
+                print(f"Error getting {integration_id} integration original status: {not_found_error}")
+                exit(0)
 
         #  1.2 Get list of integrations with active schedulers:
         schedule_integrations = [
@@ -669,47 +399,41 @@ class ConnectionWorkflows(BaseWorkflow):
                 print(f"\t -{message}")
                 result.success = False
                 result.add_error(resource_id=integration_id, message=exc.title, error=exc)
-                result.add_resource(resource_type='schedule', resource_id=integration_id, data={"status":message})
+                result.add_resource(resource_type='integration', resource_id=integration_id, data={"status":message})
             except OICResourceNotFoundError as not_found_error:
                 print(f"INFO - {integration_id}  - Schedule not found: {not_found_error}")
                 schedule_integrations_without_schedule.append(integration_id)
         # Remove integrations without schedule from list
-
-
-        # TODO:  1.3 For each schedule integration, gather when is the next run and if any runs are in process
+        schedule_integrations = [
+            int_id for int_id in schedule_integrations
+            if int_id not in schedule_integrations_without_schedule
+        ]
 
         # # TODO: 2. Prompt user for proceed confirmation showing the schedule integrations with their running state and next run date
         # # 2.1 upon negative answer exit
         #
-        # # TODO: 3. Stop schedules of schedule integrations. Keep track of them because they will need to be re-started
-        # # 3.1 upon failure, re-start the stopped schedulers
+        # 3. Stop schedules of schedule integrations. Keep track of them because they will need to be re-started
+        # # TODO: 3.1 upon failure, re-start the stopped schedulers
+        filtered = [s for s in schedule_integrations if s.startswith("PSSWRD")] # TODO: remove
+        result_stop_shc = self._stop_schedulers(filtered, integrations_original_status)
+        result.merge(result_stop_shc)
+        data = {"action": "STOP_SCHEDULE", "datetime": datetime.now().isoformat(), "success": True,
+                "schedule_state": "STOPPED"}
         for integration_id in schedule_integrations:
-            try:
-                if integration_id.startswith("PSSWRD"):
-                    if integrations_original_status[integration_id]['SCHEDULE']['state'] == "ACTIVE":
-                        print("Stopping Scheduler for: ", integration_id)
-                        stop_response = self.client.integrations.stop_schedule(integration_id)
+            result.add_resource(resource_type='integration', resource_id=integration_id, data=data)
 
-            except OICAPIError as exc:
-                message = f"FAILED to STOP Schedule for {integration_id}: {exc.title}"
-                print(f"\t -{message}")
-                result.success = False
-                result.add_error(resource_id=integration_id, message=exc.title, error=exc)
-                result.add_resource(resource_type='schedule', resource_id=integration_id, data={"STOP_SCHEDULE":message})
-            except OICResourceNotFoundError as not_found_error:
-                print(f"\n\t{integration_id} not found: {not_found_error}")
-                result.success = False
-                result.add_error(resource_id=integration_id,  error=not_found_error)
-                result.add_resource(resource_type='schedule', resource_id=integration_id,
-                                    data={"STOP_SCHEDULE": "Not Found"})
-
-
-
-        #
         # # TODO: 4. Deactivate integrations.
-        # #  4.1 Wait until all integrations go into CONFIGURED state. Time out after 5 minutes, include the integrations de-activated in response
+        # # 4.1 Deactivate
+        filtered = [s for s in integrations_original_status.keys() if s.startswith("PSSWRD")]  # TODO: remove
+        response_wf:WorkflowResult = self.deactivate_integrations(integration_ids=filtered)
+        result.merge(response_wf)
+        if not response_wf.success:
+            print("Failed: ", response_wf.message, " ", result.message)
+            exit(1)
+
+        # #  4.2 Ensure all integrations go into CONFIGURED state. Time out after 5 minutes, include the integrations de-activated in response
         #
-        # # TODO: 5. Update the connections passwords
+        # Update the connections passwords
         print(f"\n======================================================")
 
         for connection_id in connections_dictionary.keys():
@@ -753,4 +477,107 @@ class ConnectionWorkflows(BaseWorkflow):
                     result.add_resource(resource_type='connection', resource_id=connection_id,data={"status":message})
 
 
+        return result
+
+    def _stop_schedulers(self, schedule_integrations: list[str], integrations_original_status: dict[str, dict[str, Any]]
+                         ) -> WorkflowResult:
+        schedule_integration_stopped: list[Any] = []
+        result= WorkflowResult()
+        success = True
+        for integration_id in schedule_integrations:
+            try:
+                print(integration_id, "state", integrations_original_status[integration_id]['SCHEDULE']['state'] )
+                if integrations_original_status[integration_id]['SCHEDULE']['state'] == "ACTIVE":
+                    print("Stopping Scheduler for: ", integration_id)
+                    params = {'asynch': True}
+                    self.client.integrations.stop_schedule(integration_id=integration_id, params=params)
+                    data = {"action": "STOP_SCHEDULE", "datetime": datetime.now().isoformat(), "success": True,
+                            'schedule_state': 'STOPPED'}
+                    result.add_resource(resource_type='integration', resource_id=integration_id,
+                                        data=data)
+                    schedule_integration_stopped.append(integration_id)
+
+            except OICAPIError as exc:
+                message = f"FAILED to STOP Schedule for {integration_id}: {exc.title}"
+                print(f"\t -{message}")
+                success = success if exc.status_code != "412" else False # Other than 412 is fatal error
+                result.add_error(resource_id=integration_id, message=exc.title, error=exc)
+                data = {"action": "STOP_SCHEDULE", "datetime": datetime.now().isoformat(), "success": False,
+                        "message": message}
+                result.add_resource(resource_type='integration', resource_id=integration_id,
+                                    data=data)
+            except OICResourceNotFoundError as not_found_error:
+                print(f"\n\t{integration_id} not found: {not_found_error}")
+                success = False
+                message = f'Error Stopping Schedule: {not_found_error}'
+                result.message = "Internal coding error: Schedule is not found by OIC API."
+                result.add_error(resource_id=integration_id, error=not_found_error, message=message)
+                data = {"action": "STOP_SCHEDULE", "datetime": datetime.now().isoformat(), "success": False,
+                        "message": message}
+                result.add_resource(resource_type='integration', resource_id=integration_id,
+                                    data=data)
+        #  Wait until all schedules go into CANCELLED state. Time out after 5 minutes, include the integrations de-activated in response
+        #
+        all_stopped = False   #guilty till proven innocent
+        iteration = 0
+        while iteration < 5 and not all_stopped:
+            iteration += 1
+
+            # Assume all are stopped until we find one that isn't
+            all_stopped = True
+
+            for integration_id in schedule_integrations:
+                try:
+                    schedule = self.client.integrations.get_schedule(integration_id)
+                    is_cancelled = schedule.get("state") == "CANCELLED"
+                    if not is_cancelled:
+                        all_stopped = False
+                        # No need to keep checking others in this iteration
+                        break
+                except OICError as oic_error:
+                    print(f"Error validating scheduler is deactivated for {integration_id}: {oic_error}")
+                    # If we can't validate one, be conservative and keep waiting
+                    all_stopped = False
+                    break
+
+            if not all_stopped and iteration < 5:
+                time.sleep(5)
+
+        result.success = success and all_stopped
+
+        return result
+
+    def deactivate_integrations(self, integration_ids: List[str]) -> WorkflowResult:
+        """
+        Deactivates the integrations that are active
+
+        Returns WorkflowResult:
+            Already inactive integrations will append a resource having the details in the "data" field
+            Success == False terminal error happened.  Failing to de-active because it wasn't active does not count as terminal fail.
+        """
+        result = WorkflowResult()
+        success = True
+        for integration_id in integration_ids:
+            try:
+                self.client.integrations.deactivate(integration_id=integration_id, delete_event_subscription_flag=False)
+                data = {"action":"DEACTIVATE", "datetime": datetime.now().isoformat(), "success":True}
+                result.add_resource(resource_id=integration_id, resource_type="integration",data=data)
+            except OICAPIError as exc:
+                message = f"FAILED to DEACTIVATE {integration_id}: {exc.title}"
+                success = success if exc.status_code != "412" else False # 412 means "Integration xxx is not active". Do not fail on 412
+                if not success:
+                    result.add_error(resource_id=integration_id, message=exc.title, error=exc)
+                data = {"action": "DEACTIVATE", "datetime": datetime.now().isoformat(), "success": False, "message": message}
+                result.add_resource(resource_type='integration', resource_id=integration_id,
+                                    data=data)
+            except OICResourceNotFoundError as not_found_error:
+                print(f"\n\t{integration_id} not found: {not_found_error}")
+                result.success = False
+                result.add_error(resource_id=integration_id, error=not_found_error, message=f'Error Deactivating: {not_found_error}')
+                result.message ="Internal coding error: Integrations are not found by OIC API."
+                data = {"action": "DEACTIVATE", "datetime": datetime.now().isoformat(), "success": False,
+                        "message": "404 - Not Found"}
+                result.add_resource(resource_type='integration', resource_id=integration_id,
+                                    data=data)
+        result.success = success
         return result
