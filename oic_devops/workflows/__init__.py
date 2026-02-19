@@ -13,6 +13,7 @@ from oic_devops.workflows.integration import IntegrationWorkflows
 from oic_devops.workflows.monitoring import MonitoringWorkflows
 from oic_devops.workflows.schedule import ScheduleWorkflows
 from oic_devops.workflows.validation import ValidationWorkflows
+from oic_devops.workflows.password_rotation import PasswordRotationWorkflow
 
 __all__ = [
 	'BackupWorkflows',
@@ -24,4 +25,5 @@ __all__ = [
 	'ScheduleWorkflows',
 	'ValidationWorkflows',
 	'WorkflowResult',
+    'PasswordRotationWorkflow'
 ]
