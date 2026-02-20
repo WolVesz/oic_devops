@@ -38,6 +38,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
     ACTION_INTEGRATION_IN_PROCESS = 'INTEGRATION_IN_PROCESS'
     ACTION_ACTIVATE = "ACTIVATE"
     ACTION_DEACTIVATE = "DEACTIVATE"
+    ACTION_START_SCHEDULE = "START_SCHEDULE"
 
 
     # --------------------------- Public API ---------------------------
@@ -125,11 +126,22 @@ class PasswordRotationWorkflow(BaseWorkflow):
             return result
 
         # 8) Start Schedulers
-
+        schedulers_wf = self.start_schedulers(schedule_integrations=scheduled_ids, integrations_original_status= integrations_original_status)
+        result.merge(schedulers_wf)
+        if not schedules_wf.success:
+            self.save_result(result)
+            return result
+        # 9) Wait for activated
+        wait_sched_wf = self.wait_for_schedules_state(scheduled_ids, desired_state="ACTIVE", timeout_sec=300,
+                                                      poll_interval_sec=5)
+        result.merge(wait_sched_wf)
+        if not wait_sched_wf.success:
+            self.save_result(result)
+            return result
 
         self.save_result(result)
         return result
-        return result
+
 
     # ---------------------- Unit-testable helpers ----------------------
     def build_connections_dictionary(
@@ -254,11 +266,11 @@ class PasswordRotationWorkflow(BaseWorkflow):
                     params = {"asynch": True}
                     self.client.integrations.stop_schedule(integration_id=integration_id, params=params)
                     data = {"action": "STOP_SCHEDULE", "datetime": datetime.now().isoformat(), "success": True, "schedule_state": "STOPPED"}
-                    result.add_resource(self.RESOURCE_INTEGRATION, integration_id, data)
+                    result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
                 else:
                     # Already not active; record as noop
                     data = {"action": "STOP_SCHEDULE", "datetime": datetime.now().isoformat(), "success": True, "schedule_state": state or "UNKNOWN"}
-                    result.add_resource(self.RESOURCE_INTEGRATION, integration_id, data)
+                    result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
             except OICAPIError as exc:
                 # Consider 412 (precondition) as non-fatal; others fatal
                 is_fatal = str(getattr(exc, "status_code", "")) != "412"
@@ -267,14 +279,59 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 overall_success = overall_success and (not is_fatal)
                 result.add_error(resource_id=integration_id, message=exc.title, error=exc)
                 data = {"action": "STOP_SCHEDULE", "datetime": datetime.now().isoformat(), "success": False, "message": msg}
-                result.add_resource(self.RESOURCE_INTEGRATION, integration_id, data)
+                result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
             except OICResourceNotFoundError as nf:
                 msg = f"Schedule not found: {nf}"
                 self.logger.error("%s for %s", msg, integration_id)
                 overall_success = False
                 result.add_error(resource_id=integration_id, message=str(nf), error=nf)
                 data = {"action": "STOP_SCHEDULE", "datetime": datetime.now().isoformat(), "success": False, "message": msg}
-                result.add_resource(self.RESOURCE_INTEGRATION, integration_id, data)
+                result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
+        result.success = overall_success
+        return result
+
+    def start_schedulers(
+        self, schedule_integrations: Iterable[str], integrations_original_status: Dict[str, Dict[str, Any]]
+    ) -> WorkflowResult:
+        """Stop ACTIVE schedules for the provided integrations."""
+        result = WorkflowResult()
+        overall_success = True
+
+        for integration_id in schedule_integrations:
+            try:
+                state = integrations_original_status.get(integration_id, {}).get("SCHEDULE", {}).get("state")
+                if state == "ACTIVE": # Originally active
+                    # Activate the Scheduler for the integration
+                    params = {'async': 'true'}
+                    self.client.integrations.start_schedule(integration_id=integration_id, data=None, params=params)
+
+                    data = {"action": self.ACTION_START_SCHEDULE, "datetime": datetime.now().isoformat(), "success": True, "schedule_state": "202 - Asked",
+                            "message":"Start submitted"}
+                    result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
+                else:
+                    # Originally not active; do nothing
+                    data = {"action": self.ACTION_START_SCHEDULE, "datetime": datetime.now().isoformat(), "success": False, "schedule_state": state or "UNKNOWN",
+                            "message":f"Schedule was not originally active. Original state: {state}" }
+                    result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
+                    self.logger.warning("%s was not originally active. No scheduler started.", integration_id)
+            except OICAPIError as exc:
+                # Consider 412 (precondition) as non-fatal; others fatal
+                is_fatal = str(getattr(exc, "status_code", "")) != "412"
+                msg = f"FAILED to Start Schedule: {exc.title}"
+                self.logger.error("%s for %s", msg, integration_id)
+                overall_success = overall_success and (not is_fatal)
+                result.add_error(resource_id=integration_id, message=exc.title, error=exc)
+                schedule_state = "UNKNOWN" if is_fatal else "ACTIVE"
+                data = {"action": self.ACTION_START_SCHEDULE, "datetime": datetime.now().isoformat(), "success": False, "schedule_state": schedule_state,
+                        "message": msg}
+                result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
+            except OICResourceNotFoundError as nf:
+                msg = f"Schedule not found: {nf}"
+                self.logger.error("%s for %s", msg, integration_id)
+                overall_success = False
+                result.add_error(resource_id=integration_id, message=str(nf), error=nf)
+                data = {"action": self.ACTION_START_SCHEDULE, "datetime": datetime.now().isoformat(), "success": False, "schedule_state": "UNKNOWN", "message": msg}
+                result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
         result.success = overall_success
         return result
 
@@ -351,7 +408,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
                             "message": f"In progress instances: {len(total_records_count)}",
                             "success" : True
                             }
-                    result.add_resource(self.RESOURCE_INTEGRATION, integration_id, data)
+                    result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
 
             except OICAPIError as exc:
                 is_fatal = str(getattr(exc, "status_code", "")) != "412"  # 412 = not active
@@ -360,19 +417,19 @@ class PasswordRotationWorkflow(BaseWorkflow):
                     result.add_error(resource_id=integration_id, message=exc.title, error=exc)
                 data = {"action": self.ACTION_INTEGRATION_IN_PROCESS, "datetime": datetime.now().isoformat(), "success": not is_fatal,
                         "message": exc.title}
-                result.add_resource(self.RESOURCE_INTEGRATION, integration_id, data)
+                result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
             except OICResourceNotFoundError as nf:
                 overall_success = False
                 result.add_error(resource_id=integration_id, message=str(nf), error=nf)
                 data = {"action": self.ACTION_INTEGRATION_IN_PROCESS, "datetime": datetime.now().isoformat(), "success": False,
                         f"message": f"404 - Not Found: code: {code}, version: {version}"}
-                result.add_resource(self.RESOURCE_INTEGRATION, integration_id, data)
+                result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
 
         result.success = overall_success
         return result
 
     def _are_in_progress(self, in_progress_wf_response: WorkflowResult) -> bool:
-        return len(in_progress_wf_response.resources[self.RESOURCE_INTEGRATION]) > 0
+        return len(in_progress_wf_response.resources[self.RESOURCE_INTEGRATION]) > 0 if in_progress_wf_response.resources[self.RESOURCE_INTEGRATION] else False
 
     def deactivate_integrations(self, integration_ids: Iterable[str]) -> WorkflowResult:
         """Deactivate the provided integrations (ignore 412 Precondition)."""
@@ -394,19 +451,19 @@ class PasswordRotationWorkflow(BaseWorkflow):
                     integration_id=integration_id, delete_event_subscription_flag=False
                 )
                 data = {"action": self.ACTION_DEACTIVATE, "datetime": datetime.now().isoformat(), "success": True}
-                result.add_resource(self.RESOURCE_INTEGRATION, integration_id, data)
+                result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
             except OICAPIError as exc:
                 is_fatal = str(getattr(exc, "status_code", "")) != "412"  # 412 = not active
                 if is_fatal:
                     overall_success = False
                     result.add_error(resource_id=integration_id, message=exc.title, error=exc)
                 data = {"action": self.ACTION_DEACTIVATE, "datetime": datetime.now().isoformat(), "success": not is_fatal, "message": exc.title}
-                result.add_resource(self.RESOURCE_INTEGRATION, integration_id, data)
+                result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
             except OICResourceNotFoundError as nf:
                 overall_success = False
                 result.add_error(resource_id=integration_id, message=str(nf), error=nf)
                 data = {"action": self.ACTION_DEACTIVATE, "datetime": datetime.now().isoformat(), "success": False, "message": "404 - Not Found"}
-                result.add_resource(self.RESOURCE_INTEGRATION, integration_id, data)
+                result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
         result.success = overall_success
         return result
 
@@ -422,18 +479,19 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 )
                 status = response['status'] if response['status'] else 'unknown'
                 data = {"action": self.ACTION_ACTIVATE, "datetime": datetime.now().isoformat(), "success": True, "status": response['status'] }
-                result.add_resource(self.RESOURCE_INTEGRATION, integration_id, data)
+                result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
             except OICAPIError as exc:
                 is_fatal = str(getattr(exc, "status_code", "")) != "412"  # 412 = not active
                 if is_fatal:
                     result.add_error(resource_id=integration_id, message=exc.title, error=exc)
                 data = {"action": self.ACTION_ACTIVATE, "datetime": datetime.now().isoformat(), "success": not is_fatal, "message": exc.title, "status": ""}
-                result.add_resource(self.RESOURCE_INTEGRATION, integration_id, data)
+                result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
+                self.logger.warning("Activating %s has a fatal (%s) exception: %s", integration_id, is_fatal, exc.title)
             except OICResourceNotFoundError as nf:
                 overall_success = False
                 result.add_error(resource_id=integration_id, message=str(nf), error=nf)
                 data = {"action": self.ACTION_ACTIVATE, "datetime": datetime.now().isoformat(), "success": False, "message": "404 - Not Found", "status": ""}
-                result.add_resource(self.RESOURCE_INTEGRATION, integration_id, data)
+                result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
         result.success = overall_success
         return result
 

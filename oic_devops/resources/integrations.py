@@ -238,6 +238,44 @@ class IntegrationsResource(BaseResource):
             'GET',
             self._get_endpoint(resource_id=integration_id, action='schedule'),
         )
+
+    def start_schedule(self, integration_id: str, data:Dict[str,Any],params: Optional[Dict[str, Any]] | None = None) -> Dict[str, Any]:
+        """
+        Resume a specific integration schedule.
+
+        Args:
+            integration_id: ID of the integration to activate.
+            data: data = {"parameters":[],"runAsUserName":"oic_service_account@tristategt.org"}
+            params:{"async":True}
+        Returns:
+            Dict: The activation result data.
+                https code 202 - Accepted
+                data = {
+                    "id": "",
+                    "instanceId": "",
+                    "links": [ ... ]
+}
+        """
+        if not data:
+            data:Dict[str,Any] = {"parameters":[]}
+        if not params:
+            params:Dict[str, Any] = {}
+
+        # Safely ensure default
+        params.setdefault('async', 'true')
+
+        headers = {'X-HTTP-Method-Override': 'PATCH'}
+        endpoint = self._get_endpoint(resource_id=integration_id, action='schedule/start')
+
+        response = self.client.request(
+            method='POST',
+            endpoint=endpoint,
+            headers=headers,
+            data=data,
+            params=params,
+        )
+        return response
+
     def resume_schedule(self, integration_id: str) -> Dict[str, Any]:
         """
         Resume a specific integration schedule.

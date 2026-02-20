@@ -386,7 +386,6 @@ class MonitoringResource(BaseResource):
             params = {}
 
         # Add filters to parameters
-
         #  {timewindow:'1h',code:'PSSWRD_SUBSCRIBER_B',version:'01.00.0000',status: 'IN_PROGRESS'}
         code_q = f",code:'{integration_code}'" if integration_code else None
         version_q= f",version:'{integration_version}'" if integration_version else None
