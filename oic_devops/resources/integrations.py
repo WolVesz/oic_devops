@@ -331,7 +331,7 @@ class IntegrationsResource(BaseResource):
 
         if not params:
             params: Optional[Dict[str, Any]] = {}
-        params['delete_event_subscription_flag']= delete_event_subscription_flag
+        params['deleteEventSubscriptionFlag']= delete_event_subscription_flag
 
         body = {'status': 'CONFIGURED'}
 
