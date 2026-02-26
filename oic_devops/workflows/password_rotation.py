@@ -6,9 +6,11 @@ from __future__ import annotations
 
 import time
 import os
+import traceback
 from datetime import datetime
 from typing import Any, Dict, Iterable, List, Tuple, Optional
 
+from oic_devops.cli import integrations
 from oic_devops.exceptions import (
     OICAPIError,
     OICError,
@@ -37,7 +39,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
 
     RESOURCE_INTEGRATION = "integrations"
     RESOURCE_CONNECTION = "connection"
-    ACTION_INTEGRATION_IN_PROCESS = 'INTEGRATION_IN_PROCESS'
+    ACTION_INTEGRATION_IN_PROGRESS = 'INTEGRATION_IN_PROGRESS'
     ACTION_ACTIVATE = "ACTIVATE"
     ACTION_DEACTIVATE = "DEACTIVATE"
     ACTION_START_SCHEDULE = "START_SCHEDULE"
@@ -65,101 +67,187 @@ class PasswordRotationWorkflow(BaseWorkflow):
             overrides: Dict[str,Any]| None = None
     ) -> WorkflowResult:
 
-        if self.client.config.profile == 'prod':
-            print("the update password is NOT READY for PROD.")
-            exit(0)
 
-        result = WorkflowResult()
-        result.message = "Updating passwords and restarting integrations"
+        #Validate to continue or not
+        continue_true_false = self._prompt_confirm_continue([self.client.config.profile, f"Connections filter: {connection_filter}"],"The following environment will be updated.")
+        if not continue_true_false:
+            exit(0)
 
         # 0) Initializations
         timeout_sec = 300 if overrides and not overrides['timeout_sec'] else overrides['timeout_sec']
         poll_interval_sec = 5 if overrides and not overrides['poll_interval_sec'] else overrides['poll_interval_sec']
 
-        # 1) Build/reuse cross-reference: connection_id -> { username, integrations: [ids] } ACTIVE connections ACTIVATED Integrations only
-        if refresh_xref or not self.connections_dictionary or not self.connectionFilter == connection_filter:
-            try:
-                self.connections_dictionary = self.build_connections_dictionary(target_usernames, connectionFilter=connection_filter)
-                self.connectionFilter = connection_filter
-            except Exception as exc:  # surface build errors
-                self.logger.exception("Failed to build connections dictionary.")
+        result = WorkflowResult()
+        result.message = f"Updating passwords. Connection filter: {connection_filter}"
+        result.success = True ## till proven guilty
+        try:
+            # 1) Build/reuse cross-reference: connection_id -> { username, integrations: [ids] } ACTIVE connections ACTIVATED Integrations only
+            if refresh_xref or not self.connections_dictionary or not self.connectionFilter == connection_filter:
+                try:
+                    self.connections_dictionary = self.build_connections_dictionary(target_usernames, connectionFilter=connection_filter)
+                    self.connectionFilter = connection_filter
+                except Exception as exc:  # surface build errors
+                    self.logger.exception("Failed to build connections dictionary.")
+                    result.success = False
+                    result.add_error(message="Failed to build connections dictionary", error=exc)
+                    return result
+
+            connections_dictionary = self.connections_dictionary or {}
+            ## Prompt to continue or chicken-out.
+            continue_true_false = self._prompt_confirm_continue(connections_dictionary,
+                                                                "The following connections will be Password Rotated")
+            if not continue_true_false:
                 result.success = False
-                result.add_error(message="Failed to build connections dictionary", error=exc)
+                result.message = "Aborted at Rotate Passwords."
                 return result
 
-        connections_dictionary = self.connections_dictionary or {}
+            # 2) Snapshot original status for all dependent integrations
+            integrations_original_status, snapshot_wf = self.snapshot_integrations_state(connections_dictionary)
+            self.integrations_original_status = integrations_original_status  # just to have access from the outside
+            result.merge(snapshot_wf)
+            if not snapshot_wf.success:
+                return result
 
-        # 2) Snapshot original status for all dependent integrations
-        integrations_original_status, snapshot_wf = self.snapshot_integrations_state(connections_dictionary)
-        result.merge(snapshot_wf)
-        if not snapshot_wf.success:
+            # 3) Identify scheduled integrations and their schedules
+            scheduled_ids = self.get_scheduled_integrations(integrations_original_status)
+            schedules_wf = self.snapshot_schedules(scheduled_ids, integrations_original_status)
+            result.merge(schedules_wf)
+            if not schedules_wf.success:
+                return result
+
+            # 4) Stop schedules and wait until CANCELLED
+            stop_sched_wf = self.stop_schedulers(scheduled_ids, integrations_original_status)
+            result.merge(stop_sched_wf)
+            if not stop_sched_wf.success:
+                self.print_status(stop_sched_wf,
+                                  message="Schedulers did not STOP. WARNING: Some have been stopped.",
+                                  resource_type=self.RESOURCE_INTEGRATION
+                                  )
+                result.add_error("Schedulers did not STOP")
+                self.save_result(result)
+                return result
+
+            wait_sched_wf = self.wait_for_schedules_state(scheduled_ids, integrations_original_status, desired_state="CANCELLED", timeout_sec=timeout_sec, poll_interval_sec=poll_interval_sec)
+            result.merge(wait_sched_wf)
+            if not wait_sched_wf.success:
+                self.print_status(wait_sched_wf,
+                                  message="Schedulers did not STOP on time. WARNING: Some have been stopped.",
+                                  resource_type=self.RESOURCE_INTEGRATION
+                                  )
+                result.add_error("Schedulers did not CANCEL on time")
+                self.save_result(result)
+                return result
+
+            # 5) Deactivate dependent integrations
+            dependent_integration_ids = self.filter_by_status_is_activated(integrations_original_status) #self.get_integration_ids_from_connection_dic(connections_dictionary)
+            deactivated_wf = self.deactivate_integrations(dependent_integration_ids)
+            result.merge(deactivated_wf)
+            if not deactivated_wf.success:
+                self.print_status(deactivated_wf,
+                                  message="Some integration failed to deactivate. WARNING: Some have been deactivated.",
+                                  resource_type= self.RESOURCE_INTEGRATION
+                                  )
+                result.add_error("Integrations did not DEACTIVATE on time")
+                self.save_result(result)
+                return result
+
+            # 6) Update connection passwords
+            update_wf = self.update_connection_passwords(connections_dictionary, target_usernames)
+            result.merge(update_wf)
+            if not update_wf.success:
+                self.print_status(update_wf,
+                                  message="Connections did not UPDATE PASSWORD correctly. WARNING: Some have been updated.",
+                                  resource_type=self.RESOURCE_CONNECTION
+                                  )
+                result.add_error("Connections did not UPDATE PASSWORD correctly")
+                self.save_result(result)
+                return result
+
+            # 7) Activate Integrations
+            activate_wf = self.activate_integrations(integrations_original_status)
+            result.merge(activate_wf)
+            if not activate_wf.success:
+                self.print_status(activate_wf,
+                                  message="Integrations did not REACTIVATE correctly. WARNING: Some have been activated.",
+                                  resource_type=self.RESOURCE_CONNECTION
+                                  )
+                result.add_error("Integrations did not activate correctly")
+                self.save_result(result)
+                return result
+
+            #7.a) Wait for activation to finish
+            wait_activate_integrations = self.wait_for_integrations_state(dependent_integration_ids, desired_status="ACTIVATED", timeout_sec=timeout_sec, poll_interval_sec=poll_interval_sec)
+            result.merge(wait_activate_integrations)
+            if not wait_activate_integrations.success:
+                self.print_status(wait_activate_integrations,
+                                  message="Integrations did not REACTIVATE on time. WARNING: Some have been activated.",
+                                  resource_type=self.RESOURCE_CONNECTION
+                                  )
+                result.add_error("Integrations did not activate on time")
+                self.save_result(result)
+                return result
+
+            # 8) Start Schedulers
+            schedulers_wf = self.start_schedulers(
+                schedule_integrations=scheduled_ids,
+                integrations_original_status=integrations_original_status)
+            result.merge(schedulers_wf)
+            if not schedules_wf.success:
+                self.print_status(schedules_wf,
+                                  message="Schedulers did not RE-START. WARNING: Some have been activated.",
+                                  resource_type=self.RESOURCE_CONNECTION
+                                  )
+                result.add_error("Schedulers did not re-started")
+                self.save_result(result)
+                return result
+            # 9) Wait for scheduler to be activated
+            wait_sched_wf = self.wait_for_schedules_state(scheduled_ids, integrations_original_status, desired_state="ACTIVE", timeout_sec=timeout_sec, poll_interval_sec=poll_interval_sec)
+            result.merge(wait_sched_wf)
+            if not wait_sched_wf.success:
+                self.print_status(wait_sched_wf,
+                                  message="Schedulers did not RE-START on time. WARNING: Some have been activated.",
+                                  resource_type=self.RESOURCE_CONNECTION
+                                  )
+                result.add_error("Schedulers did not re-started on time")
+                self.save_result(result)
+                return result
+
+            self.save_result(result)
+
+            integrations_result_status, wf = self.snapshot_integrations_state(connections_dictionary)
+            print("===" * 30)
+            if not wf.success:
+                print("Comparing resulting integrations status cannot be done because of a failure getting the integration status")
+            else:
+                print(
+                    "Comparing resulting integrations status with original")
+                print("---" * 30)
+                i=1
+                for integration_id, info in integrations_original_status.items():
+                    current_integration_status = integrations_result_status[integration_id]
+                    original_status = info.get('status')
+                    new_status = "unknown" if not current_integration_status else current_integration_status['status']
+                    print(f"{i}. {integration_id}\toriginal:{original_status}  new status:{new_status}\tSAME STATUS: {original_status == new_status}")
+                    i +=1
             return result
 
-        self.integrations_original_status = integrations_original_status # just to have access from the outside
-        # 3) Identify scheduled integrations and their schedules
-        scheduled_ids = self.get_scheduled_integrations(integrations_original_status)
-        schedules_wf = self.snapshot_schedules(scheduled_ids, integrations_original_status)
-        result.merge(schedules_wf)
-        if not schedules_wf.success:
-            return result
-        if self.client.config.profile == 'prod':
-            print("the update password is NOT READY for PROD.")
-            exit(0)
-        # 4) Stop schedules and wait until CANCELLED
-        stop_sched_wf = self.stop_schedulers(scheduled_ids, integrations_original_status)
-        result.merge(stop_sched_wf)
-        if not stop_sched_wf.success:
+        except Exception as e:
+            full_error = traceback.format_exc()
+            self.logger.error(full_error)
+            result.message = full_error
+            result.add_error(message=full_error, error=e, resource_id=None)
             self.save_result(result)
             return result
 
-        wait_sched_wf = self.wait_for_schedules_state(scheduled_ids, integrations_original_status, desired_state="CANCELLED", timeout_sec=timeout_sec, poll_interval_sec=poll_interval_sec)
-        result.merge(wait_sched_wf)
-        if not wait_sched_wf.success:
-            self.save_result(result)
-            return result
-
-        # 5) Deactivate dependent integrations
-        dependent_integration_ids = self.get_integration_ids_from_connection_dic(connections_dictionary)
-        deact_wf = self.deactivate_integrations(dependent_integration_ids)
-        result.merge(deact_wf)
-        if not deact_wf.success:
-            self.save_result(result)
-            return result
-
-        # 6) Update connection passwords
-        update_wf = self.update_connection_passwords(connections_dictionary, target_usernames)
-        result.merge(update_wf)
-        if not update_wf.success:
-            self.save_result(result)
-            return result
-
-        # 7) Activate Integrations
-        activate_wf = self.activate_integrations(dependent_integration_ids)
-        result.merge(activate_wf)
-        if not activate_wf.success:
-            self.save_result(result)
-            return result
-
-        # 8) Start Schedulers
-        schedulers_wf = self.start_schedulers(
-            schedule_integrations=scheduled_ids,
-            integrations_original_status=integrations_original_status)
-        result.merge(schedulers_wf)
-        if not schedules_wf.success:
-            self.save_result(result)
-            return result
-        # 9) Wait for activated
-        wait_sched_wf = self.wait_for_schedules_state(scheduled_ids, integrations_original_status, desired_state="ACTIVE", timeout_sec=timeout_sec, poll_interval_sec=poll_interval_sec)
-        result.merge(wait_sched_wf)
-        if not wait_sched_wf.success:
-            self.save_result(result)
-            return result
-
-        self.save_result(result)
-        return result
-
-
-    # ---------------------- Unit-testable helpers ----------------------
+    def print_status(self, wf: WorkflowResult,  message: str, resource_type:str):
+        print("!!!", "=" * 60)
+        print(message)
+        print("!!!", "-" * 60)
+        if wf.resources[resource_type]:
+            for deactivated, info in wf.resources[resource_type].items():
+                print(f"{deactivated}\t {info}")
+        else:
+            print(f'Resource: {resource_type}, Success:{wf.success}, message:{wf.message}')
     def build_connections_dictionary(
             self,
             target_usernames: Dict[str, str],
@@ -219,6 +307,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
         where the map is {integration_id: {...raw integration details...}}
         """
         result = WorkflowResult()
+        result.message="snapshot_integrations_state"
         info: Dict[str, Dict[str, Any]] = {}
 
         integration_ids = self.get_integration_ids_from_connection_dic(connections_dictionary)
@@ -254,6 +343,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
     ) -> WorkflowResult:
         """Fetch and record the schedule details for given integrations."""
         result = WorkflowResult()
+        result.message="snapshot_schedules"
         for integration_id in schedule_integrations:
             try:
                 schedule = self.client.integrations.get_schedule(integration_id=integration_id)
@@ -277,7 +367,15 @@ class PasswordRotationWorkflow(BaseWorkflow):
     ) -> WorkflowResult:
         """Stop ACTIVE schedules for the provided integrations."""
         result = WorkflowResult()
+        result.message = "stop_schedulers"
         overall_success = True
+
+        # Validate to continue or not
+        continue_true_false = self._prompt_confirm_continue(schedule_integrations, "The following schedulers will be STOPPED")
+        if not continue_true_false:
+            result.success = False
+            result.message = "Aborted at Stop Schedulers"
+            return result
 
         for integration_id in schedule_integrations:
             try:
@@ -313,6 +411,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
     ) -> WorkflowResult:
         """Starts ACTIVE schedules for the provided integrations."""
         result = WorkflowResult()
+        result.message = "start_schedulers"
         overall_success = True
 
         for integration_id in schedule_integrations:
@@ -351,6 +450,78 @@ class PasswordRotationWorkflow(BaseWorkflow):
         result.success = overall_success
         return result
 
+    def wait_for_integrations_state(
+        self,
+        integrations_original_status: Iterable[str],
+        desired_status: str = "CANCELLED",
+        timeout_sec: int = 300,
+        poll_interval_sec: int = 5,
+    ) -> WorkflowResult:
+        result = WorkflowResult()
+        result.message = f"wait_for_integrations_state:{desired_status}"  # let's be optimistic
+        start = time.time()
+        ids = integrations_original_status
+        if not ids:
+            result.success = True
+            result.message = "wait_for_integrations_state:No integrations to wait for"
+            return result
+        current_status = None
+        integration_exception = None
+        integration_id_not_matching = "see errors"
+        while True:
+            all_done = True
+            for integration_id in ids:
+                try:
+                    integration = self.client.integrations.get(integration_id)
+                    if integration.get("status") != desired_status:
+                        current_status = integration.get("status")
+                        self.logger.warning(f'Integration is not at desired status: {integration_id}. current status: {current_status} != desired: {desired_status}')
+                        all_done = False
+                        integration_id_not_matching = integration_id
+                        break
+                except OICResourceNotFoundError as nf:
+                    self.logger.error(nf)
+                    integration_id_not_matching = integration_id
+                    integration_exception = nf
+                    all_done = False
+                    result.add_error(resource_id=integration_id, message=str(nf), error=nf)
+                    data = {"action": f"GET Integration - WAIT_{desired_status}", "datetime": datetime.now().isoformat(),
+                            "success": False,
+                            f"message": f"404 - Not Found: {integration_id}"}
+                    result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
+                except OICError as exc:
+                    self.logger.error(exc)
+                    integration_exception = exc
+                    integration_id_not_matching = integration_id
+                    # Conservative: keep waiting if a transient error occurs
+                    all_done = False
+                    self.logger.error(exc)
+                    break
+
+            if all_done:
+                result.success = True
+                for integration_id in ids:
+                    result.add_resource(self.RESOURCE_INTEGRATION, integration_id, {"action": f"WAIT_{desired_status}", "success": True, "state": desired_status})
+                    result = self.trace_into_details(resource_type=self.RESOURCE_INTEGRATION, workflow_result=result)
+                return result
+
+            if time.time() - start >= timeout_sec:
+                result.success = False
+                result.message = f"wait_for_integrations_state Timeout. Desired state: {desired_status}"
+                current_status = current_status if current_status is not None else "UNKNOWN"
+                result.add_error(resource_id=integration_id_not_matching,
+                                 message=f"Current state: {current_status} desired: {desired_status}. Integration API response: {integration_exception} ")
+                message = f"current state: {current_status} desired: {desired_status}"
+                data = {"action": "WAIT_{desired_state}", "datetime": datetime.now().isoformat(),"success": False, "message": message}
+                result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id_not_matching, data=data)
+
+                result = self.trace_into_details(resource_type=self.RESOURCE_INTEGRATION, workflow_result=result)
+
+                return result
+
+            time.sleep(poll_interval_sec)
+
+
     def wait_for_schedules_state(
         self,
         schedule_integrations: Iterable[str],
@@ -361,12 +532,12 @@ class PasswordRotationWorkflow(BaseWorkflow):
     ) -> WorkflowResult:
         """Poll schedules until all reach the desired state (default CANCELLED)."""
         result = WorkflowResult()
-        result.message = f"Integration Schedulers match the state:{desired_state}"  # let be optimistic
+        result.message = f"wait_for_schedules_state: {desired_state}"  # let be optimistic
         start = time.time()
         ids = list(schedule_integrations)
         if not ids:
             result.success = True
-            result.message = "No scheduled integrations to wait for"
+            result.message = "wait_for_schedules_state: No scheduled integrations to wait for"
             return result
         current_state = None
         schedule_exception = None
@@ -390,7 +561,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
                         schedule_exception = nf
                         all_done = False
                         result.add_error(resource_id=integration_id, message=str(nf), error=nf)
-                        data = {"action": "GET Schedule", "datetime": datetime.now().isoformat(),
+                        data = {"action": f"GET Schedule failed on WAIT_SCHEDULE to desired:{desired_state}", "datetime": datetime.now().isoformat(),
                                 "success": False,
                                 f"message": f"404 - Not Found: {integration_id}"}
                         result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
@@ -400,19 +571,25 @@ class PasswordRotationWorkflow(BaseWorkflow):
                         integration_id_not_matching = integration_id
                         # Conservative: keep waiting if a transient error occurs
                         all_done = False
-                        self.logger.error(exc)
+                        data = {"action": f"GET Schedule failed on WAIT_SCHEDULE to desired:{desired_state}",
+                                "datetime": datetime.now().isoformat(),
+                                "success": False,
+                                f"message": exc}
+                        result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id,
+                                            data=data)
                         break
 
             if all_done:
                 result.success = True
                 for integration_id in ids:
                     result.add_resource(self.RESOURCE_INTEGRATION, integration_id, {"action": "WAIT_SCHEDULE", "success": True, "state": desired_state})
-                    result = self.trace_into_details(resource_type=self.RESOURCE_INTEGRATION, workflow_result=result)
+
+                result = self.trace_into_details(resource_type=self.RESOURCE_INTEGRATION, workflow_result=result)
                 return result
 
             if time.time() - start >= timeout_sec:
                 result.success = False
-                result.message = f"Timeout while waiting for schedules to reach {desired_state}. See errors for details."
+                result.message = f"wait_for_schedules_state Timeout. Desired state: {desired_state}. See errors for details."
                 current_state = current_state if current_state is not None else "UNKNOWN"
                 result.add_error(resource_id=integration_id_not_matching,
                                  message=f"Current state: {current_state} desired: {desired_state}. Schedule API response: {schedule_exception} ")
@@ -439,6 +616,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
         {timewindow:'1h',code:'PSSWRD_SUBSCRIBER_B',version:'01.00.0000',status: 'IN_PROGRESS'}
         """
         result = WorkflowResult()
+        result.message = "get_in_progress_integrations"
         overall_success = True
         all_in_progress = 0
         # check integration running instances
@@ -449,26 +627,28 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 total_records_count = response['totalRecordsCount']
                 if total_records_count > 0:
                     all_in_progress += total_records_count
-                    result.message = f"There are integration instances running (in progress): {all_in_progress}"
+                    result.message = f"get_in_progress_integrations - integrations in progress: {all_in_progress}"
                     data = {
-                            "action": self.ACTION_INTEGRATION_IN_PROCESS, "datetime": datetime.now().isoformat(),
-                            "message": f"In progress instances: {len(total_records_count)}",
+                            "action": self.ACTION_INTEGRATION_IN_PROGRESS, "datetime": datetime.now().isoformat(),
+                            "message": f"In progress instances: {total_records_count}",
                             "success" : True
                             }
                     result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
 
             except OICAPIError as exc:
+                self.logger.error(exc)
                 is_fatal = str(getattr(exc, "status_code", "")) != "412"  # 412 = not active
                 if is_fatal:
                     overall_success = False
                     result.add_error(resource_id=integration_id, message=exc.title, error=exc)
-                data = {"action": self.ACTION_INTEGRATION_IN_PROCESS, "datetime": datetime.now().isoformat(), "success": not is_fatal,
+                data = {"action": self.ACTION_INTEGRATION_IN_PROGRESS, "datetime": datetime.now().isoformat(), "success": not is_fatal,
                         "message": exc.title}
                 result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
             except OICResourceNotFoundError as nf:
+                self.logger.warning(nf)
                 overall_success = False
                 result.add_error(resource_id=integration_id, message=str(nf), error=nf)
-                data = {"action": self.ACTION_INTEGRATION_IN_PROCESS, "datetime": datetime.now().isoformat(), "success": False,
+                data = {"action": self.ACTION_INTEGRATION_IN_PROGRESS, "datetime": datetime.now().isoformat(), "success": False,
                         f"message": f"404 - Not Found: code: {code}, version: {version}"}
                 result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
 
@@ -488,14 +668,22 @@ class PasswordRotationWorkflow(BaseWorkflow):
     def deactivate_integrations(self, integration_ids: Iterable[str]) -> WorkflowResult:
         """Deactivate the provided integrations (ignore 412 Precondition)."""
         result = WorkflowResult()
+        result.message = "deactivate_integrations"
         overall_success = True
 
         # Verify no integrations are running
         in_progress_wf = self.get_in_progress_integrations(integration_ids)
         if self._are_in_progress(in_progress_wf_response=in_progress_wf):
-            result.message = f"Cannot deactivate integrations because there are some running at this time: {datetime.now().isoformat()}"
+            result.message = f"deactivate_integrations: Cannot deactivate because some are running at: {datetime.now().isoformat()}"
             result.merge(in_progress_wf)
             result.success = False
+            return result
+
+        continue_true_false = self._prompt_confirm_continue(integration_ids,
+                                                   "The following integrations  will be DEACTIVATED")
+        if not continue_true_false:
+            result.success = False
+            result.message = "deactivate_integrations: Aborted."
             return result
 
         # Go for it, shut tehm down!
@@ -507,6 +695,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 data = {"action": self.ACTION_DEACTIVATE, "datetime": datetime.now().isoformat(), "success": True}
                 result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
             except OICAPIError as exc:
+                self.logger.error(exc)
                 is_fatal = str(getattr(exc, "status_code", "")) != "412"  # 412 = not active
                 if is_fatal:
                     overall_success = False
@@ -514,6 +703,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 data = {"action": self.ACTION_DEACTIVATE, "datetime": datetime.now().isoformat(), "success": not is_fatal, "message": exc.title}
                 result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
             except OICResourceNotFoundError as nf:
+                self.logger.warning(nf)
                 overall_success = False
                 result.add_error(resource_id=integration_id, message=str(nf), error=nf)
                 data = {"action": self.ACTION_DEACTIVATE, "datetime": datetime.now().isoformat(), "success": False, "message": "404 - Not Found"}
@@ -522,39 +712,53 @@ class PasswordRotationWorkflow(BaseWorkflow):
         result.success = overall_success
         return result
 
-    def activate_integrations(self, integration_ids: Iterable[str]) -> WorkflowResult:
+    def activate_integrations(self, integrations_original_status: Dict[str, Any]) -> WorkflowResult:
         """Activate the provided integrations (ignore 412 Precondition)."""
         result = WorkflowResult()
+        result.message = "activate_integrations"
         overall_success = True
+        originally_activated_ids = self.filter_by_status_is_activated(integrations_original_status)
 
-        for integration_id in integration_ids:
+        for integration_id in originally_activated_ids:
             try:
                 response = self.client.integrations.activate(
                     integration_id=integration_id
                 )
+                # Add activation success  to response
                 status = response['status'] if response['status'] else 'unknown'
-                data = {"action": self.ACTION_ACTIVATE, "datetime": datetime.now().isoformat(), "success": True, "status": response['status'] }
+                data = {"action": self.ACTION_ACTIVATE, "datetime": datetime.now().isoformat(), "success": True, "status": status }
                 result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
+
             except OICAPIError as exc:
+                self.logger.error(exc)
                 is_fatal = str(getattr(exc, "status_code", "")) != "412"  # 412 = not active
                 if is_fatal:
                     result.add_error(resource_id=integration_id, message=exc.title, error=exc)
-                data = {"action": self.ACTION_ACTIVATE, "datetime": datetime.now().isoformat(), "success": not is_fatal, "message": exc.title, "status": ""}
+                data = {"action": self.ACTION_ACTIVATE, "datetime": datetime.now().isoformat(), "success": not is_fatal, "message": exc.title, "status": "unknown"}
                 result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
                 self.logger.warning("Activating %s has a fatal (%s) exception: %s", integration_id, is_fatal, exc.title)
             except OICResourceNotFoundError as nf:
                 overall_success = False
                 result.add_error(resource_id=integration_id, message=str(nf), error=nf)
-                data = {"action": self.ACTION_ACTIVATE, "datetime": datetime.now().isoformat(), "success": False, "message": "404 - Not Found", "status": ""}
+                data = {"action": self.ACTION_ACTIVATE, "datetime": datetime.now().isoformat(), "success": False, "message": "404 - Not Found", "status": "unknown"}
                 result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
         result = self.trace_into_details(resource_type=self.RESOURCE_INTEGRATION, workflow_result=result)
         result.success = overall_success
         return result
 
+    def filter_by_status_is_activated(self, integrations_original_status: dict[str, Any]) -> list[str]:
+        ## Filter originally ACTIVATED
+        originally_activated_ids = [
+            integration_id
+            for integration_id, info in integrations_original_status.items()
+            if info.get("status") == "ACTIVATED" or "status" not in info
+        ]
+        return originally_activated_ids
 
     def update_connection_passwords(self, connections_dictionary: Dict[str, Dict[str, Any]], target_usernames: Dict[str, str]) -> WorkflowResult:
         """Patch username/password on each connection and verify CONFIGURED status."""
         result = WorkflowResult()
+        result.message ='update_connection_passwords'
         overall_success = True
 
         for connection_id, info in connections_dictionary.items():
@@ -578,20 +782,29 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 response = self.client.connections.update(connection_id=connection_id, params=params, data=data)
                 configured = response.get("status") == "CONFIGURED"
                 if configured:
-                    result.add_resource(self.RESOURCE_CONNECTION, connection_id, {"status": "password successfully updated"})
+                    data = {"action":"UPDATE_PASSWORD", "success": True, "state":configured}
+                    result.add_resource(self.RESOURCE_CONNECTION, connection_id, data)
                     self.logger.info("Updated password for connection %s", connection_id)
                 else:
                     overall_success = False
                     msg = "Password updated, but connection did not reach CONFIGURED status"
                     result.add_error(resource_id=connection_id, message=msg)
-                    result.add_resource(self.RESOURCE_CONNECTION, connection_id, {"status": "Error", "message": msg})
+                    data = {"action": "UPDATE_PASSWORD", "success": False, "state": configured, "message":msg}
+                    result.add_resource(self.RESOURCE_CONNECTION, connection_id, data=data)
                     self.logger.error("%s for %s", msg, connection_id)
             except OICAPIError as exc:
+                self.logger.error(exc)
                 overall_success = False
                 msg = f"{connection_id}/{username} password update FAILED: {exc.title}"
                 self.logger.error(msg)
                 result.add_error(resource_id=connection_id, message=exc.title, error=exc)
-                result.add_resource(self.RESOURCE_CONNECTION, connection_id, {"status": "Error", "message": msg})
+                data = {"action": "UPDATE_PASSWORD", "success": False, "state": "unknown", "message": msg}
+                result.add_resource(self.RESOURCE_CONNECTION, connection_id, data)
+            except OICResourceNotFoundError as nf:
+                overall_success = False
+                result.add_error(resource_id=connection_id, message=str(nf), error=nf)
+                data = {"action": "UPDATE_PASSWORD", "datetime": datetime.now().isoformat(), "success": False, "message": "404 - Not Found", "status": "unknown"}
+                result.add_resource(resource_type=self.RESOURCE_CONNECTION, resource_id=connection_id, data=data)
 
         result = self.trace_into_details(resource_type=self.RESOURCE_CONNECTION, workflow_result=result)
         result.success = overall_success
@@ -618,3 +831,22 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 key = f"{timestamp}-{idx:07d}"
                 workflow_result.details[key] = {integration_id: value}
         return workflow_result
+
+
+    def _prompt_confirm_continue(self, resource_ids: Iterable[str], message:str) -> bool:
+        """
+        Prints the ids that will be {message} and prompts for confirmation.
+
+        Returns True if the user confirms; False otherwise.
+        """
+        if not resource_ids:
+            return False  # Nothing to do
+
+        print(f"\n{message} in {self.client.config.profile}:")
+        for i, resource_id in enumerate(resource_ids, start=1):
+            print(f"  {i:>2}.  {resource_id}")
+
+        # Basic y/N prompt
+        answer = input("\nProceed ? [y/N]: ").strip().lower()
+        return answer in ("y", "yes")
+
