@@ -138,7 +138,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
             result.merge(responses_wf)
             if not responses_wf.success:
                 print_status(responses_wf,
-                                  message="Schedulers did not STOP. WARNING: Some have been stopped.",
+                                  message="Schedulers did not STOP. WARNING: Some might had been stopped.",
                                   resource_type=self.RESOURCE_INTEGRATION
                                   )
                 result.add_error("Schedulers did not STOP")
@@ -282,7 +282,6 @@ class PasswordRotationWorkflow(BaseWorkflow):
 
     def print_final_state_comparison(self, connections_dictionary: dict[str, dict[str, Any]] | None | dict[Any, Any],
                                      integrations_original_status: dict[str, dict[str, Any]], result: WorkflowResult):
-        integrations_final_status, wf = self.snapshot_integrations_state(connections_dictionary)
 
         ## Prompt for wanna see it
         continue_true_false = self._prompt_confirm_continue(
@@ -290,6 +289,9 @@ class PasswordRotationWorkflow(BaseWorkflow):
             "Want to see Original vs Final state.")
         if not continue_true_false:
             return
+
+        integrations_final_status, wf = self.snapshot_integrations_state(connections_dictionary)
+
         # print compare
         print("===" * 30)
         if not wf.success:
@@ -300,14 +302,17 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 "Comparing resulting integrations status with original")
             print("---" * 30)
             i = 1
+            contador_diff = 0
             for integration_id, info in integrations_original_status.items():
                 final_integration_status = integrations_final_status[integration_id]
                 original_status = info.get('status')
                 new_status = "unknown" if not final_integration_status else final_integration_status['status']
+                same_status = original_status == new_status
+                contador_diff = contador_diff +1 if not same_status else contador_diff
                 print(
-                    f"{i}. {integration_id}\toriginal:{original_status}  new status:{new_status}\tSAME STATUS: {original_status == new_status}")
+                    f"{i}. {integration_id}\toriginal:{original_status}  new status:{new_status}\tSAME STATUS: {same_status}")
                 i += 1
-
+            print(f"Integrations with different status: {contador_diff}")
             scheduler_ids = self.filter_scheduled_integrations(integrations_final_status)
             wf = self.enrich_integration_status_with_schedules_snapshot(schedule_integrations=scheduler_ids,
                                                                         integrations_status=integrations_final_status)
@@ -319,14 +324,19 @@ class PasswordRotationWorkflow(BaseWorkflow):
                     "Comparing resulting schedule state with original")
                 print("---" * 30)
                 i = 1
+                contador_diff = 0
                 for integration_id in scheduler_ids:
                     info = integrations_original_status[integration_id].get("SCHEDULE",{})
                     final_integration_status = integrations_final_status[integration_id].get("SCHEDULE",{})
                     original_status = info.get('state')
                     new_status = final_integration_status.get('state')
+                    same_status = original_status == new_status
+                    contador_diff = contador_diff if same_status else contador_diff +1
                     print(
-                        f"{i}. {integration_id}\toriginal:{original_status}  new status:{new_status}\tSAME STATUS: {original_status == new_status}")
+                        f"{i:>4,}. {integration_id}\toriginal:{original_status}  new status:{new_status}\tSAME STATUS: {same_status}")
                     i += 1
+                print(f"Integrations with different status: {contador_diff}")
+
         # print errors
         ## Prompt for wanna see it
         continue_true_false = self._prompt_confirm_continue(
@@ -334,7 +344,11 @@ class PasswordRotationWorkflow(BaseWorkflow):
             f"Want to see the Errors: {len(result.errors)}")
         if not continue_true_false:
             return
-        
+        else:
+            i = 1
+            for error in result.errors:
+                print(f'{i:>4,}. {error}')
+                i += 1
     def build_connections_dictionary(
             self,
             target_usernames: Dict[str, str],
@@ -910,7 +924,8 @@ class PasswordRotationWorkflow(BaseWorkflow):
     def persist_result(self, wf: WorkflowResult):
         save_dir = self.make_persist_dir()
 
-        filename = os.path.join(save_dir, "password_rotation_result.json")
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = os.path.join(save_dir, f"password_rotation_result{ts}.json")
         wf.save_to_file(filename)
 
     def make_persist_dir(self) -> str:
