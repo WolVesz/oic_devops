@@ -142,7 +142,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
                                   resource_type=self.RESOURCE_INTEGRATION
                                   )
                 result.add_error("Schedulers did not STOP")
-                self.save_result(result)
+                self.persist_result(result)
                 self.print_final_state_comparison(connections_dictionary, integrations_original_status,result)
                 return result
 
@@ -154,7 +154,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
                                   resource_type=self.RESOURCE_INTEGRATION
                                   )
                 result.add_error("Schedulers did not CANCEL on time")
-                self.save_result(result)
+                self.persist_result(result)
                 self.print_final_state_comparison(connections_dictionary, integrations_original_status, result)
                 return result
 
@@ -168,7 +168,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
                                   resource_type= self.RESOURCE_INTEGRATION
                                   )
                 result.add_error("Integrations did not DEACTIVATE on time")
-                self.save_result(result)
+                self.persist_result(result)
                 self.print_final_state_comparison(connections_dictionary, integrations_original_status, result)
                 return result
 
@@ -177,7 +177,8 @@ class PasswordRotationWorkflow(BaseWorkflow):
                                                         "LAST opportunity to abort - The following connections will be Password Rotated")
             if not continue_true_false:
                 result.success = False
-                result.message = "Aborted at Rotate Passwords. Nothing got updated."
+                result.message = "Aborted at Rotate Passwords. No password updated, but Integrations and Schedulers deactivated and stopped.\nuse restore_instegrations_to_original_state() if desired."
+                self.persist_result(result)
                 return result
 
             # 6) Update connection passwords
@@ -189,7 +190,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
                                   resource_type=self.RESOURCE_CONNECTION
                                   )
                 result.add_error("Connections did not UPDATE PASSWORD correctly")
-                self.save_result(result)
+                self.persist_result(result)
                 self.print_final_state_comparison(connections_dictionary, integrations_original_status, result)
                 return result
 
@@ -202,7 +203,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
                                   resource_type=self.RESOURCE_CONNECTION
                                   )
                 result.add_error("Integrations did not activate correctly")
-                self.save_result(result)
+                self.persist_result(result)
                 self.print_final_state_comparison(connections_dictionary, integrations_original_status, result)
                 return result
 
@@ -215,7 +216,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
                                   resource_type=self.RESOURCE_CONNECTION
                                   )
                 result.add_error("Integrations did not activate on time")
-                self.save_result(result)
+                self.persist_result(result)
                 self.print_final_state_comparison(connections_dictionary, integrations_original_status, result)
                 return result
 
@@ -230,7 +231,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
                                   resource_type=self.RESOURCE_CONNECTION
                                   )
                 result.add_error("Schedulers did not re-started")
-                self.save_result(result)
+                self.persist_result(result)
                 self.print_final_state_comparison(connections_dictionary, integrations_original_status, result)
                 return result
             # 9) Wait for scheduler to be activated
@@ -242,11 +243,11 @@ class PasswordRotationWorkflow(BaseWorkflow):
                                   resource_type=self.RESOURCE_CONNECTION
                                   )
                 result.add_error("Schedulers did not re-started on time")
-                self.save_result(result)
+                self.persist_result(result)
                 self.print_final_state_comparison(connections_dictionary, integrations_original_status, result)
                 return result
 
-            self.save_result(result)
+            self.persist_result(result)
             print("/nTotal errors: ", len(result.errors))
             self.print_final_state_comparison(connections_dictionary, integrations_original_status, result)
 
@@ -259,14 +260,12 @@ class PasswordRotationWorkflow(BaseWorkflow):
             self.logger.error(full_error)
             result.message = full_error
             result.add_error(message=full_error, error=e, resource_id=None)
-            self.save_result(result)
+            self.persist_result(result)
             return result
 
     def persist_integrations_original_state(self, integrations_original_status: dict[str, dict[str, Any]]):
         try:
-            save_dir = self.client.config.save_results_directory
-            save_dir = os.path.join(save_dir,self.client.config.profile)   # ./output/dev-1
-            os.makedirs(save_dir, exist_ok=True)
+            save_dir = self.make_persist_dir()
             ts = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = os.path.join(save_dir, f"integrations_original_status_{ts}.json")
             with open(filename, "w") as f:
@@ -466,7 +465,9 @@ class PasswordRotationWorkflow(BaseWorkflow):
         overall_success = True
 
         # Validate to continue or not
-        continue_true_false = self._prompt_confirm_continue(schedule_integrations, "The following schedulers will be STOPPED")
+        continue_true_false = self._prompt_confirm_continue(
+            schedule_integrations,
+            "The following schedulers will be STOPPED, if active; otherwise no change")
         if not continue_true_false:
             result.success = False
             result.message = "Aborted at Stop Schedulers. No password has been updated."
@@ -905,14 +906,19 @@ class PasswordRotationWorkflow(BaseWorkflow):
         result.success = overall_success
         return result
 
-    def save_result(self, wf: WorkflowResult):
-        save_dir = self.client.config.save_results_directory
-
-        # Ensure directory exists
-        os.makedirs(save_dir, exist_ok=True)
+    def persist_result(self, wf: WorkflowResult):
+        save_dir = self.make_persist_dir()
 
         filename = os.path.join(save_dir, "password_rotation_result.json")
         wf.save_to_file(filename)
+
+    def make_persist_dir(self) -> str:
+        save_dir = self.client.config.save_results_directory
+        save_dir = os.path.join(save_dir, self.client.config.profile)  # ./output/dev-1
+
+        # Ensure directory exists
+        os.makedirs(save_dir, exist_ok=True)
+        return save_dir
 
     @staticmethod
     def trace_into_details(resource_type:str, workflow_result:WorkflowResult)-> WorkflowResult:
@@ -945,8 +951,16 @@ class PasswordRotationWorkflow(BaseWorkflow):
         answer = input("\nProceed ? [y/N]: ").strip().lower()
         return answer in ("y", "yes")
 
-    def restore_integrations_to_original_state(self,integrations_original_status: Optional[Dict[str, Dict[str, Any]]] =None) -> WorkflowResult:
+    def restore_integrations_to_original_state(
+            self,
+            integrations_original_status: Optional[Dict[str, Dict[str, Any]]] =None,
+            overrides:Optional[Dict[str,Any]] = None,
+    ) -> WorkflowResult:
+
+        # 0) Initializations
         result = WorkflowResult()
+        timeout_sec = 300 if overrides and not overrides['timeout_sec'] else overrides['timeout_sec']
+        poll_interval_sec = 5 if overrides and not overrides['poll_interval_sec'] else overrides['poll_interval_sec']
 
         integrations_original = integrations_original_status.copy() if integrations_original_status else self.integrations_original_status.copy()
 
@@ -965,20 +979,48 @@ class PasswordRotationWorkflow(BaseWorkflow):
            return result_sh
 
         # Find differences
-        print("Differences:")
         different_integration_ids = {}
         for integration_id, info in integrations_original.items():
             old_status = info['status']
             now_status = integrations_now[integration_id]['status']
             if old_status != now_status:
                 different_integration_ids[integration_id] = {"integration_old_status":old_status, "integration_now_status":now_status} # old_status becomes desired
-                print(f"{integration_id} \tINTEGRATION Status Old: {old_status}\tNow: {now_status}")
+                data = {"old_status":old_status, "now_status":now_status, "datetime": datetime.now().isoformat() }
+                result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id,data=data)
             old_schedule_state =info.get("SCHEDULE",{}).get("state")
             if old_schedule_state:
                 now_schedule_state = integrations_now[integration_id].get("SCHEDULE",{}).get("state")
                 if old_schedule_state != now_schedule_state:
-                    different_integration_ids[integration_id] = {"schedule_old_state":old_schedule_state, "schedule_now_state":now_schedule_state}
-                    print(f"{integration_id} \tSCHEDULE State Old: {old_schedule_state}\tNow: {now_schedule_state}")
+                    # different_integration_ids[integration_id] = {"old_schedule_state":old_schedule_state, "now_schedule_state":now_schedule_state}
+                    # Append schedule deltas without overwriting existing integration status deltas
+                    entry = different_integration_ids.setdefault(integration_id, {})
+                    entry.update({"old_schedule_state": old_schedule_state, "now_schedule_state": now_schedule_state})
+
+                    data = {"old_schedule_state": old_schedule_state, "now_schedule_state": now_schedule_state, "datetime": datetime.now().isoformat()}
+                    result.add_resource(resource_type=self.RESOURCE_INTEGRATION, resource_id=integration_id, data=data)
+        # show Delta
+        print("Differences:")
+        i = 1
+        for integration_id, info in different_integration_ids.items():
+            old_status = info.get("integration_old_status")
+            if old_status:
+                now_status = info['integration_now_status']
+                print(f"{i:>4,}.{integration_id} \tINTEGRATION from {now_status} to original status: {old_status}")
+                i +=1
+            old_schedule_state = info.get("old_schedule_state")
+            if old_schedule_state:
+                now_schedule_state = info['now_schedule_state']
+                print(f"{i:>4,}.{integration_id} \tSCHEDULE from {now_schedule_state} to original: {old_schedule_state}")
+                i += 1
+
+        # Proceed?
+        continue_true_false = self._prompt_confirm_continue(
+            ['looks good?'],
+            "The ABOVE integrations will be restored")
+        if not continue_true_false:
+            result.success = False
+            result.message = "Aborted"
+            return result
 
         # Restore to original
         start_schedulers=[]
@@ -993,23 +1035,21 @@ class PasswordRotationWorkflow(BaseWorkflow):
             if info.get("integration_now_status") == "CONFIGURED":
                 activate_integrations.append(integration_id)
             # Schedulers
-            if info.get("schedule_old_state") == "ACTIVE":
-                start_schedulers.append(integration_id)
-            if info.get("schedule_old_state") != "ACTIVE":
-                stop_schedulers.append(integration_id)
+            schedule_old_state = info.get("old_schedule_state")
+            if schedule_old_state:  #If it's a Scheduler
+                if schedule_old_state == "ACTIVE":
+                    start_schedulers.append(integration_id)
+                else:
+                    stop_schedulers.append(integration_id)
 
 
         # Stop schedulers
         if stop_schedulers:
             wf = self.stop_schedulers(stop_schedulers, integrations_now)
             result.merge(wf)
-            if not wf.success:
-                return result
             # Wait until CANCELLED for those we attempted to stop
-            wf_wait = self.wait_for_schedules_state(stop_schedulers, integrations_now, desired_state="CANCELLED")
+            wf_wait = self.wait_for_schedules_state(stop_schedulers, integrations_now, desired_state="CANCELLED", timeout_sec=timeout_sec, poll_interval_sec=poll_interval_sec)
             result.merge(wf_wait)
-            if not wf_wait.success:
-                return result
 
         # Activate Integrations
         if activate_integrations:
@@ -1017,24 +1057,18 @@ class PasswordRotationWorkflow(BaseWorkflow):
             to_activate_dict = {iid: {"status": "ACTIVATED"} for iid in activate_integrations}
             wf_act = self.activate_integrations(to_activate_dict)
             result.merge(wf_act)
-            if not wf_act.success:
-                return result
+
             # Wait until ACTIVATED
             wf_wait_act = self.wait_for_integrations_state(activate_integrations, desired_status="ACTIVATED")
             result.merge(wf_wait_act)
-            if not wf_wait_act.success:
-                return result
 
         # Start Schedulers
         if start_schedulers:
             wf_start = self.start_schedulers(schedule_integrations=start_schedulers, integrations_original_status=integrations_original)
             result.merge(wf_start)
-            if not wf_start.success:
-                return result
             # Wait until ACTIVE
-            wf_wait_start = self.wait_for_schedules_state(start_schedulers, integrations_original, desired_state="ACTIVE")
+            wf_wait_start = self.wait_for_schedules_state(start_schedulers, integrations_original, desired_state="ACTIVE",timeout_sec=timeout_sec, poll_interval_sec=poll_interval_sec)
             result.merge(wf_wait_start)
-            if not wf_wait_start.success:
-                return result
-
+        print("=="*30)
+        print(f"Done restoring to original. Success:{result.success}  Message:{result.message}")
         return result
