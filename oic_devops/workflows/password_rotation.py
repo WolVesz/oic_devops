@@ -8,9 +8,8 @@ import time
 import os
 import traceback
 from datetime import datetime
-from typing import Any, Dict, Iterable, List, Tuple, Optional
+from typing import Any, Dict, Iterable, List, Tuple, Optional, final
 
-from oic_devops.cli import integrations
 from oic_devops.exceptions import (
     OICAPIError,
     OICError,
@@ -84,7 +83,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
             # 1) Build/reuse cross-reference: connection_id -> { username, integrations: [ids] } ACTIVE connections ACTIVATED Integrations only
             if refresh_xref or not self.connections_dictionary or not self.connectionFilter == connection_filter:
                 try:
-                    self.connections_dictionary = self.build_connections_dictionary(target_usernames, connectionFilter=connection_filter)
+                    self.connections_dictionary = self.build_connections_dictionary(target_usernames, connection_filter=connection_filter)
                     self.connectionFilter = connection_filter
                 except Exception as exc:  # surface build errors
                     self.logger.exception("Failed to build connections dictionary.")
@@ -102,24 +101,24 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 return result
 
             # 2) Snapshot original status for all dependent integrations
-            integrations_original_status, snapshot_wf = self.snapshot_integrations_state(connections_dictionary)
+            integrations_original_status, responses_wf = self.snapshot_integrations_state(connections_dictionary)
             self.integrations_original_status = integrations_original_status  # just to have access from the outside
-            result.merge(snapshot_wf)
-            if not snapshot_wf.success:
+            result.merge(responses_wf)
+            if not responses_wf.success:
                 return result
 
             # 3) Identify scheduled integrations and their schedules
-            scheduled_ids = self.get_scheduled_integrations(integrations_original_status)
-            schedules_wf = self.snapshot_schedules(scheduled_ids, integrations_original_status)
-            result.merge(schedules_wf)
-            if not schedules_wf.success:
+            scheduled_ids = self.filter_scheduled_integrations(integrations_original_status)
+            responses_wf = self.snapshot_schedules(scheduled_ids, integrations_original_status)
+            result.merge(responses_wf)
+            if not responses_wf.success:
                 return result
 
             # 4) Stop schedules and wait until CANCELLED
-            stop_sched_wf = self.stop_schedulers(scheduled_ids, integrations_original_status)
-            result.merge(stop_sched_wf)
-            if not stop_sched_wf.success:
-                self.print_status(stop_sched_wf,
+            responses_wf = self.stop_schedulers(scheduled_ids, integrations_original_status)
+            result.merge(responses_wf)
+            if not responses_wf.success:
+                self.print_status(responses_wf,
                                   message="Schedulers did not STOP. WARNING: Some have been stopped.",
                                   resource_type=self.RESOURCE_INTEGRATION
                                   )
@@ -127,10 +126,10 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 self.save_result(result)
                 return result
 
-            wait_sched_wf = self.wait_for_schedules_state(scheduled_ids, integrations_original_status, desired_state="CANCELLED", timeout_sec=timeout_sec, poll_interval_sec=poll_interval_sec)
-            result.merge(wait_sched_wf)
-            if not wait_sched_wf.success:
-                self.print_status(wait_sched_wf,
+            responses_wf = self.wait_for_schedules_state(scheduled_ids, integrations_original_status, desired_state="CANCELLED", timeout_sec=timeout_sec, poll_interval_sec=poll_interval_sec)
+            result.merge(responses_wf)
+            if not responses_wf.success:
+                self.print_status(responses_wf,
                                   message="Schedulers did not STOP on time. WARNING: Some have been stopped.",
                                   resource_type=self.RESOURCE_INTEGRATION
                                   )
@@ -140,11 +139,11 @@ class PasswordRotationWorkflow(BaseWorkflow):
 
             # 5) Deactivate dependent integrations
             dependent_integration_ids = self.filter_by_status_is_activated(integrations_original_status) #self.get_integration_ids_from_connection_dic(connections_dictionary)
-            deactivated_wf = self.deactivate_integrations(dependent_integration_ids)
-            result.merge(deactivated_wf)
-            if not deactivated_wf.success:
-                self.print_status(deactivated_wf,
-                                  message="Some integration failed to deactivate. WARNING: Some have been deactivated.",
+            responses_wf = self.deactivate_integrations(dependent_integration_ids)
+            result.merge(responses_wf)
+            if not responses_wf.success:
+                self.print_status(responses_wf,
+                                  message="    Some integration failed to deactivate. WARNING: Some have been deactivated.",
                                   resource_type= self.RESOURCE_INTEGRATION
                                   )
                 result.add_error("Integrations did not DEACTIVATE on time")
@@ -152,10 +151,10 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 return result
 
             # 6) Update connection passwords
-            update_wf = self.update_connection_passwords(connections_dictionary, target_usernames)
-            result.merge(update_wf)
-            if not update_wf.success:
-                self.print_status(update_wf,
+            responses_wf = self.update_connection_passwords(connections_dictionary, target_usernames)
+            result.merge(responses_wf)
+            if not responses_wf.success:
+                self.print_status(responses_wf,
                                   message="Connections did not UPDATE PASSWORD correctly. WARNING: Some have been updated.",
                                   resource_type=self.RESOURCE_CONNECTION
                                   )
@@ -164,10 +163,10 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 return result
 
             # 7) Activate Integrations
-            activate_wf = self.activate_integrations(integrations_original_status)
-            result.merge(activate_wf)
-            if not activate_wf.success:
-                self.print_status(activate_wf,
+            response_wf = self.activate_integrations(integrations_original_status)
+            result.merge(response_wf)
+            if not response_wf.success:
+                self.print_status(response_wf,
                                   message="Integrations did not REACTIVATE correctly. WARNING: Some have been activated.",
                                   resource_type=self.RESOURCE_CONNECTION
                                   )
@@ -176,10 +175,10 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 return result
 
             #7.a) Wait for activation to finish
-            wait_activate_integrations = self.wait_for_integrations_state(dependent_integration_ids, desired_status="ACTIVATED", timeout_sec=timeout_sec, poll_interval_sec=poll_interval_sec)
-            result.merge(wait_activate_integrations)
-            if not wait_activate_integrations.success:
-                self.print_status(wait_activate_integrations,
+            responses_wf = self.wait_for_integrations_state(dependent_integration_ids, desired_status="ACTIVATED", timeout_sec=timeout_sec, poll_interval_sec=poll_interval_sec)
+            result.merge(responses_wf)
+            if not responses_wf.success:
+                self.print_status(responses_wf,
                                   message="Integrations did not REACTIVATE on time. WARNING: Some have been activated.",
                                   resource_type=self.RESOURCE_CONNECTION
                                   )
@@ -188,12 +187,12 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 return result
 
             # 8) Start Schedulers
-            schedulers_wf = self.start_schedulers(
+            responses_wf = self.start_schedulers(
                 schedule_integrations=scheduled_ids,
                 integrations_original_status=integrations_original_status)
-            result.merge(schedulers_wf)
-            if not schedules_wf.success:
-                self.print_status(schedules_wf,
+            result.merge(responses_wf)
+            if not responses_wf.success:
+                self.print_status(responses_wf,
                                   message="Schedulers did not RE-START. WARNING: Some have been activated.",
                                   resource_type=self.RESOURCE_CONNECTION
                                   )
@@ -201,10 +200,10 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 self.save_result(result)
                 return result
             # 9) Wait for scheduler to be activated
-            wait_sched_wf = self.wait_for_schedules_state(scheduled_ids, integrations_original_status, desired_state="ACTIVE", timeout_sec=timeout_sec, poll_interval_sec=poll_interval_sec)
-            result.merge(wait_sched_wf)
-            if not wait_sched_wf.success:
-                self.print_status(wait_sched_wf,
+            responses_wf = self.wait_for_schedules_state(scheduled_ids, integrations_original_status, desired_state="ACTIVE", timeout_sec=timeout_sec, poll_interval_sec=poll_interval_sec)
+            result.merge(responses_wf)
+            if not responses_wf.success:
+                self.print_status(responses_wf,
                                   message="Schedulers did not RE-START on time. WARNING: Some have been activated.",
                                   resource_type=self.RESOURCE_CONNECTION
                                   )
@@ -214,7 +213,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
 
             self.save_result(result)
 
-            integrations_result_status, wf = self.snapshot_integrations_state(connections_dictionary)
+            integrations_final_status, wf = self.snapshot_integrations_state(connections_dictionary)
             print("===" * 30)
             if not wf.success:
                 print("Comparing resulting integrations status cannot be done because of a failure getting the integration status")
@@ -224,11 +223,31 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 print("---" * 30)
                 i=1
                 for integration_id, info in integrations_original_status.items():
-                    current_integration_status = integrations_result_status[integration_id]
+                    final_integration_status = integrations_final_status[integration_id]
                     original_status = info.get('status')
-                    new_status = "unknown" if not current_integration_status else current_integration_status['status']
+                    new_status = "unknown" if not final_integration_status else final_integration_status['status']
                     print(f"{i}. {integration_id}\toriginal:{original_status}  new status:{new_status}\tSAME STATUS: {original_status == new_status}")
                     i +=1
+
+                scheduler_ids = self.filter_scheduled_integrations(integrations_final_status)
+                wf = self.snapshot_schedules(schedule_integrations=scheduler_ids, integrations_status=integrations_final_status)
+                if not wf.success:
+                    print(
+                        "Comparing resulting scheduler state cannot be done because of a failure getting the integration scheduler")
+                else:
+                    print(
+                        "Comparing resulting schedule state with original")
+                    print("---" * 30)
+                    i = 1
+                    for integration_id in scheduler_ids:
+                        info = integrations_original_status[integration_id]["SCHEDULE"]
+                        final_integration_status = integrations_final_status[integration_id]["SCHEDULE"]
+                        original_status = info.get('state')
+                        new_status = final_integration_status.get('state')
+                        print(
+                            f"{i}. {integration_id}\toriginal:{original_status}  new status:{new_status}\tSAME STATUS: {original_status == new_status}")
+                        i += 1
+
             return result
 
         except Exception as e:
@@ -243,7 +262,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
         print("!!!", "=" * 60)
         print(message)
         print("!!!", "-" * 60)
-        if wf.resources[resource_type]:
+        if wf.resources.get(resource_type):
             for deactivated, info in wf.resources[resource_type].items():
                 print(f"{deactivated}\t {info}")
         else:
@@ -251,7 +270,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
     def build_connections_dictionary(
             self,
             target_usernames: Dict[str, str],
-            connectionFilter: Optional[str] = None,
+            connection_filter: Optional[str] = None,
     ) -> Dict[str, Dict[str, Any]]:
         """Build a dict mapping connection_id -> { 'username': str, 'integrations': [str] }.
             Only ACTIVATED Integrations
@@ -261,18 +280,18 @@ class PasswordRotationWorkflow(BaseWorkflow):
         self.logger.info("Building connections dictionary for usernames: %s", list(target_usernames.keys()))
 
         # Ensure we have enriched connections cached
+        params = None
         if not self.connections_configured_enriched:
-            params = None
-            if connectionFilter:
-                params = {"q": "{"+f"name:{connectionFilter}"+"}"}
+            if connection_filter:
+                params = {"q": "{" +f"name:{connection_filter}" + "}"}
 
-            self.logger.info("Fetching enriched connections with filter: %s", connectionFilter)
+            self.logger.info("Fetching enriched connections with filter: %s", connection_filter)
             self.connections_configured_enriched = self.client.connections.list_enriched(params=params)
 
         connections_dictionary: Dict[str, Dict[str, Any]] = {}
 
         for username in target_usernames.keys():
-            connection_ids = self.get_connection_ids_using_username(username)
+            connection_ids = self.get_connection_ids_using_username(username, params=params)
             for connection_id in connection_ids:
                 connections_dictionary.setdefault(connection_id, {"username": username, "integrations": []})
                 # Get dependent integrations (usage) for the connection
@@ -282,14 +301,14 @@ class PasswordRotationWorkflow(BaseWorkflow):
 
         return connections_dictionary
 
-    def get_connection_ids_using_username(self, target_username: str) -> List[str]:
+    def get_connection_ids_using_username(self, target_username: str, params:Optional[Dict[str,Any]]) -> List[str]:
         """Return a list of connection IDs that use the given username.
 
         Relies on the cached `connections_configured_enriched` populated by
         build_connections_dictionary().
         """
         if not self.connections_configured_enriched:
-            self.connections_configured_enriched = self.client.connections.list_enriched()
+            self.connections_configured_enriched = self.client.connections.list_enriched(params=params)
 
         connections = self.connections_configured_enriched
         ids = [
@@ -306,11 +325,18 @@ class PasswordRotationWorkflow(BaseWorkflow):
         Returns a tuple: (integrations_original_status, WorkflowResult)
         where the map is {integration_id: {...raw integration details...}}
         """
-        result = WorkflowResult()
-        result.message="snapshot_integrations_state"
-        info: Dict[str, Dict[str, Any]] = {}
 
         integration_ids = self.get_integration_ids_from_connection_dic(connections_dictionary)
+        info, result = self.get_integrations_snapshot(integration_ids)
+        result.message = "snapshot_integrations_state"
+
+        return info, result
+
+    def get_integrations_snapshot(self, integration_ids:Iterable[str]) -> Tuple[Dict[str, Dict[str, Any]], WorkflowResult]:
+        result = WorkflowResult()
+        result.message = "get_integrations_snapshot"
+        info: Dict[str, Dict[str, Any]] = {}
+
         for integration_id in integration_ids:
             try:
                 info[integration_id] = self.client.integrations.get(integration_id=integration_id)
@@ -319,27 +345,28 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 self.logger.error("Failed to fetch integration %s: %s", integration_id, exc.title)
                 result.success = False
                 result.add_error(resource_id=integration_id, message=exc.title, error=exc)
-                result.add_resource(self.RESOURCE_INTEGRATION, integration_id, {"action": "SNAPSHOT", "success": False, "message": exc.title})
+                result.add_resource(self.RESOURCE_INTEGRATION, integration_id,
+                                    {"action": "SNAPSHOT", "success": False, "message": exc.title})
             except OICResourceNotFoundError as not_found:
                 self.logger.error("Integration %s not found: %s", integration_id, not_found)
                 result.success = False
                 result.add_error(resource_id=integration_id, message=str(not_found), error=not_found)
-                result.add_resource(self.RESOURCE_INTEGRATION, integration_id, {"action": "SNAPSHOT", "success": False, "message": "404 - Not Found"})
+                result.add_resource(self.RESOURCE_INTEGRATION, integration_id,
+                                    {"action": "SNAPSHOT", "success": False, "message": "404 - Not Found"})
 
         result = self.trace_into_details(resource_type=self.RESOURCE_INTEGRATION, workflow_result=result)
 
         return info, result
 
-
     @staticmethod
-    def get_scheduled_integrations(integrations_original_status: Dict[str, Dict[str, Any]]) -> List[str]:
+    def filter_scheduled_integrations(integrations_original_status: Dict[str, Dict[str, Any]]) -> List[str]:
         """Return integration IDs that are Scheduled based on the snapshot."""
         return sorted({iid for iid, details in integrations_original_status.items() if details.get("pattern") == "Scheduled"})
 
     def snapshot_schedules(
         self,
         schedule_integrations: Iterable[str],
-        integrations_original_status: Dict[str, Dict[str, Any]],
+        integrations_status: Dict[str, Dict[str, Any]],
     ) -> WorkflowResult:
         """Fetch and record the schedule details for given integrations."""
         result = WorkflowResult()
@@ -347,7 +374,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
         for integration_id in schedule_integrations:
             try:
                 schedule = self.client.integrations.get_schedule(integration_id=integration_id)
-                integrations_original_status[integration_id]["SCHEDULE"] = schedule
+                integrations_status[integration_id]["SCHEDULE"] = schedule
                 result.add_resource(self.RESOURCE_INTEGRATION, integration_id, {"action": "FETCH_SCHEDULE", "success": True, "schedule_state": schedule.get("state")})
             except OICAPIError as exc:
                 msg = f"FAILED to fetch schedule: {exc.title}"
@@ -850,3 +877,38 @@ class PasswordRotationWorkflow(BaseWorkflow):
         answer = input("\nProceed ? [y/N]: ").strip().lower()
         return answer in ("y", "yes")
 
+    def restore_integrations_to_original_state(self,integrations_original_status: Dict[str, Dict[str, Any]]) -> WorkflowResult:
+        result = WorkflowResult()
+        integrations_original = integrations_original_status.copy()
+
+        # Filter original schedule ones
+        schedule_integration_ids_original = self.filter_scheduled_integrations(integrations_original)
+
+        # Find different integration state
+        integrations_new, result_int = self.get_integrations_snapshot(integration_ids=integrations_original)
+        if not result_int.success:
+           self.print_status(wf=result_int, resource_type=self.RESOURCE_INTEGRATION, message="Fail to retrieve integrations snapshot")
+           return result_int
+
+        schedule_integrations_now, result_sh = self.snapshot_schedules(schedule_integration_ids_original, integrations_status=integrations_new)
+        if not result_sh.success:
+           self.print_status(wf=result_sh, resource_type=self.RESOURCE_INTEGRATION, message="Fail to retrieve integrations schedulers")
+           return result_sh
+
+        # Find differences
+        print("Differences:")
+        different_integration_ids = []
+        for integration_id, info in integrations_original.items():
+            old_status = info['status']
+            new_status = integrations_new[integration_id]['status']
+            if old_status != new_status:
+                different_integration_ids.append(integration_id)
+                print(f"{integration_id} \tINTEGRATION Status Old: {old_status}\tNew: {new_status}")
+            old_schedule =info.get("SCHEDULE",{}).get("state")
+            if old_schedule:
+                new_schedule = integrations_new[integration_id].get("SCHEDULE",{}).get("state")
+                if old_schedule != new_schedule:
+                    different_integration_ids.append(integration_id)
+                    print(f"{integration_id} \tSCHEDULE State Old: {old_schedule}\tNew: {new_schedule}")
+
+        return  result
