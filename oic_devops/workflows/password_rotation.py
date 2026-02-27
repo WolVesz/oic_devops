@@ -179,6 +179,7 @@ class PasswordRotationWorkflow(BaseWorkflow):
                 result.success = False
                 result.message = "Aborted at Rotate Passwords. No password updated, but Integrations and Schedulers deactivated and stopped.\nuse restore_instegrations_to_original_state() if desired."
                 self.persist_result(result)
+                print(result.message)
                 return result
 
             # 6) Update connection passwords
