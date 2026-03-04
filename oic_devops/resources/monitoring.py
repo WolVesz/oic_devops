@@ -387,12 +387,79 @@ class MonitoringResource(BaseResource):
 
         # Add filters to parameters
         #  {timewindow:'1h',code:'PSSWRD_SUBSCRIBER_B',version:'01.00.0000',status: 'IN_PROGRESS'}
-        code_q = f",code:'{integration_code}'" if integration_code else None
-        version_q= f",version:'{integration_version}'" if integration_version else None
-        status_q = f",status:'{status}'" if status else None
+        code_q = f",code:'{integration_code}'" if integration_code else ""
+        version_q= f",version:'{integration_version}'" if integration_version else ""
+        status_q = f",status:'{status}'" if status else ""
         query_value = "{timewindow:" + f"'{timewindow}'" + code_q + version_q + status_q +"}"
         params['q'] =  query_value
 
 
         # Make the request
         return self.client.get(f'{self.base_path}/instances', params=params)
+
+    def get_integration_instances_all(self,
+                                  timewindow: str = 'RETENTIONPERIOD',
+                                  integration_code: Optional[str] = None,  # e.g. PSSWRD_SUBSCRIBER_B
+                                  integration_version: Optional[str] = None,  # e.g 01.00.0000
+                                  status: Optional[str] = None,  # e.g. IN_PROGRESS
+                                  group_by: Optional[str] = None,  # e.g. integration
+                                  params: Optional[Dict[str, Any]] = None,
+                                  ) -> List[Dict[str,Any]]:
+        # Initialize parameters if None
+        if params is None:
+            params = {}
+
+        # Add filters to parameters
+        #  {timewindow:'1h',code:'PSSWRD_SUBSCRIBER_B',version:'01.00.0000',status: 'IN_PROGRESS'}
+        code_q = f",code:'{integration_code}'" if integration_code else ""
+        version_q = f",version:'{integration_version}'" if integration_version else ""
+        status_q = f",status:'{status}'" if status else ""
+
+        query_value = "{timewindow:" + f"'{timewindow}'" + code_q + version_q + status_q + "}"
+        params['q'] = query_value
+
+        params['limit'] = 50
+
+        if group_by:
+            params['groupBy'] = group_by
+
+        # Make the request
+        # return self.client.get(f'{self.base_path}/instances', params=params)
+        has_more = True
+        pages = 0
+        output = []
+        expected_records=9999999
+        while has_more is True:
+            try:
+                params['offset'] = pages
+                self.logger.info(f"params:{params}")
+                content = self.client.get(f'{self.base_path}/instances', params=params)
+                output.extend(content['integrationItems'])
+                pages += 50 if content['totalResults'] > 50 else content['totalResults']
+                expected_records = content['totalRecordsCount']
+                self.logger.info(f'Expected records: {expected_records} offset:{pages}')
+                has_more = content['hasMore'] if content['hasMore'] else False
+            except OICAPIError as excp:
+                # has_more = content['hasMore'] #Rest API is broken here.
+                if len(output) == expected_records:
+                    has_more = True
+                elif len(output) > expected_records:
+                    has_more = True
+                    output = list(set(output))
+                elif excp.status_code == 400:
+                    self.logger.warning(f"""
+
+                            Monitoring.get_integration_instances has failed due to a 400 error code. 
+
+                            This is expected due to non-disclosed limitations of the monitor/instances api. You can 
+                            only have a max of a 500 offset, 50 limit, and has_more is always false. 
+
+                            You recieved {len(output)} out of an expected: {expected_records}
+
+                            Raw exception.title: {excp.title}
+                            Raw: {excp}
+                            """)
+                    return output
+                else:
+                    raise excp
+        return output

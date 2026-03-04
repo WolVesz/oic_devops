@@ -54,9 +54,9 @@ class BaseResource:
     def list(
         self,
         params: Optional[Dict[str, Any]] = None,
-        raw: Optional[Dict[str, Any]] = False,
+        raw: Optional[Dict[str, Any]]|Optional[bool] = False,
         **kwargs,
-    ) -> List[Dict[str, Any]]:
+    ) ->Dict[str,Any]|List[Dict[str, Any]]:
         """
         List all resources of this type.
 
@@ -66,7 +66,7 @@ class BaseResource:
             **kwargs: Passed to self._get_endpoint
 
         Returns:
-            List[Dict]: List of resources.
+            List[Dict]: List of resources on NoRaw
             Json: raw API response of multiple integrations
 
         """
