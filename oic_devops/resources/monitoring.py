@@ -463,3 +463,92 @@ class MonitoringResource(BaseResource):
                 else:
                     raise excp
         return output
+
+    def get_instance_activity_stream_details(
+        self, activity_stream_details_instance_id: str, params: Optional[Dict[str, Any]] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Get activity stream details for a specific integration instance.
+
+        Args:
+            activity_stream_details_instance_id: ID of the instance to retrieve activities for.
+            params: Optional query parameters.
+
+        Returns:
+            List[Dict]: List of instance activities.
+
+        """
+        if not params:
+            params = {}
+        if not params.get('timezone'):
+            params['timezone'] = 'America/Denver'
+        response = self.client.get(
+            f'{self.base_path}/instances/{activity_stream_details_instance_id}/activityStreamDetails', params=params
+        )
+
+        # Extract activities from the response
+        if 'items' in response:
+            return response['items']
+        if 'elements' in response:
+            return response['elements']
+        if isinstance(response, list):
+            return response
+        self.logger.warning(
+            f'Unexpected response format from get_instance_activities endpoint: {response.keys() if isinstance(response, dict) else type(response)}'
+        )
+        return []
+
+    def get_instance_activity_stream_details_payload(
+        self, activity_stream_details_instance_id: str, tracking_data: str, params: Optional[Dict[str, Any]] = None
+    ) -> str:
+        """
+        Get activity stream details for a specific integration instance.
+        https://design.integration.us-phoenix-1.ocp.oraclecloud.com/ic/api/integration/v1/monitoring/instances/Hrpwgx79EfGeGsfxGJQY2w/activityStreamDetails/tracking-data%2Fdebug%2FHrrlth79EfGeGsfxGJQY2w?integrationInstance=prod-axeufspbztar-px
+        'href': 'https://design.integration.us-phoenix-1.ocp.oraclecloud.com/ic/api/integration/v1/monitoring/instances/eg3bER8CEfGN64N0SmAwxQ/activityStreamDetails/tracking-data%2Fproduction%2Feg3bEx8CEfGN64N0SmAwxQ?integrationInstance=prod-axeufspbztar-px'
+        Args:
+            activity_stream_details_instance_id: ID of the instance to retrieve activities for.
+            params: Optional query parameters.
+
+        Returns:
+            List[Dict]: List of instance activities.
+
+        """
+        if not params:
+            params = {}
+        if not params.get('timezone'):
+            params['timezone'] = 'America/Denver'
+        headers = {'Accept': 'application/octet-stream'}
+        response = self.client.get(
+            f'{self.base_path}/instances/{activity_stream_details_instance_id}/activityStreamDetails/{tracking_data}',
+            params=params,
+            headers=headers
+        )
+
+        # --- Normalize to XML text ---------------------------------------------
+        # Cases we handle:
+        #  1) bytes  -> decode via UTF-8 (clean = my_bytes.decode("utf-8"))
+        #  2) str    -> return as-is
+        #  3) dict   -> expect {'content': <bytes|str>} and normalize
+        # -----------------------------------------------------------------------
+        # If your client returns a dict wrapper
+        if isinstance(response, dict):
+            content = response.get('content')
+            if isinstance(content, (bytes, bytearray)):
+                return content.decode('utf-8', errors='replace')  # clean = my_bytes.decode("utf-8")
+            if isinstance(content, str):
+                return content
+            # Unexpected content type inside dict
+            self.logger.warning(f'Unexpected response["content"] type: {type(content)}')
+            raise OICAPIError('Unexpected payload format from activityStreamDetails payload endpoint')
+
+        # If your client returns raw bytes
+        if isinstance(response, (bytes, bytearray)):
+            return response.decode('utf-8', errors='replace')  # clean = my_bytes.decode("utf-8")
+
+        # If your client returns an XML string already
+        if isinstance(response, str):
+            return response
+
+        # Anything else is unexpected
+        self.logger.warning(f'Unexpected response type: {type(response)}')
+        raise OICAPIError('Unexpected payload format from activityStreamDetails payload endpoint')
