@@ -15,7 +15,6 @@ from oic_devops.resources.base import BaseResource
 from oic_devops.utils.str import camel_to_snake
 from urllib.parse import unquote
 
-
 class MonitoringResource(BaseResource):
     """
     Class for monitoring OIC resources.
@@ -497,6 +496,11 @@ class MonitoringResource(BaseResource):
             try:
                 timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
                 out_path = self._build_payload_path(file_dir=file_dir, activity_stream_details_instance_id=activity_stream_details_instance_id,tracking_data=timestamp, file_extension="json")
+                ## create directory if it does not exist
+                parent = os.path.dirname(os.path.abspath(out_path))
+                if parent and not os.path.exists(parent):
+                    os.makedirs(parent, exist_ok=True)
+
                 with open(out_path, "w", encoding="utf-8", newline="") as f:
                     json.dump(response, f, ensure_ascii=False, indent=2)
                 self.logger.info(f"ActivityStreamDetails JSON written to: {out_path}")
@@ -574,13 +578,15 @@ class MonitoringResource(BaseResource):
         # --- Optional: write to disk ---------------------------------------------
         if file_dir:
             try:
+                # Write UTF-8 XML (newline normalized by default open)
+                file_path = self._build_payload_path(file_dir, "payload", f"{tracking_data}",
+                                                     file_extension="xml")
                 # Ensure parent directory exists
-                parent = os.path.dirname(os.path.abspath(file_dir))
+                parent = os.path.dirname(os.path.abspath(file_path))
                 if parent and not os.path.exists(parent):
                     os.makedirs(parent, exist_ok=True)
-                timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
-                # Write UTF-8 XML (newline normalized by default open)
-                file_path = self._build_payload_path(file_dir, activity_stream_details_instance_id, f"{tracking_data}_{timestamp}", file_extension="xml")
+
+
                 with open(file_path, "w", encoding="utf-8", newline="") as f:
                     f.write(xml_text)
 
