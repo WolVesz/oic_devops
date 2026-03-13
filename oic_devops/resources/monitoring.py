@@ -496,7 +496,7 @@ class MonitoringResource(BaseResource):
         if file_dir:
             try:
                 timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
-                out_path = self._build_payload_path(file_dir=file_dir, activity_stream_details_instance_id=activity_stream_details_instance_id,tracking_data=timestamp)
+                out_path = self._build_payload_path(file_dir=file_dir, activity_stream_details_instance_id=activity_stream_details_instance_id,tracking_data=timestamp, file_extension="json")
                 with open(out_path, "w", encoding="utf-8", newline="") as f:
                     json.dump(response, f, ensure_ascii=False, indent=2)
                 self.logger.info(f"ActivityStreamDetails JSON written to: {out_path}")
@@ -580,7 +580,7 @@ class MonitoringResource(BaseResource):
                     os.makedirs(parent, exist_ok=True)
                 timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
                 # Write UTF-8 XML (newline normalized by default open)
-                file_path = self._build_payload_path(file_dir, activity_stream_details_instance_id, f"{tracking_data}_{timestamp}")
+                file_path = self._build_payload_path(file_dir, activity_stream_details_instance_id, f"{tracking_data}_{timestamp}", file_extension="xml")
                 with open(file_path, "w", encoding="utf-8", newline="") as f:
                     f.write(xml_text)
 
@@ -608,9 +608,9 @@ class MonitoringResource(BaseResource):
         name = re.sub(r'-{2,}', '-', name)
         return name[:200]  # avoid overly long filenames
 
-    def _build_payload_path(self, file_dir: str, activity_stream_details_instance_id: str, tracking_data: str) -> str:
+    def _build_payload_path(self, file_dir: str, activity_stream_details_instance_id: str, tracking_data: str, file_extension:str = "xml") -> str:
         safe_tracking = self._safe_filename(name=tracking_data)
-        filename = f"{activity_stream_details_instance_id}_{safe_tracking}.xml"
+        filename = f"{activity_stream_details_instance_id}_{safe_tracking}.{file_extension}"
         # Use os.path.join instead of f"{file_dir}/..."
         path = os.path.abspath(os.path.join(file_dir, filename))
         return path
