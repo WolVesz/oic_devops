@@ -1,0 +1,97 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_1
+      xsdfilepath: ../resources/processor_1/resourcegroup_2/ICSIntegrationMetadata.xsd
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: userJobName
+              xpath: /scheduleReport/scheduleRequest/userJobName
+            - role: tracking_var_2
+              name: startDate
+              xpath: /scheduleReport/scheduleRequest/startDate
+            - role: tracking_var_3
+              name: reportAbsolutePath
+              xpath: /scheduleReport/scheduleRequest/reportRequest/reportAbsolutePath
+        - Map: Map(m1)
+          xsltfilepath: ../resources/processor_50/resourcegroup_53/req_0cce68d9190a40d3a632d308ddae7c9c.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:tns="http://xmlns.oracle.com/oxp/service/ScheduleReportService" xmlns:nstrgmpr="http://xmlns.oracle.com/types/SubmitScheduleReport/1757107182667/OutboundSOAPRequestDocument" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" version="2.0" xml:id="id_1" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi xsd fn xp20 xsl ignore01 nsmpr0" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+            - '      <nstrgmpr:Body>'
+            - '        <tns:scheduleReport>'
+            - '          <xsl:copy-of select="/tns:scheduleReport/scheduleRequest"/>'
+            - ""
+        - Invoke: SubmitScheduleReport(i0)
+          application:
+            Application: SubmitScheduleReport(BIP_SCHEDULEREPORTWS)
+            name: SubmitScheduleReport
+            adapter:
+                code: BIP_SCHEDULEREPORTWS
+            properties:
+                - name: operationPath
+                  value: ""
+        - Logger: Logger(lg1)
+          name: LogResponse
+          description: ""
+          propertyfile: ../resources/processor_84/resourcegroup_87/expr.properties
+          expressionProperties:
+            xpathExpression: oraext:get-content-as-string($SubmitScheduleReport/ns52:scheduleReportResponse)
+            namespaceList: ns52=http://xmlns.oracle.com/oxp/service/ScheduleReportService oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+            variableName: LogResponse
+        - xmlname:
+            space: http://www.oracle.com/2014/03/ics/flow/definition
+            local: note
+          attrs:
+            - name:
+                space: ""
+                local: id
+              value: nt0
+            - name:
+                space: ""
+                local: name
+              value: ToDo
+            - name:
+                space: ""
+                local: description
+              value: Once Oracle fixes scheduleReport to include the namespace, change the map
+          content: ""
+          statements: []
+        - Map: Map(m0)
+          xsltfilepath: ../resources/processor_28/resourcegroup_31/req_df38f3c9be6b4ea0b5008af6d82017c5.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nstrgmpr="http://xmlns.oracle.com/oxp/service/ScheduleReportService" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr1="http://xmlns.oracle.com/types/SubmitScheduleReport/1757107182667/OutboundSOAPRequestDocument" version="2.0" xml:id="id_1" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi fn xp20 xsl ignore01 nsmpr0 nsmpr1" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+            - '  <xsl:param name="SubmitScheduleReport" xml:id="id_25"/>'
+            - '  <xsl:param name="SubmitScheduleReport_REQUEST" xml:id="id_34"/>'
+            - '  <xsl:param name="self" xml:id="id_35"/>'
+            - '  <xsl:param name="tracking_var_1" xml:id="id_36"/>'
+            - '  <xsl:param name="tracking_var_2" xml:id="id_37"/>'
+            - '  <xsl:param name="tracking_var_3" xml:id="id_38"/>'
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:scheduleReportResponse xml:id="id_12">'
+            - '      <scheduleReport>'
+            - '        <xsl:value-of select="$SubmitScheduleReport/nstrgmpr:scheduleReportResponse/*[local-name()=&apos;scheduleReport&apos;]"/>'
+            - ""
+        - Reply: Reply(y0)
+          adapterjcareference: null
+          wsdlfilepath: ""
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Logger: Logger(lg0)
+              name: Logfault
+              description: ""
+              propertyfile: ../resources/processor_60/resourcegroup_77/expr.properties
+              expressionProperties:
+                xpathExpression: oraext:get-content-as-string($GlobalFaultObject/ics:fault)
+                namespaceList: ics=http://www.oracle.com/2014/03/ics/fault oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                variableName: Logfault
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_55/resourcegroup_56/ICSFault.xsd

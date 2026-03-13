@@ -3,15 +3,17 @@ Monitoring resource module for the OIC DevOps package.
 
 This module provides functionality for monitoring OIC resources.
 """
-
+import os
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
-
+import re
+import json
 from oic_devops.exceptions import OICAPIError, OICValidationError
 from oic_devops.resources.base import BaseResource
 from oic_devops.utils.str import camel_to_snake
+from urllib.parse import unquote
 
 
 class MonitoringResource(BaseResource):
@@ -465,7 +467,10 @@ class MonitoringResource(BaseResource):
         return output
 
     def get_instance_activity_stream_details(
-        self, activity_stream_details_instance_id: str, params: Optional[Dict[str, Any]] = None
+        self,
+        activity_stream_details_instance_id: str,
+        params: Optional[Dict[str, Any]] = None,
+        file_dir: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """
         Get activity stream details for a specific integration instance.
@@ -473,6 +478,7 @@ class MonitoringResource(BaseResource):
         Args:
             activity_stream_details_instance_id: ID of the instance to retrieve activities for.
             params: Optional query parameters.
+            file_dir: If provided, writes the JSON response to this path (creates parent dirs if needed).
 
         Returns:
             List[Dict]: List of instance activities.
@@ -485,6 +491,18 @@ class MonitoringResource(BaseResource):
         response = self.client.get(
             f'{self.base_path}/instances/{activity_stream_details_instance_id}/activityStreamDetails', params=params
         )
+
+        # --- Optional: write raw JSON response to disk ---
+        if file_dir:
+            try:
+                timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
+                out_path = self._build_payload_path(file_dir=file_dir, activity_stream_details_instance_id=activity_stream_details_instance_id,tracking_data=timestamp)
+                with open(out_path, "w", encoding="utf-8", newline="") as f:
+                    json.dump(response, f, ensure_ascii=False, indent=2)
+                self.logger.info(f"ActivityStreamDetails JSON written to: {out_path}")
+            except Exception as e:
+                # Log but do not fail the call; still return the items below
+                self.logger.error(f"Failed to write ActivityStreamDetails to '{file_dir}': {e}")
 
         # Extract activities from the response
         if 'items' in response:
@@ -499,56 +517,100 @@ class MonitoringResource(BaseResource):
         return []
 
     def get_instance_activity_stream_details_payload(
-        self, activity_stream_details_instance_id: str, tracking_data: str, params: Optional[Dict[str, Any]] = None
+            self,
+            activity_stream_details_instance_id: str,
+            tracking_data: str,
+            params: Optional[Dict[str, Any]] = None,
+            file_dir: Optional[str] = None,
     ) -> str:
         """
-        Get activity stream details for a specific integration instance.
-        https://design.integration.us-phoenix-1.ocp.oraclecloud.com/ic/api/integration/v1/monitoring/instances/Hrpwgx79EfGeGsfxGJQY2w/activityStreamDetails/tracking-data%2Fdebug%2FHrrlth79EfGeGsfxGJQY2w?integrationInstance=prod-axeufspbztar-px
-        'href': 'https://design.integration.us-phoenix-1.ocp.oraclecloud.com/ic/api/integration/v1/monitoring/instances/eg3bER8CEfGN64N0SmAwxQ/activityStreamDetails/tracking-data%2Fproduction%2Feg3bEx8CEfGN64N0SmAwxQ?integrationInstance=prod-axeufspbztar-px'
+        Return the activity stream detail payload as an XML string and
+        optionally write it to a file (UTF-8).
+
         Args:
-            activity_stream_details_instance_id: ID of the instance to retrieve activities for.
-            params: Optional query parameters.
+            activity_stream_details_instance_id: OIC instance id for the activityStreamDetails call.
+            tracking_data: The tracking-data path segment (may already be URL-encoded).
+            params: Optional query parameters; 'timezone' defaults to 'America/Denver' if missing.
+            file_dir: If provided, writes the XML to this path (creates parent dirs if needed).
 
         Returns:
-            List[Dict]: List of instance activities.
+            XML payload as a UTF-8 string.
 
+        Raises:
+            OICAPIError: If the response shape is unexpected.
         """
-        if not params:
-            params = {}
-        if not params.get('timezone'):
-            params['timezone'] = 'America/Denver'
+        # Normalize params and ensure timezone
+        params = dict(params or {})
+        params['timezone'] = params.get('timezone') or 'America/Denver'
+
+        # Request the binary payload as before
         headers = {'Accept': 'application/octet-stream'}
+
         response = self.client.get(
-            f'{self.base_path}/instances/{activity_stream_details_instance_id}/activityStreamDetails/{tracking_data}',
+            f"{self.base_path}/instances/{activity_stream_details_instance_id}/activityStreamDetails/{tracking_data}",
             params=params,
             headers=headers
         )
 
-        # --- Normalize to XML text ---------------------------------------------
-        # Cases we handle:
-        #  1) bytes  -> decode via UTF-8 (clean = my_bytes.decode("utf-8"))
-        #  2) str    -> return as-is
-        #  3) dict   -> expect {'content': <bytes|str>} and normalize
-        # -----------------------------------------------------------------------
-        # If your client returns a dict wrapper
+        # --- Normalize to XML text ------------------------------------------------
+        # Handle common response shapes from your client
         if isinstance(response, dict):
             content = response.get('content')
             if isinstance(content, (bytes, bytearray)):
-                return content.decode('utf-8', errors='replace')  # clean = my_bytes.decode("utf-8")
-            if isinstance(content, str):
-                return content
-            # Unexpected content type inside dict
-            self.logger.warning(f'Unexpected response["content"] type: {type(content)}')
+                xml_text = content.decode("utf-8", errors="replace")  # clean = my_bytes.decode("utf-8")
+            elif isinstance(content, str):
+                xml_text = content
+            else:
+                self.logger.warning(f'Unexpected response["content"] type: {type(content)}')
+                raise OICAPIError('Unexpected payload format from activityStreamDetails payload endpoint')
+        elif isinstance(response, (bytes, bytearray)):
+            xml_text = response.decode("utf-8", errors="replace")  # clean = my_bytes.decode("utf-8")
+        elif isinstance(response, str):
+            xml_text = response
+        else:
+            self.logger.warning(f'Unexpected response type: {type(response)}')
             raise OICAPIError('Unexpected payload format from activityStreamDetails payload endpoint')
 
-        # If your client returns raw bytes
-        if isinstance(response, (bytes, bytearray)):
-            return response.decode('utf-8', errors='replace')  # clean = my_bytes.decode("utf-8")
+        # --- Optional: write to disk ---------------------------------------------
+        if file_dir:
+            try:
+                # Ensure parent directory exists
+                parent = os.path.dirname(os.path.abspath(file_dir))
+                if parent and not os.path.exists(parent):
+                    os.makedirs(parent, exist_ok=True)
+                timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
+                # Write UTF-8 XML (newline normalized by default open)
+                file_path = self._build_payload_path(file_dir, activity_stream_details_instance_id, f"{tracking_data}_{timestamp}")
+                with open(file_path, "w", encoding="utf-8", newline="") as f:
+                    f.write(xml_text)
 
-        # If your client returns an XML string already
-        if isinstance(response, str):
-            return response
+                self.logger.info(f"ActivityStreamDetails payload written to: {file_path}")
+            except Exception as e:
+                # Log but still return xml_text—caller may still want the content
+                self.logger.error(f"Failed to write payload to '{file_dir}': {e}")
 
-        # Anything else is unexpected
-        self.logger.warning(f'Unexpected response type: {type(response)}')
-        raise OICAPIError('Unexpected payload format from activityStreamDetails payload endpoint')
+        return xml_text
+
+    def _safe_filename(self,name: str) -> str:
+        # 1) Decode URL-encoding (e.g., %2F → /)
+        name = unquote(name)
+
+        # 2) Replace path separators to avoid creating folders
+        name = name.replace(os.sep, "-")
+        if os.altsep:
+            name = name.replace(os.altsep, "-")
+
+        # 3) Strip characters that are unsafe on common filesystems
+        #    (Windows: \/:*?"<>| ; also keep it readable)
+        name = re.sub(r'[\\/:*?"<>|]+', "-", name).strip()
+
+        # Optional: collapse runs of '-' and trim length if needed
+        name = re.sub(r'-{2,}', '-', name)
+        return name[:200]  # avoid overly long filenames
+
+    def _build_payload_path(self, file_dir: str, activity_stream_details_instance_id: str, tracking_data: str) -> str:
+        safe_tracking = self._safe_filename(name=tracking_data)
+        filename = f"{activity_stream_details_instance_id}_{safe_tracking}.xml"
+        # Use os.path.join instead of f"{file_dir}/..."
+        path = os.path.abspath(os.path.join(file_dir, filename))
+        return path

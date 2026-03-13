@@ -1,0 +1,279 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_143
+      xsdfilepath: ../resources/processor_143/resourcegroup_144/ICSIntegrationMetadata.xsd
+    - xmlname:
+        space: http://www.oracle.com/2014/03/ics/flow/definition
+        local: integrationProperties
+      attrs:
+        - name:
+            space: ""
+            local: id
+          value: ip0
+        - name:
+            space: ""
+            local: refUri
+          value: processor_178
+      content: ""
+      statements: []
+    - GlobalVariable: (gtv0)
+      variableName: getConfigOutput
+      variableType: $GetConfigs/ns61:executeResponse
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: Interface
+              xpath: /execute/request-wrapper/Config/Interface
+            - role: tracking_var_2
+              name: tracking_var_2
+            - role: tracking_var_3
+              name: tracking_var_3
+        - Assignments: AssignVars_i0(l0)
+          name: AssignVars_i0
+          assignments:
+            - Assignment: Assignment(a0)
+              variableName: v_counter_i0
+              variableType: string
+              expressionProperties:
+                xpathExpression: number(1)
+                variableName: v_counter_i0
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a1)
+              variableName: v_retry_i0
+              variableType: string
+              expressionProperties:
+                xpathExpression: '''true'''
+                variableName: v_retry_i0
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a2)
+              variableName: v_retryCount_i0
+              variableType: string
+              expressionProperties:
+                xpathExpression: $selfProperties/ns61:properties/ns61:retryCount
+                namespaceList: ns61=http://www.oracle.com/2014/03/ic/integration/properties
+                variableName: v_retryCount_i0
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a3)
+              variableName: v_waitInSecs_i0
+              variableType: string
+              expressionProperties:
+                xpathExpression: $selfProperties/ns61:properties/ns61:waitInSeconds
+                namespaceList: ns61=http://www.oracle.com/2014/03/ic/integration/properties
+                variableName: v_waitInSecs_i0
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - While: whileLoop(wh0)
+          expressionProperties:
+            xpathExpression: $v_retry_i0 = 'true'
+            variableName: InvokeService_i0
+          statements:
+            - Try: Try(t0)
+              username: ScopeService_i0
+              statements:
+                - Map: Map(m1)
+                  xsltfilepath: ../resources/processor_124/resourcegroup_127/req_4b9653b4f71443d5822af60c6091f7ad.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetConfigs" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetConfigTrigger" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigTrigger_REQUEST/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigTrigger_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigs_REQUEST/RESTOUTREQ" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns23="http://xml.oracle.com/adapters/extension" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigTrigger_REQUEST/RESTINREQ" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigTrigger_REQUEST/RESTINRES" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigTrigger/types" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns27="http://xml.oracle.com/types/REST/GetConfigs_REQUEST" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigs_REQUEST/RESTOUTRES" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns25="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext nsmpr0 plnk xsd xp20 ora oracle-xsl-mapper nssrcdfl nssrcmpr xsi fn nsmpr1 xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:execute xml:id="id_12">'
+                    - '      <nstrgmpr:QueryParameters xml:id="id_21">'
+                    - '        <ns27:q xml:id="id_22">'
+                    - '          <xsl:choose>'
+                    - '            <xsl:when test="not(boolean(string(normalize-space(/nssrcmpr:execute/ns24:request-wrapper/ns24:Config/ns24:Key))))">'
+                    - '              <xsl:value-of xml:id="id_23" select="concat (&quot;interfaceName like &apos;&quot;, /nssrcmpr:execute/ns24:request-wrapper/ns24:Config/ns24:Interface, &quot;&apos;&quot; )"/>'
+                    - '            <xsl:otherwise>'
+                    - '              <xsl:value-of xml:id="id_23" select="concat (&quot;interfaceName like &apos;&quot;, /nssrcmpr:execute/ns24:request-wrapper/ns24:Config/ns24:Interface, &quot;&apos; and valueKey like&apos;&quot;, /nssrcmpr:execute/ns24:request-wrapper/ns24:Config/ns24:Key, &quot;&apos;&quot; )"/>'
+                    - ""
+                - Invoke: GetConfigs(i0)
+                  application:
+                    Application: GetConfigs(TSGTRESTOICINVOK_CONN)
+                    name: GetConfigs
+                    adapter:
+                        code: TSGTRESTOICINVOK_CONN
+                    properties:
+                        - name: HttpVerb
+                          value: GET
+                        - name: QueryParameters
+                          value: q
+                        - name: ResourceURI
+                          value: /builder/rt/InterfaceConfigs/live/resources/data/Config
+                - Switch: Switch(s1)
+                  routes:
+                    - Route: (sc1)
+                      exprProperties:
+                        xpathExpression: count($GetConfigs/ns21:executeResponse/ns25:response-wrapper/ns25:items) = 0
+                        namespaceList: ns21=http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types ns25=http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: GetConfigs
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types}executeResponse'
+                      statements:
+                        - xmlname:
+                            space: http://www.oracle.com/2014/03/ics/flow/definition
+                            local: throw
+                          attrs:
+                            - name:
+                                space: ""
+                                local: id
+                              value: th0
+                            - name:
+                                space: ""
+                                local: refUri
+                              value: processor_326
+                          content: ""
+                          statements: []
+                    - Route: Otherwise(sc4)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: {}
+                      statements:
+                        - Assignments: SetRetriesToFalse_i0(l1)
+                          name: SetRetriesToFalse_i0
+                          assignments:
+                            - Assignment: Assignment(a4)
+                              variableName: v_retry_i0
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''false'''
+                                variableName: v_retry_i0
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Stitch: Stitch(sh0)
+                  stitchNamespaceResolver:
+                    prefixnamespacemap:
+                        ns10: http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types
+                  stitchVariables:
+                    - name: getConfigOutput
+                      datatype:
+                        type: XMLComplex
+                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types}executeResponse'
+                        uriToSchema: ../../application_112/inbound_113/resourcegroup_114/GetConfigs_REQUEST.wsdl
+                      access: SOURCE_AND_TARGET
+                    - name: GetConfigs
+                      datatype:
+                        type: XMLComplex
+                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types}executeResponse'
+                        uriToSchema: ../../application_112/inbound_113/resourcegroup_114/GetConfigs_REQUEST.wsdl
+                      access: SOURCE_AND_TARGET
+                  stitchSentences:
+                    - operation: Assign
+                      from:
+                        type: XPathExpression
+                        expression: $GetConfigs/ns10:executeResponse
+                        returnType: XML_TYPE_NODE_NODESET
+                      to:
+                        type: XPathPath
+                        path: $getConfigOutput/ns10:executeResponse
+                        isLastStepXsdAnyType: false
+                - CatchAll: CatchAll(ta1)
+                  statements:
+                    - Switch: Switch(s0)
+                      routes:
+                        - Route: RetriesRequires_i0(sc0)
+                          exprProperties:
+                            xpathExpression: $v_counter_i0 != $v_retryCount_i0
+                            namespaceList: ns0=http://www.w3.org/2001/XMLSchema
+                            expressionName: RetriesRequires_i0
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: v_counter_i0
+                                  rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                - VariableName: v_retryCount_i0
+                                  rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                          statements:
+                            - Assignments: incrementCounter_i0(l2)
+                              name: incrementCounter_i0
+                              assignments:
+                                - Assignment: Assignment(a5)
+                                  variableName: v_counter_i0
+                                  variableType: string
+                                  expressionProperties:
+                                    xpathExpression: ($v_counter_i0)+1
+                                    variableName: v_counter_i0
+                                    variableType: string
+                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - xmlname:
+                                space: http://www.oracle.com/2014/03/ics/flow/definition
+                                local: wait
+                              attrs:
+                                - name:
+                                    space: ""
+                                    local: id
+                                  value: w0
+                                - name:
+                                    space: ""
+                                    local: refUri
+                                  value: processor_267
+                              content: ""
+                              statements: []
+                        - Route: Otherwise(sc2)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: {}
+                          statements:
+                            - Assignments: SetRetryToFalse_i0(l3)
+                              name: SetRetryToFalse_i0
+                              assignments:
+                                - Assignment: Assignment(a6)
+                                  variableName: v_retry_i0
+                                  variableType: string
+                                  expressionProperties:
+                                    xpathExpression: '''false'''
+                                    variableName: v_retry_i0
+                                    variableType: string
+                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Stop: EHStop(eh0)
+                  icsfaultfilepath: ../resources/processor_230/resourcegroup_231/ICSFault.xsd
+        - Map: Map(m0)
+          xsltfilepath: ../resources/processor_29/resourcegroup_32/req_d6c95676988044e69f3015e1ea359e37.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigTrigger/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetConfigTrigger" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigTrigger_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigTrigger_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01 ns35 ns33 ns4 ns37 ns36 ns32 nsmpr3 nsmpr2 ns36 nsmpr2 ns36 nsmpr2 ns36 nsmpr2 ns36" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/database/GetDbConfigs_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:flt="http://xmlns.oracle.com/cloud/generic/service/fault" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:tns="http://xmlns.oracle.com/cloud/adapter/database/GetDbConfigs_REQUEST" xmlns:ns20="http://xml.oracle.com/adapters/extension" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigTrigger_REQUEST/RESTINREQ" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigTrigger_REQUEST/RESTINRES" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types" xmlns:ns35="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigs_REQUEST/RESTOUTRES" xmlns:ns33="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetConfigs" xmlns:ns30="http://xmlns.oracle.com/procmon" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST" xmlns:ns31="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns37="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigs_REQUEST/RESTOUTREQ" xmlns:ns36="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" xmlns:ns32="http://xml.oracle.com/types/REST/GetConfigs_REQUEST" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/properties">
+            - '  <xsl:param name="getConfigOutput" xml:id="id_66"/>'
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:executeResponse xml:id="id_12">'
+            - '      <nstrgdfl:response-wrapper xml:id="id_31">'
+            - '        <xsl:for-each xml:id="id_33" select="$getConfigOutput/nsmpr2:executeResponse/ns36:response-wrapper/ns36:items">'
+            - '          <nstrgdfl:Configs xml:id="id_34">'
+            - '            <nstrgdfl:Interface xml:id="id_35">'
+            - '              <xsl:value-of xml:id="id_36" select="ns36:interfaceName"/>'
+            - '            <nstrgdfl:Key xml:id="id_37">'
+            - '              <xsl:value-of xml:id="id_38" select="ns36:valueKey"/>'
+            - '            <nstrgdfl:Value xml:id="id_39">'
+            - '              <xsl:value-of xml:id="id_40" select="ns36:value"/>'
+            - ""
+        - Reply: Reply(y0)
+          adapterjcareference: null
+          wsdlfilepath: ""
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Map: Map(m3)
+              xsltfilepath: ../resources/processor_102/resourcegroup_105/req_d6e4079f242841fd860de1b84f0a7f4f.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetConfigTrigger" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgdfl="http://xmlns.oracle.com/procmon" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigTrigger_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigTrigger_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ics/fault" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/collocatedics/PublishAuditing_REQUEST/types" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns29="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Auditing/Notification/collocatedics/PublishAuditing_REQUEST" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/collocatedics/PublishAuditing_REQUEST" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/PublishAuditing_REQUEST/SKIPOUTREQ" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns22="http://xml.oracle.com/adapters/extension" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigTrigger_REQUEST/RESTINREQ" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigTrigger_REQUEST/RESTINRES" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigTrigger/types" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns30="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Auditing/collocatedics/PublishAuditing_REQUEST" xmlns:ns24="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/PublishAuditing" xmlns:ns31="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/PublishAuditing_REQUEST">
+                - '  <xsl:param name="GlobalFaultObject" xml:id="id_29"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:APIInvocationError xml:id="id_12">'
+                - '      <nstrgmpr:title xml:id="id_40">'
+                - '        <xsl:value-of xml:id="id_41" select="$GlobalFaultObject/nsmpr0:fault/nsmpr0:reason"/>'
+                - '      <nstrgmpr:detail xml:id="id_38">'
+                - '        <xsl:value-of xml:id="id_39" select="$GlobalFaultObject/nsmpr0:fault/nsmpr0:details"/>'
+                - '      <nstrgmpr:errorCode xml:id="id_36">'
+                - '        <xsl:value-of xml:id="id_37" select="$GlobalFaultObject/nsmpr0:fault/nsmpr0:errorCode"/>'
+                - ""
+            - Reply: Reply(y1)
+              adapterjcareference: null
+              wsdlfilepath: ""
+          icsfaultfilepath: ../resources/processor_80/resourcegroup_81/ICSFault.xsd

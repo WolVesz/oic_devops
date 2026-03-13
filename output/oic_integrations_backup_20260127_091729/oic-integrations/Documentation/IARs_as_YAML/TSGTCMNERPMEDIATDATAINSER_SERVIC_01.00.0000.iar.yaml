@@ -1,0 +1,1555 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_5332
+      xsdfilepath: ../resources/processor_5332/resourcegroup_5333/ICSIntegrationMetadata.xsd
+    - Receive: Receive(r0)
+      trackingvariables:
+        - role: tracking_var_1
+          primary: true
+          name: Transaction Id
+          xpath: /execute/request-wrapper/CMN_MEDIATOR_DATAINSERT/TransactionId
+        - role: tracking_var_2
+          name: Source
+          xpath: /execute/request-wrapper/CMN_MEDIATOR_DATAINSERT/Source
+        - role: tracking_var_3
+          name: File Name
+          xpath: /execute/request-wrapper/CMN_MEDIATOR_DATAINSERT/FileName
+    - Assignments: AssignGlobalVariables(l0)
+      name: AssignGlobalVariables
+      assignments:
+        - Assignment: Assignment(a0)
+          variableName: FlowId
+          variableType: string
+          expressionProperties:
+            xpathExpression: ora:getFlowId( )
+            namespaceList: ora=http://schemas.oracle.com/xpath/extension
+            variableName: FlowId
+            variableDescription: Set the OIC unique Id for Flow Trace
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a1)
+          variableName: BaseFolderpath
+          variableType: string
+          expressionProperties:
+            xpathExpression: concat( "/temp/", $FlowId, "/")
+            variableName: BaseFolderpath
+            variableDescription: Set Base Folder Path for Stagging
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a2)
+          variableName: CurrentDateTime
+          variableType: string
+          expressionProperties:
+            xpathExpression: concat(substring-before(substring-before (string (fn:current-dateTime() ), "." ),':'),substring-before(substring-after(substring-before (string (fn:current-dateTime() ), "." ),':'),':'))
+            namespaceList: fn=http://www.w3.org/2005/xpath-functions
+            variableName: CurrentDateTime
+            variableDescription: Set the Current Date Time
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a3)
+          variableName: OICTempFileName
+          variableType: string
+          expressionProperties:
+            xpathExpression: concat( $CurrentDateTime, ".csv")
+            variableName: OICTempFileName
+            variableDescription: Set the Stage File Name
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a4)
+          variableName: StageFilePath
+          variableType: string
+          expressionProperties:
+            xpathExpression: concat( $BaseFolderpath, "mediator")
+            variableName: StageFilePath
+            variableDescription: Set the Stage File Path
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a5)
+          variableName: ErrorFlag
+          variableType: string
+          expressionProperties:
+            xpathExpression: '"N"'
+            variableName: ErrorFlag
+            variableDescription: Set Error flag used in the interface orchestration
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a9)
+          variableName: Status
+          variableType: string
+          expressionProperties:
+            xpathExpression: '"SUCCESS"'
+            variableName: Status
+            variableDescription: Set Intg Flow Tracker Prc Status
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a10)
+          variableName: TotColEnrichedinDataSync
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName','TotColEnrichedinDataSync','ConfigValue','')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TotColEnrichedinDataSync
+            variableDescription: Set the Enriched Column for Data Sync
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a11)
+          variableName: TotalRowsInFile
+          variableType: string
+          expressionProperties:
+            xpathExpression: number(0)
+            variableName: TotalRowsInFile
+            variableDescription: Set this to 0 initially
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a14)
+          variableName: OICFileEnriched
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''SFTPFileEnrichedData.csv'''
+            variableName: OICFileEnriched
+            variableDescription: Set the Enriched Filename
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a15)
+          variableName: OICFileDownloadpath
+          variableType: string
+          expressionProperties:
+            xpathExpression: concat( $BaseFolderpath, "OICVF")
+            variableName: OICFileDownloadpath
+            variableDescription: Set the Download file path to Stage
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a16)
+          variableName: OICFile
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''SFTPFileData.csv'''
+            variableName: OICFile
+            variableDescription: Set the OIC Stage File Name
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a17)
+          variableName: FileDelimitter
+          variableType: string
+          expressionProperties:
+            xpathExpression: /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:CMN_MEDIATOR_DATAINSERT/nsmpr3:Attribute1
+            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types
+            variableName: FileDelimitter
+            variableDescription: Set the delimiter from metadata config table
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a6)
+          variableName: MsgCode
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: MsgCode
+            variableDescription: Set Error or success Message Code
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a7)
+          variableName: MsgDesc
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: MsgDesc
+            variableDescription: Set Error or success Message Description from Lookup Table
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a8)
+          variableName: MsgDetail
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: MsgDetail
+            variableDescription: Set Error or success Message Description from Lookup Table
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a33)
+          variableName: FileLineNumber
+          variableType: string
+          expressionProperties:
+            xpathExpression: number(0)
+            variableName: FileLineNumber
+            variableDescription: 'File Line number : this value will be stored in the ibfile stage table.'
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a34)
+          variableName: Counter
+          variableType: string
+          expressionProperties:
+            xpathExpression: number(0)
+            variableName: Counter
+            variableDescription: Initialize Counter for no of rows in the source file
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a35)
+          variableName: SegmentValue
+          variableType: string
+          expressionProperties:
+            xpathExpression: number(200)
+            variableName: SegmentValue
+            variableDescription: Set the Segment value while doing the increment of Counter
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a40)
+          variableName: TSGT_SYSTEM_ERROR
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_SYSTEM_ERROR','MessageDescr','System Error :')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_SYSTEM_ERROR
+            variableDescription: 'Set the Error Message - System Error :'
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a39)
+          variableName: FileRef
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: FileRef
+            variableDescription: Set the File Ref from Object Storage
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+    - Try: Try(t0)
+      username: DownloadSFTPtoStagging
+      statements:
+        - Switch: Switch(s0)
+          routes:
+            - Route: (sc0)
+              exprProperties:
+                xpathExpression: $ErrorFlag = "N"
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: ErrorFlag
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - Map: Map(m1)
+                  xsltfilepath: ../resources/processor_4377/resourcegroup_4380/req_cdd9d3fbb8bc4ae58c28f6b9a8857eb9.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/DownloadFileFromBucket" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InsertStageDataService" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/DownloadFileFromBucket_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/DownloadFileFromBucket_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types" exclude-result-prefixes=" oraext plnk xsd xp20 nssrcmpr nsmpr0 ora oracle-xsl-mapper xsi fn ns18 xsl nssrcdfl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/DownloadFileFromBucket_REQUEST/RESTOUTRES" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/DownloadFileFromBucket_REQUEST/RESTOUTREQ" xmlns:ns22="http://xml.oracle.com/adapters/extension" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns27="http://xml.oracle.com/types/REST/DownloadFileFromBucket_REQUEST" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns24="http://xmlns.oracle.com/cloud/ics/binary/v1/types" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InsertStageDataService_REQUEST/RESTINREQ" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940">
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:execute xml:id="id_12">'
+                    - '      <nstrgmpr:TemplateParameters xml:id="id_41">'
+                    - '        <ns27:nameSpaceName xml:id="id_42">'
+                    - '          <xsl:value-of xml:id="id_43" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:Namespace"/>'
+                    - '        <ns27:bucketName xml:id="id_44">'
+                    - '          <xsl:value-of xml:id="id_45" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:BucketName"/>'
+                    - '        <ns27:objectName xml:id="id_46">'
+                    - '          <xsl:value-of xml:id="id_47" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:FileName"/>'
+                    - ""
+                - Invoke: DownloadFileFromBucket(i0)
+                  application:
+                    Application: DownloadFileFromBucket(TSGTOBJECTSTORAG_CONN)
+                    name: DownloadFileFromBucket
+                    adapter:
+                        code: TSGTOBJECTSTORAG_CONN
+                    properties:
+                        - name: operationPath
+                          value: http://xmlns.oracle.com/cloud/adapter/REST/DownloadFileFromBucket_REQUEST/execute
+                        - name: HttpVerb
+                          value: GET
+                        - name: ResourceURI
+                          value: /n/{nameSpaceName}/b/{bucketName}/o/{objectName}
+                - Assignments: SetFileRef(l8)
+                  name: SetFileRef
+                  assignments:
+                    - Assignment: Assignment(a38)
+                      variableName: FileRef
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $DownloadFileFromBucket/nsmpr9:executeResponse/nsmpr1:streamReference
+                        namespaceList: nsmpr9=http://xmlns.oracle.com/cloud/adapter/REST/DownloadFileFromBucket_REQUEST/types nsmpr1=http://xmlns.oracle.com/cloud/ics/binary/v1/types
+                        variableName: FileRef
+                        variableDescription: Set File Ref
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: Otherwise(sc1)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Assignments: AssignSFTPFileFetchException(l3)
+              name: AssignSFTPFileFetchException
+              assignments:
+                - Assignment: Assignment(a18)
+                  variableName: ErrorFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErrorFlag
+                    variableDescription: Set the Flag to Y
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a19)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableDescription: Set the Status to ERROR
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a20)
+                  variableName: MsgCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''TSGT_CMN_MEDIATOR_DATAINSERT_SFTP_RETRIEVE_ERROR'''
+                    variableName: MsgCode
+                    variableDescription: Set the Message Code for the Error
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a21)
+                  variableName: MsgDesc
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: concat($TSGT_SYSTEM_ERROR, ora:getFaultAsString())
+                    namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDesc
+                    variableDescription: Set the system Error concatenated with the loop up value
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a22)
+                  variableName: MsgDetail
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: 'concat($DownloadSFTPtoStaggingFaultObject/nsmpr7:fault/nsmpr7:errorCode,'' : '',ora:getContentAsString($DownloadSFTPtoStaggingFaultObject/nsmpr7:fault/nsmpr7:details))'
+                    namespaceList: nsmpr7=http://www.oracle.com/2014/03/ics/fault ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDetail
+                    variableDescription: Set the system Error code concatenated with the loop up value
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_351/resourcegroup_352/ICSFault.xsd
+    - Try: Try(t1)
+      username: DataInsertToStagging
+      statements:
+        - Switch: Switch(s1)
+          routes:
+            - Route: (sc3)
+              exprProperties:
+                xpathExpression: $ErrorFlag = "N"
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: ErrorFlag
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - StageFile: ReadFileFromStage(sf4)
+                  operation: Read
+                  expressionProperties:
+                    xpathExpression: $FileRef
+                  statements:
+                    - Switch: Switch(s6)
+                      routes:
+                        - Route: (sc2)
+                          exprProperties:
+                            xpathExpression: ((/nssrcmpr:execute/nsmpr4:request-wrapper/nsmpr4:CMN_MEDIATOR_DATAINSERT/nsmpr4:HasHeader = "Y" and count($ReadFileFromStage/nsmpr5:ReadResponse/nsmpr1:DataExtractRecordSet/nsmpr1:DataExtractRecord) > 1.0) or (/nssrcmpr:execute/nsmpr4:request-wrapper/nsmpr4:CMN_MEDIATOR_DATAINSERT/nsmpr4:HasHeader = "N" and count($ReadFileFromStage/nsmpr5:ReadResponse/nsmpr1:DataExtractRecordSet/nsmpr1:DataExtractRecord) >= 1.0))
+                            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types nsmpr4=http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types nsmpr5=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileFromStage_REQUEST/types nsmpr1=http://TargetNamespace.com/fileReference/ReadtheExtractfile
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: /
+                                  rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types}execute'
+                                - VariableName: ReadFileFromStage
+                                  rootElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileFromStage_REQUEST/types}ReadResponse'
+                          statements:
+                            - ForLoop: ForLoop(f1)
+                              expressionProperties:
+                                xpathExpression: $ReadFileFromStage/nsmpr5:ReadResponse/nsmpr1:DataExtractRecordSet/nsmpr1:DataExtractRecord
+                                namespaceList: nsmpr5=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileFromStage_REQUEST/types nsmpr1=http://TargetNamespace.com/fileReference/ReadtheExtractfile
+                                variableName: CurrentForEachReadSegments
+                              currentRecordVarName: CurrentForEachReadSegments
+                              statements:
+                                - Switch: Switch(s7)
+                                  routes:
+                                    - Route: (sc15)
+                                      exprProperties:
+                                        xpathExpression: $CurrentForEachReadSegments/nsmpr1:DataExtractRecord/nsmpr1:datacolumn = '' and /nssrcmpr:execute/nsmpr4:request-wrapper/nsmpr4:CMN_MEDIATOR_DATAINSERT/nsmpr4:HasHeader = "Y"
+                                        namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types nsmpr4=http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types nsmpr1=http://TargetNamespace.com/fileReference/ReadtheExtractfile
+                                      stateInfo:
+                                        variablesReferenced:
+                                            - VariableName: CurrentForEachReadSegments
+                                              rootElement: '{http://TargetNamespace.com/fileReference/ReadtheExtractfile}DataExtractRecord'
+                                            - VariableName: /
+                                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types}execute'
+                                      statements:
+                                        - Assignments: incrementtotalrowsinthefile(l1)
+                                          name: incrementtotalrowsinthefile
+                                          assignments:
+                                            - Assignment: Assignment(a12)
+                                              variableName: TotalRowsInFile
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: $TotalRowsInFile
+                                                variableName: TotalRowsInFile
+                                                variableDescription: DirectAssign as we are skipping the Header
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Route: Otherwise(sc16)
+                                      exprProperties:
+                                        xpathExpression: "true"
+                                        expressionName: Otherwise
+                                      stateInfo: null
+                                      statements:
+                                        - Map: Map(m2)
+                                          xsltfilepath: ../resources/processor_699/resourcegroup_702/req_cf2d69be93a747b39231c008ba3a70d1.xsl
+                                          mapsentences:
+                                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InsertStageDataService" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteEnrichedData_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteEnrichedData_REQUEST" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" oraext plnk xsd xp20 nssrcmpr ns2 ora oracle-xsl-mapper nssrcdfl xsi fn ns4 xsl ignore01 ns5 orajs10 ns6 ns7 ns8 ns45 ns11 ns9 ns10" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://TargetNamespace.com/fileReference/ReadtheExtractfile" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileFromSFTP_REQUEST/types" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileFromSFTP_REQUEST" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:ns29="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns30="http://xmlns.oracle.com/cloud/staging/write" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:ns23="http://xml.oracle.com/adapters/extension" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1227963693" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InsertStageDataService_REQUEST/RESTINREQ" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath559523921" xmlns:ns25="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InsertStageDataService_REQUEST/RESTINRES" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileFromStage_REQUEST/types" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns45="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileFromStage_REQUEST" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107">
+                                            - '  <xsl:param name="FileDelimitter" xml:id="id_29"/>'
+                                            - '  <xsl:param name="TotColEnrichedinDataSync" xml:id="id_41"/>'
+                                            - '  <xsl:param name="CurrentForEachReadSegments" xml:id="id_80"/>'
+                                            - '  <xsl:template match="/" xml:id="id_11">'
+                                            - '    <nstrgmpr:Write xml:id="id_12">'
+                                            - '      <nsmpr0:DataExtractEnrichedRecordSet xml:id="id_47">'
+                                            - '        <nsmpr0:DataExtractEnrichedRecord xml:id="id_48">'
+                                            - '          <nsmpr0:datacolumn xml:id="id_49">'
+                                            - '            <xsl:value-of xml:id="id_50" select="orajs5:convertToDelimitterString ($CurrentForEachReadSegments/nsmpr0:DataExtractRecord/nsmpr0:datacolumn, $FileDelimitter, $TotColEnrichedinDataSync )"/>'
+                                            - ""
+                                        - StageFile: WriteEnrichedData(sf0)
+                                          operation: Write
+                                          expressionProperties:
+                                            xpathExpression: $OICFileEnriched
+                                          statements: []
+                                        - Assignments: incrementtotalrowcount(l2)
+                                          name: incrementtotalrowcount
+                                          assignments:
+                                            - Assignment: Assignment(a13)
+                                              variableName: TotalRowsInFile
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: number($TotalRowsInFile) + 1
+                                                variableName: TotalRowsInFile
+                                                variableDescription: Increment the Rows in Files by 1
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Route: Otherwise(sc14)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: null
+                          statements:
+                            - Assignments: AssignNoDataFoundException(l5)
+                              name: AssignNoDataFoundException
+                              assignments:
+                                - Assignment: Assignment(a28)
+                                  variableName: ErrorFlag
+                                  variableType: string
+                                  expressionProperties:
+                                    xpathExpression: '''Y'''
+                                    variableName: ErrorFlag
+                                    variableDescription: Error flag as Y
+                                    variableType: string
+                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                - Assignment: Assignment(a29)
+                                  variableName: Status
+                                  variableType: string
+                                  expressionProperties:
+                                    xpathExpression: '''ERROR'''
+                                    variableName: Status
+                                    variableDescription: Set the Status as ERROR
+                                    variableType: string
+                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                - Assignment: Assignment(a30)
+                                  variableName: MsgCode
+                                  variableType: string
+                                  expressionProperties:
+                                    xpathExpression: '''HC_MEDIATOR_DS_NO_DATA_FOUND_ERROR'''
+                                    variableName: MsgCode
+                                    variableDescription: Set the Error Message Code
+                                    variableType: string
+                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                - Assignment: Assignment(a31)
+                                  variableName: MsgDesc
+                                  variableType: string
+                                  expressionProperties:
+                                    xpathExpression: dvm:lookupValue('HC_CMN_MSGCODE_LKP','MessageCode','HC_MEDIATOR_DS_NO_DATA_FOUND_ERROR','MessageDescr','Error Occured as their are no valid records found in File')\n
+                                    namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                                    variableName: MsgDesc
+                                    variableDescription: Set Error Message Description from lookup table
+                                    variableType: string
+                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                - Assignment: Assignment(a32)
+                                  variableName: MsgDetail
+                                  variableType: string
+                                  expressionProperties:
+                                    xpathExpression: $MsgDesc
+                                    variableName: MsgDetail
+                                    variableDescription: Set Error Message Description from lookup table
+                                    variableType: string
+                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Switch: Switch(s4)
+                  routes:
+                    - Route: (sc9)
+                      exprProperties:
+                        xpathExpression: $ErrorFlag = "N" and $TotalRowsInFile >= 1.0 and /nssrcmpr:execute/nsmpr5:request-wrapper/nsmpr5:CMN_MEDIATOR_DATAINSERT/nsmpr5:HasHeader = 'N'
+                        namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types nsmpr5=http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: ErrorFlag
+                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                            - VariableName: TotalRowsInFile
+                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                            - VariableName: /
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types}execute'
+                      statements:
+                        - StageFile: ReadEnrichedFileInSegments(sf2)
+                          operation: Read
+                          expressionProperties:
+                            xpathExpression: $OICFileDownloadpath
+                          statements:
+                            - Map: Map(m3)
+                              xsltfilepath: ../resources/processor_4965/resourcegroup_4968/req_2573ac2e723940f0b9dfe6f0d7f89120.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InsertStageDataService" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/atpdatabase/InsertDataToStagging_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tns="http://xmlns.oracle.com/cloud/adapter/atpdatabase/InsertDataToStagging_REQUEST" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadEnrichedFileInSegments_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadEnrichedFileInSegments_REQUEST" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InsertStageDataService_REQUEST/RESTINREQ" xmlns:ns24="http://TargetNamespace.com/fileReference" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext xsd xp20 nssrcmpr ns2 ora oracle-xsl-mapper xsi fn ns18 xsl nssrcdfl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                                - '  <xsl:param name="Counter" xml:id="id_22"/>'
+                                - '  <xsl:param name="ReadEnrichedFileInSegments" xml:id="id_36"/>'
+                                - '  <xsl:param name="SegmentValue" xml:id="id_37"/>'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:TsgtCmnIbfileStageTblCollection xml:id="id_12">'
+                                - '      <xsl:for-each xml:id="id_48" select="$ReadEnrichedFileInSegments/nsmpr0:ReadResponse/ns24:DataRecordSet/ns24:DataRecord">'
+                                - '        <nstrgmpr:TsgtCmnIbfileStageTbl xml:id="id_49">'
+                                - '          <nstrgmpr:recordId xml:id="id_95">'
+                                - '            <xsl:value-of xml:id="id_96" select="concat (substring-before (substring-before (substring-before (string (fn:current-dateTime() ), &quot;Z&quot; ), &quot;T&quot; ), &quot;-&quot; ), substring-before (substring-after (substring-before (substring-before (string (fn:current-dateTime() ), &quot;Z&quot; ), &quot;T&quot; ), &quot;-&quot; ), &quot;-&quot; ), substring-after (substring-after (substring-before (substring-before (string (fn:current-dateTime() ), &quot;Z&quot; ), &quot;T&quot; ), &quot;-&quot; ), &quot;-&quot; ), substring-before (substring-before (substring-after (substring-before (string (fn:current-dateTime() ), &quot;Z&quot; ), &quot;T&quot; ), &quot;.&quot; ), &quot;:&quot; ), substring-before (substring-after (substring-before (substring-after (substring-before (string (fn:current-dateTime() ), &quot;Z&quot; ), &quot;T&quot; ), &quot;.&quot; ), &quot;:&quot; ), &quot;:&quot; ), substring-after (substring-after (substring-before (substring-after (substring-before (string (fn:current-dateTime() ), &quot;Z&quot; ), &quot;T&quot; ), &quot;.&quot; ), &quot;:&quot; ), &quot;:&quot; ), substring-after (substring-after (substring-before (string (fn:current-dateTime() ), &quot;Z&quot; ), &quot;T&quot; ), &quot;.&quot; ), string (position() ) )"/>'
+                                - '          <nstrgmpr:transactionId xml:id="id_50">'
+                                - '            <xsl:value-of xml:id="id_51" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:TransactionId"/>'
+                                - '          <nstrgmpr:intgIdentifier xml:id="id_52">'
+                                - '            <xsl:value-of xml:id="id_53" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:IntegrationIdentifier"/>'
+                                - '          <nstrgmpr:intgDescr xml:id="id_54">'
+                                - '            <xsl:value-of xml:id="id_55" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:IntegrationName"/>'
+                                - '          <nstrgmpr:entity xml:id="id_58">'
+                                - '            <xsl:value-of xml:id="id_59" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:Entity"/>'
+                                - '          <nstrgmpr:source xml:id="id_56">'
+                                - '            <xsl:value-of xml:id="id_57" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:Source"/>'
+                                - '          <nstrgmpr:column1 xml:id="id_60">'
+                                - '            <xsl:value-of xml:id="id_61" select="ns24:COLUMN1"/>'
+                                - '          <nstrgmpr:column2 xml:id="id_62">'
+                                - '            <xsl:value-of xml:id="id_63" select="ns24:COLUMN2"/>'
+                                - '          <nstrgmpr:column3 xml:id="id_64">'
+                                - '            <xsl:value-of xml:id="id_65" select="ns24:COLUMN3"/>'
+                                - '          <nstrgmpr:column4>'
+                                - '            <xsl:value-of select="ns24:COLUMN4"/>'
+                                - '          <nstrgmpr:column5>'
+                                - '            <xsl:value-of select="ns24:COLUMN5"/>'
+                                - '          <nstrgmpr:column6>'
+                                - '            <xsl:value-of select="ns24:COLUMN6"/>'
+                                - '          <nstrgmpr:column7>'
+                                - '            <xsl:value-of select="ns24:COLUMN7"/>'
+                                - '          <nstrgmpr:column8>'
+                                - '            <xsl:value-of select="ns24:COLUMN8"/>'
+                                - '          <nstrgmpr:column9>'
+                                - '            <xsl:value-of select="ns24:COLUMN9"/>'
+                                - '          <nstrgmpr:column10>'
+                                - '            <xsl:value-of select="ns24:COLUMN10"/>'
+                                - '          <nstrgmpr:column11>'
+                                - '            <xsl:value-of select="ns24:COLUMN11"/>'
+                                - '          <nstrgmpr:column12>'
+                                - '            <xsl:value-of select="ns24:COLUMN12"/>'
+                                - '          <nstrgmpr:column13>'
+                                - '            <xsl:value-of select="ns24:COLUMN13"/>'
+                                - '          <nstrgmpr:column14>'
+                                - '            <xsl:value-of select="ns24:COLUMN14"/>'
+                                - '          <nstrgmpr:column15>'
+                                - '            <xsl:value-of select="ns24:COLUMN15"/>'
+                                - '          <nstrgmpr:column16>'
+                                - '            <xsl:value-of select="ns24:COLUMN16"/>'
+                                - '          <nstrgmpr:column17>'
+                                - '            <xsl:value-of select="ns24:COLUMN17"/>'
+                                - '          <nstrgmpr:column18>'
+                                - '            <xsl:value-of select="ns24:COLUMN18"/>'
+                                - '          <nstrgmpr:column19>'
+                                - '            <xsl:value-of select="ns24:COLUMN19"/>'
+                                - '          <nstrgmpr:column20>'
+                                - '            <xsl:value-of select="ns24:COLUMN20"/>'
+                                - '          <nstrgmpr:column21>'
+                                - '            <xsl:value-of select="ns24:COLUMN21"/>'
+                                - '          <nstrgmpr:column22>'
+                                - '            <xsl:value-of select="ns24:COLUMN22"/>'
+                                - '          <nstrgmpr:column23>'
+                                - '            <xsl:value-of select="ns24:COLUMN23"/>'
+                                - '          <nstrgmpr:column24>'
+                                - '            <xsl:value-of select="ns24:COLUMN24"/>'
+                                - '          <nstrgmpr:column25>'
+                                - '            <xsl:value-of select="ns24:COLUMN25"/>'
+                                - '          <nstrgmpr:column26>'
+                                - '            <xsl:value-of select="ns24:COLUMN26"/>'
+                                - '          <nstrgmpr:column27>'
+                                - '            <xsl:value-of select="ns24:COLUMN27"/>'
+                                - '          <nstrgmpr:column28>'
+                                - '            <xsl:value-of select="ns24:COLUMN28"/>'
+                                - '          <nstrgmpr:column29>'
+                                - '            <xsl:value-of select="ns24:COLUMN29"/>'
+                                - '          <nstrgmpr:column30>'
+                                - '            <xsl:value-of select="ns24:COLUMN30"/>'
+                                - '          <nstrgmpr:column31>'
+                                - '            <xsl:value-of select="ns24:COLUMN31"/>'
+                                - '          <nstrgmpr:column32>'
+                                - '            <xsl:value-of select="ns24:COLUMN32"/>'
+                                - '          <nstrgmpr:column33>'
+                                - '            <xsl:value-of select="ns24:COLUMN33"/>'
+                                - '          <nstrgmpr:column34>'
+                                - '            <xsl:value-of select="ns24:COLUMN34"/>'
+                                - '          <nstrgmpr:column35>'
+                                - '            <xsl:value-of select="ns24:COLUMN35"/>'
+                                - '          <nstrgmpr:column36>'
+                                - '            <xsl:value-of select="ns24:COLUMN36"/>'
+                                - '          <nstrgmpr:column37>'
+                                - '            <xsl:value-of select="ns24:COLUMN37"/>'
+                                - '          <nstrgmpr:column38>'
+                                - '            <xsl:value-of select="ns24:COLUMN38"/>'
+                                - '          <nstrgmpr:column39>'
+                                - '            <xsl:value-of select="ns24:COLUMN39"/>'
+                                - '          <nstrgmpr:column40>'
+                                - '            <xsl:value-of select="ns24:COLUMN40"/>'
+                                - '          <nstrgmpr:column41>'
+                                - '            <xsl:value-of select="ns24:COLUMN41"/>'
+                                - '          <nstrgmpr:column42>'
+                                - '            <xsl:value-of select="ns24:COLUMN42"/>'
+                                - '          <nstrgmpr:column43>'
+                                - '            <xsl:value-of select="ns24:COLUMN43"/>'
+                                - '          <nstrgmpr:column44>'
+                                - '            <xsl:value-of select="ns24:COLUMN44"/>'
+                                - '          <nstrgmpr:column45>'
+                                - '            <xsl:value-of select="ns24:COLUMN45"/>'
+                                - '          <nstrgmpr:column46>'
+                                - '            <xsl:value-of select="ns24:COLUMN46"/>'
+                                - '          <nstrgmpr:column47>'
+                                - '            <xsl:value-of select="ns24:COLUMN47"/>'
+                                - '          <nstrgmpr:column48>'
+                                - '            <xsl:value-of select="ns24:COLUMN48"/>'
+                                - '          <nstrgmpr:column49>'
+                                - '            <xsl:value-of select="ns24:COLUMN49"/>'
+                                - '          <nstrgmpr:column50>'
+                                - '            <xsl:value-of select="ns24:COLUMN50"/>'
+                                - '          <nstrgmpr:column51>'
+                                - '            <xsl:value-of select="ns24:COLUMN51"/>'
+                                - '          <nstrgmpr:column52>'
+                                - '            <xsl:value-of select="ns24:COLUMN52"/>'
+                                - '          <nstrgmpr:column53>'
+                                - '            <xsl:value-of select="ns24:COLUMN53"/>'
+                                - '          <nstrgmpr:column54>'
+                                - '            <xsl:value-of select="ns24:COLUMN54"/>'
+                                - '          <nstrgmpr:column55>'
+                                - '            <xsl:value-of select="ns24:COLUMN55"/>'
+                                - '          <nstrgmpr:column56>'
+                                - '            <xsl:value-of select="ns24:COLUMN56"/>'
+                                - '          <nstrgmpr:column57>'
+                                - '            <xsl:value-of select="ns24:COLUMN57"/>'
+                                - '          <nstrgmpr:column58>'
+                                - '            <xsl:value-of select="ns24:COLUMN58"/>'
+                                - '          <nstrgmpr:column59>'
+                                - '            <xsl:value-of select="ns24:COLUMN59"/>'
+                                - '          <nstrgmpr:column60>'
+                                - '            <xsl:value-of select="ns24:COLUMN60"/>'
+                                - '          <nstrgmpr:column61>'
+                                - '            <xsl:value-of select="ns24:COLUMN61"/>'
+                                - '          <nstrgmpr:column62>'
+                                - '            <xsl:value-of select="ns24:COLUMN62"/>'
+                                - '          <nstrgmpr:column63>'
+                                - '            <xsl:value-of select="ns24:COLUMN63"/>'
+                                - '          <nstrgmpr:column64>'
+                                - '            <xsl:value-of select="ns24:COLUMN64"/>'
+                                - '          <nstrgmpr:column65>'
+                                - '            <xsl:value-of select="ns24:COLUMN65"/>'
+                                - '          <nstrgmpr:column66>'
+                                - '            <xsl:value-of select="ns24:COLUMN66"/>'
+                                - '          <nstrgmpr:column67>'
+                                - '            <xsl:value-of select="ns24:COLUMN67"/>'
+                                - '          <nstrgmpr:column68>'
+                                - '            <xsl:value-of select="ns24:COLUMN68"/>'
+                                - '          <nstrgmpr:column69>'
+                                - '            <xsl:value-of select="ns24:COLUMN69"/>'
+                                - '          <nstrgmpr:column70>'
+                                - '            <xsl:value-of select="ns24:COLUMN70"/>'
+                                - '          <nstrgmpr:column71>'
+                                - '            <xsl:value-of select="ns24:COLUMN71"/>'
+                                - '          <nstrgmpr:column72>'
+                                - '            <xsl:value-of select="ns24:COLUMN72"/>'
+                                - '          <nstrgmpr:column73>'
+                                - '            <xsl:value-of select="ns24:COLUMN73"/>'
+                                - '          <nstrgmpr:column74>'
+                                - '            <xsl:value-of select="ns24:COLUMN74"/>'
+                                - '          <nstrgmpr:column75>'
+                                - '            <xsl:value-of select="ns24:COLUMN75"/>'
+                                - '          <nstrgmpr:column76>'
+                                - '            <xsl:value-of select="ns24:COLUMN76"/>'
+                                - '          <nstrgmpr:column77>'
+                                - '            <xsl:value-of select="ns24:COLUMN77"/>'
+                                - '          <nstrgmpr:column78>'
+                                - '            <xsl:value-of select="ns24:COLUMN78"/>'
+                                - '          <nstrgmpr:column79>'
+                                - '            <xsl:value-of select="ns24:COLUMN79"/>'
+                                - '          <nstrgmpr:column80>'
+                                - '            <xsl:value-of select="ns24:COLUMN80"/>'
+                                - '          <nstrgmpr:column81>'
+                                - '            <xsl:value-of select="ns24:COLUMN81"/>'
+                                - '          <nstrgmpr:column82>'
+                                - '            <xsl:value-of select="ns24:COLUMN82"/>'
+                                - '          <nstrgmpr:column83>'
+                                - '            <xsl:value-of select="ns24:COLUMN83"/>'
+                                - '          <nstrgmpr:column84>'
+                                - '            <xsl:value-of select="ns24:COLUMN84"/>'
+                                - '          <nstrgmpr:column85>'
+                                - '            <xsl:value-of select="ns24:COLUMN85"/>'
+                                - '          <nstrgmpr:column86>'
+                                - '            <xsl:value-of select="ns24:COLUMN86"/>'
+                                - '          <nstrgmpr:column87>'
+                                - '            <xsl:value-of select="ns24:COLUMN87"/>'
+                                - '          <nstrgmpr:column88>'
+                                - '            <xsl:value-of select="ns24:COLUMN88"/>'
+                                - '          <nstrgmpr:column89>'
+                                - '            <xsl:value-of select="ns24:COLUMN89"/>'
+                                - '          <nstrgmpr:column90>'
+                                - '            <xsl:value-of select="ns24:COLUMN90"/>'
+                                - '          <nstrgmpr:column91>'
+                                - '            <xsl:value-of select="ns24:COLUMN91"/>'
+                                - '          <nstrgmpr:column92>'
+                                - '            <xsl:value-of select="ns24:COLUMN92"/>'
+                                - '          <nstrgmpr:column93>'
+                                - '            <xsl:value-of select="ns24:COLUMN93"/>'
+                                - '          <nstrgmpr:column94>'
+                                - '            <xsl:value-of select="ns24:COLUMN94"/>'
+                                - '          <nstrgmpr:column95>'
+                                - '            <xsl:value-of select="ns24:COLUMN95"/>'
+                                - '          <nstrgmpr:column96>'
+                                - '            <xsl:value-of select="ns24:COLUMN96"/>'
+                                - '          <nstrgmpr:column97>'
+                                - '            <xsl:value-of select="ns24:COLUMN97"/>'
+                                - '          <nstrgmpr:column98>'
+                                - '            <xsl:value-of select="ns24:COLUMN98"/>'
+                                - '          <nstrgmpr:column99>'
+                                - '            <xsl:value-of select="ns24:COLUMN99"/>'
+                                - '          <nstrgmpr:column100>'
+                                - '            <xsl:value-of select="ns24:COLUMN100"/>'
+                                - '          <nstrgmpr:column101>'
+                                - '            <xsl:value-of select="ns24:COLUMN101"/>'
+                                - '          <nstrgmpr:column102>'
+                                - '            <xsl:value-of select="ns24:COLUMN102"/>'
+                                - '          <nstrgmpr:column103>'
+                                - '            <xsl:value-of select="ns24:COLUMN103"/>'
+                                - '          <nstrgmpr:column104>'
+                                - '            <xsl:value-of select="ns24:COLUMN104"/>'
+                                - '          <nstrgmpr:column105>'
+                                - '            <xsl:value-of select="ns24:COLUMN105"/>'
+                                - '          <nstrgmpr:column106>'
+                                - '            <xsl:value-of select="ns24:COLUMN106"/>'
+                                - '          <nstrgmpr:column107>'
+                                - '            <xsl:value-of select="ns24:COLUMN107"/>'
+                                - '          <nstrgmpr:column108>'
+                                - '            <xsl:value-of select="ns24:COLUMN108"/>'
+                                - '          <nstrgmpr:column109>'
+                                - '            <xsl:value-of select="ns24:COLUMN109"/>'
+                                - '          <nstrgmpr:column110>'
+                                - '            <xsl:value-of select="ns24:COLUMN110"/>'
+                                - '          <nstrgmpr:column111>'
+                                - '            <xsl:value-of select="ns24:COLUMN111"/>'
+                                - '          <nstrgmpr:column112>'
+                                - '            <xsl:value-of select="ns24:COLUMN112"/>'
+                                - '          <nstrgmpr:column113>'
+                                - '            <xsl:value-of select="ns24:COLUMN113"/>'
+                                - '          <nstrgmpr:column114>'
+                                - '            <xsl:value-of select="ns24:COLUMN114"/>'
+                                - '          <nstrgmpr:column115>'
+                                - '            <xsl:value-of select="ns24:COLUMN115"/>'
+                                - '          <nstrgmpr:column116>'
+                                - '            <xsl:value-of select="ns24:COLUMN116"/>'
+                                - '          <nstrgmpr:column117>'
+                                - '            <xsl:value-of select="ns24:COLUMN117"/>'
+                                - '          <nstrgmpr:column118>'
+                                - '            <xsl:value-of select="ns24:COLUMN118"/>'
+                                - '          <nstrgmpr:column119>'
+                                - '            <xsl:value-of select="ns24:COLUMN119"/>'
+                                - '          <nstrgmpr:column120>'
+                                - '            <xsl:value-of select="ns24:COLUMN120"/>'
+                                - '          <nstrgmpr:column121>'
+                                - '            <xsl:value-of select="ns24:COLUMN121"/>'
+                                - '          <nstrgmpr:column122>'
+                                - '            <xsl:value-of select="ns24:COLUMN122"/>'
+                                - '          <nstrgmpr:column123>'
+                                - '            <xsl:value-of select="ns24:COLUMN123"/>'
+                                - '          <nstrgmpr:column124>'
+                                - '            <xsl:value-of select="ns24:COLUMN124"/>'
+                                - '          <nstrgmpr:column125>'
+                                - '            <xsl:value-of select="ns24:COLUMN125"/>'
+                                - '          <nstrgmpr:column126>'
+                                - '            <xsl:value-of select="ns24:COLUMN126"/>'
+                                - '          <nstrgmpr:column127>'
+                                - '            <xsl:value-of select="ns24:COLUMN127"/>'
+                                - '          <nstrgmpr:column128>'
+                                - '            <xsl:value-of select="ns24:COLUMN128"/>'
+                                - '          <nstrgmpr:column129>'
+                                - '            <xsl:value-of select="ns24:COLUMN129"/>'
+                                - '          <nstrgmpr:column130>'
+                                - '            <xsl:value-of select="ns24:COLUMN130"/>'
+                                - '          <nstrgmpr:column131>'
+                                - '            <xsl:value-of select="ns24:COLUMN131"/>'
+                                - '          <nstrgmpr:column132>'
+                                - '            <xsl:value-of select="ns24:COLUMN132"/>'
+                                - '          <nstrgmpr:column133>'
+                                - '            <xsl:value-of select="ns24:COLUMN133"/>'
+                                - '          <nstrgmpr:column134>'
+                                - '            <xsl:value-of select="ns24:COLUMN134"/>'
+                                - '          <nstrgmpr:column135>'
+                                - '            <xsl:value-of select="ns24:COLUMN135"/>'
+                                - '          <nstrgmpr:column136>'
+                                - '            <xsl:value-of select="ns24:COLUMN136"/>'
+                                - '          <nstrgmpr:column137>'
+                                - '            <xsl:value-of select="ns24:COLUMN137"/>'
+                                - '          <nstrgmpr:column138>'
+                                - '            <xsl:value-of select="ns24:COLUMN138"/>'
+                                - '          <nstrgmpr:column139>'
+                                - '            <xsl:value-of select="ns24:COLUMN139"/>'
+                                - '          <nstrgmpr:column140>'
+                                - '            <xsl:value-of select="ns24:COLUMN140"/>'
+                                - '          <nstrgmpr:column141>'
+                                - '            <xsl:value-of select="ns24:COLUMN141"/>'
+                                - '          <nstrgmpr:column142>'
+                                - '            <xsl:value-of select="ns24:COLUMN142"/>'
+                                - '          <nstrgmpr:column143>'
+                                - '            <xsl:value-of select="ns24:COLUMN143"/>'
+                                - '          <nstrgmpr:column144>'
+                                - '            <xsl:value-of select="ns24:COLUMN144"/>'
+                                - '          <nstrgmpr:column145>'
+                                - '            <xsl:value-of select="ns24:COLUMN145"/>'
+                                - '          <nstrgmpr:column146>'
+                                - '            <xsl:value-of select="ns24:COLUMN146"/>'
+                                - '          <nstrgmpr:column147>'
+                                - '            <xsl:value-of select="ns24:COLUMN147"/>'
+                                - '          <nstrgmpr:column148>'
+                                - '            <xsl:value-of select="ns24:COLUMN148"/>'
+                                - '          <nstrgmpr:column149>'
+                                - '            <xsl:value-of select="ns24:COLUMN149"/>'
+                                - '          <nstrgmpr:column150>'
+                                - '            <xsl:value-of select="ns24:COLUMN150"/>'
+                                - '          <nstrgmpr:column151>'
+                                - '            <xsl:value-of select="ns24:COLUMN151"/>'
+                                - '          <nstrgmpr:column152>'
+                                - '            <xsl:value-of select="ns24:COLUMN152"/>'
+                                - '          <nstrgmpr:column153>'
+                                - '            <xsl:value-of select="ns24:COLUMN153"/>'
+                                - '          <nstrgmpr:column154>'
+                                - '            <xsl:value-of select="ns24:COLUMN154"/>'
+                                - '          <nstrgmpr:column155>'
+                                - '            <xsl:value-of select="ns24:COLUMN155"/>'
+                                - '          <nstrgmpr:column156>'
+                                - '            <xsl:value-of select="ns24:COLUMN156"/>'
+                                - '          <nstrgmpr:column157>'
+                                - '            <xsl:value-of select="ns24:COLUMN157"/>'
+                                - '          <nstrgmpr:column158>'
+                                - '            <xsl:value-of select="ns24:COLUMN158"/>'
+                                - '          <nstrgmpr:column159>'
+                                - '            <xsl:value-of select="ns24:COLUMN159"/>'
+                                - '          <nstrgmpr:column160>'
+                                - '            <xsl:value-of select="ns24:COLUMN160"/>'
+                                - '          <nstrgmpr:column161>'
+                                - '            <xsl:value-of select="ns24:COLUMN161"/>'
+                                - '          <nstrgmpr:column162>'
+                                - '            <xsl:value-of select="ns24:COLUMN162"/>'
+                                - '          <nstrgmpr:column163>'
+                                - '            <xsl:value-of select="ns24:COLUMN163"/>'
+                                - '          <nstrgmpr:column164>'
+                                - '            <xsl:value-of select="ns24:COLUMN164"/>'
+                                - '          <nstrgmpr:column165>'
+                                - '            <xsl:value-of select="ns24:COLUMN165"/>'
+                                - '          <nstrgmpr:column166>'
+                                - '            <xsl:value-of select="ns24:COLUMN166"/>'
+                                - '          <nstrgmpr:column167>'
+                                - '            <xsl:value-of select="ns24:COLUMN167"/>'
+                                - '          <nstrgmpr:column168>'
+                                - '            <xsl:value-of select="ns24:COLUMN168"/>'
+                                - '          <nstrgmpr:column169>'
+                                - '            <xsl:value-of select="ns24:COLUMN169"/>'
+                                - '          <nstrgmpr:column170>'
+                                - '            <xsl:value-of select="ns24:COLUMN170"/>'
+                                - '          <nstrgmpr:column171>'
+                                - '            <xsl:value-of select="ns24:COLUMN171"/>'
+                                - '          <nstrgmpr:column172>'
+                                - '            <xsl:value-of select="ns24:COLUMN172"/>'
+                                - '          <nstrgmpr:column173>'
+                                - '            <xsl:value-of select="ns24:COLUMN173"/>'
+                                - '          <nstrgmpr:column174>'
+                                - '            <xsl:value-of select="ns24:COLUMN174"/>'
+                                - '          <nstrgmpr:column175>'
+                                - '            <xsl:value-of select="ns24:COLUMN175"/>'
+                                - '          <nstrgmpr:column176>'
+                                - '            <xsl:value-of select="ns24:COLUMN176"/>'
+                                - '          <nstrgmpr:column177>'
+                                - '            <xsl:value-of select="ns24:COLUMN177"/>'
+                                - '          <nstrgmpr:column178>'
+                                - '            <xsl:value-of select="ns24:COLUMN178"/>'
+                                - '          <nstrgmpr:column179>'
+                                - '            <xsl:value-of select="ns24:COLUMN179"/>'
+                                - '          <nstrgmpr:column180>'
+                                - '            <xsl:value-of select="ns24:COLUMN180"/>'
+                                - '          <nstrgmpr:column181>'
+                                - '            <xsl:value-of select="ns24:COLUMN181"/>'
+                                - '          <nstrgmpr:column182>'
+                                - '            <xsl:value-of select="ns24:COLUMN182"/>'
+                                - '          <nstrgmpr:column183>'
+                                - '            <xsl:value-of select="ns24:COLUMN183"/>'
+                                - '          <nstrgmpr:column184>'
+                                - '            <xsl:value-of select="ns24:COLUMN184"/>'
+                                - '          <nstrgmpr:column185>'
+                                - '            <xsl:value-of select="ns24:COLUMN185"/>'
+                                - '          <nstrgmpr:column186>'
+                                - '            <xsl:value-of select="ns24:COLUMN186"/>'
+                                - '          <nstrgmpr:column187>'
+                                - '            <xsl:value-of select="ns24:COLUMN187"/>'
+                                - '          <nstrgmpr:column188>'
+                                - '            <xsl:value-of select="ns24:COLUMN188"/>'
+                                - '          <nstrgmpr:column189>'
+                                - '            <xsl:value-of select="ns24:COLUMN189"/>'
+                                - '          <nstrgmpr:column190>'
+                                - '            <xsl:value-of select="ns24:COLUMN190"/>'
+                                - '          <nstrgmpr:column191>'
+                                - '            <xsl:value-of select="ns24:COLUMN191"/>'
+                                - '          <nstrgmpr:column192>'
+                                - '            <xsl:value-of select="ns24:COLUMN192"/>'
+                                - '          <nstrgmpr:column193>'
+                                - '            <xsl:value-of select="ns24:COLUMN193"/>'
+                                - '          <nstrgmpr:column194>'
+                                - '            <xsl:value-of select="ns24:COLUMN194"/>'
+                                - '          <nstrgmpr:column195>'
+                                - '            <xsl:value-of select="ns24:COLUMN195"/>'
+                                - '          <nstrgmpr:column196>'
+                                - '            <xsl:value-of select="ns24:COLUMN196"/>'
+                                - '          <nstrgmpr:column197>'
+                                - '            <xsl:value-of select="ns24:COLUMN197"/>'
+                                - '          <nstrgmpr:column198>'
+                                - '            <xsl:value-of select="ns24:COLUMN198"/>'
+                                - '          <nstrgmpr:column199>'
+                                - '            <xsl:value-of select="ns24:COLUMN199"/>'
+                                - '          <nstrgmpr:column200>'
+                                - '            <xsl:value-of select="ns24:COLUMN200"/>'
+                                - '          <nstrgmpr:fileLineNumber xml:id="id_66">'
+                                - '            <xsl:value-of xml:id="id_67" select="((number ($SegmentValue ) * number ($Counter )) + position())"/>'
+                                - ""
+                            - Invoke: InsertDataToStagging(i1)
+                              application:
+                                Application: InsertDataToStagging(TSGTATPCLOUDDB_CONN)
+                                name: InsertDataToStagging
+                                adapter:
+                                    code: TSGTATPCLOUDDB_CONN
+                                properties: []
+                            - Assignments: SegmentCounter(l6)
+                              name: SegmentCounter
+                              assignments:
+                                - Assignment: Assignment(a36)
+                                  variableName: Counter
+                                  variableType: string
+                                  expressionProperties:
+                                    xpathExpression: $Counter+1
+                                    variableName: Counter
+                                    variableDescription: Increase the Counter value by 1
+                                    variableType: string
+                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: (sc13)
+                      exprProperties:
+                        xpathExpression: $ErrorFlag = 'N' and $TotalRowsInFile > 1 and /nssrcmpr:execute/nsmpr5:request-wrapper/nsmpr5:CMN_MEDIATOR_DATAINSERT/nsmpr5:HasHeader = 'Y'
+                        namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types nsmpr5=http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: ErrorFlag
+                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                            - VariableName: TotalRowsInFile
+                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                            - VariableName: /
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types}execute'
+                      statements:
+                        - StageFile: ReadEnrichedFileInSegmentWithHeader(sf3)
+                          operation: Read
+                          expressionProperties:
+                            xpathExpression: $OICFileDownloadpath
+                          statements:
+                            - Map: Map(m4)
+                              xsltfilepath: ../resources/processor_4993/resourcegroup_4996/req_3e39fb272cb9487e8c6ef884b5cd4783.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/atpdatabase/InsertDataToStaging_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InsertStageDataService" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:tns="http://xmlns.oracle.com/cloud/adapter/atpdatabase/InsertDataToStaging_REQUEST" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadEnrichedFileInSegmentWithHeader_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext xsd xp20 nssrcmpr ns2 ora oracle-xsl-mapper xsi fn ns18 xsl nssrcdfl ignore01" ignore01:ignorexmlids="true" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadEnrichedFileInSegmentWithHeader_REQUEST" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:ns24="http://TargetNamespace.com/fileReferencewithheader" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InsertStageDataService_REQUEST/RESTINREQ" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                                - '  <xsl:param name="Counter" xml:id="id_22"/>'
+                                - '  <xsl:param name="ReadEnrichedFileInSegmentWithHeader" xml:id="id_36"/>'
+                                - '  <xsl:param name="SegmentValue" xml:id="id_37"/>'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:TsgtCmnIbfileStageTblCollection xml:id="id_12">'
+                                - '      <xsl:for-each select="$ReadEnrichedFileInSegmentWithHeader/nsmpr0:ReadResponse/ns24:DataRecordSet/ns24:DataRecord">'
+                                - '        <nstrgmpr:TsgtCmnIbfileStageTbl>'
+                                - '          <nstrgmpr:recordId>'
+                                - '            <xsl:value-of select="concat (substring-before (substring-before (substring-before (string (fn:current-dateTime()),&quot;Z&quot;),&quot;T&quot;),&quot;-&quot;),substring-before (substring-after (substring-before (substring-before (string (fn:current-dateTime()),&quot;Z&quot;),&quot;T&quot;),&quot;-&quot;),&quot;-&quot;),substring-after (substring-after (substring-before (substring-before (string (fn:current-dateTime()),&quot;Z&quot;),&quot;T&quot;),&quot;-&quot;),&quot;-&quot;),substring-before (substring-before (substring-after (substring-before (string (fn:current-dateTime()),&quot;Z&quot;),&quot;T&quot;),&quot;.&quot;),&quot;:&quot;),substring-before (substring-after (substring-before (substring-after (substring-before (string (fn:current-dateTime()),&quot;Z&quot;),&quot;T&quot;),&quot;.&quot;),&quot;:&quot;),&quot;:&quot;),substring-after (substring-after (substring-before (substring-after (substring-before (string (fn:current-dateTime()),&quot;Z&quot;),&quot;T&quot;),&quot;.&quot;),&quot;:&quot;),&quot;:&quot;),substring-after (substring-after (substring-before (string (fn:current-dateTime()),&quot;Z&quot;),&quot;T&quot;),&quot;.&quot;),string (position()))"/>'
+                                - '          <nstrgmpr:transactionId>'
+                                - '            <xsl:value-of select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:TransactionId"/>'
+                                - '          <nstrgmpr:intgIdentifier>'
+                                - '            <xsl:value-of select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:IntegrationIdentifier"/>'
+                                - '          <nstrgmpr:intgDescr>'
+                                - '            <xsl:value-of select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:IntegrationName"/>'
+                                - '          <nstrgmpr:entity>'
+                                - '            <xsl:value-of select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:Entity"/>'
+                                - '          <nstrgmpr:source>'
+                                - '            <xsl:value-of select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:Source"/>'
+                                - '          <nstrgmpr:column1>'
+                                - '            <xsl:value-of select="ns24:COLUMN1"/>'
+                                - '          <nstrgmpr:column2>'
+                                - '            <xsl:value-of select="ns24:COLUMN2"/>'
+                                - '          <nstrgmpr:column3>'
+                                - '            <xsl:value-of select="ns24:COLUMN3"/>'
+                                - '          <nstrgmpr:column4>'
+                                - '            <xsl:value-of select="ns24:COLUMN4"/>'
+                                - '          <nstrgmpr:column5>'
+                                - '            <xsl:value-of select="ns24:COLUMN5"/>'
+                                - '          <nstrgmpr:column6>'
+                                - '            <xsl:value-of select="ns24:COLUMN6"/>'
+                                - '          <nstrgmpr:column7>'
+                                - '            <xsl:value-of select="ns24:COLUMN7"/>'
+                                - '          <nstrgmpr:column8>'
+                                - '            <xsl:value-of select="ns24:COLUMN8"/>'
+                                - '          <nstrgmpr:column9>'
+                                - '            <xsl:value-of select="ns24:COLUMN9"/>'
+                                - '          <nstrgmpr:column10>'
+                                - '            <xsl:value-of select="ns24:COLUMN10"/>'
+                                - '          <nstrgmpr:column11>'
+                                - '            <xsl:value-of select="ns24:COLUMN11"/>'
+                                - '          <nstrgmpr:column12>'
+                                - '            <xsl:value-of select="ns24:COLUMN12"/>'
+                                - '          <nstrgmpr:column13>'
+                                - '            <xsl:value-of select="ns24:COLUMN13"/>'
+                                - '          <nstrgmpr:column14>'
+                                - '            <xsl:value-of select="ns24:COLUMN14"/>'
+                                - '          <nstrgmpr:column15>'
+                                - '            <xsl:value-of select="ns24:COLUMN15"/>'
+                                - '          <nstrgmpr:column16>'
+                                - '            <xsl:value-of select="ns24:COLUMN16"/>'
+                                - '          <nstrgmpr:column17>'
+                                - '            <xsl:value-of select="ns24:COLUMN17"/>'
+                                - '          <nstrgmpr:column18>'
+                                - '            <xsl:value-of select="ns24:COLUMN18"/>'
+                                - '          <nstrgmpr:column19>'
+                                - '            <xsl:value-of select="ns24:COLUMN19"/>'
+                                - '          <nstrgmpr:column20>'
+                                - '            <xsl:value-of select="ns24:COLUMN20"/>'
+                                - '          <nstrgmpr:column21>'
+                                - '            <xsl:value-of select="ns24:COLUMN21"/>'
+                                - '          <nstrgmpr:column22>'
+                                - '            <xsl:value-of select="ns24:COLUMN22"/>'
+                                - '          <nstrgmpr:column23>'
+                                - '            <xsl:value-of select="ns24:COLUMN23"/>'
+                                - '          <nstrgmpr:column24>'
+                                - '            <xsl:value-of select="ns24:COLUMN24"/>'
+                                - '          <nstrgmpr:column25>'
+                                - '            <xsl:value-of select="ns24:COLUMN25"/>'
+                                - '          <nstrgmpr:column26>'
+                                - '            <xsl:value-of select="ns24:COLUMN26"/>'
+                                - '          <nstrgmpr:column27>'
+                                - '            <xsl:value-of select="ns24:COLUMN27"/>'
+                                - '          <nstrgmpr:column28>'
+                                - '            <xsl:value-of select="ns24:COLUMN28"/>'
+                                - '          <nstrgmpr:column29>'
+                                - '            <xsl:value-of select="ns24:COLUMN29"/>'
+                                - '          <nstrgmpr:column30>'
+                                - '            <xsl:value-of select="ns24:COLUMN30"/>'
+                                - '          <nstrgmpr:column31>'
+                                - '            <xsl:value-of select="ns24:COLUMN31"/>'
+                                - '          <nstrgmpr:column32>'
+                                - '            <xsl:value-of select="ns24:COLUMN32"/>'
+                                - '          <nstrgmpr:column33>'
+                                - '            <xsl:value-of select="ns24:COLUMN33"/>'
+                                - '          <nstrgmpr:column34>'
+                                - '            <xsl:value-of select="ns24:COLUMN34"/>'
+                                - '          <nstrgmpr:column35>'
+                                - '            <xsl:value-of select="ns24:COLUMN35"/>'
+                                - '          <nstrgmpr:column36>'
+                                - '            <xsl:value-of select="ns24:COLUMN36"/>'
+                                - '          <nstrgmpr:column37>'
+                                - '            <xsl:value-of select="ns24:COLUMN37"/>'
+                                - '          <nstrgmpr:column38>'
+                                - '            <xsl:value-of select="ns24:COLUMN38"/>'
+                                - '          <nstrgmpr:column39>'
+                                - '            <xsl:value-of select="ns24:COLUMN39"/>'
+                                - '          <nstrgmpr:column40>'
+                                - '            <xsl:value-of select="ns24:COLUMN40"/>'
+                                - '          <nstrgmpr:column41>'
+                                - '            <xsl:value-of select="ns24:COLUMN41"/>'
+                                - '          <nstrgmpr:column42>'
+                                - '            <xsl:value-of select="ns24:COLUMN42"/>'
+                                - '          <nstrgmpr:column43>'
+                                - '            <xsl:value-of select="ns24:COLUMN43"/>'
+                                - '          <nstrgmpr:column44>'
+                                - '            <xsl:value-of select="ns24:COLUMN44"/>'
+                                - '          <nstrgmpr:column45>'
+                                - '            <xsl:value-of select="ns24:COLUMN45"/>'
+                                - '          <nstrgmpr:column46>'
+                                - '            <xsl:value-of select="ns24:COLUMN46"/>'
+                                - '          <nstrgmpr:column47>'
+                                - '            <xsl:value-of select="ns24:COLUMN47"/>'
+                                - '          <nstrgmpr:column48>'
+                                - '            <xsl:value-of select="ns24:COLUMN48"/>'
+                                - '          <nstrgmpr:column49>'
+                                - '            <xsl:value-of select="ns24:COLUMN49"/>'
+                                - '          <nstrgmpr:column50>'
+                                - '            <xsl:value-of select="ns24:COLUMN50"/>'
+                                - '          <nstrgmpr:column51>'
+                                - '            <xsl:value-of select="ns24:COLUMN51"/>'
+                                - '          <nstrgmpr:column52>'
+                                - '            <xsl:value-of select="ns24:COLUMN52"/>'
+                                - '          <nstrgmpr:column53>'
+                                - '            <xsl:value-of select="ns24:COLUMN53"/>'
+                                - '          <nstrgmpr:column54>'
+                                - '            <xsl:value-of select="ns24:COLUMN54"/>'
+                                - '          <nstrgmpr:column55>'
+                                - '            <xsl:value-of select="ns24:COLUMN55"/>'
+                                - '          <nstrgmpr:column56>'
+                                - '            <xsl:value-of select="ns24:COLUMN56"/>'
+                                - '          <nstrgmpr:column57>'
+                                - '            <xsl:value-of select="ns24:COLUMN57"/>'
+                                - '          <nstrgmpr:column58>'
+                                - '            <xsl:value-of select="ns24:COLUMN58"/>'
+                                - '          <nstrgmpr:column59>'
+                                - '            <xsl:value-of select="ns24:COLUMN59"/>'
+                                - '          <nstrgmpr:column60>'
+                                - '            <xsl:value-of select="ns24:COLUMN60"/>'
+                                - '          <nstrgmpr:column61>'
+                                - '            <xsl:value-of select="ns24:COLUMN61"/>'
+                                - '          <nstrgmpr:column62>'
+                                - '            <xsl:value-of select="ns24:COLUMN62"/>'
+                                - '          <nstrgmpr:column63>'
+                                - '            <xsl:value-of select="ns24:COLUMN63"/>'
+                                - '          <nstrgmpr:column64>'
+                                - '            <xsl:value-of select="ns24:COLUMN64"/>'
+                                - '          <nstrgmpr:column65>'
+                                - '            <xsl:value-of select="ns24:COLUMN65"/>'
+                                - '          <nstrgmpr:column66>'
+                                - '            <xsl:value-of select="ns24:COLUMN66"/>'
+                                - '          <nstrgmpr:column67>'
+                                - '            <xsl:value-of select="ns24:COLUMN67"/>'
+                                - '          <nstrgmpr:column68>'
+                                - '            <xsl:value-of select="ns24:COLUMN68"/>'
+                                - '          <nstrgmpr:column69>'
+                                - '            <xsl:value-of select="ns24:COLUMN69"/>'
+                                - '          <nstrgmpr:column70>'
+                                - '            <xsl:value-of select="ns24:COLUMN70"/>'
+                                - '          <nstrgmpr:column71>'
+                                - '            <xsl:value-of select="ns24:COLUMN71"/>'
+                                - '          <nstrgmpr:column72>'
+                                - '            <xsl:value-of select="ns24:COLUMN72"/>'
+                                - '          <nstrgmpr:column73>'
+                                - '            <xsl:value-of select="ns24:COLUMN73"/>'
+                                - '          <nstrgmpr:column74>'
+                                - '            <xsl:value-of select="ns24:COLUMN74"/>'
+                                - '          <nstrgmpr:column75>'
+                                - '            <xsl:value-of select="ns24:COLUMN75"/>'
+                                - '          <nstrgmpr:column76>'
+                                - '            <xsl:value-of select="ns24:COLUMN76"/>'
+                                - '          <nstrgmpr:column77>'
+                                - '            <xsl:value-of select="ns24:COLUMN77"/>'
+                                - '          <nstrgmpr:column78>'
+                                - '            <xsl:value-of select="ns24:COLUMN78"/>'
+                                - '          <nstrgmpr:column79>'
+                                - '            <xsl:value-of select="ns24:COLUMN79"/>'
+                                - '          <nstrgmpr:column80>'
+                                - '            <xsl:value-of select="ns24:COLUMN80"/>'
+                                - '          <nstrgmpr:column81>'
+                                - '            <xsl:value-of select="ns24:COLUMN81"/>'
+                                - '          <nstrgmpr:column82>'
+                                - '            <xsl:value-of select="ns24:COLUMN82"/>'
+                                - '          <nstrgmpr:column83>'
+                                - '            <xsl:value-of select="ns24:COLUMN83"/>'
+                                - '          <nstrgmpr:column84>'
+                                - '            <xsl:value-of select="ns24:COLUMN84"/>'
+                                - '          <nstrgmpr:column85>'
+                                - '            <xsl:value-of select="ns24:COLUMN85"/>'
+                                - '          <nstrgmpr:column86>'
+                                - '            <xsl:value-of select="ns24:COLUMN86"/>'
+                                - '          <nstrgmpr:column87>'
+                                - '            <xsl:value-of select="ns24:COLUMN87"/>'
+                                - '          <nstrgmpr:column88>'
+                                - '            <xsl:value-of select="ns24:COLUMN88"/>'
+                                - '          <nstrgmpr:column89>'
+                                - '            <xsl:value-of select="ns24:COLUMN89"/>'
+                                - '          <nstrgmpr:column90>'
+                                - '            <xsl:value-of select="ns24:COLUMN90"/>'
+                                - '          <nstrgmpr:column91>'
+                                - '            <xsl:value-of select="ns24:COLUMN91"/>'
+                                - '          <nstrgmpr:column92>'
+                                - '            <xsl:value-of select="ns24:COLUMN92"/>'
+                                - '          <nstrgmpr:column93>'
+                                - '            <xsl:value-of select="ns24:COLUMN93"/>'
+                                - '          <nstrgmpr:column94>'
+                                - '            <xsl:value-of select="ns24:COLUMN94"/>'
+                                - '          <nstrgmpr:column95>'
+                                - '            <xsl:value-of select="ns24:COLUMN95"/>'
+                                - '          <nstrgmpr:column96>'
+                                - '            <xsl:value-of select="ns24:COLUMN96"/>'
+                                - '          <nstrgmpr:column97>'
+                                - '            <xsl:value-of select="ns24:COLUMN97"/>'
+                                - '          <nstrgmpr:column98>'
+                                - '            <xsl:value-of select="ns24:COLUMN98"/>'
+                                - '          <nstrgmpr:column99>'
+                                - '            <xsl:value-of select="ns24:COLUMN99"/>'
+                                - '          <nstrgmpr:column100>'
+                                - '            <xsl:value-of select="ns24:COLUMN100"/>'
+                                - '          <nstrgmpr:column101>'
+                                - '            <xsl:value-of select="ns24:COLUMN101"/>'
+                                - '          <nstrgmpr:column102>'
+                                - '            <xsl:value-of select="ns24:COLUMN102"/>'
+                                - '          <nstrgmpr:column103>'
+                                - '            <xsl:value-of select="ns24:COLUMN103"/>'
+                                - '          <nstrgmpr:column104>'
+                                - '            <xsl:value-of select="ns24:COLUMN104"/>'
+                                - '          <nstrgmpr:column105>'
+                                - '            <xsl:value-of select="ns24:COLUMN105"/>'
+                                - '          <nstrgmpr:column106>'
+                                - '            <xsl:value-of select="ns24:COLUMN106"/>'
+                                - '          <nstrgmpr:column107>'
+                                - '            <xsl:value-of select="ns24:COLUMN107"/>'
+                                - '          <nstrgmpr:column108>'
+                                - '            <xsl:value-of select="ns24:COLUMN108"/>'
+                                - '          <nstrgmpr:column109>'
+                                - '            <xsl:value-of select="ns24:COLUMN109"/>'
+                                - '          <nstrgmpr:column110>'
+                                - '            <xsl:value-of select="ns24:COLUMN110"/>'
+                                - '          <nstrgmpr:column111>'
+                                - '            <xsl:value-of select="ns24:COLUMN111"/>'
+                                - '          <nstrgmpr:column112>'
+                                - '            <xsl:value-of select="ns24:COLUMN112"/>'
+                                - '          <nstrgmpr:column113>'
+                                - '            <xsl:value-of select="ns24:COLUMN113"/>'
+                                - '          <nstrgmpr:column114>'
+                                - '            <xsl:value-of select="ns24:COLUMN114"/>'
+                                - '          <nstrgmpr:column115>'
+                                - '            <xsl:value-of select="ns24:COLUMN115"/>'
+                                - '          <nstrgmpr:column116>'
+                                - '            <xsl:value-of select="ns24:COLUMN116"/>'
+                                - '          <nstrgmpr:column117>'
+                                - '            <xsl:value-of select="ns24:COLUMN117"/>'
+                                - '          <nstrgmpr:column118>'
+                                - '            <xsl:value-of select="ns24:COLUMN118"/>'
+                                - '          <nstrgmpr:column119>'
+                                - '            <xsl:value-of select="ns24:COLUMN119"/>'
+                                - '          <nstrgmpr:column120>'
+                                - '            <xsl:value-of select="ns24:COLUMN120"/>'
+                                - '          <nstrgmpr:column121>'
+                                - '            <xsl:value-of select="ns24:COLUMN121"/>'
+                                - '          <nstrgmpr:column122>'
+                                - '            <xsl:value-of select="ns24:COLUMN122"/>'
+                                - '          <nstrgmpr:column123>'
+                                - '            <xsl:value-of select="ns24:COLUMN123"/>'
+                                - '          <nstrgmpr:column124>'
+                                - '            <xsl:value-of select="ns24:COLUMN124"/>'
+                                - '          <nstrgmpr:column125>'
+                                - '            <xsl:value-of select="ns24:COLUMN125"/>'
+                                - '          <nstrgmpr:column126>'
+                                - '            <xsl:value-of select="ns24:COLUMN126"/>'
+                                - '          <nstrgmpr:column127>'
+                                - '            <xsl:value-of select="ns24:COLUMN127"/>'
+                                - '          <nstrgmpr:column128>'
+                                - '            <xsl:value-of select="ns24:COLUMN128"/>'
+                                - '          <nstrgmpr:column129>'
+                                - '            <xsl:value-of select="ns24:COLUMN129"/>'
+                                - '          <nstrgmpr:column130>'
+                                - '            <xsl:value-of select="ns24:COLUMN130"/>'
+                                - '          <nstrgmpr:column131>'
+                                - '            <xsl:value-of select="ns24:COLUMN131"/>'
+                                - '          <nstrgmpr:column132>'
+                                - '            <xsl:value-of select="ns24:COLUMN132"/>'
+                                - '          <nstrgmpr:column133>'
+                                - '            <xsl:value-of select="ns24:COLUMN133"/>'
+                                - '          <nstrgmpr:column134>'
+                                - '            <xsl:value-of select="ns24:COLUMN134"/>'
+                                - '          <nstrgmpr:column135>'
+                                - '            <xsl:value-of select="ns24:COLUMN135"/>'
+                                - '          <nstrgmpr:column136>'
+                                - '            <xsl:value-of select="ns24:COLUMN136"/>'
+                                - '          <nstrgmpr:column137>'
+                                - '            <xsl:value-of select="ns24:COLUMN137"/>'
+                                - '          <nstrgmpr:column138>'
+                                - '            <xsl:value-of select="ns24:COLUMN138"/>'
+                                - '          <nstrgmpr:column139>'
+                                - '            <xsl:value-of select="ns24:COLUMN139"/>'
+                                - '          <nstrgmpr:column140>'
+                                - '            <xsl:value-of select="ns24:COLUMN140"/>'
+                                - '          <nstrgmpr:column141>'
+                                - '            <xsl:value-of select="ns24:COLUMN141"/>'
+                                - '          <nstrgmpr:column142>'
+                                - '            <xsl:value-of select="ns24:COLUMN142"/>'
+                                - '          <nstrgmpr:column143>'
+                                - '            <xsl:value-of select="ns24:COLUMN143"/>'
+                                - '          <nstrgmpr:column144>'
+                                - '            <xsl:value-of select="ns24:COLUMN144"/>'
+                                - '          <nstrgmpr:column145>'
+                                - '            <xsl:value-of select="ns24:COLUMN145"/>'
+                                - '          <nstrgmpr:column146>'
+                                - '            <xsl:value-of select="ns24:COLUMN146"/>'
+                                - '          <nstrgmpr:column147>'
+                                - '            <xsl:value-of select="ns24:COLUMN147"/>'
+                                - '          <nstrgmpr:column148>'
+                                - '            <xsl:value-of select="ns24:COLUMN148"/>'
+                                - '          <nstrgmpr:column149>'
+                                - '            <xsl:value-of select="ns24:COLUMN149"/>'
+                                - '          <nstrgmpr:column150>'
+                                - '            <xsl:value-of select="ns24:COLUMN150"/>'
+                                - '          <nstrgmpr:column151>'
+                                - '            <xsl:value-of select="ns24:COLUMN151"/>'
+                                - '          <nstrgmpr:column152>'
+                                - '            <xsl:value-of select="ns24:COLUMN152"/>'
+                                - '          <nstrgmpr:column153>'
+                                - '            <xsl:value-of select="ns24:COLUMN153"/>'
+                                - '          <nstrgmpr:column154>'
+                                - '            <xsl:value-of select="ns24:COLUMN154"/>'
+                                - '          <nstrgmpr:column155>'
+                                - '            <xsl:value-of select="ns24:COLUMN155"/>'
+                                - '          <nstrgmpr:column156>'
+                                - '            <xsl:value-of select="ns24:COLUMN156"/>'
+                                - '          <nstrgmpr:column157>'
+                                - '            <xsl:value-of select="ns24:COLUMN157"/>'
+                                - '          <nstrgmpr:column158>'
+                                - '            <xsl:value-of select="ns24:COLUMN158"/>'
+                                - '          <nstrgmpr:column159>'
+                                - '            <xsl:value-of select="ns24:COLUMN159"/>'
+                                - '          <nstrgmpr:column160>'
+                                - '            <xsl:value-of select="ns24:COLUMN160"/>'
+                                - '          <nstrgmpr:column161>'
+                                - '            <xsl:value-of select="ns24:COLUMN161"/>'
+                                - '          <nstrgmpr:column162>'
+                                - '            <xsl:value-of select="ns24:COLUMN162"/>'
+                                - '          <nstrgmpr:column163>'
+                                - '            <xsl:value-of select="ns24:COLUMN163"/>'
+                                - '          <nstrgmpr:column164>'
+                                - '            <xsl:value-of select="ns24:COLUMN164"/>'
+                                - '          <nstrgmpr:column165>'
+                                - '            <xsl:value-of select="ns24:COLUMN165"/>'
+                                - '          <nstrgmpr:column166>'
+                                - '            <xsl:value-of select="ns24:COLUMN166"/>'
+                                - '          <nstrgmpr:column167>'
+                                - '            <xsl:value-of select="ns24:COLUMN167"/>'
+                                - '          <nstrgmpr:column168>'
+                                - '            <xsl:value-of select="ns24:COLUMN168"/>'
+                                - '          <nstrgmpr:column169>'
+                                - '            <xsl:value-of select="ns24:COLUMN169"/>'
+                                - '          <nstrgmpr:column170>'
+                                - '            <xsl:value-of select="ns24:COLUMN170"/>'
+                                - '          <nstrgmpr:column171>'
+                                - '            <xsl:value-of select="ns24:COLUMN171"/>'
+                                - '          <nstrgmpr:column172>'
+                                - '            <xsl:value-of select="ns24:COLUMN172"/>'
+                                - '          <nstrgmpr:column173>'
+                                - '            <xsl:value-of select="ns24:COLUMN173"/>'
+                                - '          <nstrgmpr:column174>'
+                                - '            <xsl:value-of select="ns24:COLUMN174"/>'
+                                - '          <nstrgmpr:column175>'
+                                - '            <xsl:value-of select="ns24:COLUMN175"/>'
+                                - '          <nstrgmpr:column176>'
+                                - '            <xsl:value-of select="ns24:COLUMN176"/>'
+                                - '          <nstrgmpr:column177>'
+                                - '            <xsl:value-of select="ns24:COLUMN177"/>'
+                                - '          <nstrgmpr:column178>'
+                                - '            <xsl:value-of select="ns24:COLUMN178"/>'
+                                - '          <nstrgmpr:column179>'
+                                - '            <xsl:value-of select="ns24:COLUMN179"/>'
+                                - '          <nstrgmpr:column180>'
+                                - '            <xsl:value-of select="ns24:COLUMN180"/>'
+                                - '          <nstrgmpr:column181>'
+                                - '            <xsl:value-of select="ns24:COLUMN181"/>'
+                                - '          <nstrgmpr:column182>'
+                                - '            <xsl:value-of select="ns24:COLUMN182"/>'
+                                - '          <nstrgmpr:column183>'
+                                - '            <xsl:value-of select="ns24:COLUMN183"/>'
+                                - '          <nstrgmpr:column184>'
+                                - '            <xsl:value-of select="ns24:COLUMN184"/>'
+                                - '          <nstrgmpr:column185>'
+                                - '            <xsl:value-of select="ns24:COLUMN185"/>'
+                                - '          <nstrgmpr:column186>'
+                                - '            <xsl:value-of select="ns24:COLUMN186"/>'
+                                - '          <nstrgmpr:column187>'
+                                - '            <xsl:value-of select="ns24:COLUMN187"/>'
+                                - '          <nstrgmpr:column188>'
+                                - '            <xsl:value-of select="ns24:COLUMN188"/>'
+                                - '          <nstrgmpr:column189>'
+                                - '            <xsl:value-of select="ns24:COLUMN189"/>'
+                                - '          <nstrgmpr:column190>'
+                                - '            <xsl:value-of select="ns24:COLUMN190"/>'
+                                - '          <nstrgmpr:column191>'
+                                - '            <xsl:value-of select="ns24:COLUMN191"/>'
+                                - '          <nstrgmpr:column192>'
+                                - '            <xsl:value-of select="ns24:COLUMN192"/>'
+                                - '          <nstrgmpr:column193>'
+                                - '            <xsl:value-of select="ns24:COLUMN193"/>'
+                                - '          <nstrgmpr:column194>'
+                                - '            <xsl:value-of select="ns24:COLUMN194"/>'
+                                - '          <nstrgmpr:column195>'
+                                - '            <xsl:value-of select="ns24:COLUMN195"/>'
+                                - '          <nstrgmpr:column196>'
+                                - '            <xsl:value-of select="ns24:COLUMN196"/>'
+                                - '          <nstrgmpr:column197>'
+                                - '            <xsl:value-of select="ns24:COLUMN197"/>'
+                                - '          <nstrgmpr:column198>'
+                                - '            <xsl:value-of select="ns24:COLUMN198"/>'
+                                - '          <nstrgmpr:column199>'
+                                - '            <xsl:value-of select="ns24:COLUMN199"/>'
+                                - '          <nstrgmpr:column200>'
+                                - '            <xsl:value-of select="ns24:COLUMN200"/>'
+                                - '          <nstrgmpr:fileLineNumber>'
+                                - '            <xsl:value-of select="((number ($SegmentValue ) * number ($Counter )) + position())"/>'
+                                - ""
+                            - Invoke: InsertDataToStaging(i2)
+                              application:
+                                Application: InsertDataToStaging(TSGTATPCLOUDDB_CONN)
+                                name: InsertDataToStaging
+                                adapter:
+                                    code: TSGTATPCLOUDDB_CONN
+                                properties: []
+                            - Assignments: SegmentCounterHasHeader(l7)
+                              name: SegmentCounterHasHeader
+                              assignments:
+                                - Assignment: Assignment(a37)
+                                  variableName: Counter
+                                  variableType: string
+                                  expressionProperties:
+                                    xpathExpression: $Counter+1
+                                    variableName: Counter
+                                    variableDescription: Increase the Counter value by 1
+                                    variableType: string
+                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: Otherwise(sc10)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements: []
+            - Route: Otherwise(sc4)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - CatchAll: CatchAll(ta1)
+          statements:
+            - Assignments: AssignFileProcessingException(l4)
+              name: AssignFileProcessingException
+              assignments:
+                - Assignment: Assignment(a23)
+                  variableName: ErrorFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErrorFlag
+                    variableDescription: Set the Flag to Y
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a24)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableDescription: Set the Status to ERROR
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a25)
+                  variableName: MsgCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''TSGT_CMN_MEDIATOR_DATAINSERT_SFTP_RETRIEVE_ERROR'''
+                    variableName: MsgCode
+                    variableDescription: Set the Message Code for the Error
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a26)
+                  variableName: MsgDesc
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: concat($TSGT_SYSTEM_ERROR, ora:getFaultAsString())
+                    namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDesc
+                    variableDescription: Set the system Error concatenated with the loop up value
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a27)
+                  variableName: MsgDetail
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: 'concat($DataInsertToStaggingFaultObject/nsmpr7:fault/nsmpr7:errorCode,'' : '',ora:getContentAsString($DataInsertToStaggingFaultObject/nsmpr7:fault/nsmpr7:details))'
+                    namespaceList: nsmpr7=http://www.oracle.com/2014/03/ics/fault ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDetail
+                    variableDescription: Set the system Error code concatenated with the loop up value
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_1521/resourcegroup_1522/ICSFault.xsd
+    - Switch: Switch(s5)
+      routes:
+        - Route: (sc11)
+          exprProperties:
+            xpathExpression: $ErrorFlag = "N"
+          stateInfo:
+            variablesReferenced:
+                - VariableName: ErrorFlag
+                  rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+          statements:
+            - Map: Map(m0)
+              xsltfilepath: ../resources/processor_5040/resourcegroup_5043/req_d4253840a7c3404d9078b011b20409cb.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/UpdateDataInsertStatusToInstance_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/UpdateDataInsertStatusToInstance_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InsertStageDataService" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/UpdateDataInsertStatusToInstance" exclude-result-prefixes=" oraext plnk xsd xp20 nssrcmpr ns2 ora oracle-xsl-mapper nssrcdfl xsi fn ns18 xsl ignore01 orajs13" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns23="http://xml.oracle.com/adapters/extension" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/UpdateDataInsertStatusToInstance_REQUEST/SKIPOUTREQ" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InsertStageDataService_REQUEST/RESTINREQ" xmlns:ns26="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/UpdateDataInsertStatusToInstance_REQUEST" xmlns:ns25="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894">
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:POST xml:id="id_12">'
+                - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_42">'
+                - '        <ns26:Transaction_id xml:id="id_43">'
+                - '          <xsl:value-of xml:id="id_44" select="/nssrcmpr:execute/ns21:request-wrapper/ns21:CMN_MEDIATOR_DATAINSERT/ns21:TransactionId"/>'
+                - '        <ns26:Operation xml:id="id_78">'
+                - '          <xsl:value-of xml:id="id_79" select="&apos;Update&apos;"/>'
+                - '        <ns26:InstanceUpsert xml:id="id_45">'
+                - '          <xsl:value-of xml:id="id_46" select="&apos;Y&apos;"/>'
+                - '        <ns26:TransactionUpsert xml:id="id_47">'
+                - '          <xsl:value-of xml:id="id_48" select="&apos;N&apos;"/>'
+                - '        <ns26:Inst_loadStatus xml:id="id_111">'
+                - '          <xsl:value-of xml:id="id_112" select="&quot;Insert-Success&quot;"/>'
+                - ""
+        - Route: Otherwise(sc12)
+          exprProperties:
+            xpathExpression: "true"
+            expressionName: Otherwise
+          stateInfo: null
+          statements:
+            - Map: Map(m5)
+              xsltfilepath: ../resources/processor_5066/resourcegroup_5069/req_b070665875a1496bb054f56f7a1913b6.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/UpdateDataInsertStatusToInstance_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/UpdateDataInsertStatusToInstance_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InsertStageDataService" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/UpdateDataInsertStatusToInstance" exclude-result-prefixes=" oraext plnk xsd xp20 nssrcmpr ns2 ora oracle-xsl-mapper nssrcdfl xsi fn ns18 xsl ignore01 orajs13" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns23="http://xml.oracle.com/adapters/extension" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/UpdateDataInsertStatusToInstance_REQUEST/SKIPOUTREQ" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InsertStageDataService_REQUEST/RESTINREQ" xmlns:ns26="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/UpdateDataInsertStatusToInstance_REQUEST" xmlns:ns25="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894">
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:POST xml:id="id_12">'
+                - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_42">'
+                - '        <ns26:Transaction_id xml:id="id_43">'
+                - '          <xsl:value-of xml:id="id_44" select="/nssrcmpr:execute/ns21:request-wrapper/ns21:CMN_MEDIATOR_DATAINSERT/ns21:TransactionId"/>'
+                - '        <ns26:Operation xml:id="id_45">'
+                - '          <xsl:value-of xml:id="id_46" select="&apos;Update&apos;"/>'
+                - '        <ns26:InstanceUpsert xml:id="id_47">'
+                - '          <xsl:value-of xml:id="id_48" select="&apos;Y&apos;"/>'
+                - '        <ns26:TransactionUpsert xml:id="id_49">'
+                - '          <xsl:value-of xml:id="id_50" select="&apos;N&apos;"/>'
+                - '        <ns26:Inst_loadStatus xml:id="id_82">'
+                - '          <xsl:value-of xml:id="id_83" select="&quot;Insert-Error&quot;"/>'
+                - ""
+    - Invoke: UpdateDataInsertStatusToInstance(i3)
+      application:
+        Application: UpdateDataInsertStatusToInstance(PRESEEDED_COLLOCATED_CONN_1741)
+        name: UpdateDataInsertStatusToInstance
+        adapter:
+            code: PRESEEDED_COLLOCATED_CONN_1741
+        properties:
+            - name: operationPath
+              value: /UpsertInstanceTransaction
+            - name: HttpVerb
+              value: POST
+            - name: QueryParameters
+              value: ""
+            - name: ResourceURI
+              value: /UpsertInstanceTransaction
+            - name: integration_id
+              value: TSGTCMNUPSERTINS_SERVICE|01.00.0000
+            - name: integration_operation
+              value: POST
+            - name: serviceType
+              value: REST
+    - Stop: Stop(st0)

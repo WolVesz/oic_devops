@@ -1,0 +1,569 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_850
+      xsdfilepath: ../resources/processor_850/resourcegroup_851/ICSIntegrationMetadata.xsd
+    - xmlname:
+        space: http://www.oracle.com/2014/03/ics/flow/definition
+        local: integrationProperties
+      attrs:
+        - name:
+            space: ""
+            local: id
+          value: ip0
+        - name:
+            space: ""
+            local: refUri
+          value: processor_862
+      content: ""
+      statements: []
+    - GlobalVariable: (gtv0)
+      variableName: currentRetry
+      variableType: simpleType
+    - GlobalVariable: (gtv2)
+      variableName: keepRetrying
+      variableType: simpleType
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: Transaction_id
+              xpath: /execute/request-wrapper/Transaction_id
+            - role: tracking_var_2
+              name: oic_business Identifier2
+              xpath: /execute/request-wrapper/oic_businessIdentifier2
+            - role: tracking_var_3
+              name: oic_business Identifier3
+              xpath: /execute/request-wrapper/oic_businessIdentifier3
+        - Assignments: IntiVar(l0)
+          name: IntiVar
+          assignments:
+            - Assignment: Assignment(a0)
+              variableName: Status
+              variableType: string
+              expressionProperties:
+                xpathExpression: '''SUCCESS'''
+                variableName: Status
+                variableDescription: Default
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a1)
+              variableName: Result
+              variableType: string
+              expressionProperties:
+                xpathExpression: '''0'''
+                variableName: Result
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a2)
+              variableName: Framework_BaseURI
+              variableType: string
+              expressionProperties:
+                xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName','Framework_BaseURI','ConfigValue','')
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                variableName: Framework_BaseURI
+                variableDescription: VBCS integration Framework Base URL
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a3)
+              variableName: Framework_ResourceURI
+              variableType: string
+              expressionProperties:
+                xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName','Framework_ResourceURI','ConfigValue','')
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                variableName: Framework_ResourceURI
+                variableDescription: VBCS integration Framework Releative URL
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a5)
+              variableName: Error_Flag
+              variableType: string
+              expressionProperties:
+                xpathExpression: '''N'''
+                variableName: Error_Flag
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Switch: Switch(s0)
+          routes:
+            - Route: (sc0)
+              exprProperties:
+                xpathExpression: /nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Operation = "Update"
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction_REQUEST/types nssrcdfl=http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction_REQUEST/types}execute'
+              statements:
+                - Try: Try(t1)
+                  username: Transactionupdate
+                  statements:
+                    - Switch: Switch(s1)
+                      routes:
+                        - Route: (sc2)
+                          exprProperties:
+                            xpathExpression: /nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:TransactionUpsert = "Y"
+                            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction_REQUEST/types nssrcdfl=http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction/types
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: /
+                                  rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction_REQUEST/types}execute'
+                          statements:
+                            - Map: Map(m2)
+                              xsltfilepath: ../resources/processor_196/resourcegroup_199/req_76807408821c4b73af28540426a75d18.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/UpdateTransactionBoStatus_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction_REQUEST" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/UpdateTransactionBoStatus_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/UpdateTransactionBoStatus" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction_REQUEST/types" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/UpsertInstanceTransaction" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction/types" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns22="http://xml.oracle.com/adapters/extension" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/REST/UpdateTransactionBoStatus/types" xmlns:ns26="http://xml.oracle.com/types/REST/UpdateTransactionBoStatus_REQUEST" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpsertInstanceTransaction_REQUEST/RESTINREQ" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateTransactionBoStatus_REQUEST/RESTOUTRES" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateTransactionBoStatus_REQUEST/RESTOUTREQ" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpsertInstanceTransaction_REQUEST/RESTINRES" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns45="http://xmlns.oracle.com/procmon" xmlns:ns46="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext xsd xp20 nsmpr0 ora oracle-xsl-mapper nssrcmpr nsmpr1 xsi nssrcdfl fn xsl ignore01 nsmpr3" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/properties">
+                                - '  <xsl:param name="Framework_BaseURI" xml:id="id_17"/>'
+                                - '  <xsl:param name="Framework_ResourceURI" xml:id="id_18"/>'
+                                - '  <xsl:param name="Error_Flag" xml:id="id_108"/>'
+                                - '  <xsl:param name="Result" xml:id="id_109"/>'
+                                - '  <xsl:param name="Status" xml:id="id_110"/>'
+                                - '  <xsl:param name="currentRetry" xml:id="id_111"/>'
+                                - '  <xsl:param name="keepRetrying" xml:id="id_112"/>'
+                                - '  <xsl:param name="self" xml:id="id_113"/>'
+                                - '  <xsl:param name="selfProperties" xml:id="id_114"/>'
+                                - '  <xsl:param name="tracking_var_1" xml:id="id_115"/>'
+                                - '  <xsl:param name="tracking_var_2" xml:id="id_116"/>'
+                                - '  <xsl:param name="tracking_var_3" xml:id="id_117"/>'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:execute xml:id="id_12">'
+                                - '      <nstrgmpr:TemplateParameters xml:id="id_38">'
+                                - '        <ns26:Logger_Id xml:id="id_39">'
+                                - '          <xsl:value-of xml:id="id_40" select="1"/>'
+                                - '      <ns25:request-wrapper xml:id="id_25">'
+                                - '        <ns25:transactionId xml:id="id_26">'
+                                - '          <xsl:value-of xml:id="id_27" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Transaction_id"/>'
+                                - '        <ns25:transactionStatus xml:id="id_28">'
+                                - '          <xsl:value-of xml:id="id_29" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:TransactionUpsertCode"/>'
+                                - '        <xsl:if xml:id="id_58" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Trans_FileName != &quot;&quot;">'
+                                - '          <ns25:fileName xml:id="id_30">'
+                                - '            <xsl:value-of xml:id="id_31" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Trans_FileName"/>'
+                                - '        <xsl:if xml:id="id_70" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Trans_fileNameOrig != &quot;&quot;">'
+                                - '          <ns25:fileNameOrig xml:id="id_32">'
+                                - '            <xsl:value-of xml:id="id_33" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Trans_fileNameOrig"/>'
+                                - '        <ns25:sa_attribute1 xml:id="id_34">'
+                                - '          <xsl:value-of xml:id="id_35" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Trans_sa_attribute1"/>'
+                                - '        <ns25:sa_attribute2 xml:id="id_36">'
+                                - '          <xsl:value-of xml:id="id_37" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Trans_sa_attribute2"/>'
+                                - '        <xsl:if xml:id="id_97" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Trans_ESSJobParams != &quot;&quot;">'
+                                - '          <ns25:ESSJobParams xml:id="id_98">'
+                                - '            <xsl:value-of xml:id="id_99" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Trans_ESSJobParams"/>'
+                                - '      <ns24:ConnectivityProperties xml:id="id_41">'
+                                - '        <ns24:RestAPI xml:id="id_42">'
+                                - '          <ns24:BaseURI xml:id="id_43">'
+                                - '            <xsl:value-of xml:id="id_44" select="$Framework_BaseURI"/>'
+                                - '          <ns24:RelativeURI xml:id="id_45">'
+                                - '            <xsl:value-of xml:id="id_46" select="concat ($Framework_ResourceURI, &quot;/Logger/{Logger_Id}/action/updateTransaction&quot; )"/>'
+                                - ""
+                            - Invoke: UpdateTransactionBoStatus(i1)
+                              application:
+                                Application: UpdateTransactionBoStatus(TSGTRESTVBCSBO_CONN)
+                                name: UpdateTransactionBoStatus
+                                adapter:
+                                    code: TSGTRESTVBCSBO_CONN
+                                properties:
+                                    - name: operationPath
+                                      value: http://xmlns.oracle.com/cloud/adapter/REST/UpdateTransactionBoStatus_REQUEST/execute
+                                    - name: HttpVerb
+                                      value: POST
+                                    - name: ResourceURI
+                                      value: /Logger/{Logger_Id}/action/updateTransaction
+                        - Route: Otherwise(sc3)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: null
+                          statements: []
+                    - CatchAll: CatchAll(ta0)
+                      statements:
+                        - Assignments: Transactionupdatefault(l1)
+                          name: Transactionupdatefault
+                          assignments:
+                            - Assignment: Assignment(a4)
+                              variableName: Error_Flag
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''Y'''
+                                variableName: Error_Flag
+                                variableDescription: Set Flag to Y
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a6)
+                              variableName: Status
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''ERROR'''
+                                variableName: Status
+                                variableDescription: Set the Status to ERROR
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                      icsfaultfilepath: ../resources/processor_248/resourcegroup_249/ICSFault.xsd
+                - Try: Try(t0)
+                  username: InstanceUpdate
+                  statements:
+                    - Switch: Switch(s3)
+                      routes:
+                        - Route: (sc6)
+                          exprProperties:
+                            xpathExpression: /nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:InstanceUpsert = 'Y' and $Error_Flag = 'N'
+                            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction_REQUEST/types nssrcdfl=http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction/types
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: /
+                                  rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction_REQUEST/types}execute'
+                                - VariableName: Error_Flag
+                                  rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                          statements:
+                            - Stitch: Stitch(sh0)
+                              stitchNamespaceResolver:
+                                prefixnamespacemap:
+                                    fn: http://www.w3.org/2005/xpath-functions
+                              stitchVariables:
+                                - name: currentRetry
+                                  datatype:
+                                    type: XMLSimple
+                                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                                  access: SOURCE_AND_TARGET
+                                - name: keepRetrying
+                                  datatype:
+                                    type: XMLSimple
+                                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}boolean'
+                                  access: SOURCE_AND_TARGET
+                              stitchSentences:
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: "0"
+                                    returnType: XML_TYPE_ATOMIC
+                                  to:
+                                    type: XPathPath
+                                    path: $currentRetry
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: fn:true()
+                                    returnType: XML_TYPE_ATOMIC
+                                  to:
+                                    type: XPathPath
+                                    path: $keepRetrying
+                                    isLastStepXsdAnyType: false
+                            - While: whileLoop(wh0)
+                              expressionProperties:
+                                xpathExpression: $keepRetrying = fn:true()
+                                namespaceList: ns50=http://www.oracle.com/2014/03/ic/integration/properties fn=http://www.w3.org/2005/xpath-functions ns0=http://www.w3.org/2001/XMLSchema
+                                variableName: keepRetryingLoop
+                              statements:
+                                - Try: Try(t2)
+                                  username: ScopeUpdateInstanceBO
+                                  statements:
+                                    - Map: Map(m1)
+                                      xsltfilepath: ../resources/processor_174/resourcegroup_177/req_a58693c120674704b62efd2435eecd7c.xsl
+                                      mapsentences:
+                                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/UpdateInstanceBO_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction_REQUEST" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/UpdateInstanceBO_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/UpdateInstanceBO" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction_REQUEST/types" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/UpsertInstanceTransaction" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction/types" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" oraext xsd xp20 ns1 ora oracle-xsl-mapper nssrcmpr nsmpr1 xsi nssrcdfl fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns22="http://xml.oracle.com/adapters/extension" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateInstanceBO_REQUEST/RESTOUTRES" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/REST/UpdateInstanceBO/types" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns28="http://xml.oracle.com/types/REST/UpdateInstanceBO_REQUEST" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpsertInstanceTransaction_REQUEST/RESTINREQ" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateInstanceBO_REQUEST/RESTOUTREQ" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpsertInstanceTransaction_REQUEST/RESTINRES" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns46="http://xmlns.oracle.com/procmon" xmlns:ns47="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:ns12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:ns14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:ns13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604">
+                                        - '  <xsl:param name="Framework_BaseURI" xml:id="id_39"/>'
+                                        - '  <xsl:param name="Framework_ResourceURI" xml:id="id_40"/>'
+                                        - '  <xsl:template match="/" xml:id="id_11">'
+                                        - '    <nstrgmpr:execute xml:id="id_12">'
+                                        - '      <nstrgmpr:TemplateParameters xml:id="id_26">'
+                                        - '        <ns28:Logger_Id xml:id="id_27">'
+                                        - '          <xsl:value-of xml:id="id_28" select="1"/>'
+                                        - '      <ns27:request-wrapper xml:id="id_29">'
+                                        - '        <ns27:transactionId xml:id="id_30">'
+                                        - '          <xsl:value-of xml:id="id_31" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Transaction_id"/>'
+                                        - '        <xsl:if xml:id="id_340" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_essRequestId != &quot;&quot;">'
+                                        - '          <ns27:essRequestId xml:id="id_74">'
+                                        - '            <xsl:value-of xml:id="id_75" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_essRequestId"/>'
+                                        - '        <xsl:if xml:id="id_337" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:InstanceUpsertCode != &quot;&quot;">'
+                                        - '          <ns27:pStatus xml:id="id_32">'
+                                        - '            <xsl:value-of xml:id="id_33" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:InstanceUpsertCode"/>'
+                                        - '        <xsl:if xml:id="id_334" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_fileNameEnriched != &quot;&quot;">'
+                                        - '          <ns27:fileNameEnriched xml:id="id_64">'
+                                        - '            <xsl:value-of xml:id="id_65" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_fileNameEnriched"/>'
+                                        - '        <xsl:if xml:id="id_331" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_fileNameProcessed != &quot;&quot;">'
+                                        - '          <ns27:fileNameProcessed xml:id="id_66">'
+                                        - '            <xsl:value-of xml:id="id_67" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_fileNameProcessed"/>'
+                                        - '        <xsl:if xml:id="id_328" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_fileNameRAW != &quot;&quot;">'
+                                        - '          <ns27:fileNameRAW xml:id="id_68">'
+                                        - '            <xsl:value-of xml:id="id_69" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_fileNameRAW"/>'
+                                        - '        <xsl:if xml:id="id_325" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_flowIdBusinessProcessor != &quot;&quot;">'
+                                        - '          <ns27:flowIdBusinessProcessor xml:id="id_70">'
+                                        - '            <xsl:value-of xml:id="id_71" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_flowIdBusinessProcessor"/>'
+                                        - '        <xsl:if xml:id="id_322" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_flowIdTransactionProcessor != &quot;&quot;">'
+                                        - '          <ns27:flowIdTransactionProcessor xml:id="id_72">'
+                                        - '            <xsl:value-of xml:id="id_73" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_flowIdTransactionProcessor"/>'
+                                        - '        <xsl:if xml:id="id_319" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_interfaceJobStatus != &quot;&quot;">'
+                                        - '          <ns27:interfaceJobStatus xml:id="id_76">'
+                                        - '            <xsl:value-of xml:id="id_77" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_interfaceJobStatus"/>'
+                                        - '        <xsl:if xml:id="id_316" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_baseTableJobStatus != &quot;&quot;">'
+                                        - '          <ns27:baseTableJobStatus xml:id="id_78">'
+                                        - '            <xsl:value-of xml:id="id_79" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_baseTableJobStatus"/>'
+                                        - '        <xsl:if xml:id="id_313" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_baseTableJobId != &quot;&quot;">'
+                                        - '          <ns27:baseTableJobId xml:id="id_80">'
+                                        - '            <xsl:value-of xml:id="id_81" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_baseTableJobId"/>'
+                                        - '        <xsl:if xml:id="id_310" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_ucmUploadJobId != &quot;&quot;">'
+                                        - '          <ns27:ucmUploadJobId xml:id="id_82">'
+                                        - '            <xsl:value-of xml:id="id_83" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_ucmUploadJobId"/>'
+                                        - '        <xsl:if xml:id="id_307" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_totalRecords != &quot;&quot;">'
+                                        - '          <ns27:totalRecords xml:id="id_84">'
+                                        - '            <xsl:value-of xml:id="id_85" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_totalRecords"/>'
+                                        - '        <xsl:if xml:id="id_304" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_processedRecords != &quot;&quot;">'
+                                        - '          <ns27:processedRecords xml:id="id_86">'
+                                        - '            <xsl:value-of xml:id="id_87" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_processedRecords"/>'
+                                        - '        <xsl:if xml:id="id_301" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_errorRecords != &quot;&quot;">'
+                                        - '          <ns27:errorRecords xml:id="id_88">'
+                                        - '            <xsl:value-of xml:id="id_89" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_errorRecords"/>'
+                                        - '        <xsl:if xml:id="id_298" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_fileNameError != &quot;&quot;">'
+                                        - '          <ns27:fileNameError xml:id="id_92">'
+                                        - '            <xsl:value-of xml:id="id_93" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_fileNameError"/>'
+                                        - '        <xsl:if xml:id="id_414" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_fileNameResult != &quot;&quot;">'
+                                        - '          <ns27:resultFile xml:id="id_401">'
+                                        - '            <xsl:value-of xml:id="id_402" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_fileNameResult"/>'
+                                        - '        <xsl:if xml:id="id_295" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_fileNameNormalizedError != &quot;&quot;">'
+                                        - '          <ns27:fileNameNormalizedError xml:id="id_94">'
+                                        - '            <xsl:value-of xml:id="id_95" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_fileNameNormalizedError"/>'
+                                        - '        <xsl:if xml:id="id_292" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_hdlSummaryReport != &quot;&quot;">'
+                                        - '          <ns27:hdlSummaryReport xml:id="id_96">'
+                                        - '            <xsl:value-of xml:id="id_97" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_hdlSummaryReport"/>'
+                                        - '        <xsl:if xml:id="id_289" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_importStatus != &quot;&quot;">'
+                                        - '          <ns27:importStatus xml:id="id_98">'
+                                        - '            <xsl:value-of xml:id="id_99" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_importStatus"/>'
+                                        - '        <xsl:if xml:id="id_286" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_loadStatus != &quot;&quot;">'
+                                        - '          <ns27:loadStatus xml:id="id_100">'
+                                        - '            <xsl:value-of xml:id="id_101" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_loadStatus"/>'
+                                        - '        <xsl:if xml:id="id_283" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_fileNameOutbound != &quot;&quot;">'
+                                        - '          <ns27:fileNameOutbound xml:id="id_102">'
+                                        - '            <xsl:value-of xml:id="id_103" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_fileNameOutbound"/>'
+                                        - '        <xsl:if xml:id="id_280" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_InterfaceParameter1 != &quot;&quot;">'
+                                        - '          <ns27:interfaceParameter1 xml:id="id_104">'
+                                        - '            <xsl:value-of xml:id="id_105" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_InterfaceParameter1"/>'
+                                        - '        <xsl:if xml:id="id_277" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_ucmUploadJobStatus != &quot;&quot;">'
+                                        - '          <ns27:ucmUploadJobStatus xml:id="id_117">'
+                                        - '            <xsl:value-of xml:id="id_118" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_ucmUploadJobStatus"/>'
+                                        - '        <xsl:if xml:id="id_274" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_documentId != &quot;&quot;">'
+                                        - '          <ns27:documentId xml:id="id_130">'
+                                        - '            <xsl:value-of xml:id="id_131" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_documentId"/>'
+                                        - '        <xsl:if xml:id="id_271" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_MsgCode != &quot;&quot;">'
+                                        - '          <ns27:msgCode xml:id="id_143">'
+                                        - '            <xsl:value-of xml:id="id_144" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_MsgCode"/>'
+                                        - '        <xsl:if xml:id="id_259" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_MsgDescr != &quot;&quot;">'
+                                        - '          <ns27:msgDescr xml:id="id_145">'
+                                        - '            <xsl:value-of xml:id="id_146" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_MsgDescr"/>'
+                                        - '        <xsl:if xml:id="id_256" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_MsgDetail != &quot;&quot;">'
+                                        - '          <ns27:msgDetail xml:id="id_147">'
+                                        - '            <xsl:value-of xml:id="id_148" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_MsgDetail"/>'
+                                        - '        <xsl:if xml:id="id_253" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_exceptionStackTrace != &quot;&quot;">'
+                                        - '          <ns27:exceptionStackTrace xml:id="id_160">'
+                                        - '            <xsl:value-of xml:id="id_161" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_exceptionStackTrace"/>'
+                                        - '        <xsl:if xml:id="id_353" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_totalRowExtracted != &quot;&quot;">'
+                                        - '          <ns27:TOTAL_ROW_EXTRACTED xml:id="id_354">'
+                                        - '            <xsl:value-of xml:id="id_355" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_totalRowExtracted"/>'
+                                        - '        <xsl:if xml:id="id_357" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_totalRowAdded != &quot;&quot;">'
+                                        - '          <ns27:TOTAL_ROW_ADDED xml:id="id_358">'
+                                        - '            <xsl:value-of xml:id="id_359" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_totalRowAdded"/>'
+                                        - '        <xsl:if xml:id="id_372" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_ESS_Job_Details != &quot;&quot;">'
+                                        - '          <ns27:ESS_Job_Details xml:id="id_373">'
+                                        - '            <xsl:value-of xml:id="id_374" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_ESS_Job_Details"/>'
+                                        - '        <xsl:if xml:id="id_387" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_runMode != &quot;&quot;">'
+                                        - '          <ns27:runMode xml:id="id_388">'
+                                        - '            <xsl:value-of xml:id="id_389" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_runMode"/>'
+                                        - '        <xsl:if xml:id="id_250" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_flowIdLauncher != &quot;&quot;">'
+                                        - '          <ns27:flowIdLauncher xml:id="id_177">'
+                                        - '            <xsl:value-of xml:id="id_178" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_flowIdLauncher"/>'
+                                        - '        <xsl:if xml:id="id_247" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_flowIdCallback != &quot;&quot;">'
+                                        - '          <ns27:flowIdCallback xml:id="id_175">'
+                                        - '            <xsl:value-of xml:id="id_176" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_flowIdCallback"/>'
+                                        - '        <xsl:if xml:id="id_244" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_flowIdDispatcher != &quot;&quot;">'
+                                        - '          <ns27:flowIdDispatcher xml:id="id_173">'
+                                        - '            <xsl:value-of xml:id="id_174" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_flowIdDispatcher"/>'
+                                        - '        <xsl:if xml:id="id_211" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_attribute1 != &quot;&quot;">'
+                                        - '          <ns27:attribute1 xml:id="id_190">'
+                                        - '            <xsl:value-of xml:id="id_191" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_attribute1"/>'
+                                        - '        <xsl:if xml:id="id_223" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_attribute2 != &quot;&quot;">'
+                                        - '          <ns27:attribute2 xml:id="id_192">'
+                                        - '            <xsl:value-of xml:id="id_193" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_attribute2"/>'
+                                        - '        <xsl:if xml:id="id_232" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_attribute3 != &quot;&quot;">'
+                                        - '          <ns27:attribute3 xml:id="id_194">'
+                                        - '            <xsl:value-of xml:id="id_195" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_attribute3"/>'
+                                        - '        <xsl:if xml:id="id_226" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_attribute4 != &quot;&quot;">'
+                                        - '          <ns27:attribute4 xml:id="id_196">'
+                                        - '            <xsl:value-of xml:id="id_197" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_attribute4"/>'
+                                        - '        <xsl:if xml:id="id_229" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_attribute5 != &quot;&quot;">'
+                                        - '          <ns27:attribute5 xml:id="id_198">'
+                                        - '            <xsl:value-of xml:id="id_199" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Inst_attribute5"/>'
+                                        - '      <ns25:ConnectivityProperties xml:id="id_47">'
+                                        - '        <ns25:RestAPI xml:id="id_48">'
+                                        - '          <ns25:BaseURI xml:id="id_49">'
+                                        - '            <xsl:value-of xml:id="id_50" select="$Framework_BaseURI"/>'
+                                        - '          <ns25:RelativeURI xml:id="id_51">'
+                                        - '            <xsl:value-of xml:id="id_52" select="concat ($Framework_ResourceURI, &quot;/Logger/{Logger_Id}/action/updateLog&quot; )"/>'
+                                        - ""
+                                    - Invoke: UpdateInstanceBO(i0)
+                                      application:
+                                        Application: UpdateInstanceBO(TSGTRESTVBCSBO_CONN)
+                                        name: UpdateInstanceBO
+                                        adapter:
+                                            code: TSGTRESTVBCSBO_CONN
+                                        properties:
+                                            - name: operationPath
+                                              value: http://xmlns.oracle.com/cloud/adapter/REST/UpdateInstanceBO_REQUEST/execute
+                                            - name: HttpVerb
+                                              value: POST
+                                            - name: ResourceURI
+                                              value: /Logger/{Logger_Id}/action/updateLog
+                                    - Stitch: Stitch(sh1)
+                                      stitchNamespaceResolver:
+                                        prefixnamespacemap:
+                                            fn: http://www.w3.org/2005/xpath-functions
+                                      stitchVariables:
+                                        - name: keepRetrying
+                                          datatype:
+                                            type: XMLSimple
+                                            xsdDataType: '{http://www.w3.org/2001/XMLSchema}boolean'
+                                          access: SOURCE_AND_TARGET
+                                      stitchSentences:
+                                        - operation: Assign
+                                          from:
+                                            type: XPathExpression
+                                            expression: fn:false()
+                                            returnType: XML_TYPE_ATOMIC
+                                          to:
+                                            type: XPathPath
+                                            path: $keepRetrying
+                                            isLastStepXsdAnyType: false
+                                    - CatchAll: CatchAll(ta2)
+                                      statements:
+                                        - Logger: Logger(lg1)
+                                          name: logFault_I0
+                                          description: ""
+                                          propertyfile: ../resources/processor_1013/resourcegroup_1062/expr.properties
+                                          expressionProperties:
+                                            xpathExpression: oraext:get-content-as-string($ScopeUpdateInstanceBOFaultObject/ics:fault)
+                                            namespaceList: ns21=http://xmlns.oracle.com/cloud/generic/rest/fault/REST/UpdateInstanceBO ics=http://www.oracle.com/2014/03/ics/fault oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                                            variableName: logFault_I0
+                                        - Stitch: Stitch(sh2)
+                                          stitchNamespaceResolver:
+                                            prefixnamespacemap:
+                                                fn: http://www.w3.org/2005/xpath-functions
+                                                ns21: http://www.oracle.com/2014/03/ic/integration/properties
+                                          stitchVariables:
+                                            - name: currentRetry
+                                              datatype:
+                                                type: XMLSimple
+                                                xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                                              access: SOURCE_AND_TARGET
+                                            - name: keepRetrying
+                                              datatype:
+                                                type: XMLSimple
+                                                xsdDataType: '{http://www.w3.org/2001/XMLSchema}boolean'
+                                              access: SOURCE_AND_TARGET
+                                            - name: selfProperties
+                                              datatype:
+                                                type: XMLComplex
+                                                basedOnElement: '{http://www.oracle.com/2014/03/ic/integration/properties}properties'
+                                                uriToSchema: ../../processor_862/resourcegroup_863/ICSIntegrationProperties.xsd
+                                              access: SOURCE
+                                          stitchSentences:
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: fn:number($currentRetry) +1
+                                                returnType: XML_TYPE_ATOMIC
+                                              to:
+                                                type: XPathPath
+                                                path: $currentRetry
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $currentRetry < fn:number($selfProperties/ns21:properties/ns21:retryInvokeMax)
+                                                returnType: XML_TYPE_ATOMIC
+                                              to:
+                                                type: XPathPath
+                                                path: $keepRetrying
+                                                isLastStepXsdAnyType: false
+                                        - xmlname:
+                                            space: http://www.oracle.com/2014/03/ics/flow/definition
+                                            local: throw
+                                          attrs:
+                                            - name:
+                                                space: ""
+                                                local: id
+                                              value: th0
+                                            - name:
+                                                space: ""
+                                                local: refUri
+                                              value: processor_953
+                                          content: ""
+                                          statements: []
+                                        - xmlname:
+                                            space: http://www.oracle.com/2014/03/ics/flow/definition
+                                            local: wait
+                                          attrs:
+                                            - name:
+                                                space: ""
+                                                local: id
+                                              value: w0
+                                            - name:
+                                                space: ""
+                                                local: refUri
+                                              value: processor_917
+                                          content: ""
+                                          statements: []
+                                      icsfaultfilepath: ../resources/processor_1032/resourcegroup_1033/ICSFault.xsd
+                        - Route: Otherwise(sc7)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: {}
+                          statements: []
+            - Route: Otherwise(sc1)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - Map: Map(m0)
+          xsltfilepath: ../resources/processor_29/resourcegroup_32/req_5458b13b59fe435b977b85a5727dd1de.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction_REQUEST/types" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/UpsertInstanceTransaction" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction/types" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01 nsmpr1" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns19="http://xml.oracle.com/adapters/extension" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpsertInstanceTransaction_REQUEST/RESTINREQ" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns17="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpsertInstanceTransaction_REQUEST/RESTINRES" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/properties">
+            - '  <xsl:param name="Result" xml:id="id_20"/>'
+            - '  <xsl:param name="Status" xml:id="id_21"/>'
+            - '  <xsl:param name="Error_Flag" xml:id="id_39"/>'
+            - '  <xsl:param name="Framework_BaseURI" xml:id="id_40"/>'
+            - '  <xsl:param name="Framework_ResourceURI" xml:id="id_41"/>'
+            - '  <xsl:param name="currentRetry" xml:id="id_42"/>'
+            - '  <xsl:param name="keepRetrying" xml:id="id_43"/>'
+            - '  <xsl:param name="self" xml:id="id_44"/>'
+            - '  <xsl:param name="selfProperties" xml:id="id_45"/>'
+            - '  <xsl:param name="tracking_var_1" xml:id="id_46"/>'
+            - '  <xsl:param name="tracking_var_2" xml:id="id_47"/>'
+            - '  <xsl:param name="tracking_var_3" xml:id="id_48"/>'
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:executeResponse xml:id="id_12">'
+            - '      <nstrgdfl:response-wrapper xml:id="id_26">'
+            - '        <nstrgdfl:Status xml:id="id_27">'
+            - '          <xsl:value-of xml:id="id_28" select="$Status"/>'
+            - '        <nstrgdfl:Result xml:id="id_29">'
+            - '          <xsl:value-of xml:id="id_30" select="$Result"/>'
+            - ""
+        - Reply: Reply(y0)
+          adapterjcareference: null
+          wsdlfilepath: ""
+        - CatchAll: CatchAll(ta1)
+          statements:
+            - Logger: Logger(lg0)
+              name: Logger1
+              description: ""
+              propertyfile: ../resources/processor_1004/resourcegroup_1011/expr.properties
+              expressionProperties:
+                xpathExpression: oraext:get-content-as-string(/ns41:execute)
+                namespaceList: ns41=http://xmlns.oracle.com/cloud/adapter/REST/UpsertInstanceTransaction_REQUEST/types oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                variableName: Logger1
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_999/resourcegroup_1000/ICSFault.xsd

@@ -1,0 +1,794 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_1
+      xsdfilepath: ../resources/processor_1/resourcegroup_2/ICSIntegrationMetadata.xsd
+    - GlobalVariable: (gtv0)
+      variableName: g_success_dff_count
+      variableType: simpleType
+    - GlobalVariable: (gtv1)
+      variableName: g_failure_dff_count
+      variableType: simpleType
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: DOCUMENTID
+              xpath: /onEvent/ErpImportBulkDataEvent/DOCUMENTID
+            - role: tracking_var_2
+              name: tracking_var_2
+            - role: tracking_var_3
+              name: tracking_var_3
+        - Assignments: Assignments1(l0)
+          name: Assignments1
+          assignments:
+            - Assignment: Assignment(a0)
+              variableName: parent_requstid
+              variableType: string
+              expressionProperties:
+                xpathExpression: /ns16:onEvent/inp1:ErpImportBulkDataEvent/inp1:DOCUMENTID
+                namespaceList: inp1=http://xmlns.oracle.com/apps/financials/commonModules/shared ns16=http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types
+                variableName: parent_requstid
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a1)
+              variableName: LOAD_INT_FILE_IMPORT_STATUS
+              variableType: string
+              expressionProperties:
+                xpathExpression: /ns32:onEvent/inp1:ErpImportBulkDataEvent/inp1:JOBS[inp1:JOBNAME='Load Interface File for Import']/inp1:STATUS
+                namespaceList: inp1=http://xmlns.oracle.com/apps/financials/commonModules/shared ns32=http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types
+                variableName: LOAD_INT_FILE_IMPORT_STATUS
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a2)
+              variableName: LOAD_INT_FILE_IMPORT_REQID
+              variableType: string
+              expressionProperties:
+                xpathExpression: /ns16:onEvent/inp1:ErpImportBulkDataEvent/inp1:JOBS[inp1:JOBNAME='Load Interface File for Import']/inp1:REQUESTID
+                namespaceList: inp1=http://xmlns.oracle.com/apps/financials/commonModules/shared ns16=http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types
+                variableName: LOAD_INT_FILE_IMPORT_REQID
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a3)
+              variableName: IMPORT_COSTS_REQID
+              variableType: string
+              expressionProperties:
+                xpathExpression: /ns32:onEvent/inp1:ErpImportBulkDataEvent/inp1:JOBS[inp1:JOBNAME='Import Costs']/inp1:REQUESTID
+                namespaceList: ns32=http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types inp1=http://xmlns.oracle.com/apps/financials/commonModules/shared
+                variableName: IMPORT_COSTS_REQID
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a4)
+              variableName: IMPORT_COSTS_STATUS
+              variableType: string
+              expressionProperties:
+                xpathExpression: /ns32:onEvent/inp1:ErpImportBulkDataEvent/inp1:JOBS[inp1:JOBNAME='Import Costs']/inp1:STATUS
+                namespaceList: ns32=http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types inp1=http://xmlns.oracle.com/apps/financials/commonModules/shared
+                variableName: IMPORT_COSTS_STATUS
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a5)
+              variableName: UPLOAD_TO_UCM_REQID
+              variableType: string
+              expressionProperties:
+                xpathExpression: /ns32:onEvent/inp1:ErpImportBulkDataEvent/inp1:JOBS[inp1:JOBNAME='Upload Interface Error and Job Output File to Universal Content Management']/inp1:REQUESTID
+                namespaceList: inp1=http://xmlns.oracle.com/apps/financials/commonModules/shared ns32=http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types
+                variableName: UPLOAD_TO_UCM_REQID
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a6)
+              variableName: UPLOAD_TO_UCM_STATUS
+              variableType: string
+              expressionProperties:
+                xpathExpression: /ns32:onEvent/inp1:ErpImportBulkDataEvent/inp1:JOBS[inp1:JOBNAME='Upload Interface Error and Job Output File to Universal Content Management']/inp1:STATUS
+                namespaceList: ns32=http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types inp1=http://xmlns.oracle.com/apps/financials/commonModules/shared
+                variableName: UPLOAD_TO_UCM_STATUS
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Stitch: Stitch(sh0)
+          stitchNamespaceResolver:
+            prefixnamespacemap: {}
+          stitchVariables:
+            - name: g_success_dff_count
+              datatype:
+                type: XMLSimple
+                xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+              access: SOURCE_AND_TARGET
+            - name: g_failure_dff_count
+              datatype:
+                type: XMLSimple
+                xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+              access: SOURCE_AND_TARGET
+          stitchSentences:
+            - operation: Assign
+              from:
+                type: XPathExpression
+                expression: "0"
+                returnType: XML_TYPE_ATOMIC
+              to:
+                type: XPathPath
+                path: $g_success_dff_count
+                isLastStepXsdAnyType: false
+            - operation: Assign
+              from:
+                type: XPathExpression
+                expression: "0"
+                returnType: XML_TYPE_ATOMIC
+              to:
+                type: XPathPath
+                path: $g_failure_dff_count
+                isLastStepXsdAnyType: false
+        - Logger: Logger(lg0)
+          name: Logger1
+          description: ""
+          propertyfile: ../resources/processor_70/resourcegroup_77/expr.properties
+          expressionProperties:
+            xpathExpression: $LOAD_INT_FILE_IMPORT_STATUS
+            variableName: Logger1
+        - Map: Map(m2)
+          xsltfilepath: ../resources/processor_384/resourcegroup_387/req_86057c02b0ba4e5eb912b70d97e2e077.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/writezip_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi fn xp20 xsl nssrcmpr ignore01 nsmpr0 nsmpr1 oraext" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/erp/GetzipfilefromUCM_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns34="http://xmlns.oracle.com/pcbpel/adapter/opaque/" xmlns:inp1="http://xmlns.oracle.com/apps/financials/commonModules/shared" xmlns:ns16="http://xmlns.oracle.com/cloud/ics/file/v1/types">
+            - '  <xsl:param name="IMPORT_COSTS_REQID" xml:id="id_44"/>'
+            - '  <xsl:param name="IMPORT_COSTS_STATUS" xml:id="id_45"/>'
+            - '  <xsl:param name="LOAD_INT_FILE_IMPORT_REQID" xml:id="id_46"/>'
+            - '  <xsl:param name="LOAD_INT_FILE_IMPORT_STATUS" xml:id="id_47"/>'
+            - '  <xsl:param name="UPLOAD_TO_UCM_REQID" xml:id="id_48"/>'
+            - '  <xsl:param name="UPLOAD_TO_UCM_STATUS" xml:id="id_49"/>'
+            - '  <xsl:param name="parent_requstid" xml:id="id_50"/>'
+            - '  <xsl:param name="self" xml:id="id_51"/>'
+            - '  <xsl:param name="tracking_var_1" xml:id="id_52"/>'
+            - '  <xsl:param name="tracking_var_2" xml:id="id_53"/>'
+            - '  <xsl:param name="tracking_var_3" xml:id="id_54"/>'
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:Write xml:id="id_12">'
+            - '      <ns34:opaqueElement xml:id="id_38">'
+            - '        <xsl:value-of xml:id="id_39" select="oraext:encodeReferenceToBase64 (/nssrcmpr:onEvent/inp1:ErpImportBulkDataEvent/ns16:ICSFile/ns16:FileReference )"/>'
+            - ""
+        - StageFile: writezip(sf2)
+          operation: Write
+          expressionProperties:
+            xpathExpression: '''ImportCostsFBDIResponse.zip'''
+          statements: []
+        - Map: Map(m10)
+          xsltfilepath: ../resources/processor_3468/resourcegroup_3471/req_8984dee4bcfb4cada83dc4651e2f663f.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/writeglobalsuccdfffile_REQUEST/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi xsd fn xp20 xsl nssrcmpr ignore01 nsmpr0 nsmpr1" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/stagefile/writezip_REQUEST/types" xmlns:ns26="http://TargetNamespace.com/fileReference/writeglobalsuccdfffile">
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:Write xml:id="id_12">'
+            - '      <ns26:expitems xml:id="id_40">'
+            - '        <ns26:expitem xml:id="id_41">'
+            - '          <ns26:Transaction_Number xml:id="id_70">Transaction Number</ns26:Transaction_Number>'
+            - ""
+        - StageFile: writeglobalsuccdfffile(sf10)
+          operation: Write
+          expressionProperties:
+            xpathExpression: '''SuccessfulDFFUpdatedtrans.txt'''
+          statements: []
+        - Map: Map(m11)
+          xsltfilepath: ../resources/processor_3663/resourcegroup_3666/req_d7a8b18c1fc1418a9e9fdd5ef8cb75c6.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/writeglobalfaileddfffile_REQUEST/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi xsd fn xp20 xsl nssrcmpr ignore01 nsmpr0 nsmpr1 nsmpr2" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/stagefile/writeglobalsuccdfffile_REQUEST/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/writezip_REQUEST/types" xmlns:ns30="http://TargetNamespace.com/fileReference/writeglobalfaileddfffile">
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:Write xml:id="id_12">'
+            - '      <ns30:expitems xml:id="id_50">'
+            - '        <ns30:expitem xml:id="id_51">'
+            - '          <ns30:Transaction_Number xml:id="id_52">Transaction Number</ns30:Transaction_Number>'
+            - '          <ns30:errorcode xml:id="id_92">Error Code</ns30:errorcode>'
+            - '          <ns30:Error_Message xml:id="id_91">Error Message</ns30:Error_Message>'
+            - ""
+        - StageFile: writeglobalfaileddfffile(sf11)
+          operation: Write
+          expressionProperties:
+            xpathExpression: '''FailedDFFUpdatedtrans.csv'''
+          statements: []
+        - Switch: Switch(s0)
+          routes:
+            - Route: If LOAD_INT_FILE_IMPORT_STATUS = SUCCESS(sc0)
+              exprProperties:
+                xpathExpression: $LOAD_INT_FILE_IMPORT_STATUS='SUCCEEDED'
+                expressionName: If LOAD_INT_FILE_IMPORT_STATUS = SUCCESS
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: LOAD_INT_FILE_IMPORT_STATUS
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - StageFile: UnzipFile(sf0)
+                  operation: Unzip
+                  expressionProperties:
+                    xpathExpression: $writezip/ns24:WriteResponse/ns26:WriteResponse/ns3:ICSFile/ns3:FileReference
+                    namespaceList: ns24=http://xmlns.oracle.com/cloud/adapter/stagefile/writezip_REQUEST/types ns26=http://xmlns.oracle.com/cloud/staging/write ns3=http://xmlns.oracle.com/cloud/ics/file/v1/types
+                  statements: []
+                - StageFile: readpropertiesfile(sf1)
+                  operation: Read
+                  expressionProperties:
+                    xpathExpression: '''/unzip'''
+                  statements: []
+                - Map: Map(m1)
+                  xsltfilepath: ../resources/processor_229/resourcegroup_232/req_dcdce8360a1d48a8bc49109f8fbfb95a.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types" xmlns:nstrgmpr="http://xmlns.oracle.com/types/CallBIPrepforrecordcounts/1747342332298/OutboundSOAPRequestDocument" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi xsd fn xp20 xsl nssrcmpr ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 dvm nsmpr4" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/erp/GetzipfilefromUCM_REQUEST/types" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/readpropertiesfile_REQUEST/types" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns39="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:ns36="http://TargetNamespace.com/fileReference/readpropertiesfile" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/writezip_REQUEST/types">
+                    - '  <xsl:param name="readpropertiesfile" xml:id="id_43"/>'
+                    - '  <xsl:param name="IMPORT_COSTS_REQID" xml:id="id_235"/>'
+                    - '  <xsl:param name="IMPORT_COSTS_STATUS" xml:id="id_236"/>'
+                    - '  <xsl:param name="LOAD_INT_FILE_IMPORT_REQID" xml:id="id_237"/>'
+                    - '  <xsl:param name="LOAD_INT_FILE_IMPORT_STATUS" xml:id="id_238"/>'
+                    - '  <xsl:param name="UPLOAD_TO_UCM_REQID" xml:id="id_239"/>'
+                    - '  <xsl:param name="UPLOAD_TO_UCM_STATUS" xml:id="id_240"/>'
+                    - '  <xsl:param name="UnzipFile" xml:id="id_241"/>'
+                    - '  <xsl:param name="parent_requstid" xml:id="id_242"/>'
+                    - '  <xsl:param name="self" xml:id="id_243"/>'
+                    - '  <xsl:param name="tracking_var_1" xml:id="id_244"/>'
+                    - '  <xsl:param name="tracking_var_2" xml:id="id_245"/>'
+                    - '  <xsl:param name="tracking_var_3" xml:id="id_246"/>'
+                    - '  <xsl:param name="writezip" xml:id="id_247"/>'
+                    - '  <xsl:param name="writezip_REQUEST" xml:id="id_248"/>'
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                    - '      <nstrgmpr:Body xml:id="id_48">'
+                    - '        <ns39:runReport xml:id="id_49">'
+                    - '          <ns39:reportRequest xml:id="id_50">'
+                    - '            <ns39:attributeFormat xml:id="id_187">csv</ns39:attributeFormat>'
+                    - '            <ns39:byPassCache xml:id="id_218">true</ns39:byPassCache>'
+                    - '            <ns39:flattenXML xml:id="id_104">false</ns39:flattenXML>'
+                    - '            <ns39:parameterNameValues xml:id="id_53">'
+                    - '              <ns39:item xml:id="id_54">'
+                    - '                <ns39:name xml:id="id_55">P_TRANSACTION_SOURCE_ID</ns39:name>'
+                    - '                <ns39:values xml:id="id_56">'
+                    - '                  <ns39:item xml:id="id_57">'
+                    - '                    <xsl:value-of xml:id="id_58" select="$readpropertiesfile/nsmpr2:ReadResponse/ns36:properties/ns36:property/ns36:Transaction_Source_id[1]"/>'
+                    - '              <ns39:item xml:id="id_59">'
+                    - '                <ns39:name xml:id="id_60">P_BATCH_NAME</ns39:name>'
+                    - '                <ns39:values xml:id="id_62" xsi:nil="">'
+                    - '                  <ns39:item xml:id="id_145">'
+                    - '                    <xsl:value-of xml:id="id_146" select="$readpropertiesfile/nsmpr2:ReadResponse/ns36:properties/ns36:property/ns36:Batch_Name"/>'
+                    - '            <ns39:reportAbsolutePath xml:id="id_51">'
+                    - '              <xsl:value-of xml:id="id_52" select="dvm:lookupValue (&quot;TSGT_PPM_CAPITAL_BURDEN_LKP&quot;, &quot;VARIABLE_NAME&quot;, &quot;RECORD_COUNT_BY_BATCH_REPORT_ABSPATH&quot;, &quot;VARIABLE_VALUE&quot;, &quot;&quot; )"/>'
+                    - '            <ns39:sizeOfDataChunkDownload xml:id="id_103">-1</ns39:sizeOfDataChunkDownload>'
+                    - ""
+                - Invoke: CallBIPrepforrecordcounts(i1)
+                  application:
+                    Application: CallBIPrepforrecordcounts(TSGTSOAPERPBIP_CONN)
+                    name: CallBIPrepforrecordcounts
+                    adapter:
+                        code: TSGTSOAPERPBIP_CONN
+                    properties:
+                        - name: operationPath
+                          value: ""
+                - StageFile: readrecordcountBIPReport(sf3)
+                  operation: Read
+                  expressionProperties:
+                    xpathExpression: oraext:decodeBase64ToReference($CallBIPrepforrecordcounts/tns:runReportResponse/tns:runReportReturn/tns:reportBytes)
+                    namespaceList: tns=http://xmlns.oracle.com/oxp/service/PublicReportService oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                  statements: []
+                - Assignments: Assignments2(l1)
+                  name: Assignments2
+                  assignments:
+                    - Assignment: Assignment(a7)
+                      variableName: BATCH_NAME
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $readpropertiesfile/ns43:ReadResponse/ns41:properties/ns41:property/ns41:Batch_Name[1]
+                        namespaceList: ns41=http://TargetNamespace.com/fileReference/readpropertiesfile ns43=http://xmlns.oracle.com/cloud/adapter/stagefile/readpropertiesfile_REQUEST/types
+                        variableName: BATCH_NAME
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Switch: Switch(s1)
+                  routes:
+                    - Route: (sc1)
+                      exprProperties:
+                        xpathExpression: $readrecordcountBIPReport/ns29:ReadResponse/ns28:recordcounts/ns28:recordcount/ns28:BASE_TABLE_COUNT > '-1' or $readrecordcountBIPReport/ns29:ReadResponse/ns28:recordcounts/ns28:recordcount/ns28:STAGING_TBL_COUNT > '-1'
+                        namespaceList: ns28=http://TargetNamespace.com/fileReference/readrecordcountBIPReport ns29=http://xmlns.oracle.com/cloud/adapter/stagefile/readrecordcountBIPReport_REQUEST/types
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: readrecordcountBIPReport
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/readrecordcountBIPReport_REQUEST/types}ReadResponse'
+                      statements:
+                        - Logger: Logger(lg1)
+                          name: Logger2
+                          description: ""
+                          propertyfile: ../resources/processor_484/resourcegroup_491/expr.properties
+                          expressionProperties:
+                            xpathExpression: $readrecordcountBIPReport/ns46:ReadResponse/ns45:recordcounts/ns45:recordcount/ns45:BASE_TABLE_COUNT
+                            namespaceList: ns46=http://xmlns.oracle.com/cloud/adapter/stagefile/readrecordcountBIPReport_REQUEST/types ns45=http://TargetNamespace.com/fileReference/readrecordcountBIPReport
+                            variableName: Logger2
+                        - Map: Map(m0)
+                          xsltfilepath: ../resources/processor_520/resourcegroup_523/req_e7e0fd4ed3cd467daabe112a246d7929.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/ftp/downloadexpidfilefromFTP_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi xsd fn xp20 xsl nssrcmpr ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6 dvm dvm" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr1="http://xmlns.oracle.com/types/CallBIPrepforrecordcounts/1747342332298/OutboundSOAPRequestDocument" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/stagefile/readpropertiesfile_REQUEST/types" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/readrecordcountBIPReport_REQUEST/types" xmlns:nsmpr5="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/writezip_REQUEST/types" xmlns:ns39="http://xmlns.oracle.com/cloud/download/pull">
+                            - '  <xsl:param name="BATCH_NAME" xml:id="id_97"/>'
+                            - '  <xsl:param name="CallBIPrepforrecordcounts" xml:id="id_152"/>'
+                            - '  <xsl:param name="CallBIPrepforrecordcounts_REQUEST" xml:id="id_153"/>'
+                            - '  <xsl:param name="IMPORT_COSTS_REQID" xml:id="id_154"/>'
+                            - '  <xsl:param name="IMPORT_COSTS_STATUS" xml:id="id_155"/>'
+                            - '  <xsl:param name="LOAD_INT_FILE_IMPORT_REQID" xml:id="id_156"/>'
+                            - '  <xsl:param name="LOAD_INT_FILE_IMPORT_STATUS" xml:id="id_157"/>'
+                            - '  <xsl:param name="UPLOAD_TO_UCM_REQID" xml:id="id_158"/>'
+                            - '  <xsl:param name="UPLOAD_TO_UCM_STATUS" xml:id="id_159"/>'
+                            - '  <xsl:param name="UnzipFile" xml:id="id_160"/>'
+                            - '  <xsl:param name="parent_requstid" xml:id="id_161"/>'
+                            - '  <xsl:param name="readpropertiesfile" xml:id="id_162"/>'
+                            - '  <xsl:param name="readrecordcountBIPReport" xml:id="id_163"/>'
+                            - '  <xsl:param name="self" xml:id="id_164"/>'
+                            - '  <xsl:param name="tracking_var_1" xml:id="id_165"/>'
+                            - '  <xsl:param name="tracking_var_2" xml:id="id_166"/>'
+                            - '  <xsl:param name="tracking_var_3" xml:id="id_167"/>'
+                            - '  <xsl:param name="writezip" xml:id="id_168"/>'
+                            - '  <xsl:param name="writezip_REQUEST" xml:id="id_169"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:DownloadFileToICS xml:id="id_12">'
+                            - '      <ns39:DownloadRequest xml:id="id_63">'
+                            - '        <ns39:filename xml:id="id_64">'
+                            - '          <xsl:value-of xml:id="id_116" select="concat ($BATCH_NAME, &quot;.csv&quot; )"/>'
+                            - '        <ns39:directory xml:id="id_117">'
+                            - '          <xsl:value-of xml:id="id_118" select="dvm:lookupValue (&quot;TSGT_PPM_CAPITAL_BURDEN_LKP&quot;, &quot;VARIABLE_NAME&quot;, &quot;OUTBOUND_DIRECTORY&quot;, &quot;VARIABLE_VALUE&quot;, &quot;&quot; )"/>'
+                            - '        <ns39:DownloadDirectory xml:id="id_119">/temp</ns39:DownloadDirectory>'
+                            - ""
+                        - Invoke: downloadexpidfilefromFTP(i0)
+                          application:
+                            Application: downloadexpidfilefromFTP(TSGTFTP_CONN)
+                            name: downloadexpidfilefromFTP
+                            adapter:
+                                code: TSGTFTP_CONN
+                            properties:
+                                - name: Operation
+                                  value: DownloadFileToICS
+                                - name: Host
+                                  value: '%%TSGTFTP_CONN_Host'
+                                - name: Port
+                                  value: '%%TSGTFTP_CONN_Port'
+                                - name: SecurePort
+                                  value: "990"
+                        - Logger: Logger(lg3)
+                          name: Logger4
+                          description: ""
+                          propertyfile: ../resources/processor_728/resourcegroup_735/expr.properties
+                          expressionProperties:
+                            xpathExpression: $downloadexpidfilefromFTP/ns24:DownloadFileToICSResponse/ns25:DownloadResponse/ns25:ICSFiles/ns9:ICSFile[1]/ns9:Properties/ns9:filename
+                            namespaceList: ns24=http://xmlns.oracle.com/cloud/adapter/ftp/downloadexpidfilefromFTP_REQUEST/types ns9=http://xmlns.oracle.com/cloud/ics/file/v1/types ns25=http://xmlns.oracle.com/cloud/download/pull
+                            variableName: Logger4
+                        - StageFile: readexpidfile(sf4)
+                          operation: Read
+                          expressionProperties:
+                            xpathExpression: $downloadexpidfilefromFTP/ns19:DownloadFileToICSResponse/ns20:DownloadResponse/ns20:ICSFiles/ns3:ICSFile[1]/ns3:FileReference
+                            namespaceList: ns20=http://xmlns.oracle.com/cloud/download/pull ns19=http://xmlns.oracle.com/cloud/adapter/ftp/downloadexpidfilefromFTP_REQUEST/types ns3=http://xmlns.oracle.com/cloud/ics/file/v1/types
+                          statements: []
+                        - Assignments: Assignments3(l2)
+                          name: Assignments3
+                          assignments:
+                            - Assignment: Assignment(a8)
+                              variableName: totalexpidrowcount
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: fn:count($readexpidfile/ns28:ReadResponse/ns26:expitems/ns26:expitem)
+                                namespaceList: ns28=http://xmlns.oracle.com/cloud/adapter/stagefile/readexpidfile_REQUEST/types fn=http://www.w3.org/2005/xpath-functions ns26=http://TargetNamespace.com/fileReference/readexpidfile
+                                variableName: totalexpidrowcount
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a9)
+                              variableName: loopcountvar
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: "0"
+                                variableName: loopcountvar
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - ForLoop: ForLoop(f0)
+                          expressionProperties:
+                            xpathExpression: $readexpidfile/ns45:ReadResponse/ns43:expitems/ns43:expitem
+                            namespaceList: ns45=http://xmlns.oracle.com/cloud/adapter/stagefile/readexpidfile_REQUEST/types ns43=http://TargetNamespace.com/fileReference/readexpidfile
+                            variableName: f0_expitem
+                          currentRecordVarName: f0_expitem
+                          statements:
+                            - Try: Try(t0)
+                              username: DFFUpdaterestcallScope
+                              statements:
+                                - Logger: Logger(lg2)
+                                  name: Logger3
+                                  description: ""
+                                  propertyfile: ../resources/processor_603/resourcegroup_2543/expr.properties
+                                  expressionProperties:
+                                    xpathExpression: $f0_expitem/ns26:expitem/ns26:EXPENDITURE_ITEM_ID
+                                    namespaceList: ns28=http://xmlns.oracle.com/cloud/adapter/stagefile/readexpidfile_REQUEST/types ns26=http://TargetNamespace.com/fileReference/readexpidfile
+                                    variableName: Logger3
+                                - Assignments: Assignments4(l3)
+                                  name: Assignments4
+                                  assignments:
+                                    - Assignment: Assignment(a10)
+                                      variableName: loopcountvar
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $loopcountvar+ 1
+                                        namespaceList: fn=http://www.w3.org/2005/xpath-functions
+                                        variableName: loopcountvar
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a11)
+                                      variableName: limit
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: "100"
+                                        variableName: limit
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                - Switch: Switch(s2)
+                                  routes:
+                                    - Route: Wait after 100 rest calls(sc2)
+                                      exprProperties:
+                                        xpathExpression: ($loopcountvar mod $limit) = 0
+                                        expressionName: Wait after 100 rest calls
+                                      stateInfo:
+                                        variablesReferenced:
+                                            - VariableName: loopcountvar
+                                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                            - VariableName: limit
+                                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                      statements:
+                                        - xmlname:
+                                            space: http://www.oracle.com/2014/03/ics/flow/definition
+                                            local: wait
+                                          attrs:
+                                            - name:
+                                                space: ""
+                                                local: id
+                                              value: w0
+                                            - name:
+                                                space: ""
+                                                local: refUri
+                                              value: processor_1047
+                                          content: ""
+                                          statements: []
+                                - Map: Map(m3)
+                                  xsltfilepath: ../resources/processor_1064/resourcegroup_1067/req_bc72b80421cb43de951e9d32820fc44c.xsl
+                                  mapsentences:
+                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/erp/updateexpitemdff_REQUEST/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi xsd fn xp20 xsl nssrcmpr ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6 nsmpr7 nsmpr8 nsmpr9 nsmpr10 nsmpr11" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr1="http://xmlns.oracle.com/types/CallBIPrepforrecordcounts/1747342332298/OutboundSOAPRequestDocument" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/ftp/downloadexpidfilefromFTP_REQUEST/types" xmlns:nsmpr4="http://TargetNamespace.com/fileReference/readexpidfile" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/readexpidfile_REQUEST/types" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/readpropertiesfile_REQUEST/types" xmlns:nsmpr7="http://xmlns.oracle.com/cloud/adapter/stagefile/readrecordcountBIPReport_REQUEST/types" xmlns:nsmpr8="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr9="http://xmlns.oracle.com/cloud/adapter/stagefile/writezip_REQUEST/types" xmlns:ns48="http://xmlns.oracle.com/cloud/adapters/fscmRestApp" xmlns:ns46="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/ProjectCosts" xmlns:nsmpr10="http://xmlns.oracle.com/cloud/adapter/stagefile/writeglobalfaileddfffile_REQUEST/types" xmlns:nsmpr11="http://xmlns.oracle.com/cloud/adapter/stagefile/writeglobalsuccdfffile_REQUEST/types">
+                                    - '  <xsl:param name="f0_expitem" xml:id="id_73"/>'
+                                    - '  <xsl:template match="/" xml:id="id_11">'
+                                    - '    <nstrgmpr:update xml:id="id_12">'
+                                    - '      <nstrgmpr:TemplateParameters xml:id="id_87">'
+                                    - '        <nstrgmpr:id xml:id="id_88">'
+                                    - '          <xsl:value-of xml:id="id_89" select="$f0_expitem/nsmpr4:expitem/nsmpr4:EXPENDITURE_ITEM_ID"/>'
+                                    - '      <nstrgmpr:ProjectCosts xml:id="id_90">'
+                                    - '        <ns48:ProjectCostsDFF xml:id="id_91">'
+                                    - '          <ns46:burdenCostCapitalized xml:id="id_92">Y</ns46:burdenCostCapitalized>'
+                                    - ""
+                                - Invoke: updateexpitemdff(i2)
+                                  application:
+                                    Application: updateexpitemdff(TSGTERPCLOUD_CONN)
+                                    name: updateexpitemdff
+                                    adapter:
+                                        code: TSGTERPCLOUD_CONN
+                                    properties:
+                                        - name: Host
+                                          value: '%%TSGTERPCLOUD_CONN_Host'
+                                - Stitch: Stitch(sh1)
+                                  stitchNamespaceResolver:
+                                    prefixnamespacemap: {}
+                                  stitchVariables:
+                                    - name: g_success_dff_count
+                                      datatype:
+                                        type: XMLSimple
+                                        xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                                      access: SOURCE_AND_TARGET
+                                  stitchSentences:
+                                    - operation: Assign
+                                      from:
+                                        type: XPathExpression
+                                        expression: ($g_success_dff_count + 1)
+                                        returnType: XML_TYPE_ATOMIC
+                                      to:
+                                        type: XPathPath
+                                        path: $g_success_dff_count
+                                        isLastStepXsdAnyType: false
+                                - Map: Map(m8)
+                                  xsltfilepath: ../resources/processor_3613/resourcegroup_3616/req_7a7558d81d25432bb118befffd18c12d.xsl
+                                  mapsentences:
+                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/writesuccessdfffile_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi xsd fn xp20 xsl nssrcmpr ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6 nsmpr7 nsmpr8 nsmpr9 nsmpr10 nsmpr11" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr1="http://xmlns.oracle.com/types/CallBIPrepforrecordcounts/1747342332298/OutboundSOAPRequestDocument" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/ftp/downloadexpidfilefromFTP_REQUEST/types" xmlns:nsmpr4="http://TargetNamespace.com/fileReference/readexpidfile" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/readexpidfile_REQUEST/types" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/readpropertiesfile_REQUEST/types" xmlns:nsmpr7="http://xmlns.oracle.com/cloud/adapter/stagefile/readrecordcountBIPReport_REQUEST/types" xmlns:nsmpr8="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr9="http://xmlns.oracle.com/cloud/adapter/erp/updateexpitemdff_REQUEST/types" xmlns:nsmpr10="http://xmlns.oracle.com/cloud/adapter/stagefile/writeglobalsuccdfffile_REQUEST/types" xmlns:nsmpr11="http://xmlns.oracle.com/cloud/adapter/stagefile/writezip_REQUEST/types" xmlns:ns53="http://TargetNamespace.com/fileReference/writesuccessdfffile">
+                                    - '  <xsl:param name="f0_expitem" xml:id="id_89"/>'
+                                    - '  <xsl:template match="/" xml:id="id_11">'
+                                    - '    <nstrgmpr:Write xml:id="id_12">'
+                                    - '      <ns53:expitems xml:id="id_109">'
+                                    - '        <ns53:expitem xml:id="id_110">'
+                                    - '          <ns53:Transaction_Number xml:id="id_111">'
+                                    - '            <xsl:value-of xml:id="id_112" select="$f0_expitem/nsmpr4:expitem/nsmpr4:EXPENDITURE_ITEM_ID"/>'
+                                    - ""
+                                - StageFile: writesuccessdfffile(sf7)
+                                  operation: Write
+                                  expressionProperties:
+                                    xpathExpression: '''SuccessfulDFFUpdatedtrans.txt'''
+                                  statements: []
+                                - Catch: Catch(tc0)
+                                  faultname: APIInvocationError
+                                  statements:
+                                    - Stitch: Stitch(sh2)
+                                      stitchNamespaceResolver:
+                                        prefixnamespacemap: {}
+                                      stitchVariables:
+                                        - name: g_failure_dff_count
+                                          datatype:
+                                            type: XMLSimple
+                                            xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                                          access: SOURCE_AND_TARGET
+                                      stitchSentences:
+                                        - operation: Assign
+                                          from:
+                                            type: XPathExpression
+                                            expression: $g_failure_dff_count + 1
+                                            returnType: XML_TYPE_ATOMIC
+                                          to:
+                                            type: XPathPath
+                                            path: $g_failure_dff_count
+                                            isLastStepXsdAnyType: false
+                                    - Map: Map(m9)
+                                      xsltfilepath: ../resources/processor_2842/resourcegroup_2845/req_38c2b739127446fcafcc34f0674256fc.xsl
+                                      mapsentences:
+                                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/writefailuredfffile_REQUEST/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi xsd fn xp20 xsl nssrcmpr ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6 nsmpr7 nsmpr8 nsmpr9 nsmpr10 nsmpr11 nsmpr12" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr1="http://xmlns.oracle.com/types/CallBIPrepforrecordcounts/1747342332298/OutboundSOAPRequestDocument" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/erp/updateexpitemdff_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/ftp/downloadexpidfilefromFTP_REQUEST/types" xmlns:nsmpr5="http://TargetNamespace.com/fileReference/readexpidfile" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/readexpidfile_REQUEST/types" xmlns:nsmpr7="http://xmlns.oracle.com/cloud/adapter/stagefile/readpropertiesfile_REQUEST/types" xmlns:nsmpr8="http://xmlns.oracle.com/cloud/adapter/stagefile/readrecordcountBIPReport_REQUEST/types" xmlns:nsmpr9="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr10="http://xmlns.oracle.com/cloud/adapter/stagefile/writeglobalfaileddfffile_REQUEST/types" xmlns:nsmpr11="http://xmlns.oracle.com/cloud/adapter/stagefile/writeglobalsuccdfffile_REQUEST/types" xmlns:nsmpr12="http://xmlns.oracle.com/cloud/adapter/stagefile/writezip_REQUEST/types" xmlns:ns55="http://TargetNamespace.com/fileReference/writefailuredfffile">
+                                        - '  <xsl:param name="CurrentFaultObject" xml:id="id_84"/>'
+                                        - '  <xsl:param name="f0_expitem" xml:id="id_94"/>'
+                                        - '  <xsl:template match="/" xml:id="id_11">'
+                                        - '    <nstrgmpr:Write xml:id="id_12">'
+                                        - '      <ns55:expitems xml:id="id_113">'
+                                        - '        <ns55:expitem xml:id="id_114">'
+                                        - '          <ns55:Transaction_Number xml:id="id_117">'
+                                        - '            <xsl:value-of xml:id="id_118" select="$f0_expitem/nsmpr5:expitem/nsmpr5:EXPENDITURE_ITEM_ID"/>'
+                                        - '          <ns55:errorcode xml:id="id_300">'
+                                        - '            <xsl:value-of xml:id="id_301" select="$CurrentFaultObject/nsmpr2:APIInvocationError/nsmpr2:errorDetails/nsmpr2:errorCode"/>'
+                                        - '          <ns55:Error_Message xml:id="id_115">'
+                                        - '            <xsl:value-of xml:id="id_302" select="$CurrentFaultObject/nsmpr2:APIInvocationError/nsmpr2:errorDetails/nsmpr2:instance"/>'
+                                        - ""
+                                    - StageFile: writefailuredfffile(sf9)
+                                      operation: Write
+                                      expressionProperties:
+                                        xpathExpression: '''FailedDFFUpdatedtrans.csv'''
+                                      statements: []
+                                    - Logger: Logger(lg4)
+                                      name: Logger5
+                                      description: ""
+                                      propertyfile: ../resources/processor_2847/resourcegroup_2854/expr.properties
+                                      expressionProperties:
+                                        xpathExpression: $CurrentFaultObject/ns40:APIInvocationError/ns40:detail
+                                        namespaceList: ns40=http://xmlns.oracle.com/cloud/adapter/erp/updateexpitemdff_REQUEST/types
+                                        variableName: Logger5
+                        - Map: Map(m4)
+                          xsltfilepath: ../resources/processor_1508/resourcegroup_1511/req_e84972adcde143f6abdfab5f37452afa.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types" xmlns:nstrgmpr="http://xmlns.oracle.com/types/runsuccessreportbybatch/1748007412359/OutboundSOAPRequestDocument" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi xsd fn xp20 xsl nssrcmpr ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6 nsmpr7 nsmpr8 dvm dvm" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr1="http://xmlns.oracle.com/types/CallBIPrepforrecordcounts/1747342332298/OutboundSOAPRequestDocument" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/ftp/downloadexpidfilefromFTP_REQUEST/types" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/readexpidfile_REQUEST/types" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/readpropertiesfile_REQUEST/types" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/readrecordcountBIPReport_REQUEST/types" xmlns:nsmpr7="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr8="http://xmlns.oracle.com/cloud/adapter/stagefile/writezip_REQUEST/types" xmlns:inp1="http://xmlns.oracle.com/apps/financials/commonModules/shared" xmlns:ns38="http://TargetNamespace.com/fileReference/readpropertiesfile">
+                            - '  <xsl:param name="BATCH_NAME" xml:id="id_134"/>'
+                            - '  <xsl:param name="readpropertiesfile" xml:id="id_229"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                            - '      <nstrgmpr:Body xml:id="id_81">'
+                            - '        <nsmpr0:runReport xml:id="id_82">'
+                            - '          <nsmpr0:reportRequest xml:id="id_83">'
+                            - '            <nsmpr0:attributeFormat xml:id="id_365">xlsx</nsmpr0:attributeFormat>'
+                            - '            <nsmpr0:byPassCache xml:id="id_84">true</nsmpr0:byPassCache>'
+                            - '            <nsmpr0:flattenXML xml:id="id_89">false</nsmpr0:flattenXML>'
+                            - '            <nsmpr0:parameterNameValues xml:id="id_159">'
+                            - '              <nsmpr0:item xml:id="id_160">'
+                            - '                <nsmpr0:name xml:id="id_161">P_TRANSACTION_SOURCE_ID</nsmpr0:name>'
+                            - '                <nsmpr0:values xml:id="id_163">'
+                            - '                  <nsmpr0:item xml:id="id_238">'
+                            - '                    <xsl:value-of xml:id="id_239" select="$readpropertiesfile/nsmpr5:ReadResponse/ns38:properties/ns38:property/ns38:Transaction_Source_id[1]"/>'
+                            - '              <nsmpr0:item xml:id="id_166">'
+                            - '                <nsmpr0:name xml:id="id_167">P_BATCH_NAME</nsmpr0:name>'
+                            - '                <nsmpr0:values xml:id="id_168">'
+                            - '                  <nsmpr0:item xml:id="id_169">'
+                            - '                    <xsl:value-of xml:id="id_170" select="$BATCH_NAME"/>'
+                            - '            <nsmpr0:reportAbsolutePath xml:id="id_85">'
+                            - '              <xsl:value-of xml:id="id_86" select="dvm:lookupValue (&quot;TSGT_PPM_CAPITAL_BURDEN_LKP&quot;, &quot;VARIABLE_NAME&quot;, &quot;SUCCESS_REPORT_BY_BATCH_ABSPATH&quot;, &quot;VARIABLE_VALUE&quot;, &quot;&quot; )"/>'
+                            - '            <nsmpr0:sizeOfDataChunkDownload xml:id="id_87">-1</nsmpr0:sizeOfDataChunkDownload>'
+                            - ""
+                        - Invoke: runsuccessreportbybatch(i3)
+                          application:
+                            Application: runsuccessreportbybatch(TSGTSOAPERPBIP_CONN)
+                            name: runsuccessreportbybatch
+                            adapter:
+                                code: TSGTSOAPERPBIP_CONN
+                            properties:
+                                - name: operationPath
+                                  value: ""
+                        - Map: Map(m5)
+                          xsltfilepath: ../resources/processor_1567/resourcegroup_1570/req_09dbddc683aa4c5b9f8d9bbfba5606fd.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/writesuccessxlsfile_REQUEST/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi fn xp20 xsl nssrcmpr ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6 nsmpr7 nsmpr8 nsmpr9 oraext nsmpr0 oraext nsmpr0" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr1="http://xmlns.oracle.com/types/CallBIPrepforrecordcounts/1747342332298/OutboundSOAPRequestDocument" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/ftp/downloadexpidfilefromFTP_REQUEST/types" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/readexpidfile_REQUEST/types" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/readpropertiesfile_REQUEST/types" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/readrecordcountBIPReport_REQUEST/types" xmlns:nsmpr7="http://xmlns.oracle.com/types/runsuccessreportbybatch/1748007412359/OutboundSOAPRequestDocument" xmlns:nsmpr8="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr9="http://xmlns.oracle.com/cloud/adapter/stagefile/writezip_REQUEST/types" xmlns:ns44="http://xmlns.oracle.com/pcbpel/adapter/opaque/">
+                            - '  <xsl:param name="runsuccessreportbybatch" xml:id="id_82"/>'
+                            - '  <xsl:param name="BATCH_NAME" xml:id="id_215"/>'
+                            - '  <xsl:param name="CallBIPrepforrecordcounts" xml:id="id_216"/>'
+                            - '  <xsl:param name="CallBIPrepforrecordcounts_REQUEST" xml:id="id_217"/>'
+                            - '  <xsl:param name="IMPORT_COSTS_REQID" xml:id="id_218"/>'
+                            - '  <xsl:param name="IMPORT_COSTS_STATUS" xml:id="id_219"/>'
+                            - '  <xsl:param name="LOAD_INT_FILE_IMPORT_REQID" xml:id="id_220"/>'
+                            - '  <xsl:param name="LOAD_INT_FILE_IMPORT_STATUS" xml:id="id_221"/>'
+                            - '  <xsl:param name="UPLOAD_TO_UCM_REQID" xml:id="id_222"/>'
+                            - '  <xsl:param name="UPLOAD_TO_UCM_STATUS" xml:id="id_223"/>'
+                            - '  <xsl:param name="UnzipFile" xml:id="id_224"/>'
+                            - '  <xsl:param name="downloadexpidfilefromFTP" xml:id="id_225"/>'
+                            - '  <xsl:param name="downloadexpidfilefromFTP_REQUEST" xml:id="id_226"/>'
+                            - '  <xsl:param name="loopcountvar" xml:id="id_227"/>'
+                            - '  <xsl:param name="parent_requstid" xml:id="id_228"/>'
+                            - '  <xsl:param name="readexpidfile" xml:id="id_229"/>'
+                            - '  <xsl:param name="readpropertiesfile" xml:id="id_230"/>'
+                            - '  <xsl:param name="readrecordcountBIPReport" xml:id="id_231"/>'
+                            - '  <xsl:param name="runsuccessreportbybatch_REQUEST" xml:id="id_232"/>'
+                            - '  <xsl:param name="self" xml:id="id_233"/>'
+                            - '  <xsl:param name="totalexpidrowcount" xml:id="id_234"/>'
+                            - '  <xsl:param name="tracking_var_1" xml:id="id_235"/>'
+                            - '  <xsl:param name="tracking_var_2" xml:id="id_236"/>'
+                            - '  <xsl:param name="tracking_var_3" xml:id="id_237"/>'
+                            - '  <xsl:param name="writezip" xml:id="id_238"/>'
+                            - '  <xsl:param name="writezip_REQUEST" xml:id="id_239"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:Write xml:id="id_12">'
+                            - '      <ns44:opaqueElement xml:id="id_91">'
+                            - '        <xsl:value-of xml:id="id_166" select="$runsuccessreportbybatch/nsmpr0:runReportResponse/nsmpr0:runReportReturn/nsmpr0:reportBytes"/>'
+                            - ""
+                        - StageFile: writesuccessxlsfile(sf5)
+                          operation: Write
+                          expressionProperties:
+                            xpathExpression: '''SuccessReport.xlsx'''
+                          statements: []
+                        - StageFile: readentirxmlfile(sf8)
+                          operation: Read
+                          expressionProperties:
+                            xpathExpression: $UnzipFile/ns16:UnzipResponse/ns18:ListFilesResponse/ns18:FileList/ns3:ICSFile[ns3:Properties/ns3:filetype='xml'][1]/ns3:FileReference
+                            namespaceList: ns16=http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types ns3=http://xmlns.oracle.com/cloud/ics/file/v1/types ns18=http://xmlns.oracle.com/cloud/staging/list
+                          statements: []
+                        - Map: Map(m6)
+                          xsltfilepath: ../resources/processor_1722/resourcegroup_1725/req_974e9409c2bd4f60a687ef73f2756efa.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types" xmlns:nstrgmpr="http://xmlns.oracle.com/types/rungeneratereport/1748073194269/OutboundSOAPRequestDocument" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi xsd fn xp20 xsl nssrcmpr ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6 nsmpr7 nsmpr8 nsmpr9 nsmpr10 nsmpr11 ns26 oraext ns36 nsmpr2 nsmpr12 nsmpr13 ns41 nsmpr13 oraext oraext oraext" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr1="http://xmlns.oracle.com/types/CallBIPrepforrecordcounts/1747342332298/OutboundSOAPRequestDocument" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/ftp/downloadexpidfilefromFTP_REQUEST/types" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/readexpidfile_REQUEST/types" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/readpropertiesfile_REQUEST/types" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/readrecordcountBIPReport_REQUEST/types" xmlns:nsmpr7="http://xmlns.oracle.com/cloud/adapter/stagefile/readxmlfile_REQUEST/types" xmlns:nsmpr8="http://xmlns.oracle.com/types/runsuccessreportbybatch/1748007412359/OutboundSOAPRequestDocument" xmlns:nsmpr9="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr10="http://xmlns.oracle.com/cloud/adapter/stagefile/writesuccessxlsfile_REQUEST/types" xmlns:nsmpr11="http://xmlns.oracle.com/cloud/adapter/stagefile/writezip_REQUEST/types" xmlns:ns36="http://xmlns.oracle.com/cloud/staging/list" xmlns:ns26="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:nsmpr12="http://xmlns.oracle.com/cloud/adapter/stagefile/writexmlfile_REQUEST/types" xmlns:ns45="http://xmlns.oracle.com/cloud/staging/write" xmlns:nsmpr13="http://xmlns.oracle.com/cloud/adapter/stagefile/readentirxmlfile_REQUEST/types" xmlns:ns41="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/readentirxmlfile" xmlns:ns39="http://xmlns.oracle.com/pcbpel/adapter/opaque/">
+                            - '  <xsl:param name="readentirxmlfile" xml:id="id_465"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                            - '      <nstrgmpr:Body xml:id="id_106">'
+                            - '        <nsmpr0:runReport xml:id="id_107">'
+                            - '          <nsmpr0:reportRequest xml:id="id_108">'
+                            - '            <nsmpr0:attributeFormat xml:id="id_113">pdf</nsmpr0:attributeFormat>'
+                            - '            <nsmpr0:byPassCache xml:id="id_203">true</nsmpr0:byPassCache>'
+                            - '            <nsmpr0:flattenXML xml:id="id_292">false</nsmpr0:flattenXML>'
+                            - '            <nsmpr0:reportAbsolutePath xml:id="id_202">/Projects/Project Cost/Expenditure Items/ImportAndProcessTransactions.xdo</nsmpr0:reportAbsolutePath>'
+                            - '            <nsmpr0:reportRawData xml:id="id_109">'
+                            - '              <xsl:value-of xml:id="id_569" select="oraext:decodeBase64 ($readentirxmlfile/nsmpr13:ReadResponse/ns39:opaqueElement )"/>'
+                            - '            <nsmpr0:sizeOfDataChunkDownload xml:id="id_112">-1</nsmpr0:sizeOfDataChunkDownload>'
+                            - ""
+                        - Invoke: rungeneratereport(i4)
+                          application:
+                            Application: rungeneratereport(TSGTSOAPERPBIP_CONN)
+                            name: rungeneratereport
+                            adapter:
+                                code: TSGTSOAPERPBIP_CONN
+                            properties:
+                                - name: operationPath
+                                  value: ""
+                        - Map: Map(m7)
+                          xsltfilepath: ../resources/processor_1815/resourcegroup_1818/req_a58cebabc6eb49739eec9f4d357b4216.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/writestatusreportpdf_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/callbackforFBDIImportCosts_REQUEST/types" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi fn xp20 xsl nssrcmpr ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6 nsmpr7 nsmpr8 nsmpr9 nsmpr10 nsmpr11" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr1="http://xmlns.oracle.com/types/CallBIPrepforrecordcounts/1747342332298/OutboundSOAPRequestDocument" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/ftp/downloadexpidfilefromFTP_REQUEST/types" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/readexpidfile_REQUEST/types" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/readpropertiesfile_REQUEST/types" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/readrecordcountBIPReport_REQUEST/types" xmlns:nsmpr7="http://xmlns.oracle.com/types/rungeneratereport/1748073194269/OutboundSOAPRequestDocument" xmlns:nsmpr8="http://xmlns.oracle.com/types/runsuccessreportbybatch/1748007412359/OutboundSOAPRequestDocument" xmlns:nsmpr9="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr10="http://xmlns.oracle.com/cloud/adapter/stagefile/writesuccessxlsfile_REQUEST/types" xmlns:nsmpr11="http://xmlns.oracle.com/cloud/adapter/stagefile/writezip_REQUEST/types" xmlns:ns45="http://xmlns.oracle.com/pcbpel/adapter/opaque/">
+                            - '  <xsl:param name="rungeneratereport" xml:id="id_98"/>'
+                            - '  <xsl:param name="BATCH_NAME" xml:id="id_177"/>'
+                            - '  <xsl:param name="CallBIPrepforrecordcounts" xml:id="id_178"/>'
+                            - '  <xsl:param name="CallBIPrepforrecordcounts_REQUEST" xml:id="id_179"/>'
+                            - '  <xsl:param name="IMPORT_COSTS_REQID" xml:id="id_180"/>'
+                            - '  <xsl:param name="IMPORT_COSTS_STATUS" xml:id="id_181"/>'
+                            - '  <xsl:param name="LOAD_INT_FILE_IMPORT_REQID" xml:id="id_182"/>'
+                            - '  <xsl:param name="LOAD_INT_FILE_IMPORT_STATUS" xml:id="id_183"/>'
+                            - '  <xsl:param name="UPLOAD_TO_UCM_REQID" xml:id="id_184"/>'
+                            - '  <xsl:param name="UPLOAD_TO_UCM_STATUS" xml:id="id_185"/>'
+                            - '  <xsl:param name="UnzipFile" xml:id="id_186"/>'
+                            - '  <xsl:param name="downloadexpidfilefromFTP" xml:id="id_187"/>'
+                            - '  <xsl:param name="downloadexpidfilefromFTP_REQUEST" xml:id="id_188"/>'
+                            - '  <xsl:param name="loopcountvar" xml:id="id_189"/>'
+                            - '  <xsl:param name="parent_requstid" xml:id="id_190"/>'
+                            - '  <xsl:param name="readexpidfile" xml:id="id_191"/>'
+                            - '  <xsl:param name="readpropertiesfile" xml:id="id_192"/>'
+                            - '  <xsl:param name="readrecordcountBIPReport" xml:id="id_193"/>'
+                            - '  <xsl:param name="rungeneratereport_REQUEST" xml:id="id_194"/>'
+                            - '  <xsl:param name="runsuccessreportbybatch" xml:id="id_195"/>'
+                            - '  <xsl:param name="runsuccessreportbybatch_REQUEST" xml:id="id_196"/>'
+                            - '  <xsl:param name="self" xml:id="id_197"/>'
+                            - '  <xsl:param name="totalexpidrowcount" xml:id="id_198"/>'
+                            - '  <xsl:param name="tracking_var_1" xml:id="id_199"/>'
+                            - '  <xsl:param name="tracking_var_2" xml:id="id_200"/>'
+                            - '  <xsl:param name="tracking_var_3" xml:id="id_201"/>'
+                            - '  <xsl:param name="writesuccessxlsfile" xml:id="id_202"/>'
+                            - '  <xsl:param name="writesuccessxlsfile_REQUEST" xml:id="id_203"/>'
+                            - '  <xsl:param name="writezip" xml:id="id_204"/>'
+                            - '  <xsl:param name="writezip_REQUEST" xml:id="id_205"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:Write xml:id="id_12">'
+                            - '      <ns45:opaqueElement xml:id="id_111">'
+                            - '        <xsl:value-of xml:id="id_112" select="$rungeneratereport/nsmpr0:runReportResponse/nsmpr0:runReportReturn/nsmpr0:reportBytes"/>'
+                            - ""
+                        - StageFile: writestatusreportpdf(sf6)
+                          operation: Write
+                          expressionProperties:
+                            xpathExpression: '''statusreport.pdf'''
+                          statements: []
+                        - xmlname:
+                            space: http://www.oracle.com/2014/03/ics/flow/definition
+                            local: notification
+                          attrs:
+                            - name:
+                                space: ""
+                                local: id
+                              value: n0
+                            - name:
+                                space: ""
+                                local: refUri
+                              value: processor_20
+                          content: ""
+                          statements: []
+                    - Route: Otherwise(sc4)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: {}
+                      statements:
+                        - xmlname:
+                            space: http://www.oracle.com/2014/03/ics/flow/definition
+                            local: notification
+                          attrs:
+                            - name:
+                                space: ""
+                                local: id
+                              value: n2
+                            - name:
+                                space: ""
+                                local: refUri
+                              value: processor_1215
+                          content: ""
+                          statements: []
+            - Route: Otherwise(sc3)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: {}
+              statements:
+                - xmlname:
+                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                    local: notification
+                  attrs:
+                    - name:
+                        space: ""
+                        local: id
+                      value: n1
+                    - name:
+                        space: ""
+                        local: refUri
+                      value: processor_1074
+                  content: ""
+                  statements: []
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - xmlname:
+                space: http://www.oracle.com/2014/03/ics/flow/definition
+                local: notification
+              attrs:
+                - name:
+                    space: ""
+                    local: id
+                  value: n3
+                - name:
+                    space: ""
+                    local: refUri
+                  value: processor_2488
+              content: ""
+              statements: []
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_2483/resourcegroup_2484/ICSFault.xsd

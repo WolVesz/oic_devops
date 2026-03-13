@@ -1,0 +1,486 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_780
+      xsdfilepath: ../resources/processor_780/resourcegroup_781/ICSIntegrationMetadata.xsd
+    - xmlname:
+        space: http://www.oracle.com/2014/03/ics/flow/definition
+        local: integrationProperties
+      attrs:
+        - name:
+            space: ""
+            local: id
+          value: ip0
+        - name:
+            space: ""
+            local: refUri
+          value: processor_979
+      content: ""
+      statements: []
+    - GlobalVariable: (gtv0)
+      variableName: emailRecipient
+      variableType: simpleType
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: Auditing ID
+              xpath: /execute/request-wrapper/Auditing/AuditingID
+            - role: tracking_var_2
+              name: InterfaceName
+              xpath: /execute/request-wrapper/Auditing/InterfaceName
+            - role: tracking_var_3
+              name: TrackingID
+              xpath: /execute/request-wrapper/Auditing/TrackingID
+        - Switch: Switch(s0)
+          routes:
+            - Route: (sc0)
+              exprProperties:
+                xpathExpression: fn:upper-case(/nsmpr3:execute/nssrcdfl:request-wrapper/nssrcdfl:Auditing/nssrcdfl:AuditingType) = 'ERROR' or boolean(string(normalize-space(/nsmpr3:execute/nsmpr4:request-wrapper/nsmpr4:Auditing/nsmpr4:Notification/nsmpr4:to)))
+                namespaceList: nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types nsmpr4=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger/types fn=http://www.w3.org/2005/xpath-functions nssrcdfl=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types}execute'
+              statements:
+                - Try: Try(t0)
+                  username: Scope_GetRecipient
+                  statements:
+                    - Switch: Switch(s1)
+                      routes:
+                        - Route: NoRecipient(sc2)
+                          exprProperties:
+                            xpathExpression: not(boolean(string(/nsmpr6:execute/nsmpr4:request-wrapper/nsmpr4:Auditing/nsmpr4:Notification/nsmpr4:to)))
+                            namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types nsmpr4=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger/types
+                            expressionName: NoRecipient
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: /
+                                  rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types}execute'
+                          statements:
+                            - Map: Map(m0)
+                              xsltfilepath: ../resources/processor_674/resourcegroup_677/req_9046720123af44ce9a9eab1277828539.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/GetConfigs" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns3="http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types" exclude-result-prefixes=" oraext plnk xsd xp20 ora oracle-xsl-mapper nssrcdfl xsi fn xsl ns3 nssrcmpr ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/GetConfigs_REQUEST/SKIPOUTREQ" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns22="http://xml.oracle.com/adapters/extension" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns25="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Config/collocatedics/GetConfigs_REQUEST" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/AuditingTrigger_REQUEST/RESTINREQ" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:ns26="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.response-wrapper/Configs/collocatedics/GetConfigs_REQUEST" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger/types" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns28="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/GetConfigs_REQUEST" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns24="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111">
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:POST xml:id="id_12">'
+                                - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_21">'
+                                - '        <ns28:Config xml:id="id_22">'
+                                - '          <ns25:Interface xml:id="id_23">'
+                                - '            <xsl:value-of xml:id="id_24" select="/nssrcmpr:execute/ns20:request-wrapper/ns20:Auditing/ns20:InterfaceName"/>'
+                                - ""
+                            - Invoke: GetConfigs(i0)
+                              application:
+                                Application: GetConfigs(PRESEEDED_COLLOCATED_CONN_1741)
+                                name: GetConfigs
+                                adapter:
+                                    code: PRESEEDED_COLLOCATED_CONN_1741
+                                properties:
+                                    - name: operationPath
+                                      value: /configs
+                                    - name: HttpVerb
+                                      value: POST
+                                    - name: QueryParameters
+                                      value: ""
+                                    - name: ResourceURI
+                                      value: /configs
+                                    - name: integration_id
+                                      value: TSGTGETCONFIGS_SERVICE|01.02.0000
+                                    - name: integration_operation
+                                      value: POST
+                                    - name: serviceType
+                                      value: REST
+                            - Switch: Switch(s2)
+                              routes:
+                                - Route: NotificationReturn(sc4)
+                                  exprProperties:
+                                    xpathExpression: count($GetConfigs/nssrcmpr:POSTResponse/nssrcmpr:components.schemas.response-wrapper/nsmpr8:Configs) > 0 and count($GetConfigs/nssrcmpr:POSTResponse/nssrcmpr:components.schemas.response-wrapper/nsmpr8:Configs[(nsmpr6:Key = 'Notification')]) > 0
+                                    namespaceList: nsmpr6=http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.response-wrapper/Configs/collocatedics/GetConfigs_REQUEST nssrcmpr=http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST/types nsmpr8=http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/GetConfigs_REQUEST
+                                    expressionName: NotificationReturn
+                                  stateInfo:
+                                    variablesReferenced:
+                                        - VariableName: GetConfigs
+                                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST/types}POSTResponse'
+                                        - VariableName: /
+                                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types}execute'
+                                  statements:
+                                    - Stitch: Stitch(sh0)
+                                      stitchNamespaceResolver:
+                                        prefixnamespacemap:
+                                            ns15: http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST/types
+                                            ns17: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.response-wrapper/Configs/collocatedics/GetConfigs_REQUEST
+                                            ns19: http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/GetConfigs_REQUEST
+                                      stitchVariables:
+                                        - name: emailRecipient
+                                          datatype:
+                                            type: XMLSimple
+                                            xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                                          access: SOURCE_AND_TARGET
+                                        - name: GetConfigs
+                                          datatype:
+                                            type: XMLComplex
+                                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST/types}POSTResponse'
+                                            uriToSchema: ../../application_662/inbound_663/resourcegroup_664/GetConfigs_REQUEST.wsdl
+                                          access: SOURCE_AND_TARGET
+                                      stitchSentences:
+                                        - operation: Assign
+                                          from:
+                                            type: XPathExpression
+                                            expression: $GetConfigs/ns15:POSTResponse/ns15:components.schemas.response-wrapper/ns19:Configs[ns17:Key='Notification']/ns17:Value
+                                            returnType: XML_TYPE_NODE_NODESET
+                                          to:
+                                            type: XPathPath
+                                            path: $emailRecipient
+                                            isLastStepXsdAnyType: false
+                                - Route: Otherwise(sc5)
+                                  exprProperties:
+                                    xpathExpression: "true"
+                                    expressionName: Otherwise
+                                  stateInfo: {}
+                                  statements:
+                                    - Logger: Logger(lg2)
+                                      name: LogNoConfigs
+                                      description: No info in Interface Configs
+                                      propertyfile: ../resources/processor_863/resourcegroup_1710/expr.properties
+                                      expressionProperties:
+                                        xpathExpression: fn:concat(/ns41:execute/ns37:request-wrapper/ns37:Auditing/ns37:InterfaceName, " not configured in Interface Configs")
+                                        namespaceList: ns41=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types fn=http://www.w3.org/2005/xpath-functions ns37=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger/types
+                                        variableName: LogNoConfigs
+                                        variableDescription: No info in Interface Configs
+                                    - xmlname:
+                                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                                        local: throw
+                                      attrs:
+                                        - name:
+                                            space: ""
+                                            local: id
+                                          value: th0
+                                        - name:
+                                            space: ""
+                                            local: refUri
+                                          value: processor_962
+                                      content: ""
+                                      statements: []
+                        - Route: Otherwise(sc3)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: {}
+                          statements:
+                            - Stitch: Stitch(sh1)
+                              stitchNamespaceResolver:
+                                prefixnamespacemap:
+                                    ns0: http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types
+                                    ns3: http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger/types
+                              stitchVariables:
+                                - name: emailRecipient
+                                  datatype:
+                                    type: XMLSimple
+                                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                                  access: SOURCE_AND_TARGET
+                                - name: AuditingTrigger
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types}execute'
+                                    uriToSchema: ../../application_18/outbound_19/resourcegroup_20/AuditingTrigger_REQUEST.wsdl
+                                  access: SOURCE_AND_TARGET
+                              stitchSentences:
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: $AuditingTrigger/ns0:execute/ns3:request-wrapper/ns3:Auditing/ns3:Notification/ns3:to
+                                    returnType: XML_TYPE_NODE_NODESET
+                                  to:
+                                    type: XPathPath
+                                    path: $emailRecipient
+                                    isLastStepXsdAnyType: false
+                    - CatchAll: CatchAll(ta0)
+                      statements:
+                        - Stop: EHStop(eh0)
+                      icsfaultfilepath: ../resources/processor_725/resourcegroup_726/ICSFault.xsd
+                - Switch: Switch(s3)
+                  routes:
+                    - Route: RecipientNotEmpty(sc6)
+                      exprProperties:
+                        xpathExpression: boolean(string(normalize-space($emailRecipient)))
+                        expressionName: RecipientNotEmpty
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: emailRecipient
+                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                      statements:
+                        - Assignments: AssignDefaults(l0)
+                          name: AssignDefaults
+                          assignments:
+                            - Assignment: Assignment(a1)
+                              variableName: details
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: fn:concat(/ns41:execute/ns37:request-wrapper/ns37:Auditing/ns37:Details,' ')
+                                namespaceList: ns41=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types fn=http://www.w3.org/2005/xpath-functions ns37=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger/types
+                                variableName: details
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a0)
+                              variableName: payload
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: fn:concat(/ns41:execute/ns37:request-wrapper/ns37:Auditing/ns37:Payload, ' ')
+                                namespaceList: ns41=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types fn=http://www.w3.org/2005/xpath-functions ns37=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger/types
+                                variableName: payload
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a2)
+                              variableName: iterfaceName
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: fn:concat(/ns41:execute/ns37:request-wrapper/ns37:Auditing/ns37:InterfaceName, ' ')
+                                namespaceList: ns41=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types fn=http://www.w3.org/2005/xpath-functions ns37=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger/types
+                                variableName: iterfaceName
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a3)
+                              variableName: flowInstanceID
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: fn:concat(/ns41:execute/ns37:request-wrapper/ns37:Auditing/ns37:FlowInstanceID, ' ')
+                                namespaceList: ns41=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types fn=http://www.w3.org/2005/xpath-functions ns37=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger/types
+                                variableName: flowInstanceID
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a4)
+                              variableName: withAttachment
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: fn:false()
+                                namespaceList: fn=http://www.w3.org/2005/xpath-functions
+                                variableName: withAttachment
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a7)
+                              variableName: attachmentFileReference
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: ''''''
+                                variableName: attachmentFileReference
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Switch: Switch(s4)
+                          routes:
+                            - Route: withAttachment(sc8)
+                              exprProperties:
+                                xpathExpression: fn:string-length(/ns52:execute/ns48:request-wrapper/ns48:Auditing/ns48:Attribute9) > 3 and fn:string-length(/ns52:execute/ns48:request-wrapper/ns48:Auditing/ns48:Attribute10) > 3
+                                namespaceList: ns52=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types fn=http://www.w3.org/2005/xpath-functions ns48=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger/types
+                                expressionName: withAttachment
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: /
+                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types}execute'
+                              statements:
+                                - Try: Try(t1)
+                                  username: ScopeAttachment
+                                  statements:
+                                    - Map: Map(m1)
+                                      xsltfilepath: ../resources/processor_1476/resourcegroup_1479/req_415ef6fa01e740e38e825a525051b6e6.xsl
+                                      mapsentences:
+                                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/ftp/AttechmentFile_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi xsd fn xp20 xsl nssrcmpr ignore01 nsmpr0 nsmpr1" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/properties" xmlns:ns25="http://xmlns.oracle.com/cloud/list/pull" xmlns:ns16="http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger/types">
+                                        - '  <xsl:template match="/" xml:id="id_11">'
+                                        - '    <nstrgmpr:ListFile xml:id="id_12">'
+                                        - '      <ns25:ListRequest xml:id="id_31">'
+                                        - '        <ns25:FTPListHeader xml:id="id_32">'
+                                        - '          <ns25:fileNamePattern xml:id="id_33">'
+                                        - '            <xsl:value-of xml:id="id_34" select="/nssrcmpr:execute/ns16:request-wrapper/ns16:Auditing/ns16:Attribute9"/>'
+                                        - '          <ns25:directory xml:id="id_35">'
+                                        - '            <xsl:value-of xml:id="id_36" select="/nssrcmpr:execute/ns16:request-wrapper/ns16:Auditing/ns16:Attribute10"/>'
+                                        - ""
+                                    - Invoke: AttechmentFile(i1)
+                                      application:
+                                        Application: AttechmentFile(TSGTFTP_CONN)
+                                        name: AttechmentFile
+                                        adapter:
+                                            code: TSGTFTP_CONN
+                                        properties:
+                                            - name: Operation
+                                              value: ListFile
+                                            - name: Host
+                                              value: '%%TSGTFTP_CONN_Host'
+                                            - name: Port
+                                              value: '%%TSGTFTP_CONN_Port'
+                                            - name: SecurePort
+                                              value: "990"
+                                    - Switch: Switch(s5)
+                                      routes:
+                                        - Route: (sc10)
+                                          exprProperties:
+                                            xpathExpression: $AttechmentFile/ns59:ListFileResponse/ns58:ListResponse/ns58:ItemCount > 0
+                                            namespaceList: ns59=http://xmlns.oracle.com/cloud/adapter/ftp/AttechmentFile_REQUEST/types ns58=http://xmlns.oracle.com/cloud/list/pull
+                                          stateInfo:
+                                            variablesReferenced:
+                                                - VariableName: AttechmentFile
+                                                  rootElement: '{http://xmlns.oracle.com/cloud/adapter/ftp/AttechmentFile_REQUEST/types}ListFileResponse'
+                                          statements:
+                                            - Map: Map(m2)
+                                              xsltfilepath: ../resources/processor_1674/resourcegroup_1677/req_ad83554253eb47d0bde3b04e9debfe5c.xsl
+                                              mapsentences:
+                                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/ftp/attachmentDowonload_REQUEST/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi xsd fn xp20 xsl nssrcmpr ignore01 nsmpr0 nsmpr1 nsmpr2" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/ftp/AttechmentFile_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/properties" xmlns:ns28="http://xmlns.oracle.com/cloud/download/pull" xmlns:ns17="http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger/types">
+                                                - '  <xsl:template match="/" xml:id="id_11">'
+                                                - '    <nstrgmpr:DownloadFileToICS xml:id="id_12">'
+                                                - '      <ns28:DownloadRequest xml:id="id_42">'
+                                                - '        <ns28:filename xml:id="id_43">'
+                                                - '          <xsl:value-of xml:id="id_44" select="/nssrcmpr:execute/ns17:request-wrapper/ns17:Auditing/ns17:Attribute9"/>'
+                                                - '        <ns28:directory xml:id="id_45">'
+                                                - '          <xsl:value-of xml:id="id_46" select="/nssrcmpr:execute/ns17:request-wrapper/ns17:Auditing/ns17:Attribute10"/>'
+                                                - ""
+                                            - Invoke: attachmentDowonload(i2)
+                                              application:
+                                                Application: attachmentDowonload(TSGTFTP_CONN)
+                                                name: attachmentDowonload
+                                                adapter:
+                                                    code: TSGTFTP_CONN
+                                                properties:
+                                                    - name: Operation
+                                                      value: DownloadFileToICS
+                                                    - name: Host
+                                                      value: '%%TSGTFTP_CONN_Host'
+                                                    - name: Port
+                                                      value: '%%TSGTFTP_CONN_Port'
+                                                    - name: SecurePort
+                                                      value: "990"
+                                            - Assignments: Attachment-True(l1)
+                                              name: Attachment-True
+                                              assignments:
+                                                - Assignment: Assignment(a5)
+                                                  variableName: withAttachment
+                                                  variableType: string
+                                                  expressionProperties:
+                                                    xpathExpression: fn:true()
+                                                    namespaceList: fn=http://www.w3.org/2005/xpath-functions
+                                                    variableName: withAttachment
+                                                    variableType: string
+                                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                - Assignment: Assignment(a6)
+                                                  variableName: attachmentFileReference
+                                                  variableType: string
+                                                  expressionProperties:
+                                                    xpathExpression: $attachmentDowonload/ns61:DownloadFileToICSResponse/ns62:DownloadResponse/ns62:ICSFiles/ns60:ICSFile/ns60:FileReference
+                                                    namespaceList: ns62=http://xmlns.oracle.com/cloud/download/pull ns61=http://xmlns.oracle.com/cloud/adapter/ftp/attachmentDowonload_REQUEST/types ns60=http://xmlns.oracle.com/cloud/ics/file/v1/types
+                                                    variableName: attachmentFileReference
+                                                    variableType: string
+                                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - CatchAll: CatchAll(ta2)
+                                      statements:
+                                        - Logger: Logger(lg4)
+                                          name: LogAttNotFound
+                                          description: ""
+                                          propertyfile: ../resources/processor_1836/resourcegroup_1847/expr.properties
+                                          expressionProperties:
+                                            xpathExpression: 'fn:concat(''Attachment not found: '',/ns52:execute/ns48:request-wrapper/ns48:Auditing/ns48:Attribute10, ''/'', /ns52:execute/ns48:request-wrapper/ns48:Auditing/ns48:Attribute9)'
+                                            namespaceList: ns52=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types fn=http://www.w3.org/2005/xpath-functions ns48=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger/types
+                                            variableName: LogAttNotFound
+                                      icsfaultfilepath: ../resources/processor_1831/resourcegroup_1832/ICSFault.xsd
+                        - Switch: Switch(s6)
+                          routes:
+                            - Route: (sc11)
+                              exprProperties:
+                                xpathExpression: fn:string-length($attachmentFileReference) > 3
+                                namespaceList: fn=http://www.w3.org/2005/xpath-functions ns0=http://www.w3.org/2001/XMLSchema
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: attachmentFileReference
+                                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                              statements:
+                                - xmlname:
+                                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                                    local: notification
+                                  attrs:
+                                    - name:
+                                        space: ""
+                                        local: id
+                                      value: n2
+                                    - name:
+                                        space: ""
+                                        local: refUri
+                                      value: processor_1308
+                                  content: ""
+                                  statements: []
+                            - Route: Otherwise(sc12)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: {}
+                              statements:
+                                - xmlname:
+                                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                                    local: notification
+                                  attrs:
+                                    - name:
+                                        space: ""
+                                        local: id
+                                      value: n0
+                                    - name:
+                                        space: ""
+                                        local: refUri
+                                      value: processor_47
+                                  content: ""
+                                  statements: []
+                    - Route: Otherwise(sc7)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: {}
+                      statements:
+                        - Logger: Logger(lg0)
+                          name: LogNotRecipiants
+                          description: no email configured in Interface Config app
+                          propertyfile: ../resources/processor_829/resourcegroup_1708/expr.properties
+                          expressionProperties:
+                            xpathExpression: '''No email configured in InterfaceConfig VBCS app'''
+                            variableName: LogNotRecipiants
+                            variableDescription: no email configured in Interface Config app
+            - Route: Otherwise(sc1)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: {}
+              statements:
+                - Logger: Logger(lg1)
+                  name: LogInvalidPayload
+                  description: ""
+                  propertyfile: ../resources/processor_844/resourcegroup_1712/expr.properties
+                  expressionProperties:
+                    xpathExpression: '"No Error audit type or Notification.to empty"'
+                    variableName: LogInvalidPayload
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta1)
+          statements:
+            - Logger: Logger(lg3)
+              name: LogOrginalRequest
+              description: Logs the request payload
+              propertyfile: ../resources/processor_953/resourcegroup_1714/expr.properties
+              expressionProperties:
+                xpathExpression: /ns13:execute
+                namespaceList: ns13=http://xmlns.oracle.com/cloud/adapter/REST/AuditingTrigger_REQUEST/types
+                variableName: LogOrginalRequest
+                variableDescription: Logs the request payload
+            - xmlname:
+                space: http://www.oracle.com/2014/03/ics/flow/definition
+                local: notification
+              attrs:
+                - name:
+                    space: ""
+                    local: id
+                  value: n1
+                - name:
+                    space: ""
+                    local: refUri
+                  value: processor_986
+              content: ""
+              statements: []
+            - Stop: EHStop(eh1)
+          icsfaultfilepath: ../resources/processor_872/resourcegroup_873/ICSFault.xsd

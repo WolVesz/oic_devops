@@ -1,0 +1,692 @@
+Orchestration: ""
+statements:
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - xmlname:
+            space: http://www.oracle.com/2014/03/ics/flow/definition
+            local: pick
+          attrs:
+            - name:
+                space: ""
+                local: id
+              value: p0
+            - name:
+                space: ""
+                local: refUri
+              value: processor_793
+            - name:
+                space: ""
+                local: name
+              value: receiveRequest
+          content: ""
+          statements:
+            - xmlname:
+                space: http://www.oracle.com/2014/03/ics/flow/definition
+                local: pickReceive
+              attrs:
+                - name:
+                    space: ""
+                    local: trackingRefUri
+                  value: processor_808
+                - name:
+                    space: ""
+                    local: id
+                  value: pr0
+                - name:
+                    space: ""
+                    local: refUri
+                  value: application_8/outbound_9/output_16
+              content: ""
+              statements:
+                - Try: Try(t1)
+                  username: assetQueryDetailsByBadge
+                  statements:
+                    - Switch: Switch(s0)
+                      routes:
+                        - Route: Check for empty badgeNo  activityId or nodeId(sc0)
+                          exprProperties:
+                            xpathExpression: /nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:activityId = "" or /nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:badgeNo = "" or /nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:nodeId = ""
+                            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/types nssrcdfl=http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest/types
+                            expressionName: Check for empty badgeNo  activityId or nodeId
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: /
+                                  rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/types}execute'
+                          statements:
+                            - Map: Map(m3)
+                              xsltfilepath: ../resources/processor_882/resourcegroup_885/req_2822b1fe956a46b6a0c447ec22379fdd.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/receiveRequest" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/fault/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/types" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns19="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest/types" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163">
+                                - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:executeResponse xml:id="id_12">'
+                                - '      <ns19:response-wrapper xml:id="id_21">'
+                                - '        <ns19:output xml:id="id_22">'
+                                - '          <ns19:errorText xml:id="id_23">'
+                                - '            <xsl:value-of xml:id="id_24" select="&quot;Activity Id, Node Id, Badge Id cannot be empty&quot;"/>'
+                                - ""
+                        - Route: Otherwise(sc1)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: null
+                          statements:
+                            - Map: Map(m5)
+                              xsltfilepath: ../resources/processor_916/resourcegroup_919/req_9d7acf7d0d1047c9a16ce7056c95ce52.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet xmlns:tns="http://ouaf.oracle.com/webservices/w1/W1GAstDtlBNo" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/receiveRequest" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/AssetQuery_REQUEST/types" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ouaf="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/oracleutilities/AssetQuery_REQUEST" xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/fault/types" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/types" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest/types" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns47="http://xml.oracle.com/adapters/extension" xmlns:ns49="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/receiveRequest/RESTINREQ" xmlns:ns50="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/receiveRequest/RESTINRES" version="2.0" xml:id="id_1" exclude-result-prefixes=" ns0 oraext xsd xp20 nssrcdfl ns4 ns1 ora oracle-xsl-mapper xsi fn xsl ns2 nssrcmpr ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:W1GAstDtlBNo xml:id="id_12">'
+                                - '      <tns:W1GAstDtlBNo xml:id="id_21">'
+                                - '        <tns:input xml:id="id_22">'
+                                - '          <xsl:if test="/nssrcmpr:execute/ns26:request-wrapper/ns26:activityId !=&apos;&apos;">'
+                                - '            <tns:activityId xml:id="id_23">'
+                                - '              <xsl:value-of xml:id="id_24" select="/nssrcmpr:execute/ns26:request-wrapper/ns26:activityId"/>'
+                                - '          <xsl:if test="/nssrcmpr:execute/ns26:request-wrapper/ns26:mobileActivityId !=&apos;&apos;">'
+                                - '            <tns:mobileActivityId xml:id="id_23">'
+                                - '              <xsl:value-of xml:id="id_24" select="/nssrcmpr:execute/ns26:request-wrapper/ns26:mobileActivityId"/>'
+                                - '          <tns:badgeNo xml:id="id_25">'
+                                - '            <xsl:value-of xml:id="id_26" select="/nssrcmpr:execute/ns26:request-wrapper/ns26:badgeNo"/>'
+                                - '          <tns:nodeId xml:id="id_27">'
+                                - '            <xsl:value-of xml:id="id_28" select="/nssrcmpr:execute/ns26:request-wrapper/ns26:nodeId"/>'
+                                - '          <tns:attachedToAssetId xml:id="id_29">'
+                                - '            <xsl:value-of xml:id="id_30" select="/nssrcmpr:execute/ns26:request-wrapper/ns26:attachedToAssetId"/>'
+                                - '          <tns:attachToAssetId xml:id="id_31">'
+                                - '            <xsl:value-of xml:id="id_32" select="/nssrcmpr:execute/ns26:request-wrapper/ns26:attachToAssetId"/>'
+                                - '          <tns:mobileStoreroomId xml:id="id_41">'
+                                - '            <xsl:value-of xml:id="id_42" select="/nssrcmpr:execute/ns26:request-wrapper/ns26:mobileStoreroomId"/>'
+                                - ""
+                    - Invoke: AssetQuery(i0)
+                      application:
+                        Application: AssetQuery(OUTL-BRT-SOAP-WACS_WACSOFSC)
+                        name: AssetQuery
+                        adapter:
+                            code: OUTL-BRT-SOAP-WACS_WACSOFSC
+                        properties:
+                            - name: operationPath
+                              value: http://den00tyu.us.oracle.com/webservices/W1GAstDtlBNo#W1GAstDtlBNo
+                    - Map: Map(m0)
+                      xsltfilepath: ../resources/processor_788/resourcegroup_791/req_6f273202425947b1a2a9119099db4cf7.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/receiveRequest" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/fault/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/types" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr10="http://xmlns.oracle.com/cloud/adapter/Oracle_Utilities/AssetQuery_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/oracleutilities/AssetQuery_REQUEST/types" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:ns23="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns19="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest/types" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:ns28="http://ouaf.oracle.com/webservices/w1/W1GAstDtlBNo" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:ns38="http://xmlns.oracle.com/cloud/adapter/oracleutilities/AssetQuery_REQUEST" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                        - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                        - '  <xsl:param name="AssetQuery" xml:id="id_25"/>'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:executeResponse xml:id="id_12">'
+                        - '      <ns19:response-wrapper xml:id="id_31">'
+                        - '        <ns19:output xml:id="id_32">'
+                        - '          <ns19:inventories xml:id="id_33">'
+                        - '            <ns19:items xml:id="id_34">'
+                        - '              <ns19:inventoryType xml:id="id_119">'
+                        - '                <xsl:value-of xml:id="id_120" select="dvm:lookupValue (&quot;WAMOFSC_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;asset.inventory.type&quot;, &quot;Value&quot;, &quot;asset.inventory.type.error&quot; )"/>'
+                        - '              <xsl:choose xml:id="id_50">'
+                        - '                <xsl:when xml:id="id_51" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:assetId">'
+                        - '                  <ns19:serialNumber xml:id="id_35">'
+                        - '                    <xsl:value-of xml:id="id_53" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:assetId"/>'
+                        - '                <xsl:otherwise xml:id="id_54">'
+                        - '                  <ns19:serialNumber xml:id="id_359">'
+                        - '                    <xsl:value-of xml:id="id_57" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:nodeId"/>'
+                        - '              <xsl:if xml:id="id_200" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:validMeasurementTypes">'
+                        - '                <ns19:wam_valid_measurement_types xml:id="id_154">'
+                        - '                  <xsl:value-of xml:id="id_155" select="oraext:get-content-as-string ($AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:validMeasurementTypes )"/>'
+                        - '              <xsl:if xml:id="id_287" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:assetDetails/ns28:serialNo">'
+                        - '                <ns19:ITEM_NUMBER xml:id="id_71">'
+                        - '                  <xsl:value-of xml:id="id_72" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:assetDetails/ns28:serialNo"/>'
+                        - '              <xsl:if xml:id="id_284" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:nodeId">'
+                        - '                <ns19:wam_node_id xml:id="id_73">'
+                        - '                  <xsl:value-of xml:id="id_74" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:nodeId"/>'
+                        - '              <xsl:if xml:id="id_281" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:assetDetails/ns28:attachedToAssetId">'
+                        - '                <ns19:wam_attached_to_asset_id xml:id="id_75">'
+                        - '                  <xsl:value-of xml:id="id_76" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:assetDetails/ns28:attachedToAssetId"/>'
+                        - '              <xsl:if xml:id="id_278" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:assetDetails/ns28:maybeLeftInPlace">'
+                        - '                <ns19:wam_asset_maybeLeftInPlace xml:id="id_77">'
+                        - '                  <xsl:value-of xml:id="id_78" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:assetDetails/ns28:maybeLeftInPlace"/>'
+                        - '              <xsl:if xml:id="id_275" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:assetDetails/ns28:info">'
+                        - '                <ns19:wam_asset_info xml:id="id_79">'
+                        - '                  <xsl:value-of xml:id="id_80" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:assetDetails/ns28:info"/>'
+                        - '              <xsl:if xml:id="id_214" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:badgeNo">'
+                        - '                <ns19:wam_badge_number xml:id="id_81">'
+                        - '                  <xsl:value-of xml:id="id_138" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:badgeNo"/>'
+                        - '              <xsl:if xml:id="id_217" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:validServiceHistoryTypes">'
+                        - '                <ns19:wam_asset_valid_service_history_types>'
+                        - '                  <xsl:value-of xml:id="id_140" select="oraext:get-content-as-string ($AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:validServiceHistoryTypes )"/>'
+                        - '              <xsl:if xml:id="id_220" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:failureInformation">'
+                        - '                <ns19:wam_failure_info xml:id="id_185">'
+                        - '                  <xsl:value-of xml:id="id_186" select="oraext:get-content-as-string ($AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:failureInformation )"/>'
+                        - '              <xsl:if xml:id="id_223" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:locationInformation/ns28:info">'
+                        - '                <ns19:wam_asset_location_info xml:id="id_91">'
+                        - '                  <xsl:value-of xml:id="id_129" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:locationInformation/ns28:info"/>'
+                        - '              <xsl:if xml:id="id_226" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:locationInformation/ns28:building">'
+                        - '                <ns19:wam_asset_location_building xml:id="id_93">'
+                        - '                  <xsl:value-of xml:id="id_94" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:locationInformation/ns28:building"/>'
+                        - '              <xsl:if xml:id="id_229" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:locationInformation/ns28:room">'
+                        - '                <ns19:wam_asset_location_room xml:id="id_95">'
+                        - '                  <xsl:value-of xml:id="id_96" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:locationInformation/ns28:room"/>'
+                        - '              <xsl:if xml:id="id_232" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:locationInformation/ns28:runToFailure">'
+                        - '                <ns19:wam_asset_location_runToFailure xml:id="id_97">'
+                        - '                  <xsl:value-of xml:id="id_98" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:locationInformation/ns28:runToFailure"/>'
+                        - '              <xsl:if xml:id="id_235" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:locationInformation/ns28:siteLocation">'
+                        - '                <ns19:wam_asset_location_siteLocation xml:id="id_99">'
+                        - '                  <xsl:value-of xml:id="id_100" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:locationInformation/ns28:siteLocation"/>'
+                        - '              <xsl:if xml:id="id_238" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:locationInformation/ns28:pointId">'
+                        - '                <ns19:wam_asset_location_pointId xml:id="id_101">'
+                        - '                  <xsl:value-of xml:id="id_102" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:locationInformation/ns28:pointId"/>'
+                        - '              <xsl:if xml:id="id_252" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:locationInformation/ns28:serviceArea">'
+                        - '                <ns19:wam_asset_location_serviceArea xml:id="id_103">'
+                        - '                  <xsl:value-of xml:id="id_104" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:locationInformation/ns28:serviceArea"/>'
+                        - '              <ns19:wam_is_asset_location>'
+                        - '                <xsl:value-of select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:locationInformation/ns28:isAssetLocation"/>'
+                        - '              <xsl:if xml:id="id_255" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:assetId">'
+                        - '                <ns19:wam_asset_id xml:id="id_105">'
+                        - '                  <xsl:value-of xml:id="id_171" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:assetId"/>'
+                        - '              <xsl:if xml:id="id_258" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:validMeasurementTypes/ns28:measurementTypeList/ns28:description">'
+                        - '                <ns19:wam_asset_desc xml:id="id_107">'
+                        - '                  <xsl:value-of xml:id="id_108" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:validMeasurementTypes/ns28:measurementTypeList/ns28:description"/>'
+                        - '              <xsl:if xml:id="id_261" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:assetDetails/ns28:assetType">'
+                        - '                <ns19:wam_asset_type xml:id="id_109">'
+                        - '                  <xsl:value-of xml:id="id_110" select="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:assetDetails/ns28:assetType"/>'
+                        - '              <ns19:wam_asset_or_component>'
+                        - '                <xsl:choose>'
+                        - '                  <xsl:when test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:assetLocationAssets/ns28:assetLocationAssetList/ns28:assetDetails/ns28:isComponent=&apos;W1YS&apos;">'
+                        - '                    <xsl:value-of select="&apos;C&apos;"/>'
+                        - '                  <xsl:otherwise>'
+                        - '                    <xsl:value-of select="&apos;A&apos;"/>'
+                        - '              <ns19:wam_asset_worked xml:id="id_156">'
+                        - '                <xsl:value-of xml:id="id_157" select="1"/>'
+                        - '          <xsl:if xml:id="id_26001" test="$AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:serviceHistoryTypes">'
+                        - '            <xsl:variable name="wamSHTStr">'
+                        - '              <xsl:value-of select="oraext:get-content-as-string($AssetQuery/nsmpr0:W1GAstDtlBNoResponse/ns28:W1GAstDtlBNo/ns28:output/ns28:serviceHistoryTypes )"/>'
+                        - '            <xsl:variable name="msgSize">'
+                        - '              <xsl:value-of select="string-length($wamSHTStr)"/>'
+                        - '            <xsl:variable name="sizeInKB">'
+                        - '              <xsl:value-of select="$msgSize div 1024"/>'
+                        - '            <xsl:variable name="sht_node">'
+                        - '              <xsl:call-template name="splitWAM_SHT">'
+                        - '                <xsl:with-param name="wam_SHT_ip" select="$wamSHTStr"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[1]">'
+                        - '              <ns19:wam_service_history_types1>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[1]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[2]">'
+                        - '              <ns19:wam_service_history_types2>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[2]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[3]">'
+                        - '              <ns19:wam_service_history_types3>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[3]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[4]">'
+                        - '              <ns19:wam_service_history_types4>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[4]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[5]">'
+                        - '              <ns19:wam_service_history_types5>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[5]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[6]">'
+                        - '              <ns19:wam_service_history_types6>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[6]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[7]">'
+                        - '              <ns19:wam_service_history_types7>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[7]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[8]">'
+                        - '              <ns19:wam_service_history_types8>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[8]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[9]">'
+                        - '              <ns19:wam_service_history_types9>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[9]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[10]">'
+                        - '              <ns19:wam_service_history_types10>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[10]"/>'
+                        - '  <xsl:template name="splitWAM_SHT">'
+                        - '    <xsl:param name="wam_SHT_ip"/>'
+                        - '    <xsl:choose>'
+                        - '      <xsl:when test="string-length($wam_SHT_ip) &lt; 65536">'
+                        - '        <sht_text>'
+                        - '          <xsl:value-of select="$wam_SHT_ip"/>'
+                        - '      <xsl:when test="string-length($wam_SHT_ip) &gt; 65535">'
+                        - '        <sht_text>'
+                        - '          <xsl:value-of select="substring($wam_SHT_ip,0,65535)"/>'
+                        - '        <xsl:call-template name="splitWAM_SHT">'
+                        - '          <xsl:with-param name="wam_SHT_ip" select="substring($wam_SHT_ip, 65536, string-length($wam_SHT_ip)-65535)"/>'
+                        - ""
+                    - Catch: Catch(tc0)
+                      faultname: fault
+                      statements:
+                        - Switch: Switch(s2)
+                          routes:
+                            - Route: Send Email Notification(sc2)
+                              exprProperties:
+                                xpathExpression: dvm:lookupValue( "WAMOFSC_ConfigProps", "PropertyName", "email.flag", "Value", "false") = "true"
+                                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                                expressionName: Send Email Notification
+                              stateInfo:
+                                referencedLookupData:
+                                    - lookup-table-name-with-location: WAMOFSC_ConfigProps
+                                      source: '"PropertyName"'
+                                      target: '"Value"'
+                              statements:
+                                - xmlname:
+                                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                                    local: notification
+                                  attrs:
+                                    - name:
+                                        space: ""
+                                        local: id
+                                      value: n1
+                                    - name:
+                                        space: ""
+                                        local: refUri
+                                      value: processor_960
+                                  content: ""
+                                  statements: []
+                                - Map: Map(m4)
+                                  xsltfilepath: ../resources/processor_955/resourcegroup_958/req_e139cf7bb75e4724a791a8ac20c1903b.xsl
+                                  mapsentences:
+                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/receiveRequest" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/fault/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/types" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://ouaf.oracle.com/" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest/types" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:tns="http://ouaf.oracle.com/webservices/w1/W1GAstDtlBNo" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/oracleutilities/AssetQuery_REQUEST/types" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/oracleutilities/AssetQuery_REQUEST" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163">
+                                    - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                                    - '  <xsl:param name="CurrentFaultObject" xml:id="id_21"/>'
+                                    - '  <xsl:template match="/" xml:id="id_11">'
+                                    - '    <nstrgmpr:executeResponse xml:id="id_12">'
+                                    - '      <ns21:response-wrapper xml:id="id_26">'
+                                    - '        <ns21:output xml:id="id_27">'
+                                    - '          <ns21:errorText xml:id="id_28">'
+                                    - '            <xsl:value-of xml:id="id_38" select="$CurrentFaultObject/nsmpr0:Fault/ResponseText"/>'
+                                    - ""
+                            - Route: Otherwise(sc3)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements:
+                                - Map: Map(m6)
+                                  xsltfilepath: ../resources/processor_1002/resourcegroup_1005/req_a021c92514864409819d172460e76adb.xsl
+                                  mapsentences:
+                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/receiveRequest" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/fault/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/types" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://ouaf.oracle.com/" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest/types" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:tns="http://ouaf.oracle.com/webservices/w1/W1GAstDtlBNo" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/oracleutilities/AssetQuery_REQUEST/types" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/oracleutilities/AssetQuery_REQUEST" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163">
+                                    - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                                    - '  <xsl:param name="CurrentFaultObject" xml:id="id_21"/>'
+                                    - '  <xsl:template match="/" xml:id="id_11">'
+                                    - '    <nstrgmpr:executeResponse xml:id="id_12">'
+                                    - '      <ns21:response-wrapper xml:id="id_26">'
+                                    - '        <ns21:output xml:id="id_27">'
+                                    - '          <ns21:errorText xml:id="id_28">'
+                                    - '            <xsl:value-of xml:id="id_38" select="$CurrentFaultObject/nsmpr0:Fault/ResponseText"/>'
+                                    - ""
+                    - CatchAll: CatchAll(ta1)
+                      statements:
+                        - Switch: Switch(s3)
+                          routes:
+                            - Route: (sc6)
+                              exprProperties:
+                                xpathExpression: dvm:lookupValue("WAMOFSC_ConfigProps", "PropertyName", "email.flag", "Value", "false") = "true"
+                                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                              stateInfo:
+                                referencedLookupData:
+                                    - lookup-table-name-with-location: WAMOFSC_ConfigProps
+                                      source: '"PropertyName"'
+                                      target: '"Value"'
+                              statements:
+                                - xmlname:
+                                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                                    local: notification
+                                  attrs:
+                                    - name:
+                                        space: ""
+                                        local: id
+                                      value: n2
+                                    - name:
+                                        space: ""
+                                        local: refUri
+                                      value: processor_1027
+                                  content: ""
+                                  statements: []
+                                - Map: Map(m7)
+                                  xsltfilepath: ../resources/processor_1069/resourcegroup_1072/req_dae3bf92ef2941d6bc0202b7df5f1dca.xsl
+                                  mapsentences:
+                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/receiveRequest" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/fault/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/types" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ics/fault" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest/types" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163">
+                                    - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                                    - '  <xsl:param name="assetQueryDetailsByBadgeFaultObject" xml:id="id_21"/>'
+                                    - '  <xsl:template match="/" xml:id="id_11">'
+                                    - '    <nstrgmpr:executeResponse xml:id="id_12">'
+                                    - '      <ns21:response-wrapper xml:id="id_26">'
+                                    - '        <ns21:output xml:id="id_27">'
+                                    - '          <ns21:errorText xml:id="id_28">'
+                                    - '            <xsl:value-of xml:id="id_29" select="substring-before (substring-after ($assetQueryDetailsByBadgeFaultObject/nsmpr0:fault/nsmpr0:details, &quot;&lt;ResponseText&gt;&quot; ), &quot;&lt;/ResponseText&gt;&quot; )"/>'
+                                    - ""
+                            - Route: Otherwise(sc7)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements:
+                                - Map: Map(m8)
+                                  xsltfilepath: ../resources/processor_1074/resourcegroup_1077/req_07eeeb0670dd4e2b9e91508e8e296768.xsl
+                                  mapsentences:
+                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/receiveRequest" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/fault/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/types" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ics/fault" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest/types" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163">
+                                    - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                                    - '  <xsl:param name="assetQueryDetailsByBadgeFaultObject" xml:id="id_21"/>'
+                                    - '  <xsl:template match="/" xml:id="id_11">'
+                                    - '    <nstrgmpr:executeResponse xml:id="id_12">'
+                                    - '      <ns21:response-wrapper xml:id="id_26">'
+                                    - '        <ns21:output xml:id="id_27">'
+                                    - '          <ns21:errorText xml:id="id_28">'
+                                    - '            <xsl:value-of xml:id="id_29" select="substring-before (substring-after ($assetQueryDetailsByBadgeFaultObject/nsmpr0:fault/nsmpr0:details, &quot;&lt;ResponseText&gt;&quot; ), &quot;&lt;/ResponseText&gt;&quot; )"/>'
+                                    - ""
+                      icsfaultfilepath: ../resources/processor_1012/resourcegroup_1013/ICSFault.xsd
+                - Reply: Reply(y0)
+                  adapterjcareference: null
+                  wsdlfilepath: ""
+            - xmlname:
+                space: http://www.oracle.com/2014/03/ics/flow/definition
+                local: pickReceive
+              attrs:
+                - name:
+                    space: ""
+                    local: trackingRefUri
+                  value: processor_825
+                - name:
+                    space: ""
+                    local: id
+                  value: pr1
+                - name:
+                    space: ""
+                    local: refUri
+                  value: application_815/outbound_816/output_822
+              content: ""
+              statements:
+                - Try: Try(t0)
+                  username: assetQueryForPickupScope
+                  statements:
+                    - Map: Map(m1)
+                      xsltfilepath: ../resources/processor_1176/resourcegroup_1179/req_b0b5e7b7a6474a7f875044a0e769d8b4.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:tns="http://ouaf.oracle.com/webservices/w1/W1GAstDtlBNo" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/MainAssetQueryForPickup_REQUEST/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/oracleutilities/MainAssetQueryForPickup_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns5="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/receiveRequest/assetQueryForPickup" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/assetQueryForPickup" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest/assetQueryForPickup/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/assetQueryForPickup/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ouaf="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/fault/types" exclude-result-prefixes=" ns0 oraext plnk xsd xp20 ns5 nsmpr0 ora ns4 nssrcdfl oracle-xsl-mapper nssrcmpr xsi fn xsl ns2 ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:ns28="http://xml.oracle.com/adapters/extension" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:ns29="http://ouaf.oracle.com/webservices/w1/W1-AssetQuery" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163">
+                        - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:W1-AssetQuery xml:id="id_12">'
+                        - '      <ns29:W1-AssetQuery xml:id="id_21">'
+                        - '        <ns29:input xml:id="id_22">'
+                        - '          <ns29:badgeNo xml:id="id_23">'
+                        - '            <xsl:value-of xml:id="id_24" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:badgeNo"/>'
+                        - '          <ns29:location xml:id="id_25">'
+                        - '            <ns29:locationType xml:id="id_26">'
+                        - '              <xsl:value-of xml:id="id_27" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:location/nssrcdfl:locationType"/>'
+                        - '            <ns29:address xml:id="id_28">'
+                        - '              <xsl:value-of xml:id="id_29" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:location/nssrcdfl:address"/>'
+                        - '            <ns29:city xml:id="id_30">'
+                        - '              <xsl:value-of xml:id="id_31" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:location/nssrcdfl:city"/>'
+                        - '            <ns29:postal xml:id="id_32">'
+                        - '              <xsl:value-of xml:id="id_33" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:location/nssrcdfl:postal"/>'
+                        - '            <ns29:building xml:id="id_34">'
+                        - '              <xsl:value-of xml:id="id_35" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:location/nssrcdfl:building"/>'
+                        - '            <ns29:description xml:id="id_36">'
+                        - '              <xsl:value-of xml:id="id_37" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:location/nssrcdfl:description"/>'
+                        - ""
+                    - Invoke: MainAssetQueryForPickup(i1)
+                      application:
+                        Application: MainAssetQueryForPickup(OUTL-BRT-SOAP-WACS_WACSOFSC)
+                        name: MainAssetQueryForPickup
+                        adapter:
+                            code: OUTL-BRT-SOAP-WACS_WACSOFSC
+                        properties:
+                            - name: operationPath
+                              value: http://den00tyu.us.oracle.com/webservices/W1-AssetQuery#W1-AssetQuery
+                    - Map: Map(m9)
+                      xsltfilepath: ../resources/processor_1186/resourcegroup_1189/req_7f9c9312c59241d881b746f52835d684.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns5="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/receiveRequest/assetQueryForPickup" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/assetQueryForPickup" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest/assetQueryForPickup/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/assetQueryForPickup/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/fault/types" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/oracleutilities/MainAssetQueryForPickup_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/oracleutilities/MainAssetQueryForPickup_REQUEST" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:ns22="http://xml.oracle.com/adapters/extension" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:ns23="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:ns29="http://ouaf.oracle.com/webservices/w1/W1-AssetQuery" xmlns:tns="http://ouaf.oracle.com/webservices/w1/W1GAstDtlBNo" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163">
+                        - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                        - '  <xsl:param name="MainAssetQueryForPickup" xml:id="id_25"/>'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:executeResponse xml:id="id_12">'
+                        - '      <nstrgdfl:response-wrapper xml:id="id_31">'
+                        - '        <nstrgdfl:output xml:id="id_32">'
+                        - '          <xsl:for-each xml:id="id_34" select="$MainAssetQueryForPickup/nsmpr0:W1-AssetQueryResponse/ns29:W1-AssetQuery/ns29:output/ns29:assets/ns29:assetList">'
+                        - '            <nstrgdfl:assetList xml:id="id_35">'
+                        - '              <nstrgdfl:assetId xml:id="id_36">'
+                        - '                <xsl:value-of xml:id="id_37" select="ns29:assetId"/>'
+                        - '              <nstrgdfl:assetInfo xml:id="id_38">'
+                        - '                <xsl:value-of xml:id="id_39" select="ns29:assetInfo"/>'
+                        - '              <nstrgdfl:nodeId xml:id="id_40">'
+                        - '                <xsl:value-of xml:id="id_41" select="ns29:nodeId"/>'
+                        - '              <nstrgdfl:locationInfo xml:id="id_42">'
+                        - '                <xsl:value-of xml:id="id_43" select="ns29:locationInfo"/>'
+                        - ""
+                    - CatchAll: CatchAll(ta3)
+                      statements:
+                        - Logger: Logger(lg0)
+                          name: assetQueryForPickupLogger
+                          description: ""
+                          propertyfile: ../resources/processor_1305/resourcegroup_1434/expr.properties
+                          expressionProperties:
+                            xpathExpression: '"Error in AssetQueryForPickup Scope"'
+                            variableName: assetQueryForPickupLogger
+                        - Stop: EHStop(eh2)
+                      icsfaultfilepath: ../resources/processor_1295/resourcegroup_1296/ICSFault.xsd
+                - Reply: Reply(y1)
+                  adapterjcareference: null
+                  wsdlfilepath: ""
+            - xmlname:
+                space: http://www.oracle.com/2014/03/ics/flow/definition
+                local: pickReceive
+              attrs:
+                - name:
+                    space: ""
+                    local: trackingRefUri
+                  value: processor_865
+                - name:
+                    space: ""
+                    local: id
+                  value: pr2
+                - name:
+                    space: ""
+                    local: refUri
+                  value: application_855/outbound_856/output_862
+              content: ""
+              statements:
+                - Try: Try(t2)
+                  username: assetQueryDetailsPickupScope
+                  statements:
+                    - Map: Map(m10)
+                      xsltfilepath: ../resources/processor_1280/resourcegroup_1283/req_1daa57736ce649ae8ec9fe8f77a801ac.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/assetQueryDetailsPickup/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetAssetDetailsForPickup_REQUEST" xmlns:ns5="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/receiveRequest/assetQueryDetailsPickup" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest/assetQueryDetailsPickup/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ouaf.oracle.com/webservices/w1/W1-GetAssetLocationDetails" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgdfl="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/fault/types" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/assetQueryDetailsPickup" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetAssetDetailsForPickup_REQUEST/types" exclude-result-prefixes=" nssrcmpr ns5 ns0 oraext xsd xp20 nssrcdfl nsmpr0 ora oracle-xsl-mapper xsi fn xsl ns2 ns4 ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/assetQueryDetailsPickup/request/types" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163">
+                        - '  <xsl:param name="assetQueryDetailsPickup_tracking_var_1" xml:id="id_32"/>'
+                        - '  <xsl:param name="assetQueryDetailsPickup_tracking_var_2" xml:id="id_33"/>'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:W1-GetAstDtl xml:id="id_12">'
+                        - '      <tns:W1-GetAstDtl xml:id="id_21">'
+                        - '        <tns:assetLocationAssets xml:id="id_22">'
+                        - '          <tns:assetLocationAssetList xml:id="id_23">'
+                        - '            <tns:nodeId xml:id="id_26">'
+                        - '              <xsl:value-of xml:id="id_27" select="$assetQueryDetailsPickup_tracking_var_2"/>'
+                        - '            <tns:assetId xml:id="id_24">'
+                        - '              <xsl:value-of xml:id="id_25" select="$assetQueryDetailsPickup_tracking_var_1"/>'
+                        - ""
+                    - Invoke: GetAssetDetailsForPickup(i2)
+                      application:
+                        Application: GetAssetDetailsForPickup(OUTL-BRT-SOAP-WACS_WACSOFSC)
+                        name: GetAssetDetailsForPickup
+                        adapter:
+                            code: OUTL-BRT-SOAP-WACS_WACSOFSC
+                        properties:
+                            - name: operationPath
+                              value: http://den00tyu.us.oracle.com/webservices/W1-GetAssetLocationDetails#W1-GetAstDtl
+                    - Map: Map(m2)
+                      xsltfilepath: ../resources/processor_872/resourcegroup_875/req_13cac9524ffd4a92aea449c1392dc081.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/assetQueryDetailsPickup/types" xmlns:ns5="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/receiveRequest/assetQueryDetailsPickup" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest/assetQueryDetailsPickup/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/internal/commons/proxy/fault/types" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/assetQueryDetailsPickup" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetAssetDetailsForPickup_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetAssetDetailsForPickup_REQUEST" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/REST/receiveRequest_REQUEST/assetQueryDetailsPickup/request/types" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns26="http://ouaf.oracle.com/webservices/w1/W1-GetAssetLocationDetails" xmlns:ouaf="http://ouaf.oracle.com/" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns23="http://xmlns.oracle.com/procmon" xmlns:ns25="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                        - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                        - '  <xsl:param name="GetAssetDetailsForPickup" xml:id="id_25"/>'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:executeResponse xml:id="id_12">'
+                        - '      <nstrgdfl:response-wrapper xml:id="id_31">'
+                        - '        <nstrgdfl:output xml:id="id_32">'
+                        - '          <nstrgdfl:inventories xml:id="id_33">'
+                        - '            <nstrgdfl:items xml:id="id_34">'
+                        - '              <nstrgdfl:inventoryType xml:id="id_74">'
+                        - '                <xsl:value-of xml:id="id_75" select="dvm:lookupValue (&quot;WAMOFSC_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;asset.inventory.type&quot;, &quot;Value&quot;, &quot;asset.inventory.type.error&quot; )"/>'
+                        - '              <nstrgdfl:serialNumber xml:id="id_76">'
+                        - '                <xsl:value-of xml:id="id_77" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:assetId"/>'
+                        - '              <xsl:if xml:id="id_80" test="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:validMeasurementTypes">'
+                        - '                <nstrgdfl:wam_valid_measurement_types xml:id="id_81">'
+                        - '                  <xsl:value-of xml:id="id_82" select="oraext:get-content-as-string ($GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:validMeasurementTypes )"/>'
+                        - '              <nstrgdfl:ITEM_NUMBER xml:id="id_83">'
+                        - '                <xsl:value-of xml:id="id_84" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:assetDetails/ns26:serialNo"/>'
+                        - '              <nstrgdfl:wam_node_id xml:id="id_37">'
+                        - '                <xsl:value-of xml:id="id_38" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:nodeId"/>'
+                        - '              <nstrgdfl:wam_attached_to_asset_id xml:id="id_53">'
+                        - '                <xsl:value-of xml:id="id_54" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:assetDetails/ns26:attachedToAssetId"/>'
+                        - '              <nstrgdfl:wam_asset_maybeLeftInPlace xml:id="id_55">'
+                        - '                <xsl:value-of xml:id="id_56" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:assetDetails/ns26:maybeLeftInPlace"/>'
+                        - '              <nstrgdfl:wam_asset_info xml:id="id_51">'
+                        - '                <xsl:value-of xml:id="id_52" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:assetDetails/ns26:info"/>'
+                        - '              <nstrgdfl:wam_badge_number xml:id="id_35">'
+                        - '                <xsl:value-of xml:id="id_36" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:badgeNo"/>'
+                        - '              <xsl:if xml:id="id_180" test="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:validServiceHistoryTypes">'
+                        - '                <nstrgdfl:wam_asset_valid_service_history_types xml:id="id_85">'
+                        - '                  <xsl:value-of xml:id="id_86" select="oraext:get-content-as-string ($GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:validServiceHistoryTypes )"/>'
+                        - '              <xsl:if xml:id="id_1800" test="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:failureInformation">'
+                        - '                <nstrgdfl:wam_failure_info xml:id="id_87">'
+                        - '                  <xsl:value-of xml:id="id_88" select="oraext:get-content-as-string ($GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:failureInformation )"/>'
+                        - '              <nstrgdfl:wam_asset_location_info xml:id="id_49">'
+                        - '                <xsl:value-of xml:id="id_50" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:locationInformation/ns26:info"/>'
+                        - '              <nstrgdfl:wam_asset_location_building xml:id="id_41">'
+                        - '                <xsl:value-of xml:id="id_42" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:locationInformation/ns26:building"/>'
+                        - '              <nstrgdfl:wam_asset_location_room xml:id="id_43">'
+                        - '                <xsl:value-of xml:id="id_44" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:locationInformation/ns26:room"/>'
+                        - '              <xsl:if test="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:locationInformation/ns26:runToFailure">'
+                        - '                <nstrgdfl:wam_asset_location_runToFailure xml:id="id_89">'
+                        - '                  <xsl:value-of xml:id="id_90" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:locationInformation/ns26:runToFailure"/>'
+                        - '              <nstrgdfl:wam_asset_location_siteLocation xml:id="id_91">'
+                        - '                <xsl:value-of xml:id="id_92" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:locationInformation/ns26:siteLocation"/>'
+                        - '              <nstrgdfl:wam_asset_location_pointId xml:id="id_45">'
+                        - '                <xsl:value-of xml:id="id_46" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:locationInformation/ns26:pointId"/>'
+                        - '              <nstrgdfl:wam_asset_location_serviceArea xml:id="id_47">'
+                        - '                <xsl:value-of xml:id="id_48" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:locationInformation/ns26:serviceArea"/>'
+                        - '              <nstrgdfl:wam_is_asset_location>'
+                        - '                <xsl:value-of select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:locationInformation/ns26:isAssetLocation"/>'
+                        - '              <nstrgdfl:wam_asset_id xml:id="id_39">'
+                        - '                <xsl:value-of xml:id="id_40" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:assetId"/>'
+                        - '              <nstrgdfl:wam_asset_desc xml:id="id_57">'
+                        - '                <xsl:value-of xml:id="id_58" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:assetDetails/ns26:description"/>'
+                        - '              <nstrgdfl:wam_asset_type xml:id="id_59">'
+                        - '                <xsl:value-of xml:id="id_60" select="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:assetDetails/ns26:assetType"/>'
+                        - '              <nstrgdfl:wam_asset_worked xml:id="id_93">'
+                        - '                <xsl:value-of xml:id="id_94" select="&quot;1&quot;"/>'
+                        - '              <nstrgdfl:wam_asset_or_component>'
+                        - '                <xsl:choose>'
+                        - '                  <xsl:when test="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:assetLocationAssets/ns26:assetLocationAssetList/ns26:assetDetails/ns26:isComponent=&apos;W1YS&apos;">'
+                        - '                    <xsl:value-of select="&apos;C&apos;"/>'
+                        - '                  <xsl:otherwise>'
+                        - '                    <xsl:value-of select="&apos;A&apos;"/>'
+                        - '          <xsl:if xml:id="id_26001" test="$GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:serviceHistoryTypes">'
+                        - '            <xsl:variable name="wamSHTStr">'
+                        - '              <xsl:value-of select="oraext:get-content-as-string($GetAssetDetailsForPickup/nsmpr0:W1-GetAstDtlResponse/ns26:W1-GetAstDtl/ns26:serviceHistoryTypes )"/>'
+                        - '            <xsl:variable name="msgSize">'
+                        - '              <xsl:value-of select="string-length($wamSHTStr)"/>'
+                        - '            <xsl:variable name="sizeInKB">'
+                        - '              <xsl:value-of select="$msgSize div 1024"/>'
+                        - '            <xsl:variable name="sht_node">'
+                        - '              <xsl:call-template name="splitWAM_SHT">'
+                        - '                <xsl:with-param name="wam_SHT_ip" select="$wamSHTStr"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[1]">'
+                        - '              <nstrgdfl:wam_service_history_types1 xml:id="id_95">'
+                        - '                <xsl:value-of select="$sht_node/sht_text[1]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[2]">'
+                        - '              <nstrgdfl:wam_service_history_types2>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[2]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[3]">'
+                        - '              <nstrgdfl:wam_service_history_types3>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[3]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[4]">'
+                        - '              <nstrgdfl:wam_service_history_types4>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[4]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[5]">'
+                        - '              <nstrgdfl:wam_service_history_types5>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[5]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[6]">'
+                        - '              <nstrgdfl:wam_service_history_types6>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[6]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[7]">'
+                        - '              <nstrgdfl:wam_service_history_types7>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[7]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[8]">'
+                        - '              <nstrgdfl:wam_service_history_types8>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[8]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[9]">'
+                        - '              <nstrgdfl:wam_service_history_types9>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[9]"/>'
+                        - '            <xsl:if test="$sht_node/sht_text[10]">'
+                        - '              <nstrgdfl:wam_service_history_types10>'
+                        - '                <xsl:value-of select="$sht_node/sht_text[10]"/>'
+                        - '  <xsl:template name="splitWAM_SHT">'
+                        - '    <xsl:param name="wam_SHT_ip"/>'
+                        - '    <xsl:choose>'
+                        - '      <xsl:when test="string-length($wam_SHT_ip) &lt; 65536">'
+                        - '        <sht_text>'
+                        - '          <xsl:value-of select="$wam_SHT_ip"/>'
+                        - '      <xsl:when test="string-length($wam_SHT_ip) &gt; 65535">'
+                        - '        <sht_text>'
+                        - '          <xsl:value-of select="substring($wam_SHT_ip,0,65535)"/>'
+                        - '        <xsl:call-template name="splitWAM_SHT">'
+                        - '          <xsl:with-param name="wam_SHT_ip" select="substring($wam_SHT_ip, 65536, string-length($wam_SHT_ip)-65535)"/>'
+                        - ""
+                    - CatchAll: CatchAll(ta2)
+                      statements:
+                        - Logger: Logger(lg1)
+                          name: assetQueryDetailsPickupLogger
+                          description: ""
+                          propertyfile: ../resources/processor_1314/resourcegroup_1436/expr.properties
+                          expressionProperties:
+                            xpathExpression: '"Error in assetQueryDetailsPickup Scope"'
+                            variableName: assetQueryDetailsPickupLogger
+                        - Stop: EHStop(eh1)
+                      icsfaultfilepath: ../resources/processor_1290/resourcegroup_1291/ICSFault.xsd
+                - Reply: Reply(y2)
+                  adapterjcareference: null
+                  wsdlfilepath: ""
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Switch: Switch(s1)
+              routes:
+                - Route: Send Email Notification(sc4)
+                  exprProperties:
+                    xpathExpression: dvm:lookupValue("WAMOFSC_ConfigProps", "PropertyName", "email.flag", "Value", "false") = "true"
+                    namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                    expressionName: Send Email Notification
+                  stateInfo:
+                    referencedLookupData:
+                        - lookup-table-name-with-location: WAMOFSC_ConfigProps
+                          source: '"PropertyName"'
+                          target: '"Value"'
+                  statements:
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: notification
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: n0
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_147
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc5)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_126/resourcegroup_127/ICSFault.xsd

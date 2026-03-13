@@ -1,0 +1,522 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_72
+      xsdfilepath: ../resources/processor_72/resourcegroup_73/ICSIntegrationMetadata.xsd
+    - GlobalVariable: (gtv1)
+      variableName: items_GV
+      variableType: $getItemListPrice/ns20:getAllResponse
+    - GlobalVariable: (gtv0)
+      variableName: itemCosts_GV
+      variableType: $getItemCosts/ns20:getAllResponse
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: organization Name
+              xpath: /ERP_CMMATTRANOMT/sendDetails/materialTransactionGroup/materialTransactionList/organizationName
+            - role: tracking_var_2
+              name: transaction Type Name
+              xpath: /ERP_CMMATTRANOMT/sendDetails/materialTransactionGroup/materialTransactionList/transactionTypeName
+            - role: tracking_var_3
+              name: item Number
+              xpath: /ERP_CMMATTRANOMT/sendDetails/materialTransactionGroup/materialTransactionList/itemNumber
+        - Try: Try(t0)
+          username: MaterialTransactionsScope
+          statements:
+            - ForLoop: ForLoop(f1)
+              expressionProperties:
+                xpathExpression: /nsmpr6:ERP_CMMATTRANOMT/ns1:sendDetails/ns1:materialTransactionGroup/ns1:materialTransactionList
+                namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST/types ns1=http://ouaf.oracle.com/outbound/CM-MATTRANSOUTMSG
+                variableName: currentMaterialTransaction
+              currentRecordVarName: currentMaterialTransaction
+              statements:
+                - Switch: Switch(s3)
+                  routes:
+                    - Route: Cost is not blank(sc6)
+                      exprProperties:
+                        xpathExpression: $currentMaterialTransaction/nssrcmpr:materialTransactionList/nssrcmpr:costs/nssrcmpr:cost != ""
+                        namespaceList: nssrcmpr=http://ouaf.oracle.com/outbound/CM-MATTRANSOUTMSG
+                        expressionName: Cost is not blank
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: currentMaterialTransaction
+                              rootElement: '{http://ouaf.oracle.com/outbound/CM-MATTRANSOUTMSG}materialTransactionList'
+                      statements:
+                        - Map: Map(m7)
+                          xsltfilepath: ../resources/processor_395/resourcegroup_398/req_3c4bbacbdb724a328f0143e9e2f5642e.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/erp/getItemCosts_REQUEST" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nsmpr0="http://ouaf.oracle.com/outbound/CM-MATTRANSOUTMSG" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://xmlns.oracle.com/apps/scm/productModel/items/itemServiceV2/" xmlns:nsmpr1="http://ouaf.oracle.com/webservices/outbound/ERP_CMMATTRANOMT" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/erp/getItemCosts_REQUEST/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ouaf="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:types="http://xmlns.oracle.com/apps/scm/productModel/items/itemServiceV2/types/" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/erp/getItemListPrice_REQUEST/types" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns30="http://xml.oracle.com/adapters/extension" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath685051496" xmlns:ns32="http://xmlns.oracle.com/apps/contracts/coreAuthoring/contractService/types/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:ns29="http://xmlns.oracle.com/cloud/adapters/fscmRestApp" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:ns31="http://xmlns.oracle.com/apps/contracts/coreAuthoring/contractService/" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns33="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/getItemListPrice_REQUEST/RESTOUTREQ" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns34="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/getItemCosts_REQUEST/RESTOUTREQ" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns28="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" version="2.0" xml:id="id_1" exclude-result-prefixes=" ns2 oraext xsd xp20 nsmpr0 nsmpr1 ora oracle-xsl-mapper nssrcdfl nssrcmpr xsi fn xsl ouaf ignore01 ns8 ns4 ns10 ns7 ns6 ns5 ns9" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                            - '  <xsl:param name="currentMaterialTransaction" xml:id="id_25"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:getAll xml:id="id_12">'
+                            - '      <nstrgmpr:QueryParameters xml:id="id_31">'
+                            - '        <xsl:choose>'
+                            - '          <xsl:when test="$currentMaterialTransaction/nsmpr0:materialTransactionList/nsmpr0:transactionTypeName != &quot;WACS Stock Transfer Receipt&quot;">'
+                            - '            <nstrgmpr:query xml:id="id_32">'
+                            - '              <xsl:value-of xml:id="id_33" select="concat (&quot;ItemNumber=&quot;, $currentMaterialTransaction/nsmpr0:materialTransactionList/nsmpr0:itemNumber, &quot;;ValuationUnit=&quot;, dvm:lookupValue (&quot;TSGT_OrganizationCode_WACSToERP&quot;, &quot;OrganizationName&quot;, $currentMaterialTransaction/nsmpr0:materialTransactionList/nsmpr0:organizationName, &quot;ERP_ValuationUnit&quot;, &quot;&quot; ) )"/>'
+                            - '          <xsl:otherwise>'
+                            - '            <nstrgmpr:query xml:id="id_32">'
+                            - '              <xsl:value-of xml:id="id_33" select="concat (&quot;ItemNumber=&quot;, $currentMaterialTransaction/nsmpr0:materialTransactionList/nsmpr0:itemNumber, &quot;;ValuationUnit=&quot;, dvm:lookupValue (&quot;TSGT_OrganizationCode_WACSToERP&quot;, &quot;OrganizationName&quot;, $currentMaterialTransaction/nsmpr0:materialTransactionList/nsmpr0:srcOrganizationName, &quot;ERP_ValuationUnit&quot;, &quot;&quot; ) )"/>'
+                            - ""
+                        - Invoke: getItemCosts(i4)
+                          application:
+                            Application: getItemCosts(OUTL-BRT-APP-ERPPIM_WACSERPPIM)
+                            name: getItemCosts
+                            adapter:
+                                code: OUTL-BRT-APP-ERPPIM_WACSERPPIM
+                            properties:
+                                - name: operationPath
+                                  value: http://xmlns.oracle.com/cloud/adapter/erp/getItemCosts_REQUEST/getAll
+                        - Stitch: Stitch(sh1)
+                          stitchNamespaceResolver:
+                            prefixnamespacemap:
+                                ns18: http://xmlns.oracle.com/cloud/adapter/erp/getItemCosts_REQUEST/types
+                          stitchVariables:
+                            - name: itemCosts_GV
+                              datatype:
+                                type: XMLComplex
+                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/erp/getItemCosts_REQUEST/types}getAllResponse'
+                                uriToSchema: ../../application_383/inbound_384/resourcegroup_385/getItemCosts_REQUEST.wsdl
+                              access: SOURCE_AND_TARGET
+                            - name: getItemCosts
+                              datatype:
+                                type: XMLComplex
+                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/erp/getItemCosts_REQUEST/types}getAllResponse'
+                                uriToSchema: ../../application_383/inbound_384/resourcegroup_385/getItemCosts_REQUEST.wsdl
+                              access: SOURCE_AND_TARGET
+                          stitchSentences:
+                            - operation: Append
+                              from:
+                                type: XPathExpression
+                                expression: $getItemCosts/ns18:getAllResponse/ns18:items
+                                returnType: XML_TYPE_NODE_NODESET
+                              to:
+                                type: XPathPath
+                                path: $itemCosts_GV/ns18:getAllResponse/ns18:items
+                                isLastStepXsdAnyType: false
+                        - Map: Map(m6)
+                          xsltfilepath: ../resources/processor_316/resourcegroup_319/req_acb0ec79f8dd4cc4bf0a3aedca532a4a.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST" xmlns:types="http://xmlns.oracle.com/apps/contracts/coreAuthoring/contractService/types/" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns1="http://ouaf.oracle.com/outbound/CM-MATTRANSOUTMSG" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ouaf.oracle.com/webservices/outbound/ERP_CMMATTRANOMT" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/erp/getItemListPrice_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nsmpr0="http://xmlns.oracle.com/apps/contracts/coreAuthoring/contractService/" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ouaf="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/erp/getItemListPrice_REQUEST" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns29="http://xml.oracle.com/adapters/extension" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs30="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath685051496" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs29="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:ns28="http://xmlns.oracle.com/cloud/adapters/fscmRestApp" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/getItemListPrice_REQUEST/RESTOUTREQ" xmlns:orajs31="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns27="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" version="2.0" xml:id="id_1" exclude-result-prefixes=" ns2 oraext xsd xp20 ns1 tns ora oracle-xsl-mapper nssrcdfl nssrcmpr xsi fn xsl ouaf ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                            - '  <xsl:param name="currentMaterialTransaction" xml:id="id_36"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:getAll xml:id="id_12">'
+                            - '      <nstrgmpr:QueryParameters xml:id="id_21">'
+                            - '        <xsl:choose>'
+                            - '          <xsl:when test="$currentMaterialTransaction/ns1:materialTransactionList/ns1:transactionTypeName != &quot;WACS Stock Transfer Receipt&quot;">'
+                            - '            <nstrgmpr:query xml:id="id_22">'
+                            - '              <xsl:value-of xml:id="id_23" select="concat (&quot;ItemNumber=&quot;, $currentMaterialTransaction/ns1:materialTransactionList/ns1:itemNumber, &quot;;OrganizationCode=&quot;, dvm:lookupValue (&quot;TSGT_OrganizationCode_WACSToERP&quot;, &quot;OrganizationName&quot;, $currentMaterialTransaction/ns1:materialTransactionList/ns1:organizationName, &quot;OrganizationCode&quot;, &quot;&quot; ) )"/>'
+                            - '          <xsl:otherwise>'
+                            - '            <nstrgmpr:query xml:id="id_22">'
+                            - '              <xsl:value-of xml:id="id_23" select="concat (&quot;ItemNumber=&quot;, $currentMaterialTransaction/ns1:materialTransactionList/ns1:itemNumber, &quot;;OrganizationCode=&quot;, $currentMaterialTransaction/ns1:materialTransactionList/ns1:srcOrganizationCode )"/>'
+                            - ""
+                        - Invoke: getItemListPrice(i3)
+                          application:
+                            Application: getItemListPrice(OUTL-BRT-APP-ERPPIM_WACSERPPIM)
+                            name: getItemListPrice
+                            adapter:
+                                code: OUTL-BRT-APP-ERPPIM_WACSERPPIM
+                            properties:
+                                - name: operationPath
+                                  value: http://xmlns.oracle.com/cloud/adapter/erp/getItemListPrice_REQUEST/getAll
+                        - Stitch: Stitch(sh0)
+                          stitchNamespaceResolver:
+                            prefixnamespacemap:
+                                ns0: http://xmlns.oracle.com/cloud/adapter/erp/getItemListPrice_REQUEST/types
+                          stitchVariables:
+                            - name: getItemListPrice
+                              datatype:
+                                type: XMLComplex
+                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/erp/getItemListPrice_REQUEST/types}getAllResponse'
+                                uriToSchema: ../../application_304/inbound_305/resourcegroup_306/getItemListPrice_REQUEST.wsdl
+                              access: SOURCE_AND_TARGET
+                            - name: items_GV
+                              datatype:
+                                type: XMLComplex
+                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/erp/getItemListPrice_REQUEST/types}getAllResponse'
+                                uriToSchema: ../../application_304/inbound_305/resourcegroup_306/getItemListPrice_REQUEST.wsdl
+                              access: SOURCE_AND_TARGET
+                          stitchSentences:
+                            - operation: Append
+                              from:
+                                type: XPathExpression
+                                expression: $getItemListPrice/ns0:getAllResponse/ns0:items[1]
+                                returnType: XML_TYPE_NODE_NODESET
+                              to:
+                                type: XPathPath
+                                path: $items_GV/ns0:getAllResponse/ns0:items
+                                isLastStepXsdAnyType: false
+                    - Route: Otherwise(sc7)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements: []
+            - Map: Map(m1)
+              xsltfilepath: ../resources/processor_57/resourcegroup_60/req_37b882aeac5f438aae17e387247e40e1.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns1="http://ouaf.oracle.com/outbound/CM-MATTRANSOUTMSG" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ouaf.oracle.com/webservices/outbound/ERP_CMMATTRANOMT" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/invokeERPSCMInvTranRestEndponts" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ouaf="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns24="http://xml.oracle.com/adapters/extension" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts/types" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/invokeERPSCMInvTranRestEndponts_REQUEST/RESTOUTREQ" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/invokeERPSCMInvTranRestEndponts_REQUEST/RESTOUTRES" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns51="http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts_REQUEST/request/types" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:ns53="http://xmlns.oracle.com/procmon" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns54="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:ns12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/erp/getItemListPrice_REQUEST/types" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath685051496" xmlns:types="http://xmlns.oracle.com/apps/contracts/coreAuthoring/contractService/types/" xmlns:ns72="http://xmlns.oracle.com/apps/contracts/coreAuthoring/contractService/" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:ns68="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/getItemListPrice_REQUEST/RESTOUTREQ" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:ns69="http://xmlns.oracle.com/cloud/adapters/fscmRestApp" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/erp/getItemCosts_REQUEST/types" xmlns:ns76="http://xmlns.oracle.com/apps/scm/productModel/items/itemServiceV2/" xmlns:ns78="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/getItemCosts_REQUEST/RESTOUTREQ" xmlns:ns77="http://xmlns.oracle.com/apps/scm/productModel/items/itemServiceV2/types/" version="2.0" xml:id="id_1" exclude-result-prefixes=" ns2 oraext xsd xp20 ns1 tns ora oracle-xsl-mapper nssrcmpr xsi fn xsl ouaf soap ignore01 ns4 ns53 ns54 ns5 ns7 ns6 orajs21 ns8 connprop ns13 types ns72 orafault ns68 errors ns69" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                - '  <xsl:param name="items_GV" xml:id="id_178"/>'
+                - '  <xsl:param name="itemCosts_GV" xml:id="id_187"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:execute xml:id="id_12">'
+                - '      <nstrgmpr:HTTPHeaders xml:id="id_97">'
+                - '        <ns51:CustomHTTPHeaders xml:id="id_98">'
+                - '          <ns51:Content-Type xml:id="id_99">'
+                - '            <xsl:value-of xml:id="id_100" select="&quot;application/vnd.oracle.adf.batch+json&quot;"/>'
+                - '      <ns22:request-wrapper xml:id="id_21">'
+                - '        <xsl:for-each select="/nssrcmpr:ERP_CMMATTRANOMT/ns1:sendDetails/ns1:materialTransactionGroup/ns1:materialTransactionList">'
+                - '          <ns22:parts xml:id="id_22">'
+                - '            <ns22:id>'
+                - '              <xsl:value-of select="concat (&quot;part-&quot;, ns1:requestDetails, &quot;-&quot;, ns1:sequence )"/>'
+                - '            <ns22:path>'
+                - '              <xsl:value-of select="dvm:lookupValue (&quot;TSGT_MaterialTransactionSync_WACS_ERPSCM&quot;,&quot;Property&quot;,&quot;MaterialTransactionSync.path&quot;,&quot;Value&quot;,&apos;&quot;/inventoryStagedTransactions&quot;&apos;)"/>'
+                - '            <ns22:operation>'
+                - '              <xsl:value-of select="dvm:lookupValue (&quot;TSGT_MaterialTransactionSync_WACS_ERPSCM&quot;,&quot;Property&quot;,&quot;MaterialTransactionSync.operation&quot;,&quot;Value&quot;,&apos;&quot;create&quot;&apos;)"/>'
+                - '            <ns22:payload xml:id="id_29">'
+                - '              <ns22:SourceCode xml:id="id_30">'
+                - '                <xsl:value-of xml:id="id_31" select="dvm:lookupValue (&quot;TSGT_MaterialTransactionSync_WACS_ERPSCM&quot;,&quot;Property&quot;,&quot;MaterialTransactionSync.sourceCode&quot;,&quot;Value&quot;,&apos;&quot;WACS&quot;&apos;)"/>'
+                - '              <ns22:OrganizationName xml:id="id_32">'
+                - '                <xsl:value-of xml:id="id_33" select="ns1:organizationName"/>'
+                - '              <ns22:ItemNumber xml:id="id_34">'
+                - '                <xsl:value-of xml:id="id_35" select="ns1:itemNumber"/>'
+                - '              <ns22:SubinventoryCode xml:id="id_36">'
+                - '                <xsl:value-of xml:id="id_37" select="ns1:subInventoryCode"/>'
+                - '              <ns22:TransactionTypeName xml:id="id_46">'
+                - '                <xsl:value-of xml:id="id_47" select="ns1:transactionTypeName"/>'
+                - '              <ns22:TransactionSourceTypeName>'
+                - '                <xsl:value-of select="dvm:lookupValue (&quot;TSGT_MaterialTransactionSync_WACS_ERPSCM&quot;,&quot;Property&quot;,&quot;MaterialTransactionSync.transactionSourceTypeName&quot;,&quot;Value&quot;,&apos;&quot;Inventory&quot;&apos;)"/>'
+                - '              <ns22:AccountAliasCombination xml:id="id_50">'
+                - '                <xsl:value-of xml:id="id_51" select="ns1:dspSegment1"/>'
+                - '              <ns22:TransactionUnitOfMeasure xml:id="id_42">'
+                - '                <xsl:value-of xml:id="id_43" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_UOM&quot;, &quot;WACS_UOMCode&quot;, ns1:transactionUom, &quot;FPRC_UOMName&quot;, ns1:transactionUom )"/>'
+                - '              <ns22:TransactionQuantity xml:id="id_40">'
+                - '                <xsl:value-of xml:id="id_41" select="ns1:transactionQuantity"/>'
+                - '              <ns22:TransactionMode>'
+                - '                <xsl:value-of select="dvm:lookupValue (&quot;TSGT_MaterialTransactionSync_WACS_ERPSCM&quot;,&quot;Property&quot;,&quot;MaterialTransactionSync.transactionMode&quot;,&quot;Value&quot;,&apos;&quot;1&quot;&apos;)"/>'
+                - '              <ns22:LocatorName xml:id="id_38">'
+                - '                <xsl:value-of xml:id="id_39" select="dvm:lookupValue (&quot;TSGT_MaterialTransactionSync_WACS_ERPSCM&quot;,&quot;Property&quot;,&quot;MaterialTransactionSync.locatorName&quot;,&quot;Value&quot;,&apos;&quot;WACS&quot;&apos;)"/>'
+                - '              <!-- <ns22:TransactionDate xml:id="id_44">'
+                - '                                            <xsl:value-of xml:id="id_45" select="substring (ns1:transactionDate, 1, 10 )"/>'
+                - '              <ns22:TransactionDate xml:id="id_44">'
+                - '                <xsl:value-of xml:id="id_45" select="fn:current-dateTime ()"/>'
+                - '              <ns22:SourceHeaderId>'
+                - '                <xsl:value-of select="dvm:lookupValue (&quot;TSGT_MaterialTransactionSync_WACS_ERPSCM&quot;,&quot;Property&quot;,&quot;MaterialTransactionSync.sourceHeaderId&quot;,&quot;Value&quot;,&apos;&quot;1&quot;&apos;)"/>'
+                - '              <ns22:SourceLineId>'
+                - '                <xsl:value-of select="dvm:lookupValue (&quot;TSGT_MaterialTransactionSync_WACS_ERPSCM&quot;,&quot;Property&quot;,&quot;MaterialTransactionSync.sourceLineId&quot;,&quot;Value&quot;,&apos;&quot;1&quot;&apos;)"/>'
+                - '              <ns22:UseCurrentCostFlag xml:id="id_109">'
+                - '                <xsl:if xml:id="id_110" test="ns1:useCurrentCost = &quot;Y&quot;">'
+                - '                  <xsl:value-of xml:id="id_111" select="&quot;true&quot;"/>'
+                - '                <xsl:if xml:id="id_110" test="ns1:useCurrentCost = &quot;N&quot;">'
+                - '                  <xsl:value-of xml:id="id_111" select="&quot;false&quot;"/>'
+                - '              <xsl:if xml:id="id_160" test="string-length (ns1:transactionCostIdentifier ) &gt; 0">'
+                - '                <ns22:TransactionCostIdentifier xml:id="id_150">'
+                - '                  <xsl:value-of xml:id="id_151" select="ns1:transactionCostIdentifier"/>'
+                - '              <xsl:if xml:id="id_163" test="string-length (ns1:costs ) &gt; 0">'
+                - '                <xsl:for-each xml:id="id_164" select="ns1:costs">'
+                - '                  <ns22:costs xml:id="id_165">'
+                - '                    <ns22:CostComponentCode xml:id="id_166">'
+                - '                      <xsl:value-of xml:id="id_167" select="ns1:costComponentCode"/>'
+                - '                    <ns22:Cost xml:id="id_168">'
+                - '                      <xsl:variable name="itemNumber" select="../ns1:itemNumber"/>'
+                - '                      <xsl:variable name="TotalUnitCost" select="$itemCosts_GV/nsmpr4:getAllResponse/nsmpr4:items[ns69:ItemNumber =  $itemNumber]/ns69:TotalUnitCost"/>'
+                - '                      <xsl:variable name="ListPrice" select="$items_GV/nsmpr3:getAllResponse/nsmpr3:items[string(ns69:ItemNumber) = $itemNumber]/ns69:ListPrice"/>'
+                - '                      <xsl:choose>'
+                - '                        <xsl:when test="$TotalUnitCost != &quot;&quot; and $TotalUnitCost != 0">'
+                - '                          <xsl:value-of xml:id="id_169" select="$TotalUnitCost"/>'
+                - '                        <xsl:when test="$ListPrice = &quot;&quot;">'
+                - '                          <xsl:value-of xml:id="id_169" select="&apos;0&apos;"/>'
+                - '                        <xsl:when test="count($ListPrice) &gt; 1">'
+                - '                          <xsl:value-of xml:id="id_169" select="$ListPrice[1]"/>'
+                - '                        <xsl:otherwise>'
+                - '                          <xsl:value-of xml:id="id_169" select="$ListPrice"/>'
+                - '              <xsl:if xml:id="id_83" test="(ns1:transactionTypeName = &quot;WACS Material Issue to POET&quot;) or (ns1:transactionTypeName = &quot;WACS Return Activity to POET&quot;)">'
+                - '                <!--  <xsl:for-each xml:id="id_130" select="ns1:projectDetails/ns1:expOrgNames">'
+                - '                                            <ns22:projectCostingDFFs xml:id="id_60">'
+                - '                                                  <ns22:__FLEX_Context xml:id="id_85">'
+                - '                                                        <xsl:value-of xml:id="id_86" select="dvm:lookupValue (&quot;tenant/resources/dvms/TSGT_MaterialTransactionSync_WACS_ERPSCM&quot;, &quot;Property&quot;, &quot;MaterialTransactionSync.flexContext&quot;, &quot;Value&quot;, &apos;&quot;INV_Misc_Transactions&quot;&apos; )"/>'
+                - '                                                  <ns22:__FLEX_Context_DisplayValue xml:id="id_87">'
+                - '                                                        <xsl:value-of xml:id="id_88" select="dvm:lookupValue (&quot;tenant/resources/dvms/TSGT_MaterialTransactionSync_WACS_ERPSCM&quot;,&quot;Property&quot;,&quot;MaterialTransactionSync.flexContextDisplayValue&quot;,&quot;Value&quot;,&apos;&quot;INV: Misc. Transactions&quot;&apos;)"/>'
+                - '                                                  <ns22:_PROJECT_ID_Display xml:id="id_65">'
+                - '                                                        <xsl:value-of xml:id="id_66" select="../ns1:pjcProjectNumber"/>'
+                - '                                                  <ns22:_TASK_ID_Display xml:id="id_67">'
+                - '                                                        <xsl:if test="../ns1:pjcTaskNumber">'
+                - '                                                              <xsl:value-of xml:id="id_68" select="concat (substring-before (../ns1:pjcTaskNumber, &quot;.&quot; ), &quot;.&quot;, fn:format-number (substring-after (../ns1:pjcTaskNumber, &quot;.&quot; ), &quot;00&quot; ) )"/>'
+                - '                                                  <ns22:_EXPENDITURE_ITEM_DATE xml:id="id_120">'
+                - '                                                        <xsl:value-of xml:id="id_121" select="../ns1:pjcExpDate"/>'
+                - '                                                  <ns22:_EXPENDITURE_TYPE_ID_Display xml:id="id_69">'
+                - '                                                        <xsl:value-of xml:id="id_70" select="dvm:lookupValue (&quot;tenant/resources/dvms/TSGT-ERP-WACS-ExpenseCode&quot;,&quot;WACSExpenseCode&quot;,../ns1:pjcExpTypeName,&quot;ERPExpenseType&quot;,../ns1:pjcExpTypeName)"/>'
+                - '                                                  <ns22:_ORGANIZATION_ID_Display xml:id="id_71">'
+                - '                                                        <xsl:value-of xml:id="id_72" select="ns1:pjcExpOrgName"/>'
+                - '                <ns22:projectCostingDFFs xml:id="id_60">'
+                - '                  <ns22:__FLEX_Context xml:id="id_85">'
+                - '                    <xsl:value-of xml:id="id_86" select="dvm:lookupValue (&quot;TSGT_MaterialTransactionSync_WACS_ERPSCM&quot;, &quot;Property&quot;, &quot;MaterialTransactionSync.flexContext&quot;, &quot;Value&quot;, &apos;&quot;INV_Misc_Transactions&quot;&apos; )"/>'
+                - '                  <ns22:__FLEX_Context_DisplayValue xml:id="id_87">'
+                - '                    <xsl:value-of xml:id="id_88" select="dvm:lookupValue (&quot;TSGT_MaterialTransactionSync_WACS_ERPSCM&quot;,&quot;Property&quot;,&quot;MaterialTransactionSync.flexContextDisplayValue&quot;,&quot;Value&quot;,&apos;&quot;INV: Misc. Transactions&quot;&apos;)"/>'
+                - '                  <ns22:_PROJECT_ID_Display xml:id="id_65">'
+                - '                    <xsl:value-of xml:id="id_66" select="ns1:projectDetails/ns1:pjcProjectNumber"/>'
+                - '                  <ns22:_TASK_ID_Display xml:id="id_67">'
+                - '                    <xsl:if test="ns1:projectDetails/ns1:pjcTaskNumber">'
+                - '                      <xsl:value-of xml:id="id_68" select="concat (substring-before (ns1:projectDetails/ns1:pjcTaskNumber, &quot;.&quot; ), &quot;.&quot;, fn:format-number (substring-after (ns1:projectDetails/ns1:pjcTaskNumber, &quot;.&quot; ), &quot;00&quot; ) )"/>'
+                - '                  <ns22:_EXPENDITURE_ITEM_DATE xml:id="id_120">'
+                - '                    <xsl:value-of xml:id="id_121" select="ns1:projectDetails/ns1:pjcExpDate"/>'
+                - '                  <ns22:_EXPENDITURE_TYPE_ID_Display xml:id="id_69">'
+                - '                    <xsl:value-of xml:id="id_70" select="dvm:lookupValue (&quot;TSGT-ERP-WACS-ExpenseCode&quot;, &quot;WACSExpenseCode&quot;, ns1:projectDetails/ns1:pjcExpTypeName, &quot;ERPExpenseType&quot;, ns1:projectDetails/ns1:pjcExpTypeName )"/>'
+                - '                  <ns22:_ORGANIZATION_ID_Display xml:id="id_71">'
+                - '                    <xsl:value-of xml:id="id_72" select="ns1:projectDetails/ns1:expOrgNames/ns1:pjcExpOrgName"/>'
+                - ""
+            - Invoke: invokeERPSCMInvTranRestEndponts(i0)
+              application:
+                Application: invokeERPSCMInvTranRestEndponts(TSGT_ERP_SCM_REST_FOR_WACS_ERP)
+                name: invokeERPSCMInvTranRestEndponts
+                adapter:
+                    code: TSGT_ERP_SCM_REST_FOR_WACS_ERP
+                properties:
+                    - name: operationPath
+                      value: http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts_REQUEST/execute
+                    - name: HttpVerb
+                      value: POST
+                    - name: ResourceURI
+                      value: /
+            - ForLoop: ForLoop(f0)
+              expressionProperties:
+                xpathExpression: $invokeERPSCMInvTranRestEndponts/nssrcmpr:executeResponse/nsmpr7:response-wrapper/nsmpr7:parts
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts_REQUEST/types nsmpr7=http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts/types
+                variableName: currentPart
+              currentRecordVarName: currentPart
+              statements:
+                - Switch: Switch(s1)
+                  routes:
+                    - Route: Error(sc2)
+                      exprProperties:
+                        xpathExpression: $currentPart/nsmpr7:parts/nsmpr7:payload/nsmpr7:ErrorCode != ""
+                        namespaceList: nsmpr7=http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts/types
+                        expressionName: Error
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: currentPart
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts/types}parts'
+                      statements:
+                        - Switch: Switch(s2)
+                          routes:
+                            - Route: notificationEnable(sc4)
+                              exprProperties:
+                                xpathExpression: dvm:lookupValue("TSGT_ERP_WACS_Notification", "Interface_Id", $self/nsmpr4:metadata/nsmpr4:integration/nsmpr4:identifier, "Enable_Notification", "false") = "true"
+                                namespaceList: nsmpr4=http://www.oracle.com/2014/03/ic/integration/metadata dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                                expressionName: notificationEnable
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: self
+                                      rootElement: '{http://www.oracle.com/2014/03/ic/integration/metadata}metadata'
+                                referencedLookupData:
+                                    - lookup-table-name-with-location: TSGT_ERP_WACS_Notification
+                                      source: '"Interface_Id"'
+                                      target: '"Enable_Notification"'
+                              statements:
+                                - Map: Map(m3)
+                                  xsltfilepath: ../resources/processor_162/resourcegroup_165/req_7fd4db0fb2b7428897769306e1526d41.xsl
+                                  mapsentences:
+                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/sendEmailNotification_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nsmpr0="http://ouaf.oracle.com/outbound/CM-MATTRANSOUTMSG" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/sendEmailNotification_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ouaf.oracle.com/webservices/outbound/ERP_CMMATTRANOMT" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/sendEmailNotification" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ouaf="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" ns2 oraext xsd xp20 nsmpr0 tns ora oracle-xsl-mapper nssrcmpr xsi fn xsl ouaf soap ignore01 ns12 ns10 orajs22 ns6 ns8 ns9 orajs25 ns7 ns5 ns11 orajs21" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts_REQUEST/types" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns25="http://xml.oracle.com/adapters/extension" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts/types" xmlns:ns31="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/sendEmailNotification_REQUEST" xmlns:ns32="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/sendEmailNotification_REQUEST/SKIPOUTREQ" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/invokeERPSCMInvTranRestEndponts_REQUEST/RESTOUTREQ" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/invokeERPSCMInvTranRestEndponts_REQUEST/RESTOUTRES" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts_REQUEST/request/types" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts_REQUEST" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns26="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/invokeERPSCMInvTranRestEndponts" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258">
+                                    - '  <xsl:param name="self" xml:id="id_27"/>'
+                                    - '  <xsl:param name="currentPart" xml:id="id_58"/>'
+                                    - '  <xsl:template match="/" xml:id="id_11">'
+                                    - '    <nstrgmpr:POST xml:id="id_12">'
+                                    - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_31">'
+                                    - '        <ns31:interfaceId xml:id="id_32">'
+                                    - '          <xsl:value-of xml:id="id_33" select="$self/nsmpr3:metadata/nsmpr3:integration/nsmpr3:identifier"/>'
+                                    - '        <ns31:flowID xml:id="id_34">'
+                                    - '          <xsl:value-of xml:id="id_35" select="$self/nsmpr3:metadata/nsmpr3:runtime/nsmpr3:instanceId"/>'
+                                    - '        <ns31:faultCode xml:id="id_36">'
+                                    - '          <xsl:value-of xml:id="id_37" select="$currentPart/ns23:parts/ns23:payload/ns23:ErrorCode"/>'
+                                    - '        <ns31:faultCategory xml:id="id_38">'
+                                    - '          <xsl:value-of xml:id="id_39" select="$currentPart/ns23:parts/ns23:payload/ns23:ErrorCode"/>'
+                                    - '        <ns31:errorDetails xml:id="id_40">'
+                                    - '          <xsl:value-of xml:id="id_41" select="$currentPart/ns23:parts/ns23:payload/ns23:ErrorExplanation"/>'
+                                    - '        <ns31:subject xml:id="id_44">'
+                                    - '          <xsl:value-of xml:id="id_45" select="concat (&quot;Fault in Material Transactions Sync flow from WACS to ERP SCM&quot;, &quot;-  ERP Organization Name: &quot;, $currentPart/ns23:parts/ns23:payload/ns23:OrganizationName, &quot;, Item Number:&quot;, $currentPart/ns23:parts/ns23:payload/ns23:ItemNumber, &quot;, Part Id : &quot;, $currentPart/ns23:parts/ns23:id )"/>'
+                                    - '        <ns31:file xml:id="id_42">'
+                                    - '          <xsl:value-of xml:id="id_43" select="&quot;null&quot;"/>'
+                                    - '        <ns31:fromEmail xml:id="id_46">'
+                                    - '          <xsl:value-of xml:id="id_47" select="dvm:lookupValue (&quot;TSGT_ERP_WACS_Notification&quot;, &quot;Interface_Id&quot;, $self/nsmpr3:metadata/nsmpr3:integration/nsmpr3:identifier, &quot;Notification_From&quot;, &quot;&quot; )"/>'
+                                    - '        <ns31:toEmail xml:id="id_48">'
+                                    - '          <xsl:value-of xml:id="id_49" select="dvm:lookupValue (&quot;TSGT_ERP_WACS_Notification&quot;, &quot;Interface_Id&quot;, $self/nsmpr3:metadata/nsmpr3:integration/nsmpr3:identifier, &quot;Notification_To&quot;, &quot;&quot; )"/>'
+                                    - ""
+                                - Invoke: sendEmailNotification(i2)
+                                  application:
+                                    Application: sendEmailNotification(PRESEEDED_COLLOCATED_CONN_1741)
+                                    name: sendEmailNotification
+                                    adapter:
+                                        code: PRESEEDED_COLLOCATED_CONN_1741
+                                    properties:
+                                        - name: operationPath
+                                          value: /send
+                                        - name: HttpVerb
+                                          value: POST
+                                        - name: QueryParameters
+                                          value: ""
+                                        - name: ResourceURI
+                                          value: /send
+                                        - name: integration_id
+                                          value: TSGT_ENTERPRISENOTIFI|01.00.0000
+                                        - name: integration_operation
+                                          value: POST
+                                        - name: serviceType
+                                          value: REST
+                            - Route: Otherwise(sc5)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements: []
+                    - Route: Otherwise(sc3)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements: []
+            - Catch: Catch(tc0)
+              faultname: APIInvocationError
+              statements:
+                - Map: Map(m5)
+                  xsltfilepath: ../resources/processor_277/resourcegroup_280/req_ed95e788347a42dcbf2eb9cc5f971351.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns1="http://ouaf.oracle.com/outbound/CM-MATTRANSOUTMSG" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ouaf.oracle.com/webservices/outbound/ERP_CMMATTRANOMT" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ouaf="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/invokeERPSCMInvTranRestEndponts" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns22="http://xml.oracle.com/adapters/extension" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts/types" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/invokeERPSCMInvTranRestEndponts_REQUEST/RESTOUTREQ" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/invokeERPSCMInvTranRestEndponts_REQUEST/RESTOUTRES" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts_REQUEST/types" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts_REQUEST/request/types" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts_REQUEST" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111">
+                    - '  <xsl:param name="CurrentFaultObject" xml:id="id_21"/>'
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:ERP_CMMATTRANOMTResponse xml:id="id_12">'
+                    - '      <ns1:responseDetails xml:id="id_26">'
+                    - '        <ns1:status xml:id="id_27">'
+                    - '          <xsl:value-of xml:id="id_28" select="&apos;ERROR&apos;"/>'
+                    - '        <ns1:errorMsg xml:id="id_29">'
+                    - '          <xsl:value-of xml:id="id_30" select="substring-before (substring-after (oraext:get-content-as-string ($CurrentFaultObject/nsmpr0:APIInvocationError/nsmpr0:errorDetails/nsmpr0:instance ), &quot;&amp;lt;![CDATA[&quot; ), &quot;]]&amp;gt;&quot; )"/>'
+                    - ""
+                - Reply: Reply(y2)
+                  adapterjcareference: null
+                  wsdlfilepath: ""
+        - Map: Map(m0)
+          xsltfilepath: ../resources/processor_67/resourcegroup_70/req_25fe625f2b3f4ddbb4129f19dccdf5f0.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns1="http://ouaf.oracle.com/outbound/CM-MATTRANSOUTMSG" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ouaf.oracle.com/webservices/outbound/ERP_CMMATTRANOMT" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ouaf="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/invokeERPSCMInvTranRestEndponts_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940">
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:ERP_CMMATTRANOMTResponse xml:id="id_12">'
+            - '      <ns1:responseDetails xml:id="id_21">'
+            - '        <ns1:status xml:id="id_22">'
+            - '          <xsl:value-of xml:id="id_23" select="&apos;SUCCESS&apos;"/>'
+            - ""
+        - Reply: Reply(y0)
+          adapterjcareference: null
+          wsdlfilepath: ""
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Map: Map(m4)
+              xsltfilepath: ../resources/processor_197/resourcegroup_200/req_11d2a4cd48dd4f179681cfc041178e9e.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns1="http://ouaf.oracle.com/outbound/CM-MATTRANSOUTMSG" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ouaf.oracle.com/webservices/outbound/ERP_CMMATTRANOMT" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgdfl="http://xmlns.oracle.com/procmon" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgmpr="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ics/fault" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns22="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111">
+                - '  <xsl:param name="GlobalFaultObject" xml:id="id_21"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:Fault xml:id="id_12">'
+                - '      <ResponseStatus xml:id="id_26">'
+                - '        <xsl:value-of xml:id="id_27" select="&quot;ERROR&quot;"/>'
+                - '      <ResponseCode xml:id="id_28">'
+                - '        <xsl:value-of xml:id="id_29" select="$GlobalFaultObject/nsmpr0:fault/nsmpr0:errorCode"/>'
+                - '      <ResponseText xml:id="id_30">'
+                - '        <xsl:choose xml:id="id_38">'
+                - '          <xsl:when xml:id="id_39" test="$GlobalFaultObject/nsmpr0:fault/nsmpr0:errorCode = &quot;APIInvocationError&quot;">'
+                - '            <xsl:value-of xml:id="id_40" select="substring-before (substring-after ($GlobalFaultObject/nsmpr0:fault/nsmpr0:details, &apos;&quot;messageText&quot;:&quot;&apos; ), &apos;&quot;&apos; )"/>'
+                - '          <xsl:otherwise xml:id="id_41">'
+                - '            <xsl:value-of xml:id="id_42" select="$GlobalFaultObject/nsmpr0:fault/nsmpr0:reason"/>'
+                - '      <ServerMessage xml:id="id_31">'
+                - '        <Number xml:id="id_32">'
+                - '          <xsl:value-of xml:id="id_33" select="$GlobalFaultObject/nsmpr0:fault/nsmpr0:errorCode"/>'
+                - '        <Text xml:id="id_34">'
+                - '          <xsl:value-of xml:id="id_35" select="$GlobalFaultObject/nsmpr0:fault/nsmpr0:reason"/>'
+                - '        <Description xml:id="id_36">'
+                - '          <xsl:value-of xml:id="id_37" select="$GlobalFaultObject/nsmpr0:fault/nsmpr0:details"/>'
+                - ""
+            - Switch: Switch(s0)
+              routes:
+                - Route: Notification Enabled(sc0)
+                  exprProperties:
+                    xpathExpression: dvm:lookupValue("TSGT_ERP_WACS_Notification", "Interface_Id", $self/nsmpr1:metadata/nsmpr1:integration/nsmpr1:identifier, "Enable_Notification", '"true"') = "true"
+                    namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue nsmpr1=http://www.oracle.com/2014/03/ic/integration/metadata
+                    expressionName: Notification Enabled
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: self
+                          rootElement: '{http://www.oracle.com/2014/03/ic/integration/metadata}metadata'
+                    referencedLookupData:
+                        - lookup-table-name-with-location: TSGT_ERP_WACS_Notification
+                          source: '"Interface_Id"'
+                          target: '"Enable_Notification"'
+                  statements:
+                    - Map: Map(m2)
+                      xsltfilepath: ../resources/processor_105/resourcegroup_108/req_998cfa5ff34b479d83d29af9d23abf9b.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet xmlns:ns2="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/sendNotification_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nsmpr0="http://ouaf.oracle.com/outbound/CM-MATTRANSOUTMSG" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/sendNotification_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ouaf.oracle.com/webservices/outbound/ERP_CMMATTRANOMT" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/sendNotification" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/receiveMaterialTransactions_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ouaf="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr1="http://www.oracle.com/2014/03/ics/fault" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns24="http://xml.oracle.com/adapters/extension" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns23="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/sendNotification_REQUEST" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/sendNotification_REQUEST/SKIPOUTREQ" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:ns51="http://xmlns.oracle.com/procmon" xmlns:ns52="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:ns12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779" version="2.0" xml:id="id_1" exclude-result-prefixes=" ns2 oraext xsd xp20 nsmpr0 tns ora oracle-xsl-mapper nssrcmpr xsi fn xsl ouaf soap ignore01 orajs22 ns10 ns12 ns11 ns9" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                        - '  <xsl:param name="GlobalFaultObject" xml:id="id_21"/>'
+                        - '  <xsl:param name="self" xml:id="id_22"/>'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:POST xml:id="id_12">'
+                        - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_26">'
+                        - '        <ns23:interfaceId xml:id="id_27">'
+                        - '          <xsl:value-of xml:id="id_28" select="$self/nsmpr2:metadata/nsmpr2:integration/nsmpr2:identifier"/>'
+                        - '        <ns23:flowID xml:id="id_29">'
+                        - '          <xsl:value-of xml:id="id_30" select="$self/nsmpr2:metadata/nsmpr2:runtime/nsmpr2:instanceId"/>'
+                        - '        <ns23:faultCode xml:id="id_31">'
+                        - '          <xsl:value-of xml:id="id_32" select="$GlobalFaultObject/nsmpr1:fault/nsmpr1:errorCode"/>'
+                        - '        <ns23:faultCategory xml:id="id_33">'
+                        - '          <xsl:value-of xml:id="id_34" select="$GlobalFaultObject/nsmpr1:fault/nsmpr1:reason"/>'
+                        - '        <ns23:errorDetails xml:id="id_52">'
+                        - '          <xsl:value-of xml:id="id_53" select="$GlobalFaultObject/nsmpr1:fault/nsmpr1:details"/>'
+                        - '        <ns23:subject xml:id="id_41">'
+                        - '          <xsl:value-of xml:id="id_42" select="concat (&quot;Fault in Material Transactions Sync flow from WACS to ERP SCM&quot;, &quot;-  ERP Organization Name: &quot;, /nssrcmpr:ERP_CMMATTRANOMT/nsmpr0:sendDetails/nsmpr0:materialTransactionGroup/nsmpr0:materialTransactionList[1.0]/nsmpr0:organizationName, &quot;, Item Number:&quot;, /nssrcmpr:ERP_CMMATTRANOMT/nsmpr0:sendDetails/nsmpr0:materialTransactionGroup/nsmpr0:materialTransactionList[1.0]/nsmpr0:itemNumber )"/>'
+                        - '        <ns23:file xml:id="id_43">'
+                        - '          <xsl:value-of xml:id="id_44" select="&quot;null&quot;"/>'
+                        - '        <ns23:fromEmail xml:id="id_45">'
+                        - '          <xsl:value-of xml:id="id_46" select="dvm:lookupValue (&quot;TSGT_ERP_WACS_Notification&quot;, &quot;Interface_Id&quot;, $self/nsmpr2:metadata/nsmpr2:integration/nsmpr2:identifier, &quot;Notification_From&quot;, &apos;&quot;erpwacs@oracle.com&quot;&apos; )"/>'
+                        - '        <ns23:toEmail xml:id="id_47">'
+                        - '          <xsl:value-of xml:id="id_48" select="dvm:lookupValue (&quot;TSGT_ERP_WACS_Notification&quot;, &quot;Interface_Id&quot;, $self/nsmpr2:metadata/nsmpr2:integration/nsmpr2:identifier, &quot;Notification_To&quot;, &apos;&quot;&quot;&apos; )"/>'
+                        - ""
+                    - Invoke: sendNotification(i1)
+                      application:
+                        Application: sendNotification(PRESEEDED_COLLOCATED_CONN_1741)
+                        name: sendNotification
+                        adapter:
+                            code: PRESEEDED_COLLOCATED_CONN_1741
+                        properties:
+                            - name: operationPath
+                              value: /send
+                            - name: HttpVerb
+                              value: POST
+                            - name: QueryParameters
+                              value: ""
+                            - name: ResourceURI
+                              value: /send
+                            - name: integration_id
+                              value: TSGT_ENTERPRISENOTIFI|01.00.0000
+                            - name: integration_operation
+                              value: POST
+                            - name: serviceType
+                              value: REST
+                - Route: Otherwise(sc1)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+            - Reply: Reply(y1)
+              adapterjcareference: null
+              wsdlfilepath: ""
+          icsfaultfilepath: ../resources/processor_35/resourcegroup_36/ICSFault.xsd

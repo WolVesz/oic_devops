@@ -1,0 +1,464 @@
+Orchestration: ""
+statements:
+    - Receive: Receive(r0)
+      trackingvariables:
+        - role: tracking_var_1
+          primary: true
+          name: Filename
+          xpath: /execute/request-wrapper/Filename
+        - role: tracking_var_2
+          name: tracking_var_2
+        - role: tracking_var_3
+          name: tracking_var_3
+    - Assignments: init(l0)
+      name: init
+      assignments:
+        - Assignment: Assignment(a0)
+          variableName: Status
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: Status
+            variableDescription: Set Status as SUCCESS or ERROR
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a1)
+          variableName: ErroFlag
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''N'''
+            variableName: ErroFlag
+            variableDescription: Set the flag as N
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a2)
+          variableName: MessageCode
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: MessageCode
+            variableDescription: Set the  Message Code
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a3)
+          variableName: MessageDescr
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: MessageDescr
+            variableDescription: Set the Message Description
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a4)
+          variableName: MessageDetail
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: MessageDetail
+            variableDescription: Set Message detail
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a25)
+          variableName: Computed_RententionDays
+          variableType: string
+          expressionProperties:
+            xpathExpression: fn:days-from-duration(nsmpr6:dayTimeDuration(string(nsmpr6:date(/nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:Comparedate)-\nnsmpr6:date( orajs9:convertEpochtoDate( /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:Lastmodified_dateime)))))\n\n
+            namespaceList: nsmpr6=http://www.w3.org/2001/XMLSchema nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/TriggerService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/TriggerService/types fn=http://www.w3.org/2005/xpath-functions orajs9=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114
+            variableName: Computed_RententionDays
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a26)
+          variableName: File_Process
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: File_Process
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a39)
+          variableName: Converted_Date
+          variableType: string
+          expressionProperties:
+            xpathExpression: orajs9:convertEpochtoDate( /nssrcmpr:execute/nsmpr1:request-wrapper/nsmpr1:Lastmodified_dateime)
+            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/TriggerService_REQUEST/types nsmpr1=http://xmlns.oracle.com/cloud/adapter/REST/TriggerService/types orajs9=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114
+            variableName: Converted_Date
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+    - Try: Try(t0)
+      username: Validation
+      statements:
+        - Switch: Switch(s1)
+          routes:
+            - Route: (sc2)
+              exprProperties:
+                xpathExpression: /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:Retention_days = "" and  /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:Retention_days < 0.0
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/TriggerService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/TriggerService/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/TriggerService_REQUEST/types}execute'
+              statements:
+                - Assignments: Assign_RentionDays(l1)
+                  name: Assign_RentionDays
+                  assignments:
+                    - Assignment: Assignment(a5)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''ERROR'''
+                        variableName: Status
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a6)
+                      variableName: ErroFlag
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''Y'''
+                        variableName: ErroFlag
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a7)
+                      variableName: MessageCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_RETENTION_CHECK','MessageDescr','Retention days is NULL or Negative value')
+                        namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                        variableName: MessageCode
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a8)
+                      variableName: MessageDescr
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''Retention days is NULL or Negative value'''
+                        variableName: MessageDescr
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a9)
+                      variableName: MessageDetail
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $MessageDescr
+                        variableName: MessageDetail
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: Otherwise(sc3)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements:
+                - Assignments: Assign(l2)
+                  name: Assign
+                  assignments:
+                    - Assignment: Assignment(a10)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''SUCCESS'''
+                        variableName: Status
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a11)
+                      variableName: ErroFlag
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''N'''
+                        variableName: ErroFlag
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Switch: Switch(s2)
+          routes:
+            - Route: (sc4)
+              exprProperties:
+                xpathExpression: /nssrcmpr:execute/nsmpr1:request-wrapper/nsmpr1:Lastmodified_dateime !=''  and 1=1
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/TriggerService_REQUEST/types nsmpr1=http://xmlns.oracle.com/cloud/adapter/REST/TriggerService/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/TriggerService_REQUEST/types}execute'
+              statements:
+                - Assignments: AssignStatus(l3)
+                  name: AssignStatus
+                  assignments:
+                    - Assignment: Assignment(a15)
+                      variableName: ErroFlag
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''N'''
+                        variableName: ErroFlag
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a16)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''SUCCESS'''
+                        variableName: Status
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a17)
+                      variableName: MessageCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: ''''''
+                        variableName: MessageCode
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a18)
+                      variableName: MessageDescr
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: ''''''
+                        variableName: MessageDescr
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a19)
+                      variableName: MessageDetail
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: ''''''
+                        variableName: MessageDetail
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: Otherwise(sc5)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements:
+                - Assignments: AssignError(l4)
+                  name: AssignError
+                  assignments:
+                    - Assignment: Assignment(a20)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''ERROR'''
+                        variableName: Status
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a21)
+                      variableName: ErroFlag
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''Y'''
+                        variableName: ErroFlag
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a22)
+                      variableName: MessageCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_LASTMODIFIED_DATE','MessageDescr','LastModifided Date should be in YYYY-MM-DD format')
+                        namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                        variableName: MessageCode
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a23)
+                      variableName: MessageDescr
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''LastModifided Date should be in YYYY-MM-DD format'''
+                        variableName: MessageDescr
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a24)
+                      variableName: MessageDetail
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $MessageDescr
+                        variableName: MessageDetail
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Assignments: SetFault_Validation(l7)
+              name: SetFault_Validation
+              assignments:
+                - Assignment: Assignment(a29)
+                  variableName: ErroFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErroFlag
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a30)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a31)
+                  variableName: MessageCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: concat( dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_RETENTION_CHECK','MessageDescr','Retention days is NULL or Negative value'),dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_LASTMODIFIED_DATE','MessageDescr','LastModifided Date should be in YYYY-MM-DD format'))
+                    namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                    variableName: MessageCode
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a32)
+                  variableName: MessageDescr
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Invalid Retention days and Lastmodified date'''
+                    variableName: MessageDescr
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a33)
+                  variableName: MessageDetail
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''$MessageDescr'''
+                    variableName: MessageDetail
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_1064/resourcegroup_1065/ICSFault.xsd
+    - Try: Try(t1)
+      username: Datecomputation
+      statements:
+        - Switch: Switch(s0)
+          routes:
+            - Route: (sc0)
+              exprProperties:
+                xpathExpression: $ErroFlag = "N" and number($Computed_RententionDays) >= /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:Retention_days
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/TriggerService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/TriggerService/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: ErroFlag
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                    - VariableName: Computed_RententionDays
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/TriggerService_REQUEST/types}execute'
+              statements:
+                - Assignments: Assign_FileProcess(l5)
+                  name: Assign_FileProcess
+                  assignments:
+                    - Assignment: Assignment(a27)
+                      variableName: File_Process
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '"Delete"'
+                        variableName: File_Process
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a12)
+                      variableName: MessageCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''Delete this File'''
+                        variableName: MessageCode
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: Otherwise(sc1)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements:
+                - Assignments: Retention_FileProcess(l6)
+                  name: Retention_FileProcess
+                  assignments:
+                    - Assignment: Assignment(a28)
+                      variableName: File_Process
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''Retain'''
+                        variableName: File_Process
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a13)
+                      variableName: MessageCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''Retain this File'''
+                        variableName: MessageCode
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - CatchAll: CatchAll(ta1)
+          statements:
+            - Assignments: SetFault_DateComputation(l8)
+              name: SetFault_DateComputation
+              assignments:
+                - Assignment: Assignment(a34)
+                  variableName: ErroFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErroFlag
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a35)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a36)
+                  variableName: MessageCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_DATECOMPUTATION','MessageDescr','Failed to compute the date. Please validate')
+                    namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                    variableName: MessageCode
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a37)
+                  variableName: MessageDescr
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Failed to compute the date. Please validate'''
+                    variableName: MessageDescr
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a38)
+                  variableName: MessageDetail
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''$MessageDescr'''
+                    variableName: MessageDetail
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_1154/resourcegroup_1155/ICSFault.xsd
+    - Map: Map(m0)
+      xsltfilepath: ../resources/processor_104/resourcegroup_107/req_0de65becc4054501b42cc7b42597fa0f.xsl
+      mapsentences:
+        - <?xml version = '1.0' encoding = 'UTF-8'?>
+        - <xsl:stylesheet xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/TriggerService_REQUEST/types" xmlns:ns4="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/TriggerService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns6="http://xmlns.oracle.com/cloud/adapter/REST/TriggerService_REQUEST" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/TriggerService/types" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/ftp/listfile_REQUEST/types" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/TriggerService_REQUEST/RESTINREQ" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/TriggerService_REQUEST/RESTINRES" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/ftp/listfile_REQUEST" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns22="http://xmlns.oracle.com/cloud/list/pull" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns57="http://xmlns.oracle.com/procmon" xmlns:ns58="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+        - '  <xsl:param name="File_Process" xml:id="id_37"/>'
+        - '  <xsl:param name="MessageCode" xml:id="id_44"/>'
+        - '  <xsl:param name="Status" xml:id="id_47"/>'
+        - '  <xsl:param name="Computed_RententionDays" xml:id="id_61"/>'
+        - '  <xsl:param name="Converted_Date" xml:id="id_75"/>'
+        - '  <xsl:param name="MessageDescr" xml:id="id_90"/>'
+        - '  <xsl:param name="MessageDetail" xml:id="id_91"/>'
+        - '  <xsl:template match="/" xml:id="id_11">'
+        - '    <nstrgmpr:executeResponse xml:id="id_12">'
+        - '      <nstrgdfl:response-wrapper>'
+        - '        <nstrgdfl:Filename xml:id="id_29">'
+        - '          <xsl:value-of xml:id="id_30" select="/nstrgmpr:execute/nstrgdfl:request-wrapper/nstrgdfl:Filename"/>'
+        - '        <nstrgdfl:convertedlastmodfied xml:id="id_83">'
+        - '          <xsl:value-of xml:id="id_84" select="$Converted_Date"/>'
+        - '        <nstrgdfl:Fileprocess>'
+        - '          <xsl:value-of select="$File_Process"/>'
+        - '        <nstrgdfl:Status xml:id="id_54">'
+        - '          <xsl:value-of xml:id="id_55" select="$Status"/>'
+        - '        <nstrgdfl:ComputedRententionDays xml:id="id_69">'
+        - '          <xsl:value-of xml:id="id_70" select="$Computed_RententionDays"/>'
+        - '        <nstrgdfl:MessageCode>'
+        - '          <xsl:value-of xml:id="id_56" select="$MessageCode"/>'
+        - '        <nstrgdfl:MessageDescr xml:id="id_96">'
+        - '          <xsl:value-of xml:id="id_97" select="$MessageDescr"/>'
+        - '        <nstrgdfl:MessageDetail xml:id="id_98">'
+        - '          <xsl:value-of xml:id="id_99" select="$MessageDetail"/>'
+        - ""
+    - Reply: Reply(y0)
+      adapterjcareference: null
+      wsdlfilepath: ""

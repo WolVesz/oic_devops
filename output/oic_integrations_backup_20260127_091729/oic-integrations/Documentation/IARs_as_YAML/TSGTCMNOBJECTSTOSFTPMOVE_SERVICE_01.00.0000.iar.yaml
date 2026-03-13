@@ -1,0 +1,816 @@
+Orchestration: ""
+statements:
+    - Receive: Receive(r0)
+      trackingvariables:
+        - role: tracking_var_1
+          primary: true
+          name: Transaction Id
+          xpath: /execute/request-wrapper/TransactionId
+        - role: tracking_var_2
+          name: Filename
+          xpath: /execute/request-wrapper/Filename
+        - role: tracking_var_3
+          name: Integration Code
+          xpath: /execute/request-wrapper/IntegrationCode
+    - Assignments: AssignInitials(l0)
+      name: AssignInitials
+      assignments:
+        - Assignment: Assignment(a0)
+          variableName: ErrorFlag
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''N'''
+            variableName: ErrorFlag
+            variableDescription: Set the Flag to N default
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a1)
+          variableName: Status
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''SUCCESS'''
+            variableName: Status
+            variableDescription: Set the Status to SUCCESS
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a2)
+          variableName: MsgCode
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: MsgCode
+            variableDescription: Set the Message Code
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a3)
+          variableName: MsgDescr
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: MsgDescr
+            variableDescription: Set the Message Description
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a4)
+          variableName: MsgDetail
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: MsgDetail
+            variableDescription: Set the Message Details
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a5)
+          variableName: TSGT_CMN_FILE_NOT_FOUND_IN_OBJECT_STORAGE
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_CMN_FILE_NOT_FOUND_IN_OBJECT_STORAGE','MessageDescr','File not found in object storage.')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_CMN_FILE_NOT_FOUND_IN_OBJECT_STORAGE
+            variableDescription: Set the Error Message - File not found in Object Storage from Lookup
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a11)
+          variableName: TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_SUCCESS
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','File uploaded to sftp path successfully.','MessageDescr','File uploaded to sftp path successfully.')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_SUCCESS
+            variableDescription: Set the Success Message - File moved to sftp path successfully
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a17)
+          variableName: TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_ERROR
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_ERROR','MessageDescr','Error occurred while uploading file to sftp path.')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_ERROR
+            variableDescription: Set the Error Message - Error occurred while uploading file to sftp path.
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a26)
+          variableName: TSGT_SYSTEM_ERROR
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_SYSTEM_ERROR','MessageDescr','System Error :')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_SYSTEM_ERROR
+            variableDescription: Set the Error Message - System Error
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a29)
+          variableName: TSGT_CMN_GET_METADATA_ERROR
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_CMN_GET_METADATA_ERROR','MessageDescr','Missing metadata from the object.')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_CMN_GET_METADATA_ERROR
+            variableDescription: Set the Error Message - Missing metadata from Business Object
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+    - Try: Try(t0)
+      username: ExtractFileFromBucketAndUploadToSftp
+      statements:
+        - Switch: Switch(s0)
+          routes:
+            - Route: (sc0)
+              exprProperties:
+                xpathExpression: $ErrorFlag = "N" and /nssrcmpr:execute/nsmpr2:request-wrapper/nsmpr2:RawBucket != '' and /nssrcmpr:execute/nsmpr2:request-wrapper/nsmpr2:Namespace != '' and /nssrcmpr:execute/nsmpr2:request-wrapper/nsmpr2:Filename != ''
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types nsmpr2=http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: ErrorFlag
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types}execute'
+              statements:
+                - Map: Map(m1)
+                  xsltfilepath: ../resources/processor_183/resourcegroup_186/req_f2d0c92bc8074288a78d1c673b0320b9.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromBucket_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromBucket_REQUEST" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetFileFromObjectStorage" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetFileFromBucket" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage/types" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ns2 ora oracle-xsl-mapper xsi fn nssrcdfl ns4 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs29="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1054450068" xmlns:orajs30="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath163080424" xmlns:orajs84="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath592165071" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs36="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath14018525" xmlns:orajs110="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1961812051" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs52="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath806893092" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1735454106" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs48="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath12241651" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINREQ" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINRES" xmlns:orajs70="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs32="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1127054925" xmlns:orajs39="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2097630753" xmlns:orajs86="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1883716401" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:orajs79="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath698324541" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1951476419" xmlns:orajs107="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath486343990" xmlns:orajs67="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath204663797" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1347180628" xmlns:orajs37="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1872994349" xmlns:orajs49="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath142383697" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1500385946" xmlns:orajs68="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath151171120" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1525074871" xmlns:orajs80="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath218076370" xmlns:orajs101="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1855842459" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath384934510" xmlns:orajs77="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath358846682" xmlns:orajs81="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1707081963" xmlns:orajs42="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1748511852" xmlns:orajs65="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1826822789" xmlns:orajs94="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1266287611" xmlns:orajs34="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1270464756" xmlns:orajs55="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath537077560" xmlns:orajs93="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1701482229" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs69="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1087267344" xmlns:orajs63="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath343408006" xmlns:orajs74="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1126016822" xmlns:orajs106="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath823981861" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs54="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1775217526" xmlns:ns27="http://xml.oracle.com/types/REST/GetFileFromBucket_REQUEST" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs62="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1985036956" xmlns:orajs66="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1766297774" xmlns:orajs57="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2042814374" xmlns:orajs44="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1174939396" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1370812183" xmlns:orajs46="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1530914355" xmlns:orajs82="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1201492479" xmlns:orajs89="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1057714831" xmlns:ns24="http://xmlns.oracle.com/cloud/ics/binary/v1/types" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs99="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs90="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1815540921" xmlns:orajs58="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1186637812" xmlns:orajs104="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1751206515" xmlns:orajs98="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath98144710" xmlns:orajs40="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath689808667" xmlns:orajs41="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath849950693" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1275849111" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath385757123" xmlns:orajs33="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath648120492" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath779497283" xmlns:orajs43="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath390194174" xmlns:orajs64="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2086680201" xmlns:orajs76="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath30445405" xmlns:orajs112="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1998789874" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath307116223" xmlns:ns21="http://xml.oracle.com/adapters/extension" xmlns:orajs50="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath74618405" xmlns:orajs53="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1397513105" xmlns:orajs59="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath702749336" xmlns:orajs100="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath495195734" xmlns:orajs88="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath127559331" xmlns:orajs61="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs31="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs105="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath255363942" xmlns:orajs75="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath981321393" xmlns:orajs72="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath537956896" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs47="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1240778610" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1286191298" xmlns:orajs87="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath226578510" xmlns:orajs38="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1365598652" xmlns:orajs108="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1877919085" xmlns:orajs92="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1865179425" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath604094323" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1877344480" xmlns:orajs95="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs35="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1735900936" xmlns:orajs71="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs73="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1498215876" xmlns:orajs102="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath882621124" xmlns:orajs56="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath62178553" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath473550523" xmlns:orajs83="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2025735738" xmlns:orajs78="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath776843482" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromBucket_REQUEST/RESTOUTRES" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath161348236" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath943039809" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromBucket_REQUEST/RESTOUTREQ" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs91="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs96="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590183926" xmlns:orajs103="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673429515" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1015305909" xmlns:orajs60="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath910881554" xmlns:orajs109="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1021825503" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath832599956" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:orajs45="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1677201779" xmlns:orajs113="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs97="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1378383666" xmlns:orajs111="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath487572452" xmlns:orajs51="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath308940992" xmlns:orajs85="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1279052434" xmlns:orajs114="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath402346545">
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:execute xml:id="id_12">'
+                    - '      <nstrgmpr:TemplateParameters xml:id="id_26">'
+                    - '        <ns27:nameSpaceName xml:id="id_29">'
+                    - '          <xsl:value-of xml:id="id_30" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Namespace"/>'
+                    - '        <ns27:bucketName xml:id="id_27">'
+                    - '          <xsl:value-of xml:id="id_28" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:RawBucket"/>'
+                    - '        <ns27:objectName xml:id="id_31">'
+                    - '          <xsl:value-of xml:id="id_32" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:Filename"/>'
+                    - ""
+                - Invoke: GetFileFromBucket(i0)
+                  application:
+                    Application: GetFileFromBucket(TSGTOBJECTSTORAG_CONN)
+                    name: GetFileFromBucket
+                    adapter:
+                        code: TSGTOBJECTSTORAG_CONN
+                    properties:
+                        - name: operationPath
+                          value: http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromBucket_REQUEST/execute
+                        - name: HttpVerb
+                          value: GET
+                        - name: ResourceURI
+                          value: /n/{nameSpaceName}/b/{bucketName}/o/{objectName}
+                - Switch: Switch(s1)
+                  routes:
+                    - Route: (sc2)
+                      exprProperties:
+                        xpathExpression: ($GetFileFromBucket/nsmpr5:executeResponse/nsmpr1:streamReference != '' or $GetFileFromBucket/nsmpr5:executeResponse/nsmpr4:ConnectivityProperties/nsmpr4:RestAPI/nsmpr4:http.response.status = 'True') and (/nssrcmpr:execute/nsmpr12:request-wrapper/nsmpr12:TargetSftpServiceName = 'DEFAULT' or /nssrcmpr:execute/nsmpr12:request-wrapper/nsmpr12:TargetSftpServiceName = '')
+                        namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types nsmpr12=http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage/types nsmpr4=http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromBucket_REQUEST/RESTOUTRES nsmpr5=http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromBucket_REQUEST/types nsmpr1=http://xmlns.oracle.com/cloud/ics/binary/v1/types
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: GetFileFromBucket
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromBucket_REQUEST/types}executeResponse'
+                            - VariableName: /
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types}execute'
+                      statements:
+                        - Map: Map(m2)
+                          xsltfilepath: ../resources/processor_230/resourcegroup_233/req_6a85ebe0ec37442998c57c5aa62a4105.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/ftp/UploadToSftp_REQUEST" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/ftp/UploadToSftp_REQUEST/types" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetFileFromObjectStorage" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage/types" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ns2 ora oracle-xsl-mapper xsi fn nssrcdfl ns4 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromBucket_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs29="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1054450068" xmlns:orajs30="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath163080424" xmlns:orajs84="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath592165071" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs36="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath14018525" xmlns:orajs111="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1961812051" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs52="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath806893092" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1735454106" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs48="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath12241651" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINREQ" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINRES" xmlns:orajs71="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs32="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1127054925" xmlns:orajs39="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2097630753" xmlns:orajs87="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1883716401" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:orajs79="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath698324541" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1951476419" xmlns:orajs105="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath486343990" xmlns:orajs67="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath204663797" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1347180628" xmlns:orajs37="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1872994349" xmlns:orajs49="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath142383697" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1500385946" xmlns:orajs68="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath151171120" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1525074871" xmlns:orajs80="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath218076370" xmlns:orajs101="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1855842459" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath384934510" xmlns:orajs77="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath358846682" xmlns:orajs81="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1707081963" xmlns:orajs42="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1748511852" xmlns:orajs65="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1826822789" xmlns:orajs94="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1266287611" xmlns:orajs35="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1270464756" xmlns:orajs55="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath537077560" xmlns:orajs95="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1701482229" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs69="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1087267344" xmlns:orajs63="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath343408006" xmlns:orajs74="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1126016822" xmlns:ns31="http://xmlns.oracle.com/cloud/ftp/write/response/pull" xmlns:orajs107="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath823981861" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs54="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1775217526" xmlns:ns28="http://xml.oracle.com/types/REST/GetFileFromBucket_REQUEST" xmlns:ns29="http://xml.oracle.com/types" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs62="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1985036956" xmlns:orajs66="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1766297774" xmlns:orajs57="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2042814374" xmlns:orajs44="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1174939396" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1370812183" xmlns:orajs46="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1530914355" xmlns:orajs82="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1201492479" xmlns:orajs89="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1057714831" xmlns:ns24="http://xmlns.oracle.com/cloud/ics/binary/v1/types" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs99="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs90="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1815540921" xmlns:orajs58="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1186637812" xmlns:orajs104="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1751206515" xmlns:orajs98="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath98144710" xmlns:orajs40="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath689808667" xmlns:orajs41="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath849950693" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1275849111" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath385757123" xmlns:orajs33="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath648120492" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath779497283" xmlns:orajs43="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath390194174" xmlns:ns30="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:orajs64="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2086680201" xmlns:orajs76="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath30445405" xmlns:orajs108="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1998789874" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath307116223" xmlns:ns21="http://xml.oracle.com/adapters/extension" xmlns:orajs50="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath74618405" xmlns:orajs53="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1397513105" xmlns:orajs59="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath702749336" xmlns:orajs100="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath495195734" xmlns:orajs86="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath127559331" xmlns:orajs61="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs31="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs106="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath255363942" xmlns:orajs75="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath981321393" xmlns:orajs72="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath537956896" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs47="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1240778610" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1286191298" xmlns:orajs88="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath226578510" xmlns:orajs38="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1365598652" xmlns:orajs110="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1877919085" xmlns:orajs96="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1865179425" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath604094323" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1877344480" xmlns:orajs93="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs34="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1735900936" xmlns:orajs70="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs73="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1498215876" xmlns:orajs102="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath882621124" xmlns:orajs56="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath62178553" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath473550523" xmlns:orajs83="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2025735738" xmlns:orajs78="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath776843482" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromBucket_REQUEST/RESTOUTRES" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath161348236" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath943039809" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromBucket_REQUEST/RESTOUTREQ" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs91="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs92="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590183926" xmlns:orajs103="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673429515" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1015305909" xmlns:orajs60="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath910881554" xmlns:orajs109="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1021825503" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath832599956" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:orajs45="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1677201779" xmlns:orajs113="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs97="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1378383666" xmlns:orajs112="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath487572452" xmlns:ns25="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetFileFromBucket" xmlns:orajs51="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath308940992" xmlns:orajs85="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1279052434" xmlns:orajs114="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath402346545">
+                            - '  <xsl:param name="GetFileFromBucket" xml:id="id_26"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:WriteFile xml:id="id_12">'
+                            - '      <nstrgmpr:OutboundFTPHeaderType xml:id="id_39">'
+                            - '        <ns29:fileName xml:id="id_40">'
+                            - '          <xsl:value-of xml:id="id_41" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:TargetFilename"/>'
+                            - '        <ns29:directory xml:id="id_42">'
+                            - '          <xsl:value-of xml:id="id_43" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:TargetSftpPath"/>'
+                            - '      <ns30:ICSFile xml:id="id_36">'
+                            - '        <ns30:FileReference xml:id="id_37">'
+                            - '          <xsl:value-of xml:id="id_38" select="$GetFileFromBucket/nsmpr0:executeResponse/ns24:streamReference"/>'
+                            - ""
+                        - Invoke: UploadToSftp(i1)
+                          application:
+                            Application: UploadToSftp(TSGTFTP_CONN)
+                            name: UploadToSftp
+                            adapter:
+                                code: TSGTFTP_CONN
+                            properties:
+                                - name: Operation
+                                  value: WriteFile
+                                - name: FtpConnectionType
+                                  value: SFTP
+                                - name: Host
+                                  value: '%%TSGTFTP_CONN_Host'
+                                - name: Port
+                                  value: '%%TSGTFTP_CONN_Port'
+                                - name: SecurePort
+                                  value: "990"
+                        - Switch: Switch(s2)
+                          routes:
+                            - Route: (sc4)
+                              exprProperties:
+                                xpathExpression: $UploadToSftp/nssrcmpr:WriteFileResponse/nssrcmpr:FTPWriteResponse/nsmpr2:Status = 'true'
+                                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/ftp/UploadToSftp_REQUEST/types nsmpr2=http://xmlns.oracle.com/cloud/ftp/write/response/pull
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: UploadToSftp
+                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/ftp/UploadToSftp_REQUEST/types}WriteFileResponse'
+                              statements:
+                                - Assignments: SetMoveFileToSftpSuccess(l2)
+                                  name: SetMoveFileToSftpSuccess
+                                  assignments:
+                                    - Assignment: Assignment(a12)
+                                      variableName: ErrorFlag
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''N'''
+                                        variableName: ErrorFlag
+                                        variableDescription: Set the Flag to Y
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a13)
+                                      variableName: Status
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''SUCCESS'''
+                                        variableName: Status
+                                        variableDescription: Set the Status to ERROR
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a14)
+                                      variableName: MsgCode
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_SUCCESS'''
+                                        variableName: MsgCode
+                                        variableDescription: Set the Success Message Code
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a15)
+                                      variableName: MsgDescr
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_SUCCESS
+                                        variableName: MsgDescr
+                                        variableDescription: Set the Success Message Description
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a16)
+                                      variableName: MsgDetail
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $MsgDescr
+                                        variableName: MsgDetail
+                                        variableDescription: Set the Success Message Detail
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Route: Otherwise(sc5)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements:
+                                - Assignments: SetMoveFileToSftpError(l3)
+                                  name: SetMoveFileToSftpError
+                                  assignments:
+                                    - Assignment: Assignment(a18)
+                                      variableName: ErrorFlag
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''Y'''
+                                        variableName: ErrorFlag
+                                        variableDescription: Set the flag to Y
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a19)
+                                      variableName: Status
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''ERROR'''
+                                        variableName: Status
+                                        variableDescription: Set the Status to ERROR
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a20)
+                                      variableName: MsgCode
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_ERROR'''
+                                        variableName: MsgCode
+                                        variableDescription: Set the Error Message Code
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a21)
+                                      variableName: MsgDescr
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_ERROR
+                                        variableName: MsgDescr
+                                        variableDescription: Set the Error Message Description
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a22)
+                                      variableName: MsgDetail
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $MsgDescr
+                                        variableName: MsgDetail
+                                        variableDescription: Set the Error Message Details
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: (sc6)
+                      exprProperties:
+                        xpathExpression: ($GetFileFromBucket/nsmpr6:executeResponse/nsmpr8:streamReference != '' or $GetFileFromBucket/nsmpr6:executeResponse/nsmpr9:ConnectivityProperties/nsmpr9:RestAPI/nsmpr9:http.response.status = 'True') and /nssrcmpr:execute/nsmpr12:request-wrapper/nsmpr12:TargetSftpServiceName = 'RAPID'
+                        namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromBucket_REQUEST/types nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types nsmpr8=http://xmlns.oracle.com/cloud/ics/binary/v1/types nsmpr9=http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromBucket_REQUEST/RESTOUTRES nsmpr12=http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage/types
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: GetFileFromBucket
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromBucket_REQUEST/types}executeResponse'
+                            - VariableName: /
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types}execute'
+                      statements:
+                        - Map: Map(m3)
+                          xsltfilepath: ../resources/processor_1029/resourcegroup_1032/req_560b064f30bb42538bf108b8afbb4bea.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/ftp/UploadToRapidSftp_REQUEST" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetFileFromObjectStorage" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/ftp/UploadToRapidSftp_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr oraext plnk xsd xp20 ns2 ora oracle-xsl-mapper nssrcdfl xsi fn ns4 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromBucket_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINREQ" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINRES" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns34="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns22="http://xml.oracle.com/adapters/extension" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromBucket_REQUEST" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns35="http://xmlns.oracle.com/cloud/ftp/write/response/pull" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns32="http://xml.oracle.com/types/REST/GetFileFromBucket_REQUEST" xmlns:ns33="http://xml.oracle.com/types" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromBucket_REQUEST/RESTOUTRES" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromBucket_REQUEST/RESTOUTREQ" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns27="http://xmlns.oracle.com/cloud/ics/binary/v1/types" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns28="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetFileFromBucket" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns23="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage/types" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111">
+                            - '  <xsl:param name="GetFileFromBucket" xml:id="id_26"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:WriteFile xml:id="id_12">'
+                            - '      <nstrgmpr:OutboundFTPHeaderType xml:id="id_44">'
+                            - '        <ns33:fileName xml:id="id_45">'
+                            - '          <xsl:value-of xml:id="id_46" select="/nssrcmpr:execute/ns24:request-wrapper/ns24:TargetFilename"/>'
+                            - '        <ns33:directory xml:id="id_47">'
+                            - '          <xsl:value-of xml:id="id_48" select="/nssrcmpr:execute/ns24:request-wrapper/ns24:TargetSftpPath"/>'
+                            - '      <ns34:ICSFile xml:id="id_41">'
+                            - '        <ns34:FileReference xml:id="id_42">'
+                            - '          <xsl:value-of xml:id="id_43" select="$GetFileFromBucket/nsmpr0:executeResponse/ns27:streamReference"/>'
+                            - ""
+                        - Invoke: UploadToRapidSftp(i2)
+                          application:
+                            Application: UploadToRapidSftp(TSGTRAPIDFTP_CONN)
+                            name: UploadToRapidSftp
+                            adapter:
+                                code: TSGTRAPIDFTP_CONN
+                            properties:
+                                - name: Operation
+                                  value: WriteFile
+                                - name: FtpConnectionType
+                                  value: SFTP
+                                - name: Host
+                                  value: '%%TSGTRAPIDFTP_CONN_Host'
+                                - name: Port
+                                  value: '%%TSGTRAPIDFTP_CONN_Port'
+                                - name: SecurePort
+                                  value: "990"
+                        - Switch: Switch(s3)
+                          routes:
+                            - Route: (sc7)
+                              exprProperties:
+                                xpathExpression: $UploadToRapidSftp/nsmpr11:WriteFileResponse/nsmpr11:FTPWriteResponse/nsmpr2:Status = 'true'
+                                namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/ftp/write/response/pull nsmpr11=http://xmlns.oracle.com/cloud/adapter/ftp/UploadToRapidSftp_REQUEST/types
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: UploadToRapidSftp
+                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/ftp/UploadToRapidSftp_REQUEST/types}WriteFileResponse'
+                              statements:
+                                - Assignments: SetMoveFileToRapidSftpSuccess(l6)
+                                  name: SetMoveFileToRapidSftpSuccess
+                                  assignments:
+                                    - Assignment: Assignment(a35)
+                                      variableName: ErrorFlag
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''N'''
+                                        variableName: ErrorFlag
+                                        variableDescription: Set Flag to N
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a36)
+                                      variableName: Status
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''SUCCESS'''
+                                        variableName: Status
+                                        variableDescription: Set Status to SUCCESS
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a37)
+                                      variableName: MsgCode
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_SUCCESS'''
+                                        variableName: MsgCode
+                                        variableDescription: Set Success Message Code
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a38)
+                                      variableName: MsgDescr
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_SUCCESS
+                                        variableName: MsgDescr
+                                        variableDescription: Set Success Message Description
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a39)
+                                      variableName: MsgDetail
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $MsgDescr
+                                        variableName: MsgDetail
+                                        variableDescription: Set Success Message Details
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Route: Otherwise(sc8)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements:
+                                - Assignments: SetMoveFileToRapidSftpError(l7)
+                                  name: SetMoveFileToRapidSftpError
+                                  assignments:
+                                    - Assignment: Assignment(a40)
+                                      variableName: ErrorFlag
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''Y'''
+                                        variableName: ErrorFlag
+                                        variableDescription: Set Flag to Y
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a41)
+                                      variableName: Status
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''ERROR'''
+                                        variableName: Status
+                                        variableDescription: Set Status to ERROR
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a42)
+                                      variableName: MsgCode
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_ERROR'''
+                                        variableName: MsgCode
+                                        variableDescription: Set Error Message Code
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a43)
+                                      variableName: MsgDescr
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_ERROR
+                                        variableName: MsgDescr
+                                        variableDescription: Set Error Message Description
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a44)
+                                      variableName: MsgDetail
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $MsgDescr
+                                        variableName: MsgDetail
+                                        variableDescription: Set Error Message Details
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: (sc9)
+                      exprProperties:
+                        xpathExpression: ($GetFileFromBucket/nsmpr6:executeResponse/nsmpr8:streamReference != '' or $GetFileFromBucket/nsmpr6:executeResponse/nsmpr9:ConnectivityProperties/nsmpr9:RestAPI/nsmpr9:http.response.status = 'True') and /nssrcmpr:execute/nsmpr12:request-wrapper/nsmpr12:TargetSftpServiceName = 'VELOCITY'
+                        namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromBucket_REQUEST/types nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types nsmpr8=http://xmlns.oracle.com/cloud/ics/binary/v1/types nsmpr9=http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromBucket_REQUEST/RESTOUTRES nsmpr12=http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage/types
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: GetFileFromBucket
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromBucket_REQUEST/types}executeResponse'
+                            - VariableName: /
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types}execute'
+                      statements:
+                        - Map: Map(m4)
+                          xsltfilepath: ../resources/processor_1364/resourcegroup_1367/req_ab0a4eb4b06746dd8e17beeca440631e.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/ftp/UploadToVelocitySftp_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetFileFromObjectStorage" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/ftp/UploadToVelocitySftp_REQUEST" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr oraext plnk xsd xp20 ns2 ora oracle-xsl-mapper nssrcdfl xsi fn ns4 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromBucket_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINREQ" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINRES" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns34="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns22="http://xml.oracle.com/adapters/extension" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromBucket_REQUEST" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:ns35="http://xmlns.oracle.com/cloud/ftp/write/response/pull" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns32="http://xml.oracle.com/types/REST/GetFileFromBucket_REQUEST" xmlns:ns33="http://xml.oracle.com/types" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromBucket_REQUEST/RESTOUTRES" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromBucket_REQUEST/RESTOUTREQ" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns27="http://xmlns.oracle.com/cloud/ics/binary/v1/types" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns28="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetFileFromBucket" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns23="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage/types" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111">
+                            - '  <xsl:param name="GetFileFromBucket" xml:id="id_26"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:WriteFile xml:id="id_12">'
+                            - '      <nstrgmpr:OutboundFTPHeaderType xml:id="id_41">'
+                            - '        <ns33:fileName xml:id="id_44">'
+                            - '          <xsl:value-of xml:id="id_45" select="/nssrcmpr:execute/ns24:request-wrapper/ns24:TargetFilename"/>'
+                            - '        <ns33:directory xml:id="id_42">'
+                            - '          <xsl:value-of xml:id="id_43" select="/nssrcmpr:execute/ns24:request-wrapper/ns24:TargetSftpPath"/>'
+                            - '      <ns34:ICSFile xml:id="id_46">'
+                            - '        <ns34:FileReference xml:id="id_47">'
+                            - '          <xsl:value-of xml:id="id_48" select="$GetFileFromBucket/nsmpr0:executeResponse/ns27:streamReference"/>'
+                            - ""
+                        - Invoke: UploadToVelocitySftp(i3)
+                          application:
+                            Application: UploadToVelocitySftp(TSGTVELOCITYFTP_CONN)
+                            name: UploadToVelocitySftp
+                            adapter:
+                                code: TSGTVELOCITYFTP_CONN
+                            properties:
+                                - name: Operation
+                                  value: WriteFile
+                                - name: FtpConnectionType
+                                  value: SFTP
+                                - name: Host
+                                  value: '%%TSGTVELOCITYFTP_CONN_Host'
+                                - name: Port
+                                  value: '%%TSGTVELOCITYFTP_CONN_Port'
+                                - name: SecurePort
+                                  value: "990"
+                        - Switch: Switch(s4)
+                          routes:
+                            - Route: (sc10)
+                              exprProperties:
+                                xpathExpression: $UploadToVelocitySftp/nsmpr9:WriteFileResponse/nsmpr9:FTPWriteResponse/nsmpr2:Status = "true"
+                                namespaceList: nsmpr9=http://xmlns.oracle.com/cloud/adapter/ftp/UploadToVelocitySftp_REQUEST/types nsmpr2=http://xmlns.oracle.com/cloud/ftp/write/response/pull
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: UploadToVelocitySftp
+                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/ftp/UploadToVelocitySftp_REQUEST/types}WriteFileResponse'
+                              statements:
+                                - Assignments: SetMoveFileToVelocitySftpSuccess(l8)
+                                  name: SetMoveFileToVelocitySftpSuccess
+                                  assignments:
+                                    - Assignment: Assignment(a45)
+                                      variableName: ErrorFlag
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''N'''
+                                        variableName: ErrorFlag
+                                        variableDescription: Set Error Flag to 'N'
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a46)
+                                      variableName: Status
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''SUCCESS'''
+                                        variableName: Status
+                                        variableDescription: Set Status
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a47)
+                                      variableName: MsgCode
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_SUCCESS'''
+                                        variableName: MsgCode
+                                        variableDescription: Message Code
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a48)
+                                      variableName: MsgDescr
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_SUCCESS
+                                        variableName: MsgDescr
+                                        variableDescription: Message Description
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a49)
+                                      variableName: MsgDetail
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $MsgDescr
+                                        variableName: MsgDetail
+                                        variableDescription: Message Detail
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Route: Otherwise(sc11)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements:
+                                - Assignments: SetMoveFileToVelocitySftpError(l9)
+                                  name: SetMoveFileToVelocitySftpError
+                                  assignments:
+                                    - Assignment: Assignment(a50)
+                                      variableName: ErrorFlag
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''Y'''
+                                        variableName: ErrorFlag
+                                        variableDescription: Set Error Flag to 'Y'
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a51)
+                                      variableName: Status
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''ERROR'''
+                                        variableName: Status
+                                        variableDescription: Set Status
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a52)
+                                      variableName: MsgCode
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_ERROR'''
+                                        variableName: MsgCode
+                                        variableDescription: Set Message Code
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a53)
+                                      variableName: MsgDescr
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $TSGT_CMN_MOVE_FILE_FROM_BUCKET_TO_SFTP_ERROR
+                                        variableName: MsgDescr
+                                        variableDescription: Set Message Description
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a54)
+                                      variableName: MsgDetail
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $MsgDescr
+                                        variableName: MsgDetail
+                                        variableDescription: Set Message Detail
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: Otherwise(sc3)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements:
+                        - Assignments: SetFileNotFound(l1)
+                          name: SetFileNotFound
+                          assignments:
+                            - Assignment: Assignment(a6)
+                              variableName: ErrorFlag
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''Y'''
+                                variableName: ErrorFlag
+                                variableDescription: Set the Flag to Y
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a7)
+                              variableName: Status
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''ERROR'''
+                                variableName: Status
+                                variableDescription: Set the Status to ERROR
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a8)
+                              variableName: MsgCode
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''TSGT_CMN_FILE_NOT_FOUND_IN_OBJECT_STORAGE'''
+                                variableName: MsgCode
+                                variableDescription: Set the Error Message Code
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a9)
+                              variableName: MsgDescr
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: $TSGT_CMN_FILE_NOT_FOUND_IN_OBJECT_STORAGE
+                                variableName: MsgDescr
+                                variableDescription: Set the Error Message Description
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a10)
+                              variableName: MsgDetail
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: $MsgDescr
+                                variableName: MsgDetail
+                                variableDescription: Set the Error Message Detail
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: Otherwise(sc1)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements:
+                - Assignments: SetMissingMetadata(l5)
+                  name: SetMissingMetadata
+                  assignments:
+                    - Assignment: Assignment(a30)
+                      variableName: ErrorFlag
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''Y'''
+                        variableName: ErrorFlag
+                        variableDescription: Set the Flag to Y
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a31)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''ERROR'''
+                        variableName: Status
+                        variableDescription: Set the Statis to ERROR
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a32)
+                      variableName: MsgCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''TSGT_CMN_GET_METADATA_ERROR'''
+                        variableName: MsgCode
+                        variableDescription: Set the Error Message Code
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a33)
+                      variableName: MsgDescr
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $TSGT_CMN_GET_METADATA_ERROR
+                        variableName: MsgDescr
+                        variableDescription: Set the Error Message Description
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a34)
+                      variableName: MsgDetail
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $MsgDescr
+                        variableName: MsgDetail
+                        variableDescription: Set the Error Message Details
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Assignments: SetFault(l4)
+              name: SetFault
+              assignments:
+                - Assignment: Assignment(a23)
+                  variableName: ErrorFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErrorFlag
+                    variableDescription: Set the Flag to Y
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a24)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableDescription: Set the Status to ERROR
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a25)
+                  variableName: MsgCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''TSGT_SYSTEM_ERROR'''
+                    variableName: MsgCode
+                    variableDescription: Set the Error Message Code
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a27)
+                  variableName: MsgDescr
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: concat($TSGT_SYSTEM_ERROR, ora:getFaultAsString())
+                    namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDescr
+                    variableDescription: Set the Error Message Description
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a28)
+                  variableName: MsgDetail
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: $MsgDescr
+                    variableName: MsgDetail
+                    variableDescription: Set the Error Message Details
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_667/resourcegroup_668/ICSFault.xsd
+    - Map: Map(m0)
+      xsltfilepath: ../resources/processor_29/resourcegroup_32/req_13b57527d62e4d55b4c66268d7e1d264.xsl
+      mapsentences:
+        - <?xml version = '1.0' encoding = 'UTF-8'?>
+        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetFileFromObjectStorage" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs29="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1054450068" xmlns:orajs30="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath163080424" xmlns:orajs84="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath592165071" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs36="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath14018525" xmlns:orajs112="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1961812051" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs51="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath806893092" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1735454106" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs48="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath12241651" xmlns:ns19="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINREQ" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINRES" xmlns:orajs71="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs32="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1127054925" xmlns:orajs39="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2097630753" xmlns:orajs86="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1883716401" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:orajs79="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath698324541" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1951476419" xmlns:orajs104="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath486343990" xmlns:orajs67="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath204663797" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1347180628" xmlns:orajs37="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1872994349" xmlns:orajs50="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath142383697" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1500385946" xmlns:orajs68="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath151171120" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1525074871" xmlns:orajs80="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath218076370" xmlns:orajs101="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1855842459" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath384934510" xmlns:orajs77="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath358846682" xmlns:orajs81="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1707081963" xmlns:orajs42="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1748511852" xmlns:orajs65="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1826822789" xmlns:orajs92="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1266287611" xmlns:orajs34="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1270464756" xmlns:orajs55="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath537077560" xmlns:orajs93="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1701482229" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs69="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1087267344" xmlns:orajs63="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath343408006" xmlns:orajs74="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1126016822" xmlns:orajs107="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath823981861" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs54="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1775217526" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs62="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1985036956" xmlns:orajs66="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1766297774" xmlns:orajs57="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2042814374" xmlns:orajs44="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1174939396" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1370812183" xmlns:orajs46="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1530914355" xmlns:orajs82="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1201492479" xmlns:orajs89="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1057714831" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs99="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs90="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1815540921" xmlns:orajs59="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1186637812" xmlns:orajs105="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1751206515" xmlns:orajs98="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath98144710" xmlns:orajs40="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath689808667" xmlns:orajs41="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath849950693" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1275849111" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath385757123" xmlns:orajs33="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath648120492" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath779497283" xmlns:orajs43="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath390194174" xmlns:orajs64="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2086680201" xmlns:orajs76="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath30445405" xmlns:orajs109="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1998789874" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath307116223" xmlns:ns18="http://xml.oracle.com/adapters/extension" xmlns:orajs49="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath74618405" xmlns:orajs53="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1397513105" xmlns:orajs58="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath702749336" xmlns:orajs100="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath495195734" xmlns:orajs88="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath127559331" xmlns:orajs61="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs31="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs106="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath255363942" xmlns:orajs75="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath981321393" xmlns:orajs72="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath537956896" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs47="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1240778610" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1286191298" xmlns:orajs87="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath226578510" xmlns:orajs38="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1365598652" xmlns:orajs110="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1877919085" xmlns:orajs95="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1865179425" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath604094323" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1877344480" xmlns:orajs94="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs35="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1735900936" xmlns:orajs70="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs73="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1498215876" xmlns:orajs102="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath882621124" xmlns:orajs56="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath62178553" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath473550523" xmlns:orajs83="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2025735738" xmlns:orajs78="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath776843482" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath161348236" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath943039809" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs91="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs96="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590183926" xmlns:orajs103="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673429515" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1015305909" xmlns:orajs60="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath910881554" xmlns:orajs108="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1021825503" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath832599956" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:orajs45="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1677201779" xmlns:orajs113="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs97="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1378383666" xmlns:orajs111="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath487572452" xmlns:orajs52="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath308940992" xmlns:orajs85="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1279052434" xmlns:orajs114="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath402346545">
+        - '  <xsl:param name="MsgCode" xml:id="id_18"/>'
+        - '  <xsl:param name="MsgDescr" xml:id="id_19"/>'
+        - '  <xsl:param name="MsgDetail" xml:id="id_20"/>'
+        - '  <xsl:param name="Status" xml:id="id_21"/>'
+        - '  <xsl:template match="/" xml:id="id_11">'
+        - '    <nstrgmpr:executeResponse xml:id="id_12">'
+        - '      <nstrgdfl:response-wrapper xml:id="id_29">'
+        - '        <nstrgdfl:Status xml:id="id_30">'
+        - '          <xsl:value-of xml:id="id_31" select="$Status"/>'
+        - '        <nstrgdfl:MsgCode xml:id="id_36">'
+        - '          <xsl:value-of xml:id="id_37" select="$MsgCode"/>'
+        - '        <nstrgdfl:MsgDescr xml:id="id_34">'
+        - '          <xsl:value-of xml:id="id_35" select="$MsgDescr"/>'
+        - '        <nstrgdfl:MsgDetail xml:id="id_32">'
+        - '          <xsl:value-of xml:id="id_33" select="$MsgDetail"/>'
+        - ""
+    - Reply: Reply(y0)
+      adapterjcareference: null
+      wsdlfilepath: ""

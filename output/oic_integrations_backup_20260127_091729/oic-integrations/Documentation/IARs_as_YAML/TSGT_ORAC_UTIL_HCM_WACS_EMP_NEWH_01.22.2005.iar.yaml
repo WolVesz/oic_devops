@@ -1,0 +1,512 @@
+Orchestration: ""
+statements:
+    - GlobalVariable: (gtv2)
+      variableName: var_workerResponse
+      variableType: $getWorkersData/ns24:executeResponse
+    - GlobalVariable: (gtv1)
+      variableName: Var_ReadBIPResponse
+      variableType: $ReadBIPOutput/ns0:ReadResponse
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - xmlname:
+            space: http://www.oracle.com/2014/03/ics/flow/definition
+            local: scheduleReceive
+          attrs:
+            - name:
+                space: ""
+                local: trackingRefUri
+              value: processor_6
+            - name:
+                space: ""
+                local: id
+              value: sr0
+            - name:
+                space: ""
+                local: refUri
+              value: processor_13
+          content: ""
+          statements: []
+        - Try: Try(t1)
+          username: processFeeds
+          statements:
+            - Map: Map(m0)
+              xsltfilepath: ../resources/processor_1600/resourcegroup_1603/req_9fa556045d084c7b93363e3fabdd761a.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns3="http://xmlns.oracle.com/cloud/adapter/hcm/ReceiveEmpNewHireFeed_REQUEST" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/hcm/ReceiveEmpNewHireFeed_REQUEST/types" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData_REQUEST/types" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getWorkersData_REQUEST/RESTOUTREQ" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getWorkersData_REQUEST/RESTOUTRES" xmlns:ns26="http://xml.oracle.com/types" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getWorkersData" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:ns24="http://xml.oracle.com/types/REST/getWorkersData_REQUEST" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData_REQUEST" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2068686068" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2047256691" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns19="http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData/types" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125">
+                - '  <xsl:param name="lastRunDateTime" xml:id="id_21"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:EmployeeNewHireFeed xml:id="id_12">'
+                - '      <nstrgmpr:ApplicationPullParameter xml:id="id_27">'
+                - '        <ns26:updated-min xml:id="id_28">'
+                - '          <xsl:value-of xml:id="id_29" select="$lastRunDateTime"/>'
+                - ""
+            - Invoke: ReceiveEmpNewHireFeed(i0)
+              application:
+                Application: ReceiveEmpNewHireFeed(OUTL-BRT-APP-HCM_HCMWACS)
+                name: ReceiveEmpNewHireFeed
+                adapter:
+                    code: OUTL-BRT-APP-HCM_HCMWACS
+                properties:
+                    - name: operationPath
+                      value: http://xmlns.oracle.com/cloud/adapter/hcm/ReceiveEmpNewHireFeed_REQUEST/EmployeeNewHireFeed
+            - ForLoop: ForLoop(f0)
+              expressionProperties:
+                xpathExpression: $ReceiveEmpNewHireFeed/nsmpr8:EmployeeNewHireFeedResponse/nsmpr8:EmployeeNewHireFeed_Update
+                namespaceList: nsmpr8=http://xmlns.oracle.com/cloud/adapter/hcm/ReceiveEmpNewHireFeed_REQUEST/types
+                variableName: currentNewHire
+              currentRecordVarName: currentNewHire
+              statements:
+                - Try: Try(t3)
+                  username: callWorkers
+                  statements:
+                    - Map: Map(m3)
+                      xsltfilepath: ../resources/processor_1425/resourcegroup_1428/req_960630c20b5e40d1ac49f87203784d69.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getWorkersData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01 orajs11 ns4 orajs10 ns46 orajs16 ns10 orajs24 ns6 ns8 orajs18 orajs12 orajs13 orajs23 orajs21 ns9 ns12 orajs25 orajs15 ns5 orajs19 ns13 orajs20 orajs14 orajs26 ns7 orajs22 orajs17 ns11" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/hcm/ReceiveEmpNewHireFeed_REQUEST/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/REST/getPublicWorkerDetails_REQUEST/types" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/REST/getPublicWorkerDetails/types" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getWorkersData_REQUEST/RESTOUTREQ" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns24="http://xml.oracle.com/types/REST/getPublicWorkerDetails_REQUEST" xmlns:ns32="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getWorkersData_REQUEST/RESTOUTRES" xmlns:ns22="http://xmlns.oracle.com/cloud/adapters/hcmRestApp" xmlns:ns20="http://xml.oracle.com/types" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:ns31="http://xml.oracle.com/types/REST/getWorkersData_REQUEST" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getPublicWorkerDetails_REQUEST/RESTOUTREQ" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getPublicWorkerDetails_REQUEST/RESTOUTRES" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getPublicWorkerDetails" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData/types" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2068686068" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2047256691" xmlns:ns46="http://xmlns.oracle.com/cloud/adapter/hcm/ReceiveEmpNewHireFeed_REQUEST" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940">
+                        - '  <xsl:param name="currentNewHire" xml:id="id_337"/>'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:execute xml:id="id_12">'
+                        - '      <nstrgmpr:QueryParameters xml:id="id_282">'
+                        - '        <ns31:q xml:id="id_283">'
+                        - '          <xsl:value-of xml:id="id_284" select="oraext:format-string (&quot;PersonId={0}&quot;, $currentNewHire/nsmpr1:EmployeeNewHireFeed_Update/nsmpr1:EmployeeNewHireFeed_Context/nsmpr1:PersonId )"/>'
+                        - '        <ns31:expand xml:id="id_285">'
+                        - '          <xsl:value-of xml:id="id_286" select="oraext:format-string (&quot;{0},{1},{2},{3}&quot;, &quot;names&quot;, &quot;emails&quot;, &quot;phones&quot;, &quot;workRelationships.assignments.gradeSteps&quot; )"/>'
+                        - '        <ns31:onlyData xml:id="id_313">'
+                        - '          <xsl:value-of xml:id="id_314" select="true()"/>'
+                        - '      <ns30:ConnectivityProperties xml:id="id_42">'
+                        - '        <ns30:RestAPI xml:id="id_43"/>'
+                        - ""
+                    - Invoke: getWorkersData(i3)
+                      application:
+                        Application: getWorkersData(OUTL-BRT-REST-HCM_HCMWACS)
+                        name: getWorkersData
+                        adapter:
+                            code: OUTL-BRT-REST-HCM_HCMWACS
+                        properties:
+                            - name: operationPath
+                              value: http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData_REQUEST/execute
+                            - name: HttpVerb
+                              value: GET
+                            - name: QueryParameters
+                              value: q, expand, onlyData
+                            - name: ResourceURI
+                              value: /workers
+                    - Stitch: Stitch(sh1)
+                      stitchNamespaceResolver:
+                        prefixnamespacemap:
+                            ns24: http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData_REQUEST/types
+                      stitchVariables:
+                        - name: var_workerResponse
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData_REQUEST/types}executeResponse'
+                            uriToSchema: ../../application_1413/inbound_1414/resourcegroup_1415/getWorkersData_REQUEST.wsdl
+                          access: SOURCE_AND_TARGET
+                        - name: getWorkersData
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData_REQUEST/types}executeResponse'
+                            uriToSchema: ../../application_1413/inbound_1414/resourcegroup_1415/getWorkersData_REQUEST.wsdl
+                          access: SOURCE_AND_TARGET
+                      stitchSentences:
+                        - operation: Assign
+                          from:
+                            type: XPathExpression
+                            expression: $getWorkersData/ns24:executeResponse
+                            returnType: XML_TYPE_NODE_NODESET
+                          to:
+                            type: XPathPath
+                            path: $var_workerResponse/ns24:executeResponse
+                            isLastStepXsdAnyType: false
+                    - CatchAll: CatchAll(ta2)
+                      statements:
+                        - Logger: Logger(lg1)
+                          name: LogMessageWorkers
+                          description: ""
+                          propertyfile: ../resources/processor_1502/resourcegroup_1802/expr.properties
+                          expressionProperties:
+                            xpathExpression: '"Error while invoking REST Workers API."'
+                            variableName: LogMessageWorkers
+                        - xmlname:
+                            space: http://www.oracle.com/2014/03/ics/flow/definition
+                            local: throw
+                          attrs:
+                            - name:
+                                space: ""
+                                local: id
+                              value: th1
+                            - name:
+                                space: ""
+                                local: refUri
+                              value: processor_1524
+                          content: ""
+                          statements: []
+                      icsfaultfilepath: ../resources/processor_1497/resourcegroup_1498/ICSFault.xsd
+                - Try: Try(t4)
+                  username: getHCMBIReport
+                  statements:
+                    - Map: Map(m4)
+                      xsltfilepath: ../resources/processor_1858/resourcegroup_1861/req_479cb83511534f00a3210cafae78c153.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nstrgmpr="http://xmlns.oracle.com/types/getHCMWACSSyncBIReport/1693561807582/OutboundSOAPRequestDocument" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:tns="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/hcm/ReceiveEmpNewHireFeed_REQUEST/types" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/getJobsData_REQUEST/types" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData_REQUEST/types" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns36="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getWorkersData_REQUEST/RESTOUTREQ" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns38="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getWorkersData_REQUEST/RESTOUTRES" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns34="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getWorkersData" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData_REQUEST" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getJobsData_REQUEST/RESTOUTREQ" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getJobsData_REQUEST/RESTOUTRES" xmlns:ns32="http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData/types" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/REST/getJobsData/types" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns31="http://xml.oracle.com/types/REST/getJobsData_REQUEST" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns23="http://xml.oracle.com/types" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getJobsData" xmlns:ns37="http://xml.oracle.com/types/REST/getWorkersData_REQUEST" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://xmlns.oracle.com/cloud/adapter/hcm/ReceiveEmpNewHireFeed_REQUEST" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadBIPOutput_REQUEST/types" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                        - '  <xsl:param name="var_workerResponse" xml:id="id_166"/>'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                        - '      <nstrgmpr:Body xml:id="id_47">'
+                        - '        <tns:runReport xml:id="id_48">'
+                        - '          <tns:reportRequest xml:id="id_49">'
+                        - '            <tns:attributeFormat xml:id="id_196">'
+                        - '              <xsl:value-of xml:id="id_197" select="&quot;xml&quot;"/>'
+                        - '            <tns:parameterNameValues xml:id="id_88">'
+                        - '              <tns:item xml:id="id_89">'
+                        - '                <tns:name xml:id="id_125">'
+                        - '                  <xsl:value-of xml:id="id_126" select="&quot;P_EFFECTIVE_DATE&quot;"/>'
+                        - '                <tns:values xml:id="id_127">'
+                        - '                  <tns:item xml:id="id_227">'
+                        - '                    <xsl:value-of xml:id="id_228" select="$var_workerResponse/nsmpr3:executeResponse/ns32:response-wrapper/ns32:items/ns32:workRelationships[ns32:PrimaryFlag=&apos;true&apos;][1]/ns32:assignments/ns32:EffectiveStartDate"/>'
+                        - '              <tns:item xml:id="id_90">'
+                        - '                <tns:name xml:id="id_129">'
+                        - '                  <xsl:value-of xml:id="id_130" select="&quot;P_ASSIGNMENT_ID&quot;"/>'
+                        - '                <tns:values xml:id="id_131">'
+                        - '                  <tns:item xml:id="id_229">'
+                        - '                    <xsl:value-of xml:id="id_230" select="$var_workerResponse/nsmpr3:executeResponse/ns32:response-wrapper/ns32:items/ns32:workRelationships[ns32:PrimaryFlag=&apos;true&apos;][1]/ns32:assignments/ns32:AssignmentId"/>'
+                        - '            <tns:reportAbsolutePath xml:id="id_50">'
+                        - '              <xsl:value-of xml:id="id_51" select="&quot;/Custom/TSGTHCMIntegrations/TSGT_HCM_WACS_EMP_OB/TSGT_HCM_WACS_SYNC_REPORT.xdo&quot;"/>'
+                        - '            <tns:sizeOfDataChunkDownload xml:id="id_52">'
+                        - '              <xsl:value-of xml:id="id_53" select="&quot;-1&quot;"/>'
+                        - ""
+                    - Invoke: getHCMWACSSyncBIReport(i4)
+                      application:
+                        Application: getHCMWACSSyncBIReport(TSGTSOAPHCMBIP_CONN)
+                        name: getHCMWACSSyncBIReport
+                        adapter:
+                            code: TSGTSOAPHCMBIP_CONN
+                        properties:
+                            - name: operationPath
+                              value: ""
+                    - Assignments: assignBIPOutputToFile(l2)
+                      name: assignBIPOutputToFile
+                      assignments:
+                        - Assignment: Assignment(a3)
+                          variableName: FileReference
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: oraext:decodeBase64ToReference($getHCMWACSSyncBIReport/tns:runReportResponse/tns:runReportReturn/tns:reportBytes)
+                            namespaceList: tns=http://xmlns.oracle.com/oxp/service/PublicReportService oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                            variableName: FileReference
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - StageFile: ReadBIPOutput(sf0)
+                      operation: Read
+                      expressionProperties:
+                        xpathExpression: $FileReference
+                      statements: []
+                    - Stitch: Stitch(sh2)
+                      stitchNamespaceResolver:
+                        prefixnamespacemap:
+                            ns0: http://xmlns.oracle.com/cloud/adapter/stagefile/ReadBIPOutput_REQUEST/types
+                      stitchVariables:
+                        - name: Var_ReadBIPResponse
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/ReadBIPOutput_REQUEST/types}ReadResponse'
+                            uriToSchema: ../../processor_1889/resourcegroup_1890/ReadBIPOutput_REQUEST.wsdl
+                          access: SOURCE_AND_TARGET
+                        - name: ReadBIPOutput
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/ReadBIPOutput_REQUEST/types}ReadResponse'
+                            uriToSchema: ../../processor_1889/resourcegroup_1890/ReadBIPOutput_REQUEST.wsdl
+                          access: SOURCE_AND_TARGET
+                      stitchSentences:
+                        - operation: Assign
+                          from:
+                            type: XPathExpression
+                            expression: $ReadBIPOutput/ns0:ReadResponse
+                            returnType: XML_TYPE_NODE_NODESET
+                          to:
+                            type: XPathPath
+                            path: $Var_ReadBIPResponse/ns0:ReadResponse
+                            isLastStepXsdAnyType: false
+                    - CatchAll: CatchAll(ta5)
+                      statements:
+                        - Logger: Logger(lg3)
+                          name: LogMessageBiReport
+                          description: ""
+                          propertyfile: ../resources/processor_1934/resourcegroup_1941/expr.properties
+                          expressionProperties:
+                            xpathExpression: '"Error while invoking BI Report from HCM."'
+                            variableName: LogMessageBiReport
+                        - xmlname:
+                            space: http://www.oracle.com/2014/03/ics/flow/definition
+                            local: throw
+                          attrs:
+                            - name:
+                                space: ""
+                                local: id
+                              value: th2
+                            - name:
+                                space: ""
+                                local: refUri
+                              value: processor_1943
+                          content: ""
+                          statements: []
+                      icsfaultfilepath: ../resources/processor_1929/resourcegroup_1930/ICSFault.xsd
+                - Try: Try(t2)
+                  username: processEmployee
+                  statements:
+                    - Switch: Switch(s1)
+                      routes:
+                        - Route: TradesCraftsJobs-YES(sc2)
+                          exprProperties:
+                            xpathExpression: $Var_ReadBIPResponse/nsmpr5:ReadResponse/nsmpr1:DATA_DS/nsmpr1:G_1/nsmpr1:WACS_JOB= "YES"
+                            namespaceList: nsmpr5=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadBIPOutput_REQUEST/types nsmpr1=http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadBIPOutput
+                            expressionName: TradesCraftsJobs-YES
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: Var_ReadBIPResponse
+                                  rootElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/ReadBIPOutput_REQUEST/types}ReadResponse'
+                          statements:
+                            - Map: Map(m1)
+                              xsltfilepath: ../resources/processor_1652/resourcegroup_1655/req_ff03cc064f254fdc954abdf9a806d213.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_Employee_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/oracleutilities/WACS_Employee" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_Employee_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/hcm/ReceiveEmpNewHireFeed_REQUEST/types" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData_REQUEST/types" xmlns:ns31="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_response/W1CreEmpSync/output/oracleutilities/WACS_Employee_REQUEST" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getWorkersData_REQUEST/RESTOUTREQ" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getWorkersData_REQUEST/RESTOUTRES" xmlns:ns36="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_response/W1CreEmpSync/input/employeeInfo/phoneNumbers/oracleutilities/WACS_Employee_REQUEST" xmlns:ns37="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_response/W1CreEmpSync/input/employeeInfo/addressInformation/oracleutilities/WACS_Employee_REQUEST" xmlns:ns25="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getWorkersData" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData_REQUEST" xmlns:ns45="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_response/W1CreEmpSync/input/employeeInfo/phoneNumbers/phoneNumbersList/oracleutilities/WACS_Employee_REQUEST" xmlns:ns46="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_response/W1CreEmpSync/input/employeeInfo/oracleutilities/WACS_Employee_REQUEST" xmlns:ns49="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_request/W1CreEmpSync/input/employeeInfo/phoneNumbers/phoneNumbersList/oracleutilities/WACS_Employee_REQUEST" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns50="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_response/W1CreEmpSync/input/employeeInfo/phoneNumbers/phoneNumbersList/phoneType/oracleutilities/WACS_Employee_REQUEST" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2047256691" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/REST/getWorkersData/types" xmlns:ns53="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_response/W1CreEmpSync/input/employeeInfo/billableRates/oracleutilities/WACS_Employee_REQUEST" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns54="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_request/W1CreEmpSync/input/employeeInfo/employeeTrainingInformation/employeeTrainingInformationList/oracleutilities/WACS_Employee_REQUEST" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:ns56="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_response/W1CreEmpSync/input/employeeInfo/employeeTrainingInformation/employeeTrainingInformationList/oracleutilities/WACS_Employee_REQUEST" xmlns:ns32="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_request/W1CreEmpSync/input/employeeInfo/billableRates/oracleutilities/WACS_Employee_REQUEST" xmlns:ns33="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_response/W1CreEmpSync/input/employeeInfo/billableRates/billableRatesList/oracleutilities/WACS_Employee_REQUEST" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns34="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_response/W1CreEmpSync/oracleutilities/WACS_Employee_REQUEST" xmlns:ns35="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_response/W1CreEmpSync/input/oracleutilities/WACS_Employee_REQUEST" xmlns:ns20="http://xml.oracle.com/types" xmlns:ns38="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_request/W1CreEmpSync/oracleutilities/WACS_Employee_REQUEST" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:ns39="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_request/W1CreEmpSync/input/employeeInfo/addressInformation/houseType/oracleutilities/WACS_Employee_REQUEST" xmlns:ns40="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_response/W1CreEmpSync/input/employeeInfo/addressInformation/houseType/oracleutilities/WACS_Employee_REQUEST" xmlns:ns28="http://xml.oracle.com/types/REST/getWorkersData_REQUEST" xmlns:ns41="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_request/W1CreEmpSync/input/employeeInfo/phoneNumbers/phoneNumbersList/phoneType/oracleutilities/WACS_Employee_REQUEST" xmlns:ns42="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_request/W1CreEmpSync/input/employeeInfo/addressInformation/oracleutilities/WACS_Employee_REQUEST" xmlns:ns43="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_request/W1CreEmpSync/input/oracleutilities/WACS_Employee_REQUEST" xmlns:ns44="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_request/W1CreEmpSync/input/employeeInfo/phoneNumbers/oracleutilities/WACS_Employee_REQUEST" xmlns:ns47="http://www.oracle.rest.converters.autogeneratedns.com/oracleutilities/WACS_Employee_REQUEST" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2068686068" xmlns:ns48="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_response/W1CreEmpSync/input/employeeInfo/employeeTrainingInformation/oracleutilities/WACS_Employee_REQUEST" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns3="http://xmlns.oracle.com/cloud/adapter/hcm/ReceiveEmpNewHireFeed_REQUEST" xmlns:ns51="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_request/W1CreEmpSync/input/employeeInfo/employeeTrainingInformation/oracleutilities/WACS_Employee_REQUEST" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns52="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_request/W1CreEmpSync/input/employeeInfo/oracleutilities/WACS_Employee_REQUEST" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns55="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_request/W1CreEmpSync/input/employeeInfo/billableRates/billableRatesList/oracleutilities/WACS_Employee_REQUEST" xmlns:ns30="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCEMPLOYEE_request/W1CreEmpSync/output/oracleutilities/WACS_Employee_REQUEST" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/hcm/jobs_REQUEST/types" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/REST/getJobsData_REQUEST/types" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:ns78="http://xmlns.oracle.com/cloud/adapter/REST/getJobsData/types" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:ns12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:ns79="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getJobsData_REQUEST/RESTOUTREQ" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns75="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getJobsData_REQUEST/RESTOUTRES" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns80="http://xml.oracle.com/types/REST/getJobsData_REQUEST" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns77="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getJobsData" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns105="http://www.oracle.rest.converters.autogeneratedns.com" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadBIPOutput_REQUEST/types" xmlns:ns107="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadBIPOutput" xmlns:ns108="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadBIPOutput_REQUEST" xmlns:ns16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:ns17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                                - '  <xsl:param name="currentNewHire" xml:id="id_35"/>'
+                                - '  <xsl:param name="var_workerResponse" xml:id="id_41"/>'
+                                - '  <xsl:param name="Var_ReadBIPResponse" xml:id="id_185"/>'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:syncEmployee xml:id="id_12">'
+                                - '      <nstrgmpr:SYNCEMPLOYEE_request xml:id="id_113">'
+                                - '        <ns47:CMCreEmpSync xml:id="id_114">'
+                                - '          <ns47:input xml:id="id_115">'
+                                - '            <ns47:externalSystem xml:id="id_116">'
+                                - '              <xsl:value-of xml:id="id_117" select="dvm:lookupValue (&quot;OUTL-BRT-HCM_WACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.externalsystem&quot;, &quot;Value&quot;, &quot;wacs.externalsystem&quot; )"/>'
+                                - '            <ns47:externalReferenceId xml:id="id_118">'
+                                - '              <xsl:value-of xml:id="id_119" select="$currentNewHire/nsmpr1:EmployeeNewHireFeed_Update/nsmpr1:EmployeeNewHireFeed_Context/nsmpr1:PersonId"/>'
+                                - '            <ns47:initialLoad xml:id="id_120">'
+                                - '              <xsl:value-of xml:id="id_121" select="&quot;F1IC&quot;"/>'
+                                - '            <ns47:employeeInfo xml:id="id_122">'
+                                - '              <ns47:cmGradeLadder xml:id="id_165">'
+                                - '                <xsl:value-of xml:id="id_166" select="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:workRelationships/ns23:assignments/ns23:gradeSteps/ns23:GradeStepName"/>'
+                                - '              <ns47:cmPayPeriodType xml:id="id_191">'
+                                - '                <xsl:value-of xml:id="id_192" select="dvm:lookupValue (&quot;OUTL-BRT-HCM_WACS_PayPeriodType&quot;, &quot;HCM_PayPeriodType&quot;, $Var_ReadBIPResponse/nsmpr6:ReadResponse/ns107:DATA_DS/ns107:G_1/ns107:PAY_FREQUENCY, &quot;WACS_PayPeriodType&quot;, &quot;&quot; )"/>'
+                                - '              <!-- <ns47:cmOrganization xml:id="id_233">'
+                                - '                                            <xsl:value-of xml:id="id_234" select="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:workRelationships/ns23:assignments/ns23:DepartmentName"/>'
+                                - '                                      <ns47:cmDepartment xml:id="id_267">'
+                                - '                                            <xsl:value-of xml:id="id_268" select="$Var_ReadBIPResponse/nsmpr6:ReadResponse/ns107:DATA_DS/ns107:G_1/ns107:COST_CENTER"/>'
+                                - '              <xsl:choose xml:id="id_239">'
+                                - '                <xsl:when xml:id="id_240" test="fn:lower-case ($var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:workRelationships[ns23:PrimaryFlag=&apos;true&apos;][1]/ns23:assignments/ns23:LabourUnionMemberFlag ) = &quot;true&quot;">'
+                                - '                  <ns47:cmUnionMember xml:id="id_241">'
+                                - '                    <xsl:value-of xml:id="id_242" select="&apos;CMYS&apos;"/>'
+                                - '                <xsl:when xml:id="id_243" test="fn:lower-case ($var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:workRelationships[ns23:PrimaryFlag=&apos;true&apos;][1]/ns23:assignments/ns23:LabourUnionMemberFlag ) = &quot;false&quot;">'
+                                - '                  <ns47:cmUnionMember xml:id="id_244">'
+                                - '                    <xsl:value-of xml:id="id_245" select="&apos;CMNO&apos;"/>'
+                                - '              <ns47:cmOverTimeStatus xml:id="id_235">'
+                                - '                <xsl:value-of xml:id="id_236" select="dvm:lookupValue (&quot;OUTL-BRT-HCM_WACS_OverTimeStatus&quot;, &quot;HCM_OTStatus&quot;, $Var_ReadBIPResponse/nsmpr6:ReadResponse/ns107:DATA_DS/ns107:G_1/ns107:OVERTIME_STATUS, &quot;WACS_OTStatus&quot;, &quot;&quot; )"/>'
+                                - '              <ns47:externalId xml:id="id_123">'
+                                - '                <xsl:value-of xml:id="id_124" select="$currentNewHire/nsmpr1:EmployeeNewHireFeed_Update/nsmpr1:EmployeeNewHireFeed_Context/nsmpr1:PersonId"/>'
+                                - '              <ns47:hrEmployeeNumber xml:id="id_125">'
+                                - '                <xsl:value-of xml:id="id_126" select="$currentNewHire/nsmpr1:EmployeeNewHireFeed_Update/nsmpr1:EmployeeNewHireFeed_Context/nsmpr1:PersonNumber"/>'
+                                - '              <ns47:employeeType xml:id="id_127">'
+                                - '                <xsl:value-of xml:id="id_128" select="dvm:lookupValue (&quot;OUTL-BRT-HCM_WACS_EmployeeType&quot;, &quot;HCM_PersonType&quot;, $currentNewHire/nsmpr1:EmployeeNewHireFeed_Update/nsmpr1:EmployeeNewHireFeed_Context/nsmpr1:WorkerType, &quot;WACS_EmployeeType&quot;, $currentNewHire/nsmpr1:EmployeeNewHireFeed_Update/nsmpr1:EmployeeNewHireFeed_Context/nsmpr1:WorkerType )"/>'
+                                - '              <ns47:businessUnit xml:id="id_129">'
+                                - '                <xsl:value-of xml:id="id_130" select="dvm:lookupValue (&quot;OUTL-BRT-HCM_WACS_BusinessUnit&quot;, &quot;HCM_LegalEntity&quot;, $var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:workRelationships[(ns23:PrimaryFlag = &quot;true&quot;)][1]/ns23:LegalEmployerName, &quot;WACS_BU&quot;, $var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:workRelationships[(ns23:PrimaryFlag = &quot;true&quot;)][1]/ns23:LegalEmployerName )"/>'
+                                - '              <ns47:status xml:id="id_131">'
+                                - '                <xsl:value-of xml:id="id_132" select="dvm:lookupValue (&quot;OUTL-BRT-HCM_WACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.inc.newempstatus&quot;, &quot;Value&quot;, &quot;wacs.inc.newempstatus&quot; )"/>'
+                                - '              <ns47:principalCraft xml:id="id_295">'
+                                - '                <xsl:value-of xml:id="id_296" select="$Var_ReadBIPResponse/nsmpr6:ReadResponse/ns107:DATA_DS/ns107:G_1/ns107:CRAFT_JOB"/>'
+                                - '              <ns47:hiredDate xml:id="id_133">'
+                                - '                <xsl:value-of xml:id="id_134" select="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:workRelationships[(ns23:PrimaryFlag=&apos;true&apos;)][1]/ns23:StartDate"/>'
+                                - '              <ns47:jobTitle xml:id="id_135">'
+                                - '                <xsl:value-of xml:id="id_136" select="$Var_ReadBIPResponse/nsmpr6:ReadResponse/ns107:DATA_DS/ns107:G_1/ns107:NAME"/>'
+                                - '              <ns47:jobCode xml:id="id_137">'
+                                - '                <xsl:value-of xml:id="id_138" select="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:workRelationships[ns23:PrimaryFlag=&apos;true&apos;][1]/ns23:assignments/ns23:JobCode"/>'
+                                - '              <ns47:firstName xml:id="id_139">'
+                                - '                <xsl:value-of xml:id="id_140" select="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:names/ns23:FirstName"/>'
+                                - '              <ns47:lastName xml:id="id_141">'
+                                - '                <xsl:value-of xml:id="id_142" select="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:names/ns23:LastName"/>'
+                                - '              <ns47:cmEmailAddress xml:id="id_212">'
+                                - '                <xsl:value-of xml:id="id_213" select="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:emails[ns23:EmailType=&apos;W1&apos;]/ns23:EmailAddress"/>'
+                                - '              <xsl:if xml:id="id_144" test="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:emails[(ns23:PrimaryFlag=&apos;true&apos;)]/ns23:EmailAddress"/>'
+                                - '              <ns47:phoneNumbers xml:id="id_147">'
+                                - '                <ns47:phoneNumbersList xml:id="id_148">'
+                                - '                  <xsl:if xml:id="id_153" test="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:phones[(ns23:PrimaryFlag = &quot;true&quot;)]/ns23:PhoneType != &quot;&quot;">'
+                                - '                    <ns47:phoneType xml:id="id_154">'
+                                - '                      <xsl:value-of xml:id="id_161" select="dvm:lookupValue (&quot;OUTL-BRT-HCM_WACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.inc.empphonetype&quot;, &quot;Value&quot;, &quot;wacs.inc.empphonetype&quot; )"/>'
+                                - '                  <xsl:if xml:id="id_155" test="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:phones[(ns23:PrimaryFlag = &quot;true&quot;)]/ns23:CountryCodeNumber != &quot;&quot;">'
+                                - '                    <ns47:countryCode xml:id="id_156">'
+                                - '                      <xsl:value-of xml:id="id_162" select="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:phones[(ns23:PrimaryFlag=&apos;true&apos;)]/ns23:CountryCodeNumber"/>'
+                                - '                  <xsl:if xml:id="id_157" test="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:phones[(ns23:PrimaryFlag = &quot;true&quot;)]/ns23:AreaCode != &quot;&quot;">'
+                                - '                    <ns47:areaCode xml:id="id_158">'
+                                - '                      <xsl:value-of xml:id="id_163" select="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:phones[(ns23:PrimaryFlag=&apos;true&apos;)]/ns23:AreaCode"/>'
+                                - '                  <xsl:if xml:id="id_159" test="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:phones[(ns23:PrimaryFlag = &quot;true&quot;)]/ns23:PhoneNumber != &quot;&quot;">'
+                                - '                    <ns47:phoneNumber xml:id="id_160">'
+                                - '                      <xsl:value-of xml:id="id_164" select="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:phones[(ns23:PrimaryFlag=&apos;true&apos;)]/ns23:PhoneNumber"/>'
+                                - '              <ns47:cmProcessData xml:id="id_292">'
+                                - '                <ns47:cmIsUpdFromInteg xml:id="id_293">'
+                                - '                  <xsl:value-of xml:id="id_294" select="&quot;true&quot;"/>'
+                                - '              <ns47:cmorgDesc xml:id="id_290">'
+                                - '                <xsl:value-of xml:id="id_291" select="$var_workerResponse/nsmpr3:executeResponse/ns23:response-wrapper/ns23:items/ns23:workRelationships[ns23:PrimaryFlag=&apos;true&apos;][1]/ns23:assignments/ns23:DepartmentName"/>'
+                                - '              <ns47:cmDepartmentDescr xml:id="id_288">'
+                                - '                <xsl:value-of xml:id="id_289" select="$Var_ReadBIPResponse/nsmpr6:ReadResponse/ns107:DATA_DS/ns107:G_1/ns107:COST_CENTER"/>'
+                                - ""
+                            - Invoke: WACS_Employee(i1)
+                              application:
+                                Application: WACS_Employee(OUTL-BRT-REST-WACS_HCMWACS)
+                                name: WACS_Employee
+                                adapter:
+                                    code: OUTL-BRT-REST-WACS_HCMWACS
+                                properties:
+                                    - name: operationPath
+                                      value: https://us-phoenix-1.stg.utilities-cloud.oracleindustry.com:443/c2g65p/dev/wac/rest/apis/cm/resources/employeeSynchronization/
+                                    - name: HttpVerb
+                                      value: POST
+                                    - name: ResourceURI
+                                      value: https://us-phoenix-1.utilities-cloud.oracleindustry.com:443/c2g65p/prod/wac/rest/apis/cm/resources/employeeSynchronization/
+                            - Assignments: UpdateLastRunDTTM(l1)
+                              name: UpdateLastRunDTTM
+                              assignments:
+                                - Assignment: Assignment(a2)
+                                  variableName: lastRunDateTime
+                                  variableType: string
+                                  expressionProperties:
+                                    xpathExpression: $currentNewHire/nsmpr9:EmployeeNewHireFeed_Update/nsmpr9:updated_timestamp
+                                    namespaceList: nsmpr9=http://xmlns.oracle.com/cloud/adapter/hcm/ReceiveEmpNewHireFeed_REQUEST/types
+                                    variableName: lastRunDateTime
+                                    variableType: string
+                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Route: Otherwise(sc3)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: null
+                          statements: []
+                    - CatchAll: CatchAll(ta3)
+                      statements:
+                        - Switch: Switch(s3)
+                          routes:
+                            - Route: xpathError(sc6)
+                              exprProperties:
+                                xpathExpression: $invokeWACSEmployeeSyncFaultObject/nsmpr3:fault/nsmpr3:errorCode = "XPathExecutionError"
+                                namespaceList: nsmpr3=http://www.oracle.com/2014/03/ics/fault
+                                expressionName: xpathError
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: invokeWACSEmployeeSyncFaultObject
+                                      rootElement: '{http://www.oracle.com/2014/03/ics/fault}fault'
+                              statements:
+                                - Stop: EHStop(eh2)
+                            - Route: Otherwise(sc7)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements: []
+                        - Assignments: Assign_WAMInvocationError(l0)
+                          name: Assign_WAMInvocationError
+                          assignments:
+                            - Assignment: Assignment(a0)
+                              variableName: Var_FaultDetail
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: ora:getContentAsString($invokeWACSEmployeeSyncFaultObject/nsmpr3:fault)
+                                namespaceList: nsmpr3=http://www.oracle.com/2014/03/ics/fault ora=http://schemas.oracle.com/xpath/extension
+                                variableName: Var_FaultDetail
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a1)
+                              variableName: Var_EmployeeErrorRecord
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: 'concat("Employee Id: ",$ReceiveEmpNewHireFeed/nsmpr6:EmployeeNewHireFeedResponse/nsmpr6:EmployeeNewHireFeed_Update/nsmpr6:EmployeeNewHireFeed_Context/nsmpr6:PersonId,"--- Error:",substring-before(substring-after($Var_FaultDetail,''title":"''),''","httpStatus''))\n\n'
+                                namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapter/hcm/ReceiveEmpNewHireFeed_REQUEST/types
+                                variableName: Var_EmployeeErrorRecord
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Switch: Switch(s4)
+                          routes:
+                            - Route: SendWACSErrorNotification(sc8)
+                              exprProperties:
+                                xpathExpression: dvm:lookupValue("OUTL-BRT-HCM_WACS_ConfigProps", "PropertyName", "email.flag", "Value", "true") = "true"
+                                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                                expressionName: SendWACSErrorNotification
+                              stateInfo:
+                                referencedLookupData:
+                                    - lookup-table-name-with-location: OUTL-BRT-HCM_WACS_ConfigProps
+                                      source: '"PropertyName"'
+                                      target: '"Value"'
+                              statements:
+                                - xmlname:
+                                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                                    local: notification
+                                  attrs:
+                                    - name:
+                                        space: ""
+                                        local: id
+                                      value: n1
+                                    - name:
+                                        space: ""
+                                        local: refUri
+                                      value: processor_512
+                                  content: ""
+                                  statements: []
+                            - Route: Otherwise(sc9)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements: []
+                      icsfaultfilepath: ../resources/processor_601/resourcegroup_602/ICSFault.xsd
+            - CatchAll: CatchAll(ta1)
+              statements:
+                - Logger: Logger(lg0)
+                  name: Error_MainScope
+                  description: ""
+                  propertyfile: ../resources/processor_363/resourcegroup_370/expr.properties
+                  expressionProperties:
+                    xpathExpression: 'concat("Error: Get Employee Update Feed:",$lastRunDateTime)'
+                    variableName: Error_MainScope
+                - Stop: EHStop(eh1)
+              icsfaultfilepath: ../resources/processor_358/resourcegroup_359/ICSFault.xsd
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Switch: Switch(s0)
+              routes:
+                - Route: sendEmail(sc0)
+                  exprProperties:
+                    xpathExpression: dvm:lookupValue("OUTL-BRT-HCM_WACS_ConfigProps", "PropertyName", "email.flag", "Value", "true") = "true"
+                    namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                    expressionName: sendEmail
+                  stateInfo:
+                    referencedLookupData:
+                        - lookup-table-name-with-location: OUTL-BRT-HCM_WACS_ConfigProps
+                          source: '"PropertyName"'
+                          target: '"Value"'
+                  statements:
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: notification
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: n0
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_212
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc1)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_191/resourcegroup_192/ICSFault.xsd

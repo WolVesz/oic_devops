@@ -1,0 +1,16 @@
+flowchart LR
+%% Auto-generated from invoke_chain_group_001.csv — root TSGT_PROJ_TOP_TASK_SYNC_TO_WACS
+classDef integ fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+classDef adapt fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+ TSGT_PROJ_TOP_TASK_SYNC_TO_WACS["TSGT Project And Top Task Sync To WACS"]:::integ
+ TSGT_ENTERPRISENOTIFI["TSGT EnterpriseNotificationService"]:::integ
+ TSGT_PROJ_TOP_TASK_SYNC_TO_WACS -->|sendEmailNotificationForErrorRecords| TSGT_ENTERPRISENOTIFI
+ TSGT_PROJ_TOP_TASK_SYNC_TO_WACS -->|sendNotification| TSGT_ENTERPRISENOTIFI
+ TSGT_PROJ_TOP_TASK_SYNC_TO_WACS -->|sendNotifications| TSGT_ENTERPRISENOTIFI
+ ORAC_UTIL_REST_WACS_FOR_WACS_PPM{{"Oracle Utilities REST WACS for WACS-PPM"}}:::adapt
+ TSGT_PROJ_TOP_TASK_SYNC_TO_WACS -->|invokeProjectTaskWACS| ORAC_UTIL_REST_WACS_FOR_WACS_PPM
+ TSGTFTP_CONN{{"TSGTFtp_Conn"}}:::adapt
+ TSGT_PROJ_TOP_TASK_SYNC_TO_WACS -->|listFilesFromERPSFTPLocation| TSGTFTP_CONN
+ TSGT_PROJ_TOP_TASK_SYNC_TO_WACS -->|moveEachFileToArchiveDirectory| TSGTFTP_CONN
+ TSGT_PROJ_TOP_TASK_SYNC_TO_WACS -->|moveFileToErrorDirectory| TSGTFTP_CONN
+ TSGT_PROJ_TOP_TASK_SYNC_TO_WACS -->|readEachFileFromERPSFTPLocation| TSGTFTP_CONN

@@ -1,0 +1,263 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_716
+      xsdfilepath: ../resources/processor_716/resourcegroup_717/ICSIntegrationMetadata.xsd
+    - GlobalVariable: (gtv1)
+      variableName: ErrRecSet
+      variableType: $receiveFault/ns0:execute/ns12:request-wrapper/ns12:ErrorCollection
+    - Receive: Receive(r0)
+      trackingvariables:
+        - role: tracking_var_1
+          primary: true
+          name: Flow Name
+          xpath: /execute/request-wrapper/ErrorCollection/faultMessage/flowName
+        - role: tracking_var_2
+          name: tracking_var_2
+        - role: tracking_var_3
+          name: tracking_var_3
+    - Try: Try(t0)
+      username: TotalScope
+      statements:
+        - Assignments: initializeVariables(l1)
+          name: initializeVariables
+          assignments:
+            - Assignment: Assignment(a1)
+              variableName: varAttachmentFlag
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: varAttachmentFlag
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a3)
+              variableName: varFileRef
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: varFileRef
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a5)
+              variableName: varAttachmentCount
+              variableType: string
+              expressionProperties:
+                xpathExpression: number(0)
+                variableName: varAttachmentCount
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - ForLoop: ForLoop(f0)
+          expressionProperties:
+            xpathExpression: /ns7:execute/nssrcmpr:request-wrapper/nssrcmpr:ErrorCollection/nssrcmpr:faultMessage
+            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/receiveFault/types ns7=http://xmlns.oracle.com/cloud/adapter/REST/receiveFault_REQUEST/types
+            variableName: eachRecord
+          currentRecordVarName: eachRecord
+          statements:
+            - Switch: Switch(s3)
+              routes:
+                - Route: checkAttachmentValue(sc6)
+                  exprProperties:
+                    xpathExpression: $eachRecord/nssrcmpr:faultMessage/nssrcmpr:attachment = "true"
+                    namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/receiveFault/types
+                    expressionName: checkAttachmentValue
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: eachRecord
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/receiveFault/types}faultMessage'
+                  statements:
+                    - Assignments: assignAttachmentData(l2)
+                      name: assignAttachmentData
+                      assignments:
+                        - Assignment: Assignment(a2)
+                          variableName: varAttachmentFlag
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: '''true'''
+                            variableName: varAttachmentFlag
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a4)
+                          variableName: varFileRef
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: 'substring-after($eachRecord/nssrcmpr:faultMessage/nssrcmpr:resourceId,"FBDI file path: ")'
+                            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/receiveFault/types
+                            variableName: varFileRef
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a6)
+                          variableName: varAttachmentCount
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: number($varAttachmentCount) + 1
+                            variableName: varAttachmentCount
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Route: Otherwise(sc7)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+        - Switch: Switch(s0)
+          routes:
+            - Route: notify errors(sc0)
+              exprProperties:
+                xpathExpression: dvm:lookupValue("OUTL-BRT-WACS_ERPFA_CONFIGPROPS", "PropertyName", "notification.error.flag", "Value", "false") = "true"
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                expressionName: notify errors
+              stateInfo:
+                referencedLookupData:
+                    - lookup-table-name-with-location: OUTL-BRT-WACS_ERPFA_CONFIGPROPS
+                      source: '"PropertyName"'
+                      target: '"Value"'
+              statements:
+                - Switch: Switch(s1)
+                  routes:
+                    - Route: notification type is email(sc2)
+                      exprProperties:
+                        xpathExpression: dvm:lookupValue("OUTL-BRT-WACS_ERPFA_CONFIGPROPS", "PropertyName", "notification.type.email", "Value", "email") = "email"
+                        namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                        expressionName: notification type is email
+                      stateInfo:
+                        referencedLookupData:
+                            - lookup-table-name-with-location: OUTL-BRT-WACS_ERPFA_CONFIGPROPS
+                              source: '"PropertyName"'
+                              target: '"Value"'
+                      statements:
+                        - xmlname:
+                            space: http://www.oracle.com/2014/03/ics/flow/definition
+                            local: callout
+                          attrs:
+                            - name:
+                                space: ""
+                                local: id
+                              value: co0
+                            - name:
+                                space: ""
+                                local: refUri
+                              value: processor_889
+                          content: ""
+                          statements: []
+                        - Switch: Switch(s2)
+                          routes:
+                            - Route: no attachment(sc4)
+                              exprProperties:
+                                xpathExpression: $varAttachmentCount = number(0.0)
+                                expressionName: no attachment
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: varAttachmentCount
+                                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                              statements:
+                                - xmlname:
+                                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                                    local: notification
+                                  attrs:
+                                    - name:
+                                        space: ""
+                                        local: id
+                                      value: n0
+                                    - name:
+                                        space: ""
+                                        local: refUri
+                                      value: processor_572
+                                  content: ""
+                                  statements: []
+                            - Route: Otherwise(sc5)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements:
+                                - xmlname:
+                                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                                    local: note
+                                  attrs:
+                                    - name:
+                                        space: ""
+                                        local: id
+                                      value: nt0
+                                    - name:
+                                        space: ""
+                                        local: name
+                                      value: attachment
+                                    - name:
+                                        space: ""
+                                        local: description
+                                      value: it has attachment
+                                  content: ""
+                                  statements: []
+                                - xmlname:
+                                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                                    local: notification
+                                  attrs:
+                                    - name:
+                                        space: ""
+                                        local: id
+                                      value: n1
+                                    - name:
+                                        space: ""
+                                        local: refUri
+                                      value: processor_1225
+                                  content: ""
+                                  statements: []
+                    - Route: Otherwise(sc3)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements: []
+                - Assignments: updateTrackingVars(l0)
+                  name: updateTrackingVars
+                  assignments:
+                    - Assignment: Assignment(a0)
+                      variableName: tracking_var_2
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: concat( "Total no. of errors ", count(/ns5:execute/nssrcmpr:request-wrapper/nssrcmpr:ErrorCollection/nssrcmpr:faultMessage))
+                        namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/receiveFault/types ns5=http://xmlns.oracle.com/cloud/adapter/REST/receiveFault_REQUEST/types
+                        variableName: tracking_var_2
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Map: Map(m0)
+                  xsltfilepath: ../resources/processor_24/resourcegroup_27/req_bed47a34666d4015bbd9760646c7356c.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/receiveFault" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/receiveFault_REQUEST/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/receiveFault_REQUEST" exclude-result-prefixes=" ora oracle-xsl-mapper oraext xsi xsd fn xp20 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath569416338" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2095151203" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:ns18="http://xml.oracle.com/adapters/extension" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/REST/receiveFault/types" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2068686068" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/receiveFault_REQUEST/RESTINRES" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2047256691" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns21="http://xmlns.oracle.com/procmon" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:ns16="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/receiveFault_REQUEST/RESTINREQ" xmlns:ns23="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath832567826">
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:executeResponse xml:id="id_12">'
+                    - '      <ns20:response-wrapper xml:id="id_21">'
+                    - '        <ns20:status xml:id="id_22">'
+                    - '          <xsl:value-of xml:id="id_23" select="&quot;SUCCESS&quot;"/>'
+                    - ""
+            - Route: Otherwise(sc1)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Map: Map(m1)
+              xsltfilepath: ../resources/processor_106/resourcegroup_109/req_24e7e08364804b1b9a706e7941db1fd8.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/receiveFault_REQUEST/types" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/receiveFault_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/receiveFault" xmlns:nstrgdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ics/fault" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath569416338" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2095151203" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:ns21="http://xml.oracle.com/adapters/extension" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/REST/receiveFault/types" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2068686068" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/receiveFault_REQUEST/RESTINRES" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2047256691" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:ns19="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/receiveFault_REQUEST/RESTINREQ" xmlns:ns24="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath832567826">
+                - '  <xsl:param name="TotalScopeFaultObject" xml:id="id_21"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:executeResponse xml:id="id_12">'
+                - '      <ns22:response-wrapper xml:id="id_26">'
+                - '        <ns22:status xml:id="id_27">'
+                - '          <xsl:value-of xml:id="id_28" select="&quot;ERROR&quot;"/>'
+                - '        <ns22:errorDetails xml:id="id_29">'
+                - '          <xsl:value-of xml:id="id_30" select="$TotalScopeFaultObject/nsmpr0:fault/nsmpr0:reason"/>'
+                - ""
+            - Reply: Reply(y1)
+              adapterjcareference: null
+              wsdlfilepath: ""
+          icsfaultfilepath: ../resources/processor_101/resourcegroup_102/ICSFault.xsd
+    - Reply: Reply(y0)
+      adapterjcareference: null
+      wsdlfilepath: ""

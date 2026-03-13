@@ -1,0 +1,1013 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_433
+      xsdfilepath: ../resources/processor_433/resourcegroup_434/ICSIntegrationMetadata.xsd
+    - GlobalVariable: (gtv1)
+      variableName: var_GetFileInUCMOutput
+      variableType: $GetFileInUCM/tns:GenericResponse
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: DocumentId
+              xpath: /onEvent/PublicationJobCompletedInfo/DocumentId/newValue/@value
+            - role: tracking_var_2
+              name: tracking_var_2
+            - role: tracking_var_3
+              name: tracking_var_3
+        - Assignments: Assign_Default(l3)
+          name: Assign_Default
+          assignments:
+            - Assignment: Assignment(a9)
+              variableName: Var_ERP_PurchaseItemCategory
+              variableType: string
+              expressionProperties:
+                xpathExpression: dvm:lookupValue('ERPWACS_ConfigProps','PropertyName','erp.purchase.itemcategory','Value','')
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                variableName: Var_ERP_PurchaseItemCategory
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a10)
+              variableName: Var_ERP_AssetActivityUserItemType
+              variableType: string
+              expressionProperties:
+                xpathExpression: dvm:lookupValue('ERPWACS_ConfigProps','PropertyName','erp.assetactivity.useritemtypevalue','Value','')
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                variableName: Var_ERP_AssetActivityUserItemType
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a12)
+              variableName: Var_ItemRecCount
+              variableType: string
+              expressionProperties:
+                xpathExpression: "0"
+                variableName: Var_ItemRecCount
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a13)
+              variableName: Var_DocId
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: Var_DocId
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a15)
+              variableName: Var_DocName
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: Var_DocName
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a14)
+              variableName: Var_DocTitle
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: Var_DocTitle
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a19)
+              variableName: Var_FileCount
+              variableType: string
+              expressionProperties:
+                xpathExpression: "0"
+                variableName: Var_FileCount
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a21)
+              variableName: Var_ErrorCount
+              variableType: string
+              expressionProperties:
+                xpathExpression: "0"
+                variableName: Var_ErrorCount
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a24)
+              variableName: CurrentItemFileName
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: CurrentItemFileName
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a25)
+              variableName: Var_FileWiseData
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: Var_FileWiseData
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a27)
+              variableName: Var_TotalItemRecCount
+              variableType: string
+              expressionProperties:
+                xpathExpression: "0"
+                variableName: Var_TotalItemRecCount
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a29)
+              variableName: Var_TotalErrorCount
+              variableType: string
+              expressionProperties:
+                xpathExpression: "0"
+                variableName: Var_TotalErrorCount
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a31)
+              variableName: Var_EachFileErrorCount
+              variableType: string
+              expressionProperties:
+                xpathExpression: "0"
+                variableName: Var_EachFileErrorCount
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a33)
+              variableName: Var_unitOfIssue
+              variableType: string
+              expressionProperties:
+                xpathExpression: ''''''
+                variableName: Var_unitOfIssue
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a34)
+              variableName: Var_piRatio
+              variableType: string
+              expressionProperties:
+                xpathExpression: ''''''
+                variableName: Var_piRatio
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Try: Try(t2)
+          username: Getfile
+          statements:
+            - Map: Map(m0)
+              xsltfilepath: ../resources/processor_41/resourcegroup_44/req_7946c75d998248e4b5bc432144b3a3e1.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:client="http://xmlns.oracle.com/fa/event" xmlns:nssrcdfl="http://xmlns.oracle.com/apps/scm/productHub/itemImport/batches/protectedModel/entity/events/schema/PublicationHistoryEO" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/erp/subscribeERPItemPublicationEvent_REQUEST" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/subscribeERPItemPublicationEvent_REQUEST/types" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:tns="urn:GenericSoap" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/types/GetFileInUCM/OutboundSOAPRequestDocument" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://www.oracle.com/UCM" exclude-result-prefixes=" plnk client nssrcdfl ns1 nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1473769253" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath182620986" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1789345403" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath709423846" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath372635089" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163">
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                - '      <nstrgmpr:Body xml:id="id_21">'
+                - '        <ns0:GenericRequest xml:id="id_22" webKey="{&apos;cs&apos;}">'
+                - '          <ns0:Service xml:id="id_23" IdcService="{&apos;GET_FILE&apos;}">'
+                - '            <ns0:Document xml:id="id_24">'
+                - '              <ns0:Field xml:id="id_25" name="{&apos;dID&apos;}">'
+                - '                <xsl:value-of xml:id="id_26" select="/nssrcmpr:onEvent/nssrcdfl:PublicationJobCompletedInfo/nssrcdfl:DocumentId/nssrcdfl:newValue/@value"/>'
+                - ""
+            - Invoke: GetFileInUCM(i0)
+              application:
+                Application: GetFileInUCM(OUTL-BRT-SOAP-UCM_GS_WACSERPPIM)
+                name: GetFileInUCM
+                adapter:
+                    code: OUTL-BRT-SOAP-UCM_GS_WACSERPPIM
+                properties:
+                    - name: operationPath
+                      value: urn:GenericSoap/GenericSoapOperation
+            - Stitch: Stitch(sh0)
+              stitchNamespaceResolver:
+                prefixnamespacemap:
+                    tns: http://www.oracle.com/UCM
+              stitchVariables:
+                - name: GetFileInUCM
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://www.oracle.com/UCM}GenericResponse'
+                    uriToSchema: ../../application_31/inbound_32/resourcegroup_33/GetFileInUCM_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+                - name: var_GetFileInUCMOutput
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://www.oracle.com/UCM}GenericResponse'
+                    uriToSchema: ../../application_31/inbound_32/resourcegroup_33/GetFileInUCM_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+              stitchSentences:
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: $GetFileInUCM/tns:GenericResponse
+                    returnType: XML_TYPE_NODE_NODESET
+                  to:
+                    type: XPathPath
+                    path: $var_GetFileInUCMOutput/tns:GenericResponse
+                    isLastStepXsdAnyType: false
+            - Assignments: Assign_ReferenceFile(l5)
+              name: Assign_ReferenceFile
+              assignments:
+                - Assignment: Assignment(a16)
+                  variableName: Var_DocId
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: $GetFileInUCM/nsmpr5:GenericResponse/nsmpr5:Service/nsmpr5:Document/nsmpr5:Field[@name='dID']
+                    namespaceList: nsmpr5=http://www.oracle.com/UCM
+                    variableName: Var_DocId
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a17)
+                  variableName: Var_DocName
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: $GetFileInUCM/nsmpr5:GenericResponse/nsmpr5:Service/nsmpr5:Document/nsmpr5:Field[@name='dDocName']
+                    namespaceList: nsmpr5=http://www.oracle.com/UCM
+                    variableName: Var_DocName
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a18)
+                  variableName: Var_DocTitle
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: $GetFileInUCM/nsmpr5:GenericResponse/nsmpr5:Service/nsmpr5:Document/nsmpr5:Field[@name='FileName']
+                    namespaceList: nsmpr5=http://www.oracle.com/UCM
+                    variableName: Var_DocTitle
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - CatchAll: CatchAll(ta3)
+              statements:
+                - Logger: Logger(lg2)
+                  name: GetFileErr
+                  description: ""
+                  propertyfile: ../resources/processor_1491/resourcegroup_1498/expr.properties
+                  expressionProperties:
+                    xpathExpression: '"Error in GetFileinUCM Scope"'
+                    variableName: GetFileErr
+                - Stop: EHStop(eh3)
+              icsfaultfilepath: ../resources/processor_1486/resourcegroup_1487/ICSFault.xsd
+        - StageFile: UnzipFile(sf0)
+          operation: Unzip
+          expressionProperties:
+            xpathExpression: $var_GetFileInUCMOutput/ns0:GenericResponse/ns0:Service/ns0:Document/ns0:File/ns0:Contents
+            namespaceList: ns0=http://www.oracle.com/UCM
+          statements: []
+        - StageFile: ListFilesInZip(sf1)
+          operation: ListFiles
+          expressionProperties:
+            xpathExpression: '''/TempUnzippedFiles'''
+          statements: []
+        - ForLoop: ForLoop(f0)
+          expressionProperties:
+            xpathExpression: $ListFilesInZip/nssrcmpr:ListFilesResponse/nsmpr1:ListFilesResponse/nsmpr1:FileList/nsmpr2:ICSFile
+            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/stagefile/ListFilesInZip_REQUEST/types nsmpr2=http://xmlns.oracle.com/cloud/ics/file/v1/types nsmpr1=http://xmlns.oracle.com/cloud/staging/list
+            variableName: CurrItemFile
+          currentRecordVarName: CurrItemFile
+          statements:
+            - Assignments: Assign_ErrorDefault(l1)
+              name: Assign_ErrorDefault
+              assignments:
+                - Assignment: Assignment(a4)
+                  variableName: Var_ErrorCount
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: "0"
+                    variableName: Var_ErrorCount
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a5)
+                  variableName: Var_ItemErrorColl
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: ''''''
+                    variableName: Var_ItemErrorColl
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a8)
+                  variableName: Var_MaxErrorCountPerEmail
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: dvm:lookupValue('ERPWACS_ConfigProps','PropertyName','maxerrorcount.per.emailnotification','Value','50')
+                    namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                    variableName: Var_MaxErrorCountPerEmail
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a40)
+                  variableName: CurrentItemFileName
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: $CurrItemFile/nsmpr2:ICSFile/nsmpr2:Properties/nsmpr2:filename
+                    namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/ics/file/v1/types
+                    variableName: CurrentItemFileName
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - StageFile: ReadItemFile(sf2)
+              operation: Read
+              expressionProperties:
+                xpathExpression: $CurrItemFile/nsmpr2:ICSFile/nsmpr2:FileReference
+                namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/ics/file/v1/types
+              statements: []
+            - ForLoop: ForLoop(f1)
+              expressionProperties:
+                xpathExpression: $ReadItemFile/nsmpr14:ReadResponse/nsmpr4:Items/nsmpr4:Item
+                namespaceList: nsmpr14=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadItemFile_REQUEST/types nsmpr4=http://xmlns.oracle.com/apps/scm/productModel/common/publicationService/
+                variableName: CurrItemRecord
+              currentRecordVarName: CurrItemRecord
+              statements:
+                - Try: Try(t0)
+                  username: SyncToWACS
+                  statements:
+                    - Switch: Switch(s0)
+                      routes:
+                        - Route: SendEmail(sc0)
+                          exprProperties:
+                            xpathExpression: dvm:lookupValue("ERPWACS_ConfigProps", "PropertyName", "email.flag", "Value", "false") = "true"
+                            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                            expressionName: SendEmail
+                          stateInfo:
+                            referencedLookupData:
+                                - lookup-table-name-with-location: ERPWACS_ConfigProps
+                                  source: '"PropertyName"'
+                                  target: '"Value"'
+                          statements:
+                            - Switch: Switch(s1)
+                              routes:
+                                - Route: ErrorCountReached(sc2)
+                                  exprProperties:
+                                    xpathExpression: number($Var_ErrorCount) = number($Var_MaxErrorCountPerEmail)
+                                    expressionName: ErrorCountReached
+                                  stateInfo:
+                                    variablesReferenced:
+                                        - VariableName: Var_ErrorCount
+                                          rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                        - VariableName: Var_MaxErrorCountPerEmail
+                                          rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                  statements:
+                                    - xmlname:
+                                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                                        local: notification
+                                      attrs:
+                                        - name:
+                                            space: ""
+                                            local: id
+                                          value: n0
+                                        - name:
+                                            space: ""
+                                            local: refUri
+                                          value: processor_821
+                                      content: ""
+                                      statements: []
+                                    - Assignments: Default_ErrorVariables(l2)
+                                      name: Default_ErrorVariables
+                                      assignments:
+                                        - Assignment: Assignment(a30)
+                                          variableName: Var_TotalErrorCount
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: number($Var_TotalErrorCount) + number($Var_ErrorCount)
+                                            variableName: Var_TotalErrorCount
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a42)
+                                          variableName: Var_EachFileErrorCount
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: number($Var_EachFileErrorCount)  + number($Var_ErrorCount)
+                                            variableName: Var_EachFileErrorCount
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a6)
+                                          variableName: Var_ErrorCount
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: "0"
+                                            variableName: Var_ErrorCount
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a7)
+                                          variableName: Var_ItemErrorColl
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: ''''''
+                                            variableName: Var_ItemErrorColl
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                - Route: Otherwise(sc3)
+                                  exprProperties:
+                                    xpathExpression: "true"
+                                    expressionName: Otherwise
+                                  stateInfo: null
+                                  statements: []
+                        - Route: Otherwise(sc1)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: null
+                          statements: []
+                    - Switch: Switch(s5)
+                      routes:
+                        - Route: UnitOfIssueIsNull(sc10)
+                          exprProperties:
+                            xpathExpression: oraext:right-trim(oraext:left-trim($CurrItemRecord/nsmpr6:Item/nsmpr6:UnitOfIssueValue)) = ""
+                            namespaceList: nsmpr6=http://xmlns.oracle.com/apps/scm/productModel/common/publicationService/ oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                            expressionName: UnitOfIssueIsNull
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: CurrItemRecord
+                                  rootElement: '{http://xmlns.oracle.com/apps/scm/productModel/common/publicationService/}Item'
+                          statements:
+                            - Assignments: Assign_PrimUOMToUOI(l7)
+                              name: Assign_PrimUOMToUOI
+                              assignments:
+                                - Assignment: Assignment(a35)
+                                  variableName: Var_unitOfIssue
+                                  variableType: string
+                                  expressionProperties:
+                                    xpathExpression: $CurrItemRecord/nsmpr6:Item/nsmpr6:PrimaryUOMValue
+                                    namespaceList: nsmpr6=http://xmlns.oracle.com/apps/scm/productModel/common/publicationService/
+                                    variableName: Var_unitOfIssue
+                                    variableType: string
+                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                - Assignment: Assignment(a36)
+                                  variableName: Var_piRatio
+                                  variableType: string
+                                  expressionProperties:
+                                    xpathExpression: '''1'''
+                                    variableName: Var_piRatio
+                                    variableType: string
+                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Route: Otherwise(sc11)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: null
+                          statements:
+                            - Assignments: Assign_UOI(l8)
+                              name: Assign_UOI
+                              assignments:
+                                - Assignment: Assignment(a37)
+                                  variableName: Var_unitOfIssue
+                                  variableType: string
+                                  expressionProperties:
+                                    xpathExpression: $CurrItemRecord/nsmpr6:Item/nsmpr6:UnitOfIssueValue
+                                    namespaceList: nsmpr6=http://xmlns.oracle.com/apps/scm/productModel/common/publicationService/
+                                    variableName: Var_unitOfIssue
+                                    variableType: string
+                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Switch: Switch(s6)
+                              routes:
+                                - Route: UOPequalsUOI(sc12)
+                                  exprProperties:
+                                    xpathExpression: $CurrItemRecord/nsmpr6:Item/nsmpr6:PrimaryUOMValue = $CurrItemRecord/nsmpr6:Item/nsmpr6:UnitOfIssueValue
+                                    namespaceList: nsmpr6=http://xmlns.oracle.com/apps/scm/productModel/common/publicationService/
+                                    expressionName: UOPequalsUOI
+                                  stateInfo:
+                                    variablesReferenced:
+                                        - VariableName: CurrItemRecord
+                                          rootElement: '{http://xmlns.oracle.com/apps/scm/productModel/common/publicationService/}Item'
+                                  statements:
+                                    - Assignments: Assign_1piRatio(l9)
+                                      name: Assign_1piRatio
+                                      assignments:
+                                        - Assignment: Assignment(a38)
+                                          variableName: Var_piRatio
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: '''1'''
+                                            variableName: Var_piRatio
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                - Route: Otherwise(sc13)
+                                  exprProperties:
+                                    xpathExpression: "true"
+                                    expressionName: Otherwise
+                                  stateInfo: null
+                                  statements:
+                                    - Try: Try(t3)
+                                      username: Calculate_piRatio
+                                      statements:
+                                        - Map: Map(m3)
+                                          xsltfilepath: ../resources/processor_4027/resourcegroup_4030/req_be417d8983364d0d97042dfe9be7d1e7.xsl
+                                          mapsentences:
+                                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:client="http://xmlns.oracle.com/fa/event" xmlns:inp1="http://xmlns.oracle.com/apps/scm/productHub/itemImport/batches/protectedModel/entity/events/schema/PublicationHistoryEO" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/erp/subscribeERPItemPublicationEvent_REQUEST" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/subscribeERPItemPublicationEvent_REQUEST/types" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/erp/GetUOMConversion_REQUEST/types" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:types="http://xmlns.oracle.com/apps/crmCommon/salesParties/accountService/types/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/erp/GetUOMConversion_REQUEST" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:tns="http://xmlns.oracle.com/apps/crmCommon/salesParties/accountService/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" client inp1 ns1 nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper nssrcdfl xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:nsmpr2="http://xmlns.oracle.com/apps/scm/productModel/common/publicationService/" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/stagefile/ListFilesInZip_REQUEST/types" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadItemFile_REQUEST/types" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types" xmlns:nsmpr6="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr7="http://www.oracle.com/UCM" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns10="http://xmlns.oracle.com/apps/scm/productModel/items/itemRelationshipService/" xmlns:ns7="http://xmlns.oracle.com/apps/scm/productModel/items/flex/itemRevision/" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:ns2="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/flex/egoItemEff/item/categories/" xmlns:ns55="http://xml.oracle.com/adapters/extension" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns3="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/protectedModel/" xmlns:ns20="http://xmlns.oracle.com/apps/scm/productModel/items/flex/item/" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns19="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/flex/egoItemEff/itemSupplier/contexts/" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns13="http://xmlns.oracle.com/apps/scm/productModel/items/structures/structureServiceV2/" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:ns21="http://xmlns.oracle.com/apps/scm/productModel/items/flex/itemGdf/" xmlns:ns8="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/flex/egoItemEff/itemRevision/categories/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns0="http://xmlns.oracle.com/adf/svc/types/" xmlns:ns54="http://xmlns.oracle.com/cloud/adapters/fscmRestApp" xmlns:ns5="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/flex/egoItemEff/item/contexts/" xmlns:ns9="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadItemFile_REQUEST" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:ns53="http://xmlns.oracle.com/types/GetFileInUCM/OutboundSOAPRequestDocument" xmlns:ns18="http://xmlns.oracle.com/oracle/apps/scm/productCatalogManagement/advancedItems/protectedModel/" xmlns:ns17="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/flex/egoItemEff/itemSupplier/categories/" xmlns:ns56="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/GetUOMConversion_REQUEST/RESTOUTREQ" xmlns:ns50="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:ns33="http://xmlns.oracle.com/cloud/adapter/stagefile/ListFilesInZip_REQUEST" xmlns:ns6="http://xmlns.oracle.com/apps/scm/productModel/items/itemServiceV2/" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns49="http://xmlns.oracle.com/cloud/staging/list" xmlns:ns32="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/">
+                                            - '  <xsl:param name="CurrItemRecord" xml:id="id_42"/>'
+                                            - '  <xsl:template match="/" xml:id="id_11">'
+                                            - '    <nstrgmpr:create xml:id="id_12">'
+                                            - '      <nstrgmpr:UnitOfMeasureConversions xml:id="id_68">'
+                                            - '        <ns54:FromUOM xml:id="id_71">'
+                                            - '          <xsl:value-of xml:id="id_72" select="dvm:lookupValue (&quot;ERPWACS_UOMCode&quot;, &quot;ERP_UOMName&quot;, $CurrItemRecord/nsmpr2:Item/nsmpr2:PrimaryUOMValue, &quot;ERP_UOMCode&quot;, &quot;&quot; )"/>'
+                                            - '        <ns54:ToUOM xml:id="id_73">'
+                                            - '          <xsl:value-of xml:id="id_74" select="dvm:lookupValue (&quot;ERPWACS_UOMCode&quot;, &quot;ERP_UOMName&quot;, $CurrItemRecord/nsmpr2:Item/nsmpr2:UnitOfIssueValue, &quot;ERP_UOMCode&quot;, &quot;&quot; )"/>'
+                                            - '        <ns54:ItemId xml:id="id_69">'
+                                            - '          <xsl:value-of xml:id="id_70" select="$CurrItemRecord/nsmpr2:Item/nsmpr2:ItemId"/>'
+                                            - ""
+                                        - Invoke: GetUOMConversion(i2)
+                                          application:
+                                            Application: GetUOMConversion(OUTL-BRT-APP-ERPPIM_WACSERPPIM)
+                                            name: GetUOMConversion
+                                            adapter:
+                                                code: OUTL-BRT-APP-ERPPIM_WACSERPPIM
+                                            properties:
+                                                - name: operationPath
+                                                  value: http://xmlns.oracle.com/cloud/adapter/erp/GetUOMConversion_REQUEST/create
+                                        - Switch: Switch(s7)
+                                          routes:
+                                            - Route: ReturnSuccess(sc14)
+                                              exprProperties:
+                                                xpathExpression: $GetUOMConversion/nsmpr14:createResponse/nsmpr14:UnitOfMeasureConversions/nsmpr1:ReturnStatus = "SUCCESS"
+                                                namespaceList: nsmpr14=http://xmlns.oracle.com/cloud/adapter/erp/GetUOMConversion_REQUEST/types nsmpr1=http://xmlns.oracle.com/cloud/adapters/fscmRestApp
+                                                expressionName: ReturnSuccess
+                                              stateInfo:
+                                                variablesReferenced:
+                                                    - VariableName: GetUOMConversion
+                                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/erp/GetUOMConversion_REQUEST/types}createResponse'
+                                              statements:
+                                                - Assignments: AssignpiRatio(l10)
+                                                  name: AssignpiRatio
+                                                  assignments:
+                                                    - Assignment: Assignment(a39)
+                                                      variableName: Var_piRatio
+                                                      variableType: string
+                                                      expressionProperties:
+                                                        xpathExpression: $GetUOMConversion/nsmpr14:createResponse/nsmpr14:UnitOfMeasureConversions/nsmpr1:ConversionFactor
+                                                        namespaceList: nsmpr14=http://xmlns.oracle.com/cloud/adapter/erp/GetUOMConversion_REQUEST/types nsmpr1=http://xmlns.oracle.com/cloud/adapters/fscmRestApp
+                                                        variableName: Var_piRatio
+                                                        variableType: string
+                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Route: Otherwise(sc15)
+                                              exprProperties:
+                                                xpathExpression: "true"
+                                                expressionName: Otherwise
+                                              stateInfo: null
+                                              statements: []
+                    - Switch: Switch(s8)
+                      routes:
+                        - Route: (sc16)
+                          exprProperties:
+                            xpathExpression: $CurrItemRecord/nsmpr4:Item/nsmpr4:OrganizationCode = "ITM"
+                            namespaceList: nsmpr4=http://xmlns.oracle.com/apps/scm/productModel/common/publicationService/
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: CurrItemRecord
+                                  rootElement: '{http://xmlns.oracle.com/apps/scm/productModel/common/publicationService/}Item'
+                          statements:
+                            - Map: Map(m1)
+                              xsltfilepath: ../resources/processor_4976/resourcegroup_4979/req_d3148bf70a3140f1806f74b3e5d3dc91.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet xmlns:client="http://xmlns.oracle.com/fa/event" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/oracleutilities/WACS_StockItemSync" xmlns:inp1="http://xmlns.oracle.com/apps/scm/productHub/itemImport/batches/protectedModel/entity/events/schema/PublicationHistoryEO" xmlns:ns3="http://xmlns.oracle.com/cloud/adapter/erp/subscribeERPItemPublicationEvent_REQUEST" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/subscribeERPItemPublicationEvent_REQUEST/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_StockItemSync_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_StockItemSync_REQUEST" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:nsmpr1="http://xmlns.oracle.com/apps/scm/productModel/common/publicationService/" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/ListFilesInZip_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadItemFile_REQUEST/types" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types" xmlns:nsmpr5="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr6="http://www.oracle.com/UCM" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns10="http://xmlns.oracle.com/apps/scm/productModel/items/itemRelationshipService/" xmlns:ns7="http://xmlns.oracle.com/apps/scm/productModel/items/flex/itemRevision/" xmlns:ns29="http://xml.oracle.com/adapters/extension" xmlns:ns2="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/flex/egoItemEff/item/categories/" xmlns:ns51="http://www.oracle.rest.converters.autogeneratedns.com" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:ns52="http://www.oracle.rest.converters.autogeneratedns.com/oracleutilities/WACS_StockItemSync_REQUEST" xmlns:ns35="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/protectedModel/" xmlns:ns20="http://xmlns.oracle.com/apps/scm/productModel/items/flex/item/" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns13="http://xmlns.oracle.com/apps/scm/productModel/items/structures/structureServiceV2/" xmlns:ns21="http://xmlns.oracle.com/apps/scm/productModel/items/flex/itemGdf/" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns8="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/flex/egoItemEff/itemRevision/categories/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:tns="http://xmlns.oracle.com/adf/svc/errors/" xmlns:ns0="http://xmlns.oracle.com/adf/svc/types/" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:ns4="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/flex/egoItemEff/item/contexts/" xmlns:ns5="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadItemFile_REQUEST" xmlns:ns50="http://xmlns.oracle.com/types/GetFileInUCM/OutboundSOAPRequestDocument" xmlns:ns17="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/flex/egoItemEff/itemSupplier/categories/" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns47="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/stagefile/ListFilesInZip_REQUEST" xmlns:ns6="http://xmlns.oracle.com/apps/scm/productModel/items/itemServiceV2/" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns46="http://xmlns.oracle.com/cloud/staging/list" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns30="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" version="2.0" xml:id="id_1" exclude-result-prefixes=" client inp1 ns3 nssrcmpr oraext plnk xsd xp20 ora oracle-xsl-mapper nssrcdfl xsi fn xsl soap ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                                - '  <xsl:param name="CurrItemRecord" xml:id="id_42"/>'
+                                - '  <xsl:param name="Var_ERP_AssetActivityUserItemType" xml:id="id_75"/>'
+                                - '  <xsl:param name="Var_ERP_PurchaseItemCategory" xml:id="id_76"/>'
+                                - '  <xsl:param name="Var_piRatio" xml:id="id_86"/>'
+                                - '  <xsl:param name="Var_unitOfIssue" xml:id="id_87"/>'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:sync xml:id="id_12">'
+                                - '      <nstrgmpr:SYNC_request>'
+                                - '        <ns52:W1AdStkItmSy>'
+                                - '          <ns52:input>'
+                                - '            <ns52:externalSystem>'
+                                - '              <xsl:value-of select="dvm:lookupValue (&quot;ERPWACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.externalsystem&quot;, &quot;Value&quot;, &quot;&quot; )"/>'
+                                - '            <ns52:externalReferenceId>'
+                                - '              <xsl:value-of select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ItemId"/>'
+                                - '            <ns52:initialLoad>'
+                                - '              <xsl:value-of select="&apos;F1IL&apos;"/>'
+                                - '            <ns52:stockItemInfo>'
+                                - '              <ns52:resourceTypeExternalId>'
+                                - '                <xsl:value-of select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ItemId"/>'
+                                - '              <ns52:boStatus>'
+                                - '                <xsl:value-of select="dvm:lookupValue (&quot;ERPWACS_StockItemStatus&quot;, &quot;ERP_StockItemStatus&quot;, $CurrItemRecord/nsmpr1:Item/nsmpr1:ItemStatusValue, &quot;WACS_StockItemStatus&quot;, &quot;&quot; )"/>'
+                                - '              <ns52:description>'
+                                - '                <xsl:value-of select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ItemDescription"/>'
+                                - '              <ns52:longDescription>'
+                                - '                <xsl:value-of select="$CurrItemRecord/nsmpr1:Item/nsmpr1:LongDescription"/>'
+                                - '              <ns52:stockItem>'
+                                - '                <xsl:value-of select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ItemNumber"/>'
+                                - '              <ns52:usageExpenseCode>'
+                                - '                <xsl:value-of select="dvm:lookupValue (&quot;ERPWACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.usageexpensecode.default&quot;, &quot;Value&quot;, &quot;&quot; )"/>'
+                                - '              <ns52:propertyUnit>'
+                                - '                <xsl:value-of select="dvm:lookupValue (&quot;ERPWACS_AssetCategory&quot;, &quot;ERP_AssetCategory&quot;, $CurrItemRecord/nsmpr1:Item/nsmpr1:AssetCategoryValue, &quot;WACS_PropertyUnit&quot;, &quot;&quot; )"/>'
+                                - '              <ns52:unitPrice>'
+                                - '                <xsl:value-of select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ListPrice"/>'
+                                - '              <ns52:stockCategory>'
+                                - '                <xsl:value-of select="dvm:lookupValue (&quot;ERPWACS_ItemClass&quot;, &quot;ERP_ItemClass&quot;, $CurrItemRecord/nsmpr1:Item/nsmpr1:ItemClass, &quot;WACS_StockCategory&quot;, &quot;&quot; )"/>'
+                                - '              <xsl:choose xml:id="id_156">'
+                                - '                <xsl:when xml:id="id_157" test="string-length (normalize-space ($CurrItemRecord/nsmpr1:Item/nsmpr1:HazardClassValue ) ) &gt; 0">'
+                                - '                  <ns52:hazardous>'
+                                - '                    <xsl:value-of select="&apos;W1YS&apos;"/>'
+                                - '                <xsl:otherwise xml:id="id_160">'
+                                - '                  <ns52:hazardous xml:id="id_161">'
+                                - '                    <xsl:value-of xml:id="id_162" select="&apos;W1NO&apos;"/>'
+                                - '              <ns52:hazardousType>'
+                                - '                <xsl:value-of select="dvm:lookupValue (&quot;ERPWACS_HazardousType&quot;, &quot;ERP_HazardousCode&quot;, $CurrItemRecord/nsmpr1:Item/nsmpr1:HazardClassValue, &quot;WACS_HazardousType&quot;, &quot;&quot; )"/>'
+                                - '              <ns52:lotManaged>'
+                                - '                <xsl:value-of select="dvm:lookupValue (&quot;ERPWACS_LotManagedFlag&quot;, &quot;ERP_LotControlFlag&quot;, $CurrItemRecord/nsmpr1:Item/nsmpr1:LotControlValue, &quot;WACS_LotManagedFlag&quot;, &quot;&quot; )"/>'
+                                - '              <ns52:shelfLife>'
+                                - '                <xsl:value-of select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ShelfLifeDays"/>'
+                                - '              <ns52:capitalSpare>'
+                                - '                <xsl:value-of select="&apos;W1NO&apos;"/>'
+                                - '              <ns52:trackable>'
+                                - '                <xsl:value-of select="&apos;W1NO&apos;"/>'
+                                - '              <xsl:choose xml:id="id_225">'
+                                - '                <xsl:when xml:id="id_226" test="$CurrItemRecord/nsmpr1:Item/nsmpr1:UserItemTypeValue = $Var_ERP_AssetActivityUserItemType">'
+                                - '                  <ns52:repairable>'
+                                - '                    <xsl:value-of select="&apos;W1YS&apos;"/>'
+                                - '                <xsl:otherwise xml:id="id_229">'
+                                - '                  <ns52:repairable xml:id="id_230">'
+                                - '                    <xsl:value-of xml:id="id_231" select="&apos;W1NO&apos;"/>'
+                                - '              <ns52:unitOfPurchase>'
+                                - '                <xsl:value-of select="dvm:lookupValue (&quot;ERPWACS_UOMCode&quot;, &quot;ERP_UOMName&quot;, $CurrItemRecord/nsmpr1:Item/nsmpr1:PrimaryUOMValue, &quot;WACS_UOMCode&quot;, $CurrItemRecord/nsmpr1:Item/nsmpr1:PrimaryUOMValue )"/>'
+                                - '              <ns52:unitOfIssue>'
+                                - '                <xsl:value-of select="dvm:lookupValue (&quot;ERPWACS_UOMCode&quot;, &quot;ERP_UOMName&quot;, $Var_unitOfIssue, &quot;WACS_UOMCode&quot;, $Var_unitOfIssue )"/>'
+                                - '              <xsl:if xml:id="id_238" test="$Var_piRatio != &quot;&quot;">'
+                                - '                <ns52:purchaseToIssueRatio>'
+                                - '                  <xsl:value-of select="number ($Var_piRatio )"/>'
+                                - '              <xsl:for-each xml:id="id_292" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ItemCategory">'
+                                - '                <xsl:if xml:id="id_295" test="ns6:ItemCatalog = $Var_ERP_PurchaseItemCategory">'
+                                - '                  <ns52:purchaseCommodity>'
+                                - '                    <xsl:value-of select="dvm:lookupValue (&quot;ERPWACS_PurchaseCommodity&quot;, &quot;ERP_PurchaseCategoryName&quot;, ns6:CategoryName, &quot;WACS_PurchaseCommodity&quot;, &quot;&quot; )"/>'
+                                - '              <ns52:doNotSubstitute>'
+                                - '                <xsl:value-of select="dvm:lookupValue (&quot;ERPWACS_AllowSubstituteReceiptsFlag&quot;, &quot;ERP_AllowSubstituteReceiptsFlag&quot;, $CurrItemRecord/nsmpr1:Item/nsmpr1:AllowSubstituteReceiptsFlag, &quot;WACS_DoNotSubstituteFlag&quot;, &quot;&quot; )"/>'
+                                - '              <ns52:defaultValueToActivity>'
+                                - '                <xsl:value-of select="&apos;W1YS&apos;"/>'
+                                - '              <ns52:vendors>'
+                                - '                <xsl:for-each xml:id="id_348" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ItemSupplierAssociation">'
+                                - '                  <ns52:vendorsList>'
+                                - '                    <ns52:vendorLocationExternalId>'
+                                - '                      <xsl:value-of select="ns6:SupplierSiteId"/>'
+                                - '                    <ns52:vendorPartNumber>'
+                                - '                      <xsl:value-of select="ns6:SupplierItemNumber"/>'
+                                - '                    <ns52:vendorPriority>'
+                                - '                      <xsl:value-of select="dvm:lookupValue (&quot;ERPWACS_VendorPriority&quot;, &quot;ERP_SupplierPrimaryFlag&quot;, ns6:PrimaryFlag, &quot;WACS_VendorPriority&quot;, &quot;&quot; )"/>'
+                                - ""
+                            - Invoke: WACS_StockItemSync(i1)
+                              application:
+                                Application: WACS_StockItemSync(OUTL-BRT-REST-WACS_WACSERPPIM)
+                                name: WACS_StockItemSync
+                                adapter:
+                                    code: OUTL-BRT-REST-WACS_WACSERPPIM
+                                properties:
+                                    - name: operationPath
+                                      value: https://us-phoenix-1.stg.utilities-cloud.oracleindustry.com:443/c2g65p/test/wac/rest/apis/asset/inventory/stockItemSync/sync
+                                    - name: HttpVerb
+                                      value: POST
+                                    - name: ResourceURI
+                                      value: https://us-phoenix-1.utilities-cloud.oracleindustry.com:443/c2g65p/prod/wac/rest/apis/asset/inventory/stockItemSync/sync
+                        - Route: Otherwise(sc17)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: null
+                          statements:
+                            - Map: Map(m2)
+                              xsltfilepath: ../resources/processor_4994/resourcegroup_4997/req_861e9006053b48c894af87843080e4e7.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet xmlns:client="http://xmlns.oracle.com/fa/event" xmlns:inp1="http://xmlns.oracle.com/apps/scm/productHub/itemImport/batches/protectedModel/entity/events/schema/PublicationHistoryEO" xmlns:ns3="http://xmlns.oracle.com/cloud/adapter/erp/subscribeERPItemPublicationEvent_REQUEST" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/subscribeERPItemPublicationEvent_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_StockItemDetailSync_REQUEST" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_StockItemDetailSync_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/oracleutilities/WACS_StockItemDetailSync" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:nsmpr1="http://xmlns.oracle.com/apps/scm/productModel/common/publicationService/" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/ListFilesInZip_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadItemFile_REQUEST/types" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types" xmlns:nsmpr5="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr6="http://www.oracle.com/UCM" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns10="http://xmlns.oracle.com/apps/scm/productModel/items/itemRelationshipService/" xmlns:ns7="http://xmlns.oracle.com/apps/scm/productModel/items/flex/itemRevision/" xmlns:ns29="http://xml.oracle.com/adapters/extension" xmlns:ns33="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/flex/egoItemEff/item/categories/" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:ns35="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/protectedModel/" xmlns:ns20="http://xmlns.oracle.com/apps/scm/productModel/items/flex/item/" xmlns:ns52="http://www.oracle.rest.converters.autogeneratedns.com/oracleutilities/WACS_StockItemDetailSync_REQUEST" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns13="http://xmlns.oracle.com/apps/scm/productModel/items/structures/structureServiceV2/" xmlns:ns21="http://xmlns.oracle.com/apps/scm/productModel/items/flex/itemGdf/" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns8="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/flex/egoItemEff/itemRevision/categories/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:tns="http://xmlns.oracle.com/adf/svc/errors/" xmlns:ns0="http://xmlns.oracle.com/adf/svc/types/" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:ns4="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/flex/egoItemEff/item/contexts/" xmlns:ns5="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadItemFile_REQUEST" xmlns:ns50="http://xmlns.oracle.com/types/GetFileInUCM/OutboundSOAPRequestDocument" xmlns:ns17="http://xmlns.oracle.com/apps/scm/productCatalogManagement/advancedItems/flex/egoItemEff/itemSupplier/categories/" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns47="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/stagefile/ListFilesInZip_REQUEST" xmlns:ns6="http://xmlns.oracle.com/apps/scm/productModel/items/itemServiceV2/" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns46="http://xmlns.oracle.com/cloud/staging/list" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns30="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:ns12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:ns14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:ns18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" version="2.0" xml:id="id_1" exclude-result-prefixes=" client inp1 ns3 nssrcmpr oraext plnk xsd xp20 ora oracle-xsl-mapper nssrcdfl xsi fn xsl soap ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                                - '  <xsl:param name="CurrItemRecord" xml:id="id_42"/>'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:StockItemDetail xml:id="id_12">'
+                                - '      <nstrgmpr:STOCKITEMDETAIL_request>'
+                                - '        <ns52:targetMo xml:id="id_89">'
+                                - '          <xsl:value-of xml:id="id_90" select="dvm:lookupValue (&quot;ERPWACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.stockItemDetailMO&quot;, &quot;Value&quot;, &quot;&quot; )"/>'
+                                - '        <ns52:externalSystem xml:id="id_31">'
+                                - '          <xsl:value-of xml:id="id_32" select="dvm:lookupValue (&quot;ERPWACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.externalsystem&quot;, &quot;Value&quot;, &quot;&quot; )"/>'
+                                - '        <ns52:externalReferenceId xml:id="id_33">'
+                                - '          <xsl:value-of xml:id="id_34" select="concat (&quot;SID-&quot;, $CurrItemRecord/nsmpr1:Item/nsmpr1:ItemId )"/>'
+                                - '        <ns52:externalPkValue1 xml:id="id_99">'
+                                - '          <xsl:value-of xml:id="id_100" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ItemId"/>'
+                                - '        <ns52:bo xml:id="id_109">'
+                                - '          <xsl:value-of xml:id="id_110" select="dvm:lookupValue (&quot;ERPWACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.stockItemDetailBO&quot;, &quot;Value&quot;, &quot;&quot; )"/>'
+                                - '        <ns52:syncRequestDetails xml:id="id_22">'
+                                - '          <ns52:original xml:id="id_23">'
+                                - '            <ns52:finalSnapshot xml:id="id_24">'
+                                - '              <ns52:stockItemCode xml:id="id_79">'
+                                - '                <xsl:value-of xml:id="id_80" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ItemNumber"/>'
+                                - '              <!-- <ns52:resourceTypeId xml:id="id_25">'
+                                - '                                            <xsl:value-of xml:id="id_26" select="$CurrItemRecord/nsmpr1:Item/ns31:ItemId"/>'
+                                - '              <ns52:boStatus xml:id="id_27">'
+                                - '                <xsl:value-of xml:id="id_28" select="dvm:lookupValue (&quot;TSGT_ERPWACS_StockItemDetails_Status&quot;, &quot;SCM_ItemStatus&quot;, $CurrItemRecord/nsmpr1:Item/nsmpr1:ItemStatusValue, &quot;WACS_SID_Status&quot;, $CurrItemRecord/nsmpr1:Item/nsmpr1:ItemStatusValue )"/>'
+                                - '              <ns52:nodeExternalId xml:id="id_29">'
+                                - '                <xsl:value-of xml:id="id_30" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:OrganizationCode"/>'
+                                - '              <ns52:stockItemDetailClass xml:id="id_35">'
+                                - '                <xsl:value-of xml:id="id_36" select="dvm:lookupValue (&quot;ERPWACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.stockItemDetailClass&quot;, &quot;Value&quot;, &quot;W1IN&quot; )"/>'
+                                - '              <ns52:buyer xml:id="id_37">'
+                                - '                <xsl:value-of xml:id="id_38" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:DefaultBuyerValue"/>'
+                                - '              <ns52:maxQty xml:id="id_39">'
+                                - '                <xsl:value-of xml:id="id_40" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:MaximumMinmaxQuantity"/>'
+                                - '              <ns52:minQty xml:id="id_41">'
+                                - '                <xsl:value-of xml:id="id_42" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:MinimumMinmaxQuantity"/>'
+                                - '              <xsl:if test="(string-length ($CurrItemRecord/nsmpr1:Item/nsmpr1:MaximumMinmaxQuantity ) &gt; 0) and ($CurrItemRecord/nsmpr1:Item/nsmpr1:MaximumMinmaxQuantity &gt; 0)">'
+                                - '                <ns52:reorderQty>'
+                                - '                  <xsl:value-of select="1"/>'
+                                - '              <xsl:choose>'
+                                - '                <xsl:when test="((string-length ($CurrItemRecord/nsmpr1:Item/nsmpr1:MaximumMinmaxQuantity ) &gt; 0) and ($CurrItemRecord/nsmpr1:Item/nsmpr1:MaximumMinmaxQuantity &gt; 0))">'
+                                - '                  <ns52:autoReorder xml:id="id_51">'
+                                - '                    <xsl:value-of select="&apos;W1YS&apos;"/>'
+                                - '                <xsl:otherwise>'
+                                - '                  <ns52:autoReorder xml:id="id_51">'
+                                - '                    <xsl:value-of select="&apos;W1NO&apos;"/>'
+                                - '              <ns52:orderOnDemand xml:id="id_53">'
+                                - '                <xsl:value-of xml:id="id_54" select="dvm:lookupValue (&quot;ERPWACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.orderOnDemand&quot;, &quot;Value&quot;, &quot;&quot; )"/>'
+                                - '              <ns52:leadTime xml:id="id_43">'
+                                - '                <xsl:value-of xml:id="id_44" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ProcessingDays"/>'
+                                - '              <ns52:sourceCode xml:id="id_55">'
+                                - '                <xsl:value-of xml:id="id_56" select="dvm:lookupValue (&quot;ERPWACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.sourceCode&quot;, &quot;Value&quot;, &quot;&quot; )"/>'
+                                - '              <ns52:unitOfPurchase xml:id="id_45">'
+                                - '                <xsl:value-of xml:id="id_46" select="dvm:lookupValue (&quot;ERPWACS_UOMCode&quot;, &quot;ERP_UOMName&quot;, $CurrItemRecord/nsmpr1:Item/nsmpr1:PrimaryUOMValue, &quot;WACS_UOMCode&quot;, $CurrItemRecord/nsmpr1:Item/nsmpr1:PrimaryUOMValue )"/>'
+                                - '              <ns52:unitOfIssue xml:id="id_47">'
+                                - '                <xsl:value-of xml:id="id_48" select="dvm:lookupValue (&quot;ERPWACS_UOMCode&quot;, &quot;ERP_UOMName&quot;, $CurrItemRecord/nsmpr1:Item/nsmpr1:PrimaryUOMValue, &quot;WACS_UOMCode&quot;, $CurrItemRecord/nsmpr1:Item/nsmpr1:PrimaryUOMValue )"/>'
+                                - '              <ns52:purchaseToIssueRatio xml:id="id_49">'
+                                - '                <xsl:value-of xml:id="id_50" select="dvm:lookupValue (&quot;ERPWACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.purchaseToIssueRatio&quot;, &quot;Value&quot;, &quot;1&quot; )"/>'
+                                - '              <ns52:vendors xml:id="id_57">'
+                                - '                <xsl:if xml:id="id_61" test="$CurrItemRecord/nsmpr1:Item/nsmpr1:ItemSupplierAssociation/ns6:SupplierSiteId">'
+                                - '                  <ns52:vendorsList xml:id="id_62">'
+                                - '                    <ns52:vendorLocationExternalId xml:id="id_65">'
+                                - '                      <xsl:value-of xml:id="id_66" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ItemSupplierAssociation/ns6:SupplierSiteId"/>'
+                                - '                    <ns52:vendorPartNumber xml:id="id_67">'
+                                - '                      <xsl:value-of xml:id="id_68" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ItemSupplierAssociation/ns6:SupplierItemNumber"/>'
+                                - '                    <ns52:vendorPriority xml:id="id_69">'
+                                - '                      <xsl:value-of xml:id="id_70" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ItemSupplierAssociation/ns6:PrimaryFlag"/>'
+                                - '                <xsl:if xml:id="id_145" test="dvm:lookupValue (&quot;ERPWACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.default.vendor.locationid&quot;, &quot;Value&quot;, &quot;&quot; ) != &quot;&quot;">'
+                                - '                  <ns52:vendorsList xml:id="id_62">'
+                                - '                    <ns52:vendorLocationId xml:id="id_146">'
+                                - '                      <xsl:value-of xml:id="id_147" select="dvm:lookupValue (&quot;ERPWACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.default.vendor.locationid&quot;, &quot;Value&quot;, &quot;&quot; )"/>'
+                                - '                    <ns52:vendorPriority>'
+                                - '                      <xsl:value-of select="&quot;W1PR&quot;"/>'
+                                - '              <!--                                      <ns52:attachmentUrl xml:id="id_71">'
+                                - '                                      <xsl:value-of xml:id="id_72" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ItemAttachment/nsmpr1:URL"/>'
+                                - '                                <xsl:choose xml:id="id_130">'
+                                - '                                      <xsl:when xml:id="id_131" test="string-length ($CurrItemRecord/nsmpr1:Item/nsmpr1:ItemAttachment/nsmpr1:Title ) &gt; 0">'
+                                - '                                            <ns52:attachmentDescription xml:id="id_132">'
+                                - '                                                  <xsl:value-of xml:id="id_136" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ItemAttachment/nsmpr1:Title"/>'
+                                - '                                      <xsl:otherwise xml:id="id_133">'
+                                - '                                            <ns52:attachmentDescription xml:id="id_134">'
+                                - '                                                  <xsl:value-of xml:id="id_135" select="fn:current-dateTime ()"/>'
+                                - '              <ns52:typeOfAdjustment xml:id="id_75">'
+                                - '                <xsl:value-of xml:id="id_76" select="dvm:lookupValue (&quot;ERPWACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.typeOfAdjustment&quot;, &quot;Value&quot;, &quot;&quot; )"/>'
+                                - '              <ns52:newAverageUnitPrice xml:id="id_73">'
+                                - '                <xsl:value-of xml:id="id_74" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:ListPrice"/>'
+                                - '              <ns52:reasonCode xml:id="id_77">'
+                                - '                <xsl:value-of xml:id="id_78" select="dvm:lookupValue (&quot;ERPWACS_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.reasonCode&quot;, &quot;Value&quot;, &quot;&quot; )"/>'
+                                - '              <ns52:cmIsIntegration xml:id="id_119">'
+                                - '                <xsl:value-of xml:id="id_120" select="true ()"/>'
+                                - '              <ns52:cmNotes xml:id="id_171">'
+                                - '                <xsl:value-of xml:id="id_172" select="$CurrItemRecord/nsmpr1:Item/nsmpr1:FormattedDescription"/>'
+                                - ""
+                            - Invoke: WACS_StockItemDetailSync(i3)
+                              application:
+                                Application: WACS_StockItemDetailSync(OUTL-BRT-REST-WACS_WACSERPPIM)
+                                name: WACS_StockItemDetailSync
+                                adapter:
+                                    code: OUTL-BRT-REST-WACS_WACSERPPIM
+                                properties:
+                                    - name: operationPath
+                                      value: https://us-phoenix-1.stg.utilities-cloud.oracleindustry.com:443/c2g65p/test01/wac/rest/apis/cm/general/StockItemDetail/StockItemDetail
+                                    - name: HttpVerb
+                                      value: POST
+                                    - name: ResourceURI
+                                      value: https://us-phoenix-1.utilities-cloud.oracleindustry.com:443/c2g65p/prod/wac/rest/apis/cm/general/StockItemDetail/StockItemDetail
+                    - Assignments: CountRecordsProcessedInEachFile(l4)
+                      name: CountRecordsProcessedInEachFile
+                      assignments:
+                        - Assignment: Assignment(a11)
+                          variableName: Var_ItemRecCount
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: number($Var_ItemRecCount) + 1
+                            variableName: Var_ItemRecCount
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a22)
+                          variableName: CurrentItemFileName
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: $CurrItemFile/nsmpr2:ICSFile/nsmpr2:Properties/nsmpr2:filename
+                            namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/ics/file/v1/types
+                            variableName: CurrentItemFileName
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - CatchAll: CatchAll(ta0)
+                      statements:
+                        - Assignments: Assign_ErrorInfoCollection(l0)
+                          name: Assign_ErrorInfoCollection
+                          assignments:
+                            - Assignment: Assignment(a0)
+                              variableName: Var_ErrorDetails
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: 'concat (''Item Number: '' , $CurrItemRecord/nsmpr4:Item/nsmpr4:ItemNumber, '' Error:'',$SyncToWACSFaultObject/nsmpr14:fault/nsmpr14:details,''---'',$SyncToWACSFaultObject/nsmpr14:fault/nsmpr14:reason)'
+                                namespaceList: nsmpr14=http://www.oracle.com/2014/03/ics/fault nsmpr4=http://xmlns.oracle.com/apps/scm/productModel/common/publicationService/
+                                variableName: Var_ErrorDetails
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a1)
+                              variableName: Var_ItemErrorPerRecord
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: concat('<tr> <td>', $Var_ErrorDetails, '</td> </tr>')\n
+                                variableName: Var_ItemErrorPerRecord
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a2)
+                              variableName: Var_ItemErrorColl
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: concat($Var_ItemErrorColl,$Var_ItemErrorPerRecord)\n
+                                variableName: Var_ItemErrorColl
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a3)
+                              variableName: Var_ErrorCount
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: number($Var_ErrorCount) + 1
+                                variableName: Var_ErrorCount
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                      icsfaultfilepath: ../resources/processor_532/resourcegroup_533/ICSFault.xsd
+            - Assignments: CountFilesProcessed(l6)
+              name: CountFilesProcessed
+              assignments:
+                - Assignment: Assignment(a20)
+                  variableName: Var_FileCount
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: number($Var_FileCount)+1
+                    variableName: Var_FileCount
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a28)
+                  variableName: Var_TotalItemRecCount
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: number($Var_TotalItemRecCount) + number($Var_ItemRecCount)
+                    variableName: Var_TotalItemRecCount
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a44)
+                  variableName: Var_TotalErrorCount
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: number($Var_TotalErrorCount) + number ($Var_ErrorCount)
+                    variableName: Var_TotalErrorCount
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a32)
+                  variableName: Var_EachFileErrorCount
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: number($Var_EachFileErrorCount)  + number($Var_ErrorCount)
+                    variableName: Var_EachFileErrorCount
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a23)
+                  variableName: Var_FileWiseData
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: concat($Var_FileWiseData,"<tr><td>",$CurrentItemFileName , "</td><td>" , $Var_ItemRecCount , "</td><td>" ,$Var_EachFileErrorCount, "</td></tr>")
+                    variableName: Var_FileWiseData
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a26)
+                  variableName: Var_ItemRecCount
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: "0"
+                    variableName: Var_ItemRecCount
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a45)
+                  variableName: Var_ErrorCount
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: "0"
+                    variableName: Var_ErrorCount
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a43)
+                  variableName: Var_EachFileErrorCount
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: "0"
+                    variableName: Var_EachFileErrorCount
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Try: Try(t1)
+              username: FinalErrorNotification
+              statements:
+                - Switch: Switch(s2)
+                  routes:
+                    - Route: SendEmail(sc4)
+                      exprProperties:
+                        xpathExpression: dvm:lookupValue("ERPWACS_ConfigProps", "PropertyName", "email.flag", "Value", "false") = "true"\n
+                        namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                        expressionName: SendEmail
+                      stateInfo:
+                        referencedLookupData:
+                            - lookup-table-name-with-location: ERPWACS_ConfigProps
+                              source: '"PropertyName"'
+                              target: '"Value"'
+                      statements:
+                        - Switch: Switch(s3)
+                          routes:
+                            - Route: (sc6)
+                              exprProperties:
+                                xpathExpression: number($Var_ErrorCount) > 0.0
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: Var_ErrorCount
+                                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                              statements:
+                                - xmlname:
+                                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                                    local: notification
+                                  attrs:
+                                    - name:
+                                        space: ""
+                                        local: id
+                                      value: n1
+                                    - name:
+                                        space: ""
+                                        local: refUri
+                                      value: processor_980
+                                  content: ""
+                                  statements: []
+                            - Route: Otherwise(sc7)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements: []
+                    - Route: Otherwise(sc5)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements: []
+                - CatchAll: CatchAll(ta2)
+                  statements:
+                    - Logger: Logger(lg0)
+                      name: FinalErrorNotificationInfo
+                      description: ""
+                      propertyfile: ../resources/processor_1437/resourcegroup_1444/expr.properties
+                      expressionProperties:
+                        xpathExpression: '"Final Error Notification"'
+                        variableName: FinalErrorNotificationInfo
+                    - Stop: EHStop(eh1)
+                  icsfaultfilepath: ../resources/processor_1432/resourcegroup_1433/ICSFault.xsd
+        - Assignments: Assign_TotalErrorCount(l11)
+          name: Assign_TotalErrorCount
+          assignments:
+            - Assignment: Assignment(a41)
+              variableName: Var_TotalErrorCount
+              variableType: string
+              expressionProperties:
+                xpathExpression: number($Var_TotalErrorCount) + number($Var_ErrorCount)
+                variableName: Var_TotalErrorCount
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - xmlname:
+            space: http://www.oracle.com/2014/03/ics/flow/definition
+            local: notification
+          attrs:
+            - name:
+                space: ""
+                local: id
+              value: n5
+            - name:
+                space: ""
+                local: refUri
+              value: processor_2482
+          content: ""
+          statements: []
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta1)
+          statements:
+            - Switch: Switch(s4)
+              routes:
+                - Route: (sc8)
+                  exprProperties:
+                    xpathExpression: dvm:lookupValue("ERPWACS_ConfigProps", "PropertyName", "email.flag", "Value", "false") = "true"
+                    namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                  stateInfo:
+                    referencedLookupData:
+                        - lookup-table-name-with-location: ERPWACS_ConfigProps
+                          source: '"PropertyName"'
+                          target: '"Value"'
+                  statements:
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: notification
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: n2
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_1408
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc9)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_1387/resourcegroup_1388/ICSFault.xsd

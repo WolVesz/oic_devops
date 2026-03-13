@@ -1,0 +1,12 @@
+flowchart LR
+%% Auto-generated from invoke_chain_group_001.csv — root TSGT_OIL_TEST_RECO_SYNC_TOA_TO_W
+classDef integ fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+classDef adapt fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+ TSGT_OIL_TEST_RECO_SYNC_TOA_TO_W["TSGT Oil Testing Records Sync TOA to WACS"]:::integ
+ TSGT_ENTERPRISENOTIFI["TSGT EnterpriseNotificationService"]:::integ
+ TSGT_OIL_TEST_RECO_SYNC_TOA_TO_W -->|sendErrorNotification| TSGT_ENTERPRISENOTIFI
+ TSGT_OIL_TEST_RECO_SYNC_TOA_TO_W -->|sendNotification| TSGT_ENTERPRISENOTIFI
+ TOARESTADAPTER{{"TOARestAdapter"}}:::adapt
+ TSGT_OIL_TEST_RECO_SYNC_TOA_TO_W -->|getTestDataExtract| TOARESTADAPTER
+ TSGTOBJECTSTORAG_CONN{{"TSGTObjectStorage_Conn"}}:::adapt
+ TSGT_OIL_TEST_RECO_SYNC_TOA_TO_W -->|writeTestDataFileInObjStr| TSGTOBJECTSTORAG_CONN

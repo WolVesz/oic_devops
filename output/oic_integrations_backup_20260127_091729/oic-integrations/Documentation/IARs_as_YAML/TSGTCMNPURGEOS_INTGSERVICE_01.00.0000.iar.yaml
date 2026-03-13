@@ -1,0 +1,172 @@
+Orchestration: ""
+statements:
+    - xmlname:
+        space: http://www.oracle.com/2014/03/ics/flow/definition
+        local: scheduleReceive
+      attrs:
+        - name:
+            space: ""
+            local: trackingRefUri
+          value: processor_1
+        - name:
+            space: ""
+            local: id
+          value: sr0
+        - name:
+            space: ""
+            local: refUri
+          value: processor_8
+      content: ""
+      statements: []
+    - Assignments: InitVariables(l0)
+      name: InitVariables
+      assignments:
+        - Assignment: Assignment(a0)
+          variableName: ObjStgNameSpace
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName',"Namespace",'ConfigValue','')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: ObjStgNameSpace
+            variableDescription: Set the Object storage namespace
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a1)
+          variableName: ObjStgRawBucket
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName',"Rawbucket",'ConfigValue','')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: ObjStgRawBucket
+            variableDescription: Set the Object Storage Raw bucket name
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a2)
+          variableName: ObjStgArchiveBucket
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName',"Archivebucket",'ConfigValue','')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: ObjStgArchiveBucket
+            variableDescription: Set the Object Storage Archive bucket name
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a3)
+          variableName: ObjStgEnrichedBucket
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName',"Enrichedbucket",'ConfigValue','')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: ObjStgEnrichedBucket
+            variableDescription: Set the Object Storage Enriched bucket name
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a4)
+          variableName: ObjStgErrorBucket
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName',"Errorbucket",'ConfigValue','')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: ObjStgErrorBucket
+            variableDescription: Set the Object Storage Error bucket name
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a5)
+          variableName: FromEmail
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName','FROM_EMAIL','ConfigValue','')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: FromEmail
+            variableDescription: Set the From Email Id from Config Lookup
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a6)
+          variableName: ToEmail
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName','Integration_Admin_emailIDs','ConfigValue','')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: ToEmail
+            variableDescription: Set the To Email Id from Config Lookup
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a7)
+          variableName: EmailSubject
+          variableType: string
+          expressionProperties:
+            xpathExpression: '"Common Purge - Object Storage Service"'
+            variableName: EmailSubject
+            variableDescription: Set the Email Subject
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+    - Try: Try(t0)
+      username: ScopeInvokePurgeObjectStorage
+      statements:
+        - Map: Map(m0)
+          xsltfilepath: ../resources/processor_35/resourcegroup_38/req_497e55e6bc5e42eca2c3abb2db319589.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/InvokePurgeObjectStorageINT_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/InvokePurgeObjectStorageINT" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/InvokePurgeObjectStorageINT_REQUEST" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01 ns4" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:ns18="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Buckets/collocatedics/InvokePurgeObjectStorageINT_REQUEST" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:ns20="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/InvokePurgeObjectStorageINT_REQUEST" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns19="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/InvokePurgeObjectStorageINT_REQUEST/SKIPOUTREQ" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+            - '  <xsl:param name="EmailSubject" xml:id="id_17"/>'
+            - '  <xsl:param name="FromEmail" xml:id="id_18"/>'
+            - '  <xsl:param name="ObjStgArchiveBucket" xml:id="id_19"/>'
+            - '  <xsl:param name="ObjStgEnrichedBucket" xml:id="id_20"/>'
+            - '  <xsl:param name="ObjStgErrorBucket" xml:id="id_21"/>'
+            - '  <xsl:param name="ObjStgNameSpace" xml:id="id_22"/>'
+            - '  <xsl:param name="ObjStgRawBucket" xml:id="id_23"/>'
+            - '  <xsl:param name="ToEmail" xml:id="id_24"/>'
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:POST xml:id="id_12">'
+            - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_29">'
+            - '        <ns20:IntegrationType xml:id="id_66">'
+            - '          <xsl:value-of xml:id="id_67" select="&quot;ALL&quot;"/>'
+            - '        <ns20:OverrideRetentionDays xml:id="id_32">'
+            - '          <xsl:value-of xml:id="id_33" select="&quot;N&quot;"/>'
+            - '        <ns20:SendEmail xml:id="id_34">'
+            - '          <xsl:value-of xml:id="id_35" select="&quot;Y&quot;"/>'
+            - '        <ns20:FromEmailId xml:id="id_36">'
+            - '          <xsl:value-of xml:id="id_37" select="$FromEmail"/>'
+            - '        <ns20:ToEmailId xml:id="id_38">'
+            - '          <xsl:value-of xml:id="id_39" select="$ToEmail"/>'
+            - '        <ns20:EmailSubject xml:id="id_40">'
+            - '          <xsl:value-of xml:id="id_41" select="$EmailSubject"/>'
+            - '        <ns20:AttachmentType xml:id="id_42">'
+            - '          <xsl:value-of xml:id="id_43" select="&quot;INLINE&quot;"/>'
+            - '        <ns20:ObjStgNamespace xml:id="id_44">'
+            - '          <xsl:value-of xml:id="id_45" select="$ObjStgNameSpace"/>'
+            - '        <ns20:Buckets xml:id="id_46">'
+            - '          <ns18:IbBucketName xml:id="id_47">'
+            - '            <xsl:value-of xml:id="id_48" select="$ObjStgRawBucket"/>'
+            - '        <ns20:Buckets xml:id="id_49">'
+            - '          <ns18:IbBucketName xml:id="id_50">'
+            - '            <xsl:value-of xml:id="id_51" select="$ObjStgArchiveBucket"/>'
+            - '        <ns20:Buckets xml:id="id_52">'
+            - '          <ns18:IbBucketName xml:id="id_53">'
+            - '            <xsl:value-of xml:id="id_54" select="$ObjStgErrorBucket"/>'
+            - '        <ns20:Buckets xml:id="id_55">'
+            - '          <ns18:IbBucketName xml:id="id_56">'
+            - '            <xsl:value-of xml:id="id_57" select="$ObjStgEnrichedBucket"/>'
+            - ""
+        - Invoke: InvokePurgeObjectStorageINT(i0)
+          application:
+            Application: InvokePurgeObjectStorageINT(PRESEEDED_COLLOCATED_CONN_1741)
+            name: InvokePurgeObjectStorageINT
+            adapter:
+                code: PRESEEDED_COLLOCATED_CONN_1741
+            properties:
+                - name: operationPath
+                  value: /
+                - name: HttpVerb
+                  value: POST
+                - name: QueryParameters
+                  value: ""
+                - name: ResourceURI
+                  value: /
+                - name: integration_id
+                  value: TSGTCMNOBJSTRGPU_SERVICE|01.00.0000
+                - name: integration_operation
+                  value: POST
+                - name: serviceType
+                  value: REST
+    - Stop: Stop(st0)

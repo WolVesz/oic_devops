@@ -1,0 +1,1882 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_10280
+      xsdfilepath: ../resources/processor_10280/resourcegroup_10281/ICSIntegrationMetadata.xsd
+    - Receive: Receive(r0)
+      trackingvariables:
+        - role: tracking_var_1
+          primary: true
+          name: ESS Process Id
+          xpath: /execute/request-wrapper/ESSProcessId
+        - role: tracking_var_2
+          name: Email Id
+          xpath: /execute/request-wrapper/EmailId
+        - role: tracking_var_3
+          name: Attribute1
+          xpath: /execute/request-wrapper/Attribute1
+    - Assignments: AssignGlobalVariable(l0)
+      name: AssignGlobalVariable
+      assignments:
+        - Assignment: Assignment(a88)
+          variableName: FlowId
+          variableType: string
+          expressionProperties:
+            xpathExpression: ora:getFlowId()
+            namespaceList: ora=http://schemas.oracle.com/xpath/extension
+            variableName: FlowId
+            variableDescription: Stores the Instance Id
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a0)
+          variableName: LogFileFound
+          variableType: string
+          expressionProperties:
+            xpathExpression: '"N"'
+            variableName: LogFileFound
+            variableDescription: Set 'Y' if log File Found and 'N' if not found
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a1)
+          variableName: OutputFileFound
+          variableType: string
+          expressionProperties:
+            xpathExpression: '"N"'
+            variableName: OutputFileFound
+            variableDescription: set Y if Output File Found and 'N' if not found
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a87)
+          variableName: BaseFolderPath
+          variableType: string
+          expressionProperties:
+            xpathExpression: concat('/temp/', $FlowId,'/')
+            variableName: BaseFolderPath
+            variableDescription: Used as the unique path to store the stage files
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a4)
+          variableName: FileContent
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: FileContent
+            variableDescription: File Reference to be sent in the mail Notification
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a6)
+          variableName: Status
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''SUCCESS'''
+            variableName: Status
+            variableDescription: Initialize the Status as SUCCESS
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a11)
+          variableName: ErrorFlag
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''N'''
+            variableName: ErrorFlag
+            variableDescription: Set Y in case of ERROR
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a41)
+          variableName: JobInstanceId
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: JobInstanceId
+            variableDescription: Variable to Store Job Instance ID for a ESS job
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a15)
+          variableName: AttachmentContent
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: AttachmentContent
+            variableDescription: Variable to store Output file Content
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a16)
+          variableName: OutputFileType
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: OutputFileType
+            variableDescription: Output File Type
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a19)
+          variableName: OutputFileName
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: OutputFileName
+            variableDescription: Output File Name
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a22)
+          variableName: JobOutputID
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: JobOutputID
+            variableDescription: Output Document ID
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a89)
+          variableName: BIReportPath
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''/Custom/TSGTIntegrations/Common/TSGT_CMN_ESSJOBFile_Extract_Report.xdo'''
+            variableName: BIReportPath
+            variableDescription: Variable to Store BI Report Absolute Path
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a28)
+          variableName: ScheduledOutputInforResponse
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: ScheduledOutputInforResponse
+            variableDescription: Variable to Store ScheduledReportOutputInfo Operation Response
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a108)
+          variableName: TSGT_CMN_NO_DATA_FOUND
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_CMN_NO_DATA_FOUND','MessageDescr','TSGT_CMN_NO_DATA_FOUND')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_CMN_NO_DATA_FOUND
+            variableDescription: Stores No Data Found Error from lookup table
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a31)
+          variableName: MsgCode
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: MsgCode
+            variableDescription: Stores a unique code for error and success status
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a29)
+          variableName: MsgDescr
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: MsgDescr
+            variableDescription: Stores the description for the Message
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a61)
+          variableName: MsgDetail
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: MsgDetail
+            variableDescription: Details information of the Exception
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a2)
+          variableName: ESSJobName
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: ESSJobName
+            variableDescription: Variable to store ESS Job Name
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a42)
+          variableName: ESSJobStatus
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: ESSJobStatus
+            variableDescription: Variable to store ESS Job Status
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a43)
+          variableName: ESSJobSubmissionTime
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: ESSJobSubmissionTime
+            variableDescription: Variable to store ESS Job Submission Time
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a44)
+          variableName: ESSJobCompletionTime
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: ESSJobCompletionTime
+            variableDescription: Variable to store ESS Job Completion Time
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a45)
+          variableName: ESSJobSubmittedBy
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: ESSJobSubmittedBy
+            variableDescription: Variable to store ESS Job Submitted By Value
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a46)
+          variableName: ESSJobScheduledTime
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: ESSJobScheduledTime
+            variableDescription: Variable to store ESS Job Scheduled Time
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a52)
+          variableName: ESSjobSubmissionNotes
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: ESSjobSubmissionNotes
+            variableDescription: Variable to store ESS Job Submission Notes
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a55)
+          variableName: BlankValue
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: BlankValue
+            variableDescription: Used to assign empty response
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a25)
+          variableName: TSGT_SYSTEM_ERROR
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_SYSTEM_ERROR','MessageDescr','TSGT_SYSTEM_ERROR')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_SYSTEM_ERROR
+            variableDescription: Stores System Error from lookup table
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a69)
+          variableName: TSGT_INVALID_ESS_JOB_ID
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_INVALID_ESS_JOB_ID','MessageDescr','TSGT_INVALID_ESS_JOB_ID')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_INVALID_ESS_JOB_ID
+            variableDescription: Stores as Initialize ESS JOB Error from lookup table
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a39)
+          variableName: TSGT_NO_ESS_JOB_ID_FOUND
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_NO_ESS_JOB_ID_FOUND','MessageDescr','TSGT_NO_ESS_JOB_ID_FOUND')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_NO_ESS_JOB_ID_FOUND
+            variableDescription: Stores as No ESS Job Found Error from lookup table
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a85)
+          variableName: ReportOutput
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: ReportOutput
+            variableDescription: variable to store decoded reportbytes
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a26)
+          variableName: BaseFilename
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''Report.csv'''
+            variableName: BaseFilename
+            variableDescription: Set the Report name
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a90)
+          variableName: LogFileDatainHTMLTable
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: LogFileDatainHTMLTable
+            variableDescription: Stores the HTML Header format
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a92)
+          variableName: MailBody
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: MailBody
+            variableDescription: Mail body to be sent via Notification
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a32)
+          variableName: TSGT_CMN_ESS_JOB_FILE_STATUS
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_CMN_ESS_JOB_FILE_STATUS','MessageDescr','TSGT_CMN_ESS_JOB_FILE_STATUS')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_CMN_ESS_JOB_FILE_STATUS
+            variableDescription: Set the ESS Job Status from Lookup
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+    - Try: Try(t2)
+      username: Scope_getReportJobInstanceId
+      statements:
+        - Switch: Switch(s4)
+          routes:
+            - Route: (sc9)
+              exprProperties:
+                xpathExpression: $ErrorFlag = "N" and /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:ESSProcessId!='' and (/nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:ESSProcessId)div(1)=(/nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:ESSProcessId)
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: ErrorFlag
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types}execute'
+              statements:
+                - Map: Map(m5)
+                  xsltfilepath: ../resources/processor_2434/resourcegroup_2437/req_65e570c8d41a4ab99fc1dcd748c89172.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types" xmlns:ns6="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getDocumentService" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nstrgmpr="http://xmlns.oracle.com/types/GetEssJobInstanceId/1629276762862/OutboundSOAPRequestDocument" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:tns="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" nssrcmpr ns6 oraext plnk xsd xp20 ns20 ora oracle-xsl-mapper nssrcdfl xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINRES" xmlns:ns27="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINREQ" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940">
+                    - '  <xsl:param name="BIReportPath" xml:id="id_60"/>'
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                    - '      <nstrgmpr:Body xml:id="id_26">'
+                    - '        <tns:runReport xml:id="id_27">'
+                    - '          <tns:reportRequest xml:id="id_28">'
+                    - '            <tns:parameterNameValues xml:id="id_31">'
+                    - '              <tns:item xml:id="id_32">'
+                    - '                <tns:name xml:id="id_33">P_REQUEST_ID</tns:name>'
+                    - '                <tns:values xml:id="id_34">'
+                    - '                  <tns:item xml:id="id_35">'
+                    - '                    <xsl:value-of xml:id="id_36" select="/nssrcmpr:execute/ns28:request-wrapper/ns28:ESSProcessId"/>'
+                    - '            <tns:reportAbsolutePath xml:id="id_30">'
+                    - '              <xsl:value-of xml:id="id_54" select="$BIReportPath"/>'
+                    - '            <tns:sizeOfDataChunkDownload xml:id="id_29">-1</tns:sizeOfDataChunkDownload>'
+                    - ""
+                - Invoke: GetEssJobInstanceId(i2)
+                  application:
+                    Application: GetEssJobInstanceId(TSGTSOAPERPBIP_CONN)
+                    name: GetEssJobInstanceId
+                    adapter:
+                        code: TSGTSOAPERPBIP_CONN
+                    properties:
+                        - name: operationPath
+                          value: ""
+                - Assignments: DecodReportBytes(l21)
+                  name: DecodReportBytes
+                  assignments:
+                    - Assignment: Assignment(a86)
+                      variableName: ReportOutput
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: oraext:decodeBase64($GetEssJobInstanceId/tns:runReportResponse/tns:runReportReturn/tns:reportBytes)
+                        namespaceList: tns=http://xmlns.oracle.com/oxp/service/PublicReportService oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                        variableName: ReportOutput
+                        variableDescription: Variable to store Decoded Report bytes
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Switch: Switch(s5)
+                  routes:
+                    - Route: (sc11)
+                      exprProperties:
+                        xpathExpression: substring-before(substring-after($ReportOutput, "<REQUEST_ID>"), "</REQUEST_ID>") != "" or substring-before(substring-after($ReportOutput, "<JOB_INSTANCE_ID>"), "</JOB_INSTANCE_ID>")!=''
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: ReportOutput
+                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                      statements:
+                        - Map: Map(m8)
+                          xsltfilepath: ../resources/processor_9891/resourcegroup_9894/req_3ecbb5bd0116444f8eb50a4933602baa.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/erp/GetESSJobName_REQUEST" xmlns:ns6="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getDocumentService" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:types="http://xmlns.oracle.com/apps/financials/commonModules/shared/model/erpIntegrationService/types/" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:tns="http://xmlns.oracle.com/apps/financials/commonModules/shared/model/erpIntegrationService/" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/erp/GetESSJobName_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" nssrcmpr ns6 oraext xsd xp20 ns22 ora oracle-xsl-mapper nssrcdfl xsi fn xsl ignore01 soap12 mime" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:sdoJava="commonj.sdo/java" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:ns27="http://xml.oracle.com/adapters/extension" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINRES" xmlns:ns29="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINREQ" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:nsmpr1="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr2="http://xmlns.oracle.com/types/GetEssJobInstanceId/1629276762862/OutboundSOAPRequestDocument" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/">
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:getESSExecutionDetails xml:id="id_12">'
+                            - '      <nstrgmpr:requestId xml:id="id_44">'
+                            - '        <xsl:value-of xml:id="id_45" select="/nssrcmpr:execute/ns30:request-wrapper/ns30:ESSProcessId"/>'
+                            - ""
+                        - Invoke: GetESSJobName(i0)
+                          application:
+                            Application: GetESSJobName(TSGTERPCLOUD_CONN)
+                            name: GetESSJobName
+                            adapter:
+                                code: TSGTERPCLOUD_CONN
+                            properties:
+                                - name: operationPath
+                                  value: http://xmlns.oracle.com/apps/financials/commonModules/shared/model/erpIntegrationService/getESSExecutionDetails
+                        - Assignments: AssignJobInstanceId(l9)
+                          name: AssignJobInstanceId
+                          assignments:
+                            - Assignment: Assignment(a14)
+                              variableName: JobInstanceId
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: substring-before(substring-after($ReportOutput,'<JOB_INSTANCE_ID>'),'</JOB_INSTANCE_ID>')
+                                variableName: JobInstanceId
+                                variableDescription: Variable to Store Job Instance ID for a ESS job
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a47)
+                              variableName: ESSJobStatus
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: substring-before(substring-after($ReportOutput,'<STATUS>'),'</STATUS>')
+                                variableName: ESSJobStatus
+                                variableDescription: Variable to store ESS Job Status
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a48)
+                              variableName: ESSJobScheduledTime
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: substring-before(substring-after($ReportOutput,'<SCHEDULED_TIME>'),'</SCHEDULED_TIME>')
+                                variableName: ESSJobScheduledTime
+                                variableDescription: Variable to store ESS Job Scheduled Time
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a49)
+                              variableName: ESSJobSubmissionTime
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: substring-before(substring-after($ReportOutput,'<SUBMISSION_TIME>'),'</SUBMISSION_TIME>')
+                                variableName: ESSJobSubmissionTime
+                                variableDescription: Variable to store ESS Job Submission Time
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a50)
+                              variableName: ESSJobCompletionTime
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: substring-before(substring-after($ReportOutput,'<COMPLETION_TIME>'),'</COMPLETION_TIME>')
+                                variableName: ESSJobCompletionTime
+                                variableDescription: Variable to store ESS Job Completion Time
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a51)
+                              variableName: ESSJobSubmittedBy
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: substring-before(substring-after($ReportOutput,'<SUBMITTED_BY>'),'</SUBMITTED_BY>')
+                                variableName: ESSJobSubmittedBy
+                                variableDescription: Variable to store ESS Job Submitted By Value
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a53)
+                              variableName: ESSjobSubmissionNotes
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: substring-before(substring-after($ReportOutput,'<SUBMISSION_NOTES>'),'</SUBMISSION_NOTES>')
+                                variableName: ESSjobSubmissionNotes
+                                variableDescription: Variable to store ESS Job Submission Notes
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a54)
+                              variableName: ESSJobName
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: substring-before(substring-after($GetESSJobName/nsmpr9:getESSExecutionDetailsResponse/nsmpr9:result,'"JOBNAME":"'),'","JOBPATH')
+                                namespaceList: nsmpr9=http://xmlns.oracle.com/cloud/adapter/erp/GetESSJobName_REQUEST/types
+                                variableName: ESSJobName
+                                variableDescription: Variable to store ESS Job Name
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a102)
+                              variableName: tracking_var_2
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: $ESSJobName
+                                variableName: tracking_var_2
+                                variableDescription: Set ESS Job Name to the Tracking Variable
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a103)
+                              variableName: tracking_var_3
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:EmailId
+                                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types
+                                variableName: tracking_var_3
+                                variableDescription: Set Email Id to the Tracking Variable
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: (sc16)
+                      exprProperties:
+                        xpathExpression: substring-before(substring-after($ReportOutput, "<REQUEST_ID>"), "</REQUEST_ID>") = ""
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: ReportOutput
+                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                      statements:
+                        - Assignments: AssignInvalidJobId(l15)
+                          name: AssignInvalidJobId
+                          assignments:
+                            - Assignment: Assignment(a36)
+                              variableName: MsgCode
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '"TSGT_INVALID_ESS_JOB_ID"'
+                                variableName: MsgCode
+                                variableDescription: Set the Message Code for the Error
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a37)
+                              variableName: MsgDescr
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: $TSGT_INVALID_ESS_JOB_ID
+                                variableName: MsgDescr
+                                variableDescription: Set the Message Description for the Error from lookup
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a38)
+                              variableName: ErrorFlag
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''Y''\n'
+                                variableName: ErrorFlag
+                                variableDescription: Set the Flag to Y
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a84)
+                              variableName: Status
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''ERROR'''
+                                variableName: Status
+                                variableDescription: Set the Status to ERROR
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: Otherwise(sc12)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements: []
+            - Route: (sc13)
+              exprProperties:
+                xpathExpression: /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:ESSProcessId=""
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types}execute'
+              statements:
+                - Assignments: AssignParamNotFound(l13)
+                  name: AssignParamNotFound
+                  assignments:
+                    - Assignment: Assignment(a33)
+                      variableName: ErrorFlag
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''Y'''
+                        variableName: ErrorFlag
+                        variableDescription: Flag to Identify the Error Status
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a34)
+                      variableName: MsgCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''TSGT_NO_ESS_JOB_ID_FOUND'''
+                        variableName: MsgCode
+                        variableDescription: Stores a unique code for error and success status
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a40)
+                      variableName: MsgDescr
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $TSGT_NO_ESS_JOB_ID_FOUND
+                        variableName: MsgDescr
+                        variableDescription: Stores the description for the Message
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a27)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''ERROR'''
+                        variableName: Status
+                        variableDescription: Stores Status
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: Otherwise(sc10)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements:
+                - Assignments: AssignInvalidData(l20)
+                  name: AssignInvalidData
+                  assignments:
+                    - Assignment: Assignment(a80)
+                      variableName: ErrorFlag
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''Y'''
+                        variableName: ErrorFlag
+                        variableDescription: Flag to Identify the Error Status
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a82)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''ERROR'''
+                        variableName: Status
+                        variableDescription: Stores Status as 'ERROR'
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a83)
+                      variableName: MsgCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''TSGT_INVALID_ESS_JOB_ID'''
+                        variableName: MsgCode
+                        variableDescription: Stores a unique code for error and success status
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a81)
+                      variableName: MsgDescr
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $TSGT_INVALID_ESS_JOB_ID
+                        variableName: MsgDescr
+                        variableDescription: Stores the description for the Message
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - CatchAll: CatchAll(ta3)
+          statements:
+            - Assignments: AssignReportDataFaultHandler(l14)
+              name: AssignReportDataFaultHandler
+              assignments:
+                - Assignment: Assignment(a35)
+                  variableName: MsgCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''TSGT_CMN_LOGUTILTY_ PROCESSING_ERROR'''
+                    variableName: MsgCode
+                    variableDescription: Stores a unique code for error and success status
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a7)
+                  variableName: MsgDescr
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: 'concat( $TSGT_SYSTEM_ERROR, " Details: ", $Scope_getReportJobInstanceIdFaultObject/nsmpr7:fault/nsmpr7:reason)'
+                    namespaceList: nsmpr7=http://www.oracle.com/2014/03/ics/fault
+                    variableName: MsgDescr
+                    variableDescription: Stores the description for the Message
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a8)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableDescription: Stores Success
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a10)
+                  variableName: ErrorFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErrorFlag
+                    variableDescription: Set Y in case of ERROR
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a62)
+                  variableName: MsgDetail
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: ora:getFaultAsString()
+                    namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDetail
+                    variableDescription: Details information of the Exception
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_7154/resourcegroup_7155/ICSFault.xsd
+    - Try: Try(t1)
+      username: Scope_getLogFile
+      statements:
+        - Switch: Switch(s2)
+          routes:
+            - Route: (sc6)
+              exprProperties:
+                xpathExpression: /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:ESSProcessId != "" and $ErrorFlag = "N" and (/nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:DocumentType = "log" or /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:DocumentType = "ALL")
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types}execute'
+                    - VariableName: ErrorFlag
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - Map: Map(m4)
+                  xsltfilepath: ../resources/processor_4515/resourcegroup_4518/req_b5c5d24d139649ee89a95eeddc164a14.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types" xmlns:ns6="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getDocumentService" xmlns:tns="http://xmlns.oracle.com/apps/financials/generalLedger/accounts/codeCombinations/accountCombinationService/" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/erp/DownloadESSJobDetails_REQUEST" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/erp/DownloadESSJobDetails_REQUEST/types" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:types="http://xmlns.oracle.com/apps/financials/generalLedger/accounts/codeCombinations/accountCombinationService/types/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" nssrcmpr ns6 oraext xsd xp20 ns22 ora oracle-xsl-mapper nssrcdfl xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/erp/downloadExportOutput_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:sdoXML="commonj.sdo/xml" xmlns:sdoJava="commonj.sdo/java" xmlns:ns37="http://xmlns.oracle.com/apps/financials/commonModules/shared/model/erpIntegrationService/" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:ns28="http://xml.oracle.com/adapters/extension" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns32="http://xmlns.oracle.com/adf/svc/types/" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns36="http://xmlns.oracle.com/cloud/adapter/erp/downloadExportOutput_REQUEST" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:sdo="commonj.sdo" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINRES" xmlns:ns30="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINREQ" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111">
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:downloadESSJobExecutionDetails xml:id="id_12">'
+                    - '      <nstrgmpr:requestId xml:id="id_44">'
+                    - '        <xsl:value-of xml:id="id_45" select="/nssrcmpr:execute/ns31:request-wrapper/ns31:ESSProcessId"/>'
+                    - '      <nstrgmpr:fileType xml:id="id_67">'
+                    - '        <xsl:value-of xml:id="id_68" select="/nssrcmpr:execute/ns31:request-wrapper/ns31:Attribute1"/>'
+                    - ""
+                - Invoke: DownloadESSJobDetails(i1)
+                  application:
+                    Application: DownloadESSJobDetails(TSGTERPCLOUD_CONN)
+                    name: DownloadESSJobDetails
+                    adapter:
+                        code: TSGTERPCLOUD_CONN
+                    properties:
+                        - name: operationPath
+                          value: http://xmlns.oracle.com/apps/financials/commonModules/shared/model/erpIntegrationService/downloadESSJobExecutionDetails
+                - Switch: Switch(s3)
+                  routes:
+                    - Route: (sc8)
+                      exprProperties:
+                        xpathExpression: $DownloadESSJobDetails/nsmpr9:downloadESSJobExecutionDetailsResponse/nsmpr9:result/nsmpr0:DocumentName != ""
+                        namespaceList: nsmpr9=http://xmlns.oracle.com/cloud/adapter/erp/DownloadESSJobDetails_REQUEST/types nsmpr0=http://xmlns.oracle.com/apps/financials/commonModules/shared/model/erpIntegrationService/
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: DownloadESSJobDetails
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/erp/DownloadESSJobDetails_REQUEST/types}downloadESSJobExecutionDetailsResponse'
+                      statements:
+                        - Assignments: AssignlogFileFoundAsY(l1)
+                          name: AssignlogFileFoundAsY
+                          assignments:
+                            - Assignment: Assignment(a3)
+                              variableName: LogFileFound
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''Y'''
+                                variableName: LogFileFound
+                                variableDescription: Set 'Y' if log File Found and 'N' if not found
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Map: Map(m1)
+                          xsltfilepath: ../resources/processor_72/resourcegroup_75/req_67a5b4df58c949509326c37c4cf10afc.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/StageWriteEssjobOutput_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/stagefile/StageWriteEssjobOutput_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr oraext xp20 ns1 ora oracle-xsl-mapper xsi fn nssrcdfl xsl ignore01 ns6 ns50 ns51 ns52 ns54" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/erp/downloadExportOutput_REQUEST/types" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:ns22="http://xmlns.oracle.com/adf/svc/types/" xmlns:sdoXML="commonj.sdo/xml" xmlns:sdoJava="commonj.sdo/java" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns33="http://xmlns.oracle.com/apps/financials/commonModules/shared/model/erpIntegrationService/" xmlns:ns34="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns35="http://xmlns.oracle.com/cloud/staging/write" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:ns21="http://xml.oracle.com/adapters/extension" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://xmlns.oracle.com/apps/financials/generalLedger/accounts/codeCombinations/accountCombinationService/" xmlns:ns32="http://xmlns.oracle.com/cloud/adapter/erp/downloadExportOutput_REQUEST" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:sdo="commonj.sdo" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:ns19="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINREQ" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:types="http://xmlns.oracle.com/apps/financials/generalLedger/accounts/codeCombinations/accountCombinationService/types/" xmlns:ns36="http://xmlns.oracle.com/pcbpel/adapter/opaque/" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:ns6="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getDocumentService" xmlns:ns50="http://xmlns.oracle.com/procmon" xmlns:ns51="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINRES" xmlns:ns52="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/erp/DownloadESSJobDetails_REQUEST/types" xmlns:ns54="http://xmlns.oracle.com/cloud/adapter/erp/DownloadESSJobDetails_REQUEST">
+                            - '  <xsl:param name="DownloadESSJobDetails" xml:id="id_68"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:Write xml:id="id_12">'
+                            - '      <ns36:opaqueElement xml:id="id_31">'
+                            - '        <xsl:value-of xml:id="id_32" select="$DownloadESSJobDetails/nsmpr3:downloadESSJobExecutionDetailsResponse/nsmpr3:result/ns33:Content"/>'
+                            - ""
+                        - StageFile: StageWriteEssjobOutput(sf0)
+                          operation: Write
+                          expressionProperties:
+                            xpathExpression: concat(/nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:ESSProcessId,'.zip')
+                            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types
+                          statements: []
+                        - Assignments: AssignESSJobExecDetailsoutRef(l2)
+                          name: AssignESSJobExecDetailsoutRef
+                          assignments:
+                            - Assignment: Assignment(a18)
+                              variableName: FileContent
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: oraext:encodeReferenceToBase64($StageWriteEssjobOutput/nsmpr11:WriteResponse/nsmpr7:WriteResponse/nsmpr8:ICSFile/nsmpr8:FileReference)
+                                namespaceList: nsmpr7=http://xmlns.oracle.com/cloud/staging/write nsmpr8=http://xmlns.oracle.com/cloud/ics/file/v1/types nsmpr11=http://xmlns.oracle.com/cloud/adapter/stagefile/StageWriteEssjobOutput_REQUEST/types oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                                variableName: FileContent
+                                variableDescription: File Reference to be sent in the mail Notification
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - StageFile: UnzipFiles(sf1)
+                          operation: Unzip
+                          expressionProperties:
+                            xpathExpression: $StageWriteEssjobOutput/nsmpr11:WriteResponse/nsmpr7:WriteResponse/nsmpr8:ICSFile/nsmpr8:FileReference
+                            namespaceList: nsmpr7=http://xmlns.oracle.com/cloud/staging/write nsmpr8=http://xmlns.oracle.com/cloud/ics/file/v1/types nsmpr11=http://xmlns.oracle.com/cloud/adapter/stagefile/StageWriteEssjobOutput_REQUEST/types
+                          statements: []
+                    - Route: Otherwise(sc15)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements:
+                        - Assignments: AssignNoLogFileFound(l5)
+                          name: AssignNoLogFileFound
+                          assignments:
+                            - Assignment: Assignment(a71)
+                              variableName: MsgCode
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''TSGT_CMN_LOGUTILTY_ PROCESSING_SUCCESS'''
+                                variableName: MsgCode
+                                variableDescription: 'Stores a unique code for error and success status Stores a unique code for error and success status: MsgCode-string'
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a72)
+                              variableName: MsgDescr
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: orajs7:stringReplace(orajs7:stringReplace($TSGT_CMN_ESS_JOB_FILE_STATUS,'%1',$LogFileFound),'%2',$OutputFileFound)
+                                namespaceList: orajs7=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957
+                                variableName: MsgDescr
+                                variableDescription: Stores the description for the Message
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: Otherwise(sc7)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Assignments: AssignFaultErrorScope(l6)
+              name: AssignFaultErrorScope
+              assignments:
+                - Assignment: Assignment(a9)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableDescription: Status
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a12)
+                  variableName: ErrorFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErrorFlag
+                    variableDescription: Set Y in case of ERROR
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a5)
+                  variableName: MsgCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''TSGT_ESSJOB_LOG_FILE_ERROR'''
+                    variableName: MsgCode
+                    variableDescription: Stores a unique code for error and success status
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a64)
+                  variableName: MsgDescr
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: 'concat( $TSGT_SYSTEM_ERROR, " Details: ", $Scope_getLogFileFaultObject/nsmpr7:fault/nsmpr7:reason)'
+                    namespaceList: nsmpr7=http://www.oracle.com/2014/03/ics/fault
+                    variableName: MsgDescr
+                    variableDescription: Stores the description for the Message
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a65)
+                  variableName: MsgDetail
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: ora:getFaultAsString()
+                    namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDetail
+                    variableDescription: Details information of the Exception
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_1370/resourcegroup_1371/ICSFault.xsd
+    - Switch: Switch(s11)
+      routes:
+        - Route: (sc26)
+          exprProperties:
+            xpathExpression: /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:DocumentType = "output" or /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:DocumentType='ALL'
+            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types
+          stateInfo:
+            variablesReferenced:
+                - VariableName: /
+                  rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types}execute'
+          statements:
+            - Try: Try(t3)
+              username: Scope_OutputFile
+              statements:
+                - Switch: Switch(s0)
+                  routes:
+                    - Route: (sc1)
+                      exprProperties:
+                        xpathExpression: $JobInstanceId != "" and $ErrorFlag != "Y"
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: JobInstanceId
+                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                            - VariableName: ErrorFlag
+                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                      statements:
+                        - Map: Map(m6)
+                          xsltfilepath: ../resources/processor_2619/resourcegroup_2622/req_2d379f42f8e644d980347eaef1d6a01b.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types" xmlns:ns6="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getDocumentService" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:nstrgmpr="http://xmlns.oracle.com/types/GetJobOutputId/1629278111491/OutboundSOAPRequestDocument" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:tns="http://xmlns.oracle.com/oxp/service/ScheduleReportService" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" nssrcmpr ns6 oraext plnk xsd xp20 ns20 ora oracle-xsl-mapper nssrcdfl xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr1="http://xmlns.oracle.com/types/GetEssJobInstanceId/1629276762862/OutboundSOAPRequestDocument" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:ns31="http://xmlns.oracle.com/oxp/service/ScheduleReportService/types" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINRES" xmlns:ns29="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINREQ" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940">
+                            - '  <xsl:param name="JobInstanceId" xml:id="id_50"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                            - '      <nstrgmpr:Body xml:id="id_37">'
+                            - '        <tns:getScheduledReportOutputInfo xml:id="id_38">'
+                            - '          <jobInstanceID xml:id="id_39">'
+                            - '            <xsl:value-of xml:id="id_40" select="$JobInstanceId"/>'
+                            - ""
+                        - Invoke: GetJobOutputId(i3)
+                          application:
+                            Application: GetJobOutputId(TSGTSOAPSCHEDSER_CONN)
+                            name: GetJobOutputId
+                            adapter:
+                                code: TSGTSOAPSCHEDSER_CONN
+                            properties:
+                                - name: operationPath
+                                  value: ""
+                        - Switch: Switch(s1)
+                          routes:
+                            - Route: (sc0)
+                              exprProperties:
+                                xpathExpression: count($GetJobOutputId/tns:getScheduledReportOutputInfoResponse//jobOutputList) >= 1.0
+                                namespaceList: tns=http://xmlns.oracle.com/oxp/service/ScheduleReportService
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: GetJobOutputId
+                                      rootElement: '{http://xmlns.oracle.com/oxp/service/ScheduleReportService}getScheduledReportOutputInfoResponse'
+                                    - VariableName: ReportOutput
+                                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                    - VariableName: /
+                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types}execute'
+                              statements:
+                                - Assignments: AssignOutputFileFound(l7)
+                                  name: AssignOutputFileFound
+                                  assignments:
+                                    - Assignment: Assignment(a75)
+                                      variableName: OutputFileFound
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''Y'''
+                                        variableName: OutputFileFound
+                                        variableDescription: set Y if Output File Found and 'N' if not found
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                - Map: Map(m0)
+                                  xsltfilepath: ../resources/processor_5894/resourcegroup_5897/req_b89d9868210f465fb0cd0682454c3660.xsl
+                                  mapsentences:
+                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                    - <xsl:stylesheet xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types" xmlns:ns6="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getDocumentService" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteSchReportout_REQUEST" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteSchReportout_REQUEST/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr1="http://xmlns.oracle.com/types/GetEssJobInstanceId/1629276762862/OutboundSOAPRequestDocument" xmlns:nsmpr2="http://xmlns.oracle.com/oxp/service/ScheduleReportService" xmlns:nsmpr3="http://xmlns.oracle.com/types/GetJobOutputId/1629278111491/OutboundSOAPRequestDocument" xmlns:nsmpr4="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns36="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:tns="http://xmlns.oracle.com/oxp/service/ScheduleReportService/types" xmlns:ns26="http://xml.oracle.com/adapters/extension" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns37="http://xmlns.oracle.com/cloud/staging/write" xmlns:ns34="http://TargetNamespace.com/fileReference/StageGetJobs" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINRES" xmlns:ns28="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINREQ" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcmpr ns6 oraext plnk xsd xp20 ns22 ora oracle-xsl-mapper nssrcdfl xsi fn xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                                    - '  <xsl:param name="GetJobOutputId" xml:id="id_39"/>'
+                                    - '  <xsl:template match="/" xml:id="id_11">'
+                                    - '    <nstrgmpr:Write xml:id="id_12">'
+                                    - '      <ns34:GetJobsSet xml:id="id_96">'
+                                    - '        <xsl:for-each xml:id="id_137" select="$GetJobOutputId/nsmpr2:getScheduledReportOutputInfoResponse//jobOutputList">'
+                                    - '          <ns34:GetJobs xml:id="id_138">'
+                                    - '            <ns34:outputName xml:id="id_215">'
+                                    - '              <xsl:value-of xml:id="id_216" select="outputName"/>'
+                                    - '            <ns34:DocumentDataContentType xml:id="id_217">'
+                                    - '              <xsl:value-of xml:id="id_218" select="documentDataContentType"/>'
+                                    - '            <ns34:documentDataAvailable xml:id="id_265">'
+                                    - '              <xsl:value-of xml:id="id_266" select="documentDataAvailable"/>'
+                                    - '            <ns34:statusDetail xml:id="id_267">'
+                                    - '              <xsl:value-of xml:id="id_268" select="statusDetail"/>'
+                                    - '            <ns34:status xml:id="id_269">'
+                                    - '              <xsl:value-of xml:id="id_270" select="status"/>'
+                                    - '            <ns34:OutputId xml:id="id_219">'
+                                    - '              <xsl:value-of xml:id="id_220" select="outputId"/>'
+                                    - ""
+                                - StageFile: WriteSchReportout(sf4)
+                                  operation: Write
+                                  expressionProperties:
+                                    xpathExpression: $BaseFilename
+                                  statements: []
+                                - Assignments: HTMLTableInit(l12)
+                                  name: HTMLTableInit
+                                  assignments:
+                                    - Assignment: Assignment(a30)
+                                      variableName: LogFileDatainHTMLTable
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: concat( /nssrcmpr:execute/nsmpr10:request-wrapper/nsmpr10:EmailBody , '<br><br>','<table border =1/>',  \norajs5:getHTMLTableRow(concat('<b>S.No</b>',\n'$','<b>Output File Name</b>',\n'$','<b>Output File Type</b>' , \n'$','<b>Status</b>'\n)))\n
+                                        namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types orajs5=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793 nsmpr10=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types
+                                        variableName: LogFileDatainHTMLTable
+                                        variableDescription: Stores the HTML Header format
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a95)
+                                      variableName: Counter
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: "0"
+                                        variableName: Counter
+                                        variableDescription: Initialize Counter Scope variable to zero
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                - ForLoop: ForLoop(f0)
+                                  expressionProperties:
+                                    xpathExpression: $WriteSchReportout_REQUEST/nsmpr9:Write/nsmpr2:GetJobsSet/nsmpr2:GetJobs
+                                    namespaceList: nsmpr9=http://xmlns.oracle.com/cloud/adapter/stagefile/WriteSchReportout_REQUEST/types nsmpr2=http://TargetNamespace.com/fileReference/StageGetJobs
+                                    variableName: CurrOutputID
+                                  currentRecordVarName: CurrOutputID
+                                  statements:
+                                    - Assignments: IncrementCounter(l24)
+                                      name: IncrementCounter
+                                      assignments:
+                                        - Assignment: Assignment(a96)
+                                          variableName: Counter
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: number($Counter)+number(1)
+                                            variableName: Counter
+                                            variableDescription: Increase the Counter value by 1
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Switch: Switch(s8)
+                                      routes:
+                                        - Route: (sc4)
+                                          exprProperties:
+                                            xpathExpression: contains($CurrOutputID/nsmpr2:GetJobs/nsmpr2:outputName,'.')=true()
+                                            namespaceList: nsmpr2=http://TargetNamespace.com/fileReference/StageGetJobs
+                                          stateInfo:
+                                            variablesReferenced:
+                                                - VariableName: CurrOutputID
+                                                  rootElement: '{http://TargetNamespace.com/fileReference/StageGetJobs}GetJobs'
+                                          statements:
+                                            - Assignments: AssignFileName(l3)
+                                              name: AssignFileName
+                                              assignments:
+                                                - Assignment: Assignment(a17)
+                                                  variableName: OutputFileName
+                                                  variableType: string
+                                                  expressionProperties:
+                                                    xpathExpression: $CurrOutputID/nsmpr2:GetJobs/nsmpr2:outputName
+                                                    namespaceList: nsmpr2=http://TargetNamespace.com/fileReference/StageGetJobs
+                                                    variableName: OutputFileName
+                                                    variableDescription: Assign Output File Name
+                                                    variableType: string
+                                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Route: (sc19)
+                                          exprProperties:
+                                            xpathExpression: contains($CurrOutputID/nsmpr2:GetJobs/nsmpr2:outputName,'Default')=true()
+                                            namespaceList: nsmpr2=http://TargetNamespace.com/fileReference/StageGetJobs
+                                          stateInfo:
+                                            variablesReferenced:
+                                                - VariableName: CurrOutputID
+                                                  rootElement: '{http://TargetNamespace.com/fileReference/StageGetJobs}GetJobs'
+                                          statements:
+                                            - Switch: Switch(s7)
+                                              routes:
+                                                - Route: (sc20)
+                                                  exprProperties:
+                                                    xpathExpression: $CurrOutputID/nsmpr2:GetJobs/nsmpr2:DocumentDataContentType = "excel"
+                                                    namespaceList: nsmpr2=http://TargetNamespace.com/fileReference/StageGetJobs
+                                                  stateInfo:
+                                                    variablesReferenced:
+                                                        - VariableName: CurrOutputID
+                                                          rootElement: '{http://TargetNamespace.com/fileReference/StageGetJobs}GetJobs'
+                                                  statements:
+                                                    - Assignments: AssignDefaultDocumentFileNameExcel(l27)
+                                                      name: AssignDefaultDocumentFileNameExcel
+                                                      assignments:
+                                                        - Assignment: Assignment(a106)
+                                                          variableName: OutputFileName
+                                                          variableType: string
+                                                          expressionProperties:
+                                                            xpathExpression: concat($ESSJobName,'_',$Counter,'.','xls')
+                                                            variableName: OutputFileName
+                                                            variableDescription: Assign Output File name in case of Excel Default document
+                                                            variableType: string
+                                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                - Route: Otherwise(sc23)
+                                                  exprProperties:
+                                                    xpathExpression: "true"
+                                                    expressionName: Otherwise
+                                                  stateInfo: null
+                                                  statements:
+                                                    - Assignments: AssignDefaultDocumentFileName(l26)
+                                                      name: AssignDefaultDocumentFileName
+                                                      assignments:
+                                                        - Assignment: Assignment(a105)
+                                                          variableName: OutputFileName
+                                                          variableType: string
+                                                          expressionProperties:
+                                                            xpathExpression: concat($ESSJobName,'_',$Counter,'.',$CurrOutputID/nsmpr2:GetJobs/nsmpr2:DocumentDataContentType)
+                                                            namespaceList: nsmpr2=http://TargetNamespace.com/fileReference/StageGetJobs
+                                                            variableName: OutputFileName
+                                                            variableDescription: Assign File Name in case if output file name is Default Document
+                                                            variableType: string
+                                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Route: Otherwise(sc18)
+                                          exprProperties:
+                                            xpathExpression: "true"
+                                            expressionName: Otherwise
+                                          stateInfo: null
+                                          statements:
+                                            - Switch: Switch(s10)
+                                              routes:
+                                                - Route: (sc24)
+                                                  exprProperties:
+                                                    xpathExpression: $CurrOutputID/nsmpr2:GetJobs/nsmpr2:DocumentDataContentType = "excel"
+                                                    namespaceList: nsmpr2=http://TargetNamespace.com/fileReference/StageGetJobs
+                                                  stateInfo:
+                                                    variablesReferenced:
+                                                        - VariableName: CurrOutputID
+                                                          rootElement: '{http://TargetNamespace.com/fileReference/StageGetJobs}GetJobs'
+                                                  statements:
+                                                    - Assignments: AssignFileNameandFileTypeforExceldoc(l28)
+                                                      name: AssignFileNameandFileTypeforExceldoc
+                                                      assignments:
+                                                        - Assignment: Assignment(a107)
+                                                          variableName: OutputFileName
+                                                          variableType: string
+                                                          expressionProperties:
+                                                            xpathExpression: concat($CurrOutputID/nsmpr2:GetJobs/nsmpr2:outputName,'.','xls')
+                                                            namespaceList: nsmpr2=http://TargetNamespace.com/fileReference/StageGetJobs
+                                                            variableName: OutputFileName
+                                                            variableDescription: Set Output File Name in case of Excel Document
+                                                            variableType: string
+                                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                - Route: Otherwise(sc25)
+                                                  exprProperties:
+                                                    xpathExpression: "true"
+                                                    expressionName: Otherwise
+                                                  stateInfo: null
+                                                  statements:
+                                                    - Assignments: AssignFileNameandFileType(l17)
+                                                      name: AssignFileNameandFileType
+                                                      assignments:
+                                                        - Assignment: Assignment(a23)
+                                                          variableName: OutputFileName
+                                                          variableType: string
+                                                          expressionProperties:
+                                                            xpathExpression: concat($CurrOutputID/nsmpr2:GetJobs/nsmpr2:outputName,'.',$CurrOutputID/nsmpr2:GetJobs/nsmpr2:DocumentDataContentType)
+                                                            namespaceList: nsmpr2=http://TargetNamespace.com/fileReference/StageGetJobs
+                                                            variableName: OutputFileName
+                                                            variableDescription: Assign File name in case if output file name does not have file extension
+                                                            variableType: string
+                                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Map: Map(m7)
+                                      xsltfilepath: ../resources/processor_2672/resourcegroup_2675/req_8c728d1a7687451796a4795f1e5fcf6d.xsl
+                                      mapsentences:
+                                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types" xmlns:ns6="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getDocumentService" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nstrgmpr="http://xmlns.oracle.com/types/GetDocumentData/1629278483237/OutboundSOAPRequestDocument" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:tns="http://xmlns.oracle.com/oxp/service/ScheduleReportService" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" nssrcmpr ns6 oraext plnk xsd xp20 ns20 ora oracle-xsl-mapper nssrcdfl xsi fn xsl ignore01 ns49 ns50 nxsd ns48" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr1="http://xmlns.oracle.com/types/GetEssJobInstanceId/1629276762862/OutboundSOAPRequestDocument" xmlns:nsmpr2="http://xmlns.oracle.com/types/GetJobOutputId/1629278111491/OutboundSOAPRequestDocument" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:ns32="http://xmlns.oracle.com/oxp/service/ScheduleReportService/types" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINRES" xmlns:ns30="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINREQ" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteSchReportout_REQUEST/types" xmlns:nsmpr5="http://TargetNamespace.com/fileReference/StageGetJobs" xmlns:ns49="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns50="http://xmlns.oracle.com/cloud/staging/write" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns48="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteSchReportout_REQUEST">
+                                        - '  <xsl:param name="CurrOutputID" xml:id="id_105"/>'
+                                        - '  <xsl:template match="/" xml:id="id_11">'
+                                        - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                                        - '      <nstrgmpr:Body xml:id="id_47">'
+                                        - '        <tns:getDocumentData xml:id="id_48">'
+                                        - '          <jobOutputID xml:id="id_49">'
+                                        - '            <xsl:value-of xml:id="id_50" select="$CurrOutputID/nsmpr5:GetJobs/nsmpr5:OutputId"/>'
+                                        - ""
+                                    - Invoke: GetDocumentData(i4)
+                                      application:
+                                        Application: GetDocumentData(TSGTSOAPSCHEDSER_CONN)
+                                        name: GetDocumentData
+                                        adapter:
+                                            code: TSGTSOAPSCHEDSER_CONN
+                                        properties:
+                                            - name: operationPath
+                                              value: ""
+                                    - Assignments: AssignDocumentData(l10)
+                                      name: AssignDocumentData
+                                      assignments:
+                                        - Assignment: Assignment(a24)
+                                          variableName: AttachmentContent
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: $GetDocumentData/tns:getDocumentDataResponse
+                                            namespaceList: tns=http://xmlns.oracle.com/oxp/service/ScheduleReportService
+                                            variableName: AttachmentContent
+                                            variableDescription: Variable to store Output file Content
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Map: Map(m3)
+                                      xsltfilepath: ../resources/processor_3047/resourcegroup_3050/req_155a9d74ad1b4c07ba71f6c592d67978.xsl
+                                      mapsentences:
+                                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types" xmlns:ns6="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getDocumentService" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/StageWriteOutputFile_REQUEST/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/stagefile/StageWriteOutputFile_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr ns6 oraext plnk xp20 ns20 ora oracle-xsl-mapper nssrcdfl xsi fn xsl ignore01 nxsd ns53" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/oxp/service/ScheduleReportService" xmlns:nsmpr1="http://xmlns.oracle.com/types/GetDocumentData/1629278483237/OutboundSOAPRequestDocument" xmlns:nsmpr2="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr3="http://xmlns.oracle.com/types/GetEssJobInstanceId/1629276762862/OutboundSOAPRequestDocument" xmlns:nsmpr4="http://xmlns.oracle.com/types/GetJobOutputId/1629278111491/OutboundSOAPRequestDocument" xmlns:nsmpr5="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns35="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:tns="http://xmlns.oracle.com/oxp/service/ScheduleReportService/types" xmlns:ns27="http://xml.oracle.com/adapters/extension" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types" xmlns:ns37="http://xmlns.oracle.com/pcbpel/adapter/opaque/" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns36="http://xmlns.oracle.com/cloud/staging/write" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINRES" xmlns:ns29="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINREQ" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:nsmpr6="http://TargetNamespace.com/fileReference/StageGetJobs" xmlns:nsmpr7="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteSchReportout_REQUEST/types" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns53="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteSchReportout_REQUEST">
+                                        - '  <xsl:param name="AttachmentContent" xml:id="id_143"/>'
+                                        - '  <xsl:template match="/" xml:id="id_11">'
+                                        - '    <nstrgmpr:Write xml:id="id_12">'
+                                        - '      <ns37:opaqueElement xml:id="id_60">'
+                                        - '        <xsl:value-of xml:id="id_61" select="$AttachmentContent"/>'
+                                        - ""
+                                    - StageFile: StageWriteOutputFile(sf2)
+                                      operation: Write
+                                      expressionProperties:
+                                        xpathExpression: $OutputFileName
+                                      statements: []
+                                    - Assignments: AssignHTMLTableData(l22)
+                                      name: AssignHTMLTableData
+                                      assignments:
+                                        - Assignment: Assignment(a91)
+                                          variableName: LogFileDatainHTMLTable
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: concat($LogFileDatainHTMLTable, orajs5:getHTMLTableRow(concat($Counter, '$', \nsubstring-before($OutputFileName,'.'), '$', \n$CurrOutputID/nsmpr2:GetJobs/nsmpr2:DocumentDataContentType,'$',\n$CurrOutputID/nsmpr2:GetJobs/nsmpr2:status\n)))
+                                            namespaceList: orajs5=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793 nsmpr2=http://TargetNamespace.com/fileReference/StageGetJobs
+                                            variableName: LogFileDatainHTMLTable
+                                            variableDescription: Set the HTML value
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Map: Map(m10)
+                                      xsltfilepath: ../resources/processor_19178/resourcegroup_19181/req_6ff792b786f647fcae2748fa251a7784.xsl
+                                      mapsentences:
+                                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types" xmlns:ns6="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getDocumentService" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteLog_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns34="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteLog_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr ns6 oraext plnk xsd xp20 ns34 ora oracle-xsl-mapper nssrcdfl xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://TargetNamespace.com/fileReference/StageGetJobs" xmlns:nsmpr1="http://xmlns.oracle.com/oxp/service/ScheduleReportService" xmlns:nsmpr2="http://xmlns.oracle.com/types/GetDocumentData/1629278483237/OutboundSOAPRequestDocument" xmlns:nsmpr3="http://xmlns.oracle.com/types/GetJobOutputId/1629278111491/OutboundSOAPRequestDocument" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/StageWriteOutputFile_REQUEST/types" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteSchReportout_REQUEST/types" xmlns:nsmpr6="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns39="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:tns="http://xmlns.oracle.com/oxp/service/ScheduleReportService/types" xmlns:ns28="http://xml.oracle.com/adapters/extension" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns42="http://TargetNamespace.com/logfileReference/logStageGetJobs" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns33="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteSchReportout_REQUEST" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types" xmlns:ns41="http://xmlns.oracle.com/pcbpel/adapter/opaque/" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns40="http://xmlns.oracle.com/cloud/staging/write" xmlns:ns38="http://xmlns.oracle.com/cloud/adapter/stagefile/StageWriteOutputFile_REQUEST" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINRES" xmlns:ns30="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINREQ" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111">
+                                        - '  <xsl:param name="CurrOutputID" xml:id="id_58"/>'
+                                        - '  <xsl:param name="Counter" xml:id="id_154"/>'
+                                        - '  <xsl:template match="/" xml:id="id_11">'
+                                        - '    <nstrgmpr:Write xml:id="id_12">'
+                                        - '      <ns42:GetJobsSet xml:id="id_99">'
+                                        - '        <ns42:GetJobs xml:id="id_100">'
+                                        - '          <ns42:SNo xml:id="id_195">'
+                                        - '            <xsl:value-of xml:id="id_196" select="$Counter"/>'
+                                        - '          <ns42:outputName xml:id="id_101">'
+                                        - '            <xsl:value-of xml:id="id_102" select="$CurrOutputID/nsmpr0:GetJobs/nsmpr0:outputName"/>'
+                                        - '          <ns42:DocumentDataContentType xml:id="id_103">'
+                                        - '            <xsl:value-of xml:id="id_104" select="$CurrOutputID/nsmpr0:GetJobs/nsmpr0:DocumentDataContentType"/>'
+                                        - '          <ns42:documentDataAvailable xml:id="id_105">'
+                                        - '            <xsl:value-of xml:id="id_106" select="$CurrOutputID/nsmpr0:GetJobs/nsmpr0:documentDataAvailable"/>'
+                                        - '          <ns42:statusDetail xml:id="id_107">'
+                                        - '            <xsl:value-of xml:id="id_108" select="$CurrOutputID/nsmpr0:GetJobs/nsmpr0:statusDetail"/>'
+                                        - '          <ns42:status xml:id="id_109">'
+                                        - '            <xsl:value-of xml:id="id_110" select="$CurrOutputID/nsmpr0:GetJobs/nsmpr0:status"/>'
+                                        - '          <ns42:OutputId xml:id="id_111">'
+                                        - '            <xsl:value-of xml:id="id_112" select="$CurrOutputID/nsmpr0:GetJobs/nsmpr0:OutputId"/>'
+                                        - ""
+                                    - StageFile: WriteLog(sf5)
+                                      operation: Write
+                                      expressionProperties:
+                                        xpathExpression: $BaseFilename
+                                      statements: []
+                                - Assignments: AssignHTMLBase64(l23)
+                                  name: AssignHTMLBase64
+                                  assignments:
+                                    - Assignment: Assignment(a93)
+                                      variableName: LogFileDatainHTMLTable
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: concat($LogFileDatainHTMLTable, '</table>')
+                                        variableName: LogFileDatainHTMLTable
+                                        variableDescription: Stores End of HTML tag for HTML email notification
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a94)
+                                      variableName: MailBody
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: oraext:encodeBase64(string($LogFileDatainHTMLTable))
+                                        namespaceList: oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                                        variableName: MailBody
+                                        variableDescription: Mail Body to be sent via NotificationSet base64 encode format of HTML email notification
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                - StageFile: ZipFile(sf3)
+                                  operation: Zip
+                                  expressionProperties:
+                                    xpathExpression: concat($BaseFolderPath,'zip/')
+                                  statements: []
+                                - Assignments: AssignZipFileReference(l8)
+                                  name: AssignZipFileReference
+                                  assignments:
+                                    - Assignment: Assignment(a20)
+                                      variableName: FileContent
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: oraext:encodeReferenceToBase64($ZipFile/nsmpr11:ZipResponse/nsmpr0:ZipResponse/nsmpr2:ICSFile/nsmpr2:FileReference)
+                                        namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/ics/file/v1/types nsmpr11=http://xmlns.oracle.com/cloud/adapter/stagefile/ZipFile_REQUEST/types nsmpr0=http://xmlns.oracle.com/cloud/staging/zip oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                                        variableName: FileContent
+                                        variableDescription: File Reference to be sent in the mail Notification
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                - Assignments: AssignMsgCodeandMsgDescription(l19)
+                                  name: AssignMsgCodeandMsgDescription
+                                  assignments:
+                                    - Assignment: Assignment(a59)
+                                      variableName: MsgDescr
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''Log & output file extract Success. Refer the attachments'''
+                                        variableName: MsgDescr
+                                        variableDescription: Stores the description for the Message
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a60)
+                                      variableName: MsgCode
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''HC_CMN_LOGUTILTY_ PROCESSING_SUCCESS'''
+                                        variableName: MsgCode
+                                        variableDescription: Stores a unique code for error and success status
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Route: Otherwise(sc3)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements:
+                                - Assignments: AssignOutputIDNotFound(l4)
+                                  name: AssignOutputIDNotFound
+                                  assignments:
+                                    - Assignment: Assignment(a63)
+                                      variableName: Status
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''ERROR'''
+                                        variableName: Status
+                                        variableDescription: Set the Status to ERROR
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a70)
+                                      variableName: ErrorFlag
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''Y'''
+                                        variableName: ErrorFlag
+                                        variableDescription: Set the Flag to Y
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a73)
+                                      variableName: MsgCode
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '"HC_CMN_NO_DATA_FOUND"'
+                                        variableName: MsgCode
+                                        variableDescription: Set the Message Code for this ERROR as No Data Found
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a74)
+                                      variableName: MsgDescr
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: dvm:lookupValue('HC_CMN_MSGCODE_LKP','MessageCode','HC_CMN_NO_DATA_FOUND','MessageDescr','')
+                                        namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                                        variableName: MsgDescr
+                                        variableDescription: Set the Message Description from the lookup
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: (sc5)
+                      exprProperties:
+                        xpathExpression: $LogFileFound = "Y" and $JobInstanceId = ""
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: LogFileFound
+                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                            - VariableName: JobInstanceId
+                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                      statements:
+                        - Assignments: AssignMsgCodeandDescr(l18)
+                          name: AssignMsgCodeandDescr
+                          assignments:
+                            - Assignment: Assignment(a57)
+                              variableName: MsgCode
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''TSGT_CMN_LOGUTILTY_ PROCESSING_SUCCESS'''
+                                variableName: MsgCode
+                                variableDescription: Stores a unique code for error and success status
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a58)
+                              variableName: MsgDescr
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: orajs7:stringReplace(orajs7:stringReplace($TSGT_CMN_ESS_JOB_FILE_STATUS,'%1',$LogFileFound), '%2',$OutputFileFound)
+                                namespaceList: orajs7=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957
+                                variableName: MsgDescr
+                                variableDescription: Stores the description for the Message
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: Otherwise(sc2)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements: []
+                - CatchAll: CatchAll(ta2)
+                  statements:
+                    - Assignments: AssignOutputFileFaultScope(l11)
+                      name: AssignOutputFileFaultScope
+                      assignments:
+                        - Assignment: Assignment(a13)
+                          variableName: Status
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: '''ERROR'''
+                            variableName: Status
+                            variableDescription: Status
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a21)
+                          variableName: ErrorFlag
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: '''Y'''
+                            variableName: ErrorFlag
+                            variableDescription: Set Y in case of ERROR
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a66)
+                          variableName: MsgCode
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: ''''''
+                            variableName: MsgCode
+                            variableDescription: Stores a unique code for error and success status
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a67)
+                          variableName: MsgDescr
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: ''''''
+                            variableName: MsgDescr
+                            variableDescription: Stores the description for the Message
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a68)
+                          variableName: MsgDetail
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: ora:getFaultAsString()
+                            namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                            variableName: MsgDetail
+                            variableDescription: Details information of the Exception
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                  icsfaultfilepath: ../resources/processor_3221/resourcegroup_3222/ICSFault.xsd
+        - Route: Otherwise(sc27)
+          exprProperties:
+            xpathExpression: "true"
+            expressionName: Otherwise
+          stateInfo: null
+          statements: []
+    - Try: Try(t4)
+      username: Notification
+      statements:
+        - Switch: Switch(s6)
+          routes:
+            - Route: (sc14)
+              exprProperties:
+                xpathExpression: /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:SendEmail = "Y" and /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:EmailId!=""
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types}execute'
+              statements:
+                - Map: Map(m12)
+                  xsltfilepath: ../resources/processor_24405/resourcegroup_24408/req_f08098dbce454d6aa4cbd18bcd4b566d.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types" xmlns:ns6="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getDocumentService" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/SendNotification_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns48="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/SendNotification_REQUEST" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/SendNotification" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/collocatedics/InvokeSendNotification_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcmpr ns6 oraext plnk xsd xp20 ns48 ora oracle-xsl-mapper nssrcdfl xsi fn xsl ignore01" ignore01:ignorexmlids="true" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/InvokeSendNotification_REQUEST/SKIPOUTREQ" xmlns:ns33="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/SendNotification_REQUEST" xmlns:ns24="http://xml.oracle.com/adapters/extension" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns31="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/InvokeSendNotification_REQUEST" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types" xmlns:ns35="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/SendNotification_REQUEST/SKIPOUTREQ" xmlns:ns29="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/InvokeSendNotification" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns34="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Notification/collocatedics/SendNotification_REQUEST" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns28="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Notification/collocatedics/InvokeSendNotification_REQUEST" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINRES" xmlns:ns26="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINREQ" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                    - '  <xsl:param name="BlankValue" xml:id="id_29"/>'
+                    - '  <xsl:param name="ESSJobCompletionTime" xml:id="id_30"/>'
+                    - '  <xsl:param name="ESSJobName" xml:id="id_31"/>'
+                    - '  <xsl:param name="ESSJobScheduledTime" xml:id="id_32"/>'
+                    - '  <xsl:param name="ESSJobStatus" xml:id="id_33"/>'
+                    - '  <xsl:param name="ESSJobSubmissionTime" xml:id="id_34"/>'
+                    - '  <xsl:param name="ESSJobSubmittedBy" xml:id="id_35"/>'
+                    - '  <xsl:param name="ESSjobSubmissionNotes" xml:id="id_36"/>'
+                    - '  <xsl:param name="FileContent" xml:id="id_38"/>'
+                    - '  <xsl:param name="LogFileFound" xml:id="id_50"/>'
+                    - '  <xsl:param name="MailBody" xml:id="id_51"/>'
+                    - '  <xsl:param name="MsgCode" xml:id="id_52"/>'
+                    - '  <xsl:param name="MsgDescr" xml:id="id_53"/>'
+                    - '  <xsl:param name="MsgDetail" xml:id="id_54"/>'
+                    - '  <xsl:param name="OutputFileFound" xml:id="id_55"/>'
+                    - '  <xsl:param name="ReportOutput" xml:id="id_58"/>'
+                    - '  <xsl:param name="Status" xml:id="id_60"/>'
+                    - '  <xsl:param name="self" xml:id="id_61"/>'
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:POST xml:id="id_12">'
+                    - '      <nstrgmpr:components.schemas.request-wrapper>'
+                    - '        <ns33:Notification>'
+                    - '          <ns34:Entity xml:id="id_145">'
+                    - '            <xsl:value-of xml:id="id_146" select="&apos;LOGOUTPUT_UTILITY&apos;"/>'
+                    - '          <ns34:IntegrationStartDate xml:id="id_235">'
+                    - '            <xsl:value-of xml:id="id_236" select="$BlankValue"/>'
+                    - '          <ns34:ESSJobDescription xml:id="id_237">'
+                    - '            <xsl:value-of xml:id="id_238" select="$BlankValue"/>'
+                    - '          <ns34:DocumentId xml:id="id_239">'
+                    - '            <xsl:value-of xml:id="id_240" select="$BlankValue"/>'
+                    - '          <ns34:AttachmentFilePath xml:id="id_241">'
+                    - '            <xsl:value-of xml:id="id_242" select="$BlankValue"/>'
+                    - '          <ns34:ErrorDetails xml:id="id_243">'
+                    - '            <xsl:value-of xml:id="id_244" select="$BlankValue"/>'
+                    - '          <ns34:AttachFromSFTP xml:id="id_245">'
+                    - '            <xsl:value-of xml:id="id_246" select="&apos;N&apos;"/>'
+                    - '          <ns34:Source xml:id="id_247">'
+                    - '            <xsl:value-of xml:id="id_248" select="$BlankValue"/>'
+                    - '          <ns34:NotificationCategory xml:id="id_196">'
+                    - '            <xsl:value-of xml:id="id_197" select="&apos;N01&apos;"/>'
+                    - '          <ns34:IntegrationName xml:id="id_251">'
+                    - '            <xsl:value-of xml:id="id_252" select="&apos;TSGTCmnGetEssLogIntg_Service&apos;"/>'
+                    - '          <ns34:AttachmentFileExist xml:id="id_52">'
+                    - '            <xsl:choose xml:id="id_53">'
+                    - '              <xsl:when xml:id="id_54" test="(($LogFileFound = &quot;Y&quot;) or ($OutputFileFound = &quot;Y&quot;))">'
+                    - '                <xsl:value-of xml:id="id_55" select="&apos;Y&apos;"/>'
+                    - '              <xsl:otherwise xml:id="id_56">'
+                    - '                <xsl:value-of xml:id="id_57" select="&apos;N&apos;"/>'
+                    - '          <ns34:EmailSubject xml:id="id_87">'
+                    - '            <xsl:choose xml:id="id_88">'
+                    - '              <xsl:when xml:id="id_89" test="/nssrcmpr:execute/ns27:request-wrapper/ns27:Subject != &quot;&quot;">'
+                    - '                <xsl:value-of xml:id="id_91" select="concat (/nssrcmpr:execute/ns27:request-wrapper/ns27:Subject, &quot;:&quot;, /nssrcmpr:execute/ns27:request-wrapper/ns27:ESSProcessId )"/>'
+                    - '              <xsl:otherwise xml:id="id_90">'
+                    - '                <xsl:value-of xml:id="id_92" select="concat (&quot;ESS Job Log &amp; Output&quot;, &quot;:&quot;, /nssrcmpr:execute/ns27:request-wrapper/ns27:ESSProcessId )"/>'
+                    - '          <ns34:AdditionalMessage1 xml:id="id_356">'
+                    - '            <xsl:value-of xml:id="id_357" select="concat (&quot;Process ID : &quot;, /nssrcmpr:execute/ns27:request-wrapper/ns27:ESSProcessId )"/>'
+                    - '          <ns34:AdditionalMessage3 xml:id="id_202">'
+                    - '            <xsl:choose xml:id="id_313">'
+                    - '              <xsl:when xml:id="id_314" test="((substring-before (substring-after ($ReportOutput, &quot;&lt;REQUEST_ID&gt;&quot; ), &quot;&lt;/REQUEST_ID&gt;&quot; ) != &quot;&quot;) and (/nssrcmpr:execute/ns27:request-wrapper/ns27:ESSProcessId != &quot;&quot;))">'
+                    - '                <xsl:value-of xml:id="id_315" select="concat (&quot;ESS Scheduled Time : &quot;, orajs8:convertUTCtoMST ($ESSJobScheduledTime ), &quot;&lt;br&gt;&quot;, &quot;ESS Submission Time : &quot;, orajs8:convertUTCtoMST ($ESSJobSubmissionTime ), &quot;&lt;br&gt;&quot;, &quot;ESS Completion Time : &quot;, orajs8:convertUTCtoMST ($ESSJobCompletionTime ) )"/>'
+                    - '              <xsl:otherwise xml:id="id_316">'
+                    - '                <xsl:value-of xml:id="id_317" select="$BlankValue"/>'
+                    - '          <ns34:AdditionalMessage2 xml:id="id_200">'
+                    - '            <xsl:choose xml:id="id_308">'
+                    - '              <xsl:when xml:id="id_309" test="((substring-before (substring-after ($ReportOutput, &quot;&lt;REQUEST_ID&gt;&quot; ), &quot;&lt;/REQUEST_ID&gt;&quot; ) != &quot;&quot;) and (/nssrcmpr:execute/ns27:request-wrapper/ns27:ESSProcessId != &quot;&quot;))">'
+                    - '                <xsl:value-of xml:id="id_310" select="concat (&quot;ESS Job Name :&quot;, $ESSJobName, &quot;&lt;br&gt;&quot;, &quot;ESS Job Status : &quot;, $ESSJobStatus )"/>'
+                    - '              <xsl:otherwise xml:id="id_311">'
+                    - '                <xsl:value-of xml:id="id_312" select="$BlankValue"/>'
+                    - '          <ns34:AdditionalMessage4 xml:id="id_219">'
+                    - '            <xsl:choose xml:id="id_318">'
+                    - '              <xsl:when xml:id="id_319" test="((substring-before (substring-after ($ReportOutput, &quot;&lt;REQUEST_ID&gt;&quot; ), &quot;&lt;/REQUEST_ID&gt;&quot; ) != &quot;&quot;) and (/nssrcmpr:execute/ns27:request-wrapper/ns27:ESSProcessId != &quot;&quot;))">'
+                    - '                <xsl:value-of xml:id="id_320" select="concat (&quot;ESS Submitted By : &quot;, $ESSJobSubmittedBy, &quot;&lt;br&gt;&quot;, &quot;Submission Notes : &quot;, $ESSjobSubmissionNotes )"/>'
+                    - '              <xsl:otherwise xml:id="id_321">'
+                    - '                <xsl:value-of xml:id="id_322" select="$BlankValue"/>'
+                    - '          <ns34:Status xml:id="id_85">'
+                    - '            <xsl:value-of xml:id="id_86" select="$Status"/>'
+                    - '          <ns34:IntegrationEndDate xml:id="id_253">'
+                    - '            <xsl:value-of xml:id="id_254" select="$BlankValue"/>'
+                    - '          <ns34:MessageCode xml:id="id_48">'
+                    - '            <xsl:value-of xml:id="id_49" select="$MsgCode"/>'
+                    - '          <ns34:AttachmentFileName xml:id="id_255">'
+                    - '            <xsl:choose xml:id="id_377">'
+                    - '              <xsl:when xml:id="id_378" test="/nssrcmpr:execute/ns27:request-wrapper/ns27:ZipFileName != &quot;&quot;">'
+                    - '                <xsl:value-of xml:id="id_379" select="concat (/nssrcmpr:execute/ns27:request-wrapper/ns27:ZipFileName, &quot;.zip&quot; )"/>'
+                    - '              <xsl:otherwise xml:id="id_380">'
+                    - '                <xsl:value-of xml:id="id_381" select="concat (&quot;ESSJOB&quot;, &quot;_&quot;, /nssrcmpr:execute/ns27:request-wrapper/ns27:ESSProcessId, &quot;.zip&quot; )"/>'
+                    - '          <ns34:ErrorReason xml:id="id_257">'
+                    - '            <xsl:value-of xml:id="id_258" select="$BlankValue"/>'
+                    - '          <ns34:ESSJobId xml:id="id_259">'
+                    - '            <xsl:value-of xml:id="id_260" select="$BlankValue"/>'
+                    - '          <ns34:Integrationidentifier xml:id="id_263">'
+                    - '            <xsl:value-of xml:id="id_264" select="$BlankValue"/>'
+                    - '          <ns34:ICSFlowId xml:id="id_173">'
+                    - '            <xsl:value-of xml:id="id_174" select="$self/nsmpr1:metadata/nsmpr1:runtime/nsmpr1:instanceId"/>'
+                    - '          <ns34:FileContents xml:id="id_119">'
+                    - '            <xsl:value-of xml:id="id_175" select="$FileContent"/>'
+                    - '          <ns34:MessageDescr xml:id="id_50">'
+                    - '            <xsl:value-of xml:id="id_51" select="$MsgDescr"/>'
+                    - '          <ns34:ErrorCode xml:id="id_265">'
+                    - '            <xsl:value-of xml:id="id_266" select="$BlankValue"/>'
+                    - '          <ns34:MessageHeader xml:id="id_427">'
+                    - '            <xsl:choose xml:id="id_428">'
+                    - '              <xsl:when xml:id="id_429" test="/nssrcmpr:execute/ns27:request-wrapper/ns27:MessageHeader != &quot;&quot;">'
+                    - '                <xsl:value-of xml:id="id_430" select="/nssrcmpr:execute/ns27:request-wrapper/ns27:MessageHeader"/>'
+                    - '              <xsl:otherwise xml:id="id_431">'
+                    - '                <xsl:value-of xml:id="id_432" select="&quot;ESS Job Log &amp; Output&quot;"/>'
+                    - '          <ns34:MessageDetail xml:id="id_267">'
+                    - '            <xsl:value-of xml:id="id_268" select="$MsgDetail"/>'
+                    - '          <ns34:ESSJobName xml:id="id_269">'
+                    - '            <xsl:value-of xml:id="id_270" select="$BlankValue"/>'
+                    - '          <ns34:ParentFlowid xml:id="id_271">'
+                    - '            <xsl:value-of xml:id="id_272" select="$BlankValue"/>'
+                    - '          <ns34:ToEmailAddress xml:id="id_273">'
+                    - '            <xsl:value-of xml:id="id_274" select="/nssrcmpr:execute/ns27:request-wrapper/ns27:EmailId"/>'
+                    - '          <ns34:MessageBody xml:id="id_275">'
+                    - '            <xsl:choose xml:id="id_402">'
+                    - '              <xsl:when xml:id="id_403" test="$MailBody != &quot;&quot;">'
+                    - '                <xsl:value-of xml:id="id_404" select="$MailBody"/>'
+                    - '              <xsl:otherwise xml:id="id_405">'
+                    - '                <xsl:value-of xml:id="id_406" select="oraext:encodeBase64 (string (/nssrcmpr:execute/ns27:request-wrapper/ns27:EmailBody ) )"/>'
+                    - ""
+                - Invoke: SendNotification(i6)
+                  application:
+                    Application: SendNotification(PRESEEDED_COLLOCATED_CONN_1741)
+                    name: SendNotification
+                    adapter:
+                        code: PRESEEDED_COLLOCATED_CONN_1741
+                    properties:
+                        - name: operationPath
+                          value: /Notify
+                        - name: HttpVerb
+                          value: POST
+                        - name: QueryParameters
+                          value: ""
+                        - name: ResourceURI
+                          value: /Notify
+                        - name: integration_id
+                          value: TSGTCMNNOTIFICAT_SERVICE|01.00.0000
+                        - name: integration_operation
+                          value: POST
+                        - name: serviceType
+                          value: REST
+            - Route: Otherwise(sc17)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - CatchAll: CatchAll(ta4)
+          statements:
+            - Assignments: AssignNotificationFaulError(l16)
+              name: AssignNotificationFaulError
+              assignments:
+                - Assignment: Assignment(a56)
+                  variableName: ErrorFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErrorFlag
+                    variableDescription: Set Y in case of ERROR
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a76)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableDescription: Status
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a77)
+                  variableName: MsgCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''HC_CMN_NOTIFICATION_FAILED'''
+                    variableName: MsgCode
+                    variableDescription: Stores a unique code for error and success status
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a78)
+                  variableName: MsgDescr
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Error Occurred while invoking Common Notification service'''
+                    variableName: MsgDescr
+                    variableDescription: Stores the description for the Message
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a79)
+                  variableName: MsgDetail
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: ora:getFaultAsString()
+                    namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDetail
+                    variableDescription: Details information of the Exception
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_10348/resourcegroup_10349/ICSFault.xsd
+    - Try: Try(t0)
+      username: Scope_ReadLogAndMapResponse
+      statements:
+        - Switch: Switch(s9)
+          routes:
+            - Route: (sc21)
+              exprProperties:
+                xpathExpression: $OutputFileFound = "Y"
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: OutputFileFound
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - StageFile: ReadLog(sf6)
+                  operation: Read
+                  expressionProperties:
+                    xpathExpression: concat($BaseFolderPath,'log/')
+                  statements: []
+                - Map: Map(m2)
+                  xsltfilepath: ../resources/processor_19143/resourcegroup_19146/req_ee35ee380b6c4b91918bf7dc4fd020d2.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types" xmlns:ns6="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getDocumentService" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns34="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINRES" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINREQ" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadLog_REQUEST/types" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns35="http://TargetNamespace.com/logfileReference/logStageGetJobs" xmlns:ns37="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadLog_REQUEST" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath276029234" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1834016253" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath323567175" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath242206471">
+                    - '  <xsl:param name="ESSJobCompletionTime" xml:id="id_22"/>'
+                    - '  <xsl:param name="ESSJobName" xml:id="id_23"/>'
+                    - '  <xsl:param name="ESSJobScheduledTime" xml:id="id_24"/>'
+                    - '  <xsl:param name="ESSJobStatus" xml:id="id_25"/>'
+                    - '  <xsl:param name="ESSJobSubmissionTime" xml:id="id_26"/>'
+                    - '  <xsl:param name="ESSJobSubmittedBy" xml:id="id_27"/>'
+                    - '  <xsl:param name="ESSjobSubmissionNotes" xml:id="id_28"/>'
+                    - '  <xsl:param name="JobInstanceId" xml:id="id_36"/>'
+                    - '  <xsl:param name="LogFileFound" xml:id="id_39"/>'
+                    - '  <xsl:param name="MsgCode" xml:id="id_41"/>'
+                    - '  <xsl:param name="MsgDescr" xml:id="id_42"/>'
+                    - '  <xsl:param name="Status" xml:id="id_49"/>'
+                    - '  <xsl:param name="ReadLog" xml:id="id_108"/>'
+                    - '  <xsl:param name="FileContent" xml:id="id_173"/>'
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:executeResponse xml:id="id_12">'
+                    - '      <nstrgdfl:response-wrapper xml:id="id_54">'
+                    - '        <nstrgdfl:Status xml:id="id_55">'
+                    - '          <xsl:value-of xml:id="id_56" select="$Status"/>'
+                    - '        <nstrgdfl:MsgCode xml:id="id_57">'
+                    - '          <xsl:value-of xml:id="id_58" select="$MsgCode"/>'
+                    - '        <nstrgdfl:ESSMsgDescr xml:id="id_59">'
+                    - '          <xsl:value-of xml:id="id_60" select="$MsgDescr"/>'
+                    - '        <nstrgdfl:ESSProcessID xml:id="id_61">'
+                    - '          <xsl:value-of xml:id="id_62" select="/nstrgmpr:execute/nstrgdfl:request-wrapper/nstrgdfl:ESSProcessId"/>'
+                    - '        <nstrgdfl:JobReportInstanceId xml:id="id_63">'
+                    - '          <xsl:value-of xml:id="id_64" select="$JobInstanceId"/>'
+                    - '        <nstrgdfl:ESSJobName xml:id="id_65">'
+                    - '          <xsl:value-of xml:id="id_66" select="$ESSJobName"/>'
+                    - '        <nstrgdfl:ExecutableStatus xml:id="id_69">'
+                    - '          <xsl:value-of xml:id="id_70" select="$ESSJobStatus"/>'
+                    - '        <nstrgdfl:ScheduledTime xml:id="id_67">'
+                    - '          <xsl:value-of xml:id="id_68" select="$ESSJobScheduledTime"/>'
+                    - '        <nstrgdfl:SubmissionTime xml:id="id_71">'
+                    - '          <xsl:value-of xml:id="id_72" select="$ESSJobSubmissionTime"/>'
+                    - '        <nstrgdfl:CompletionTime xml:id="id_73">'
+                    - '          <xsl:value-of xml:id="id_74" select="$ESSJobCompletionTime"/>'
+                    - '        <nstrgdfl:SubmittedBy xml:id="id_75">'
+                    - '          <xsl:value-of xml:id="id_76" select="$ESSJobSubmittedBy"/>'
+                    - '        <nstrgdfl:SubmissionNotes xml:id="id_77">'
+                    - '          <xsl:value-of xml:id="id_78" select="$ESSjobSubmissionNotes"/>'
+                    - '        <nstrgdfl:LogExists xml:id="id_79">'
+                    - '          <xsl:value-of xml:id="id_80" select="$LogFileFound"/>'
+                    - '        <nstrgdfl:FileContents xml:id="id_193">'
+                    - '          <xsl:value-of xml:id="id_194" select="$FileContent"/>'
+                    - '        <xsl:for-each xml:id="id_116" select="$ReadLog/nsmpr1:ReadResponse/ns35:GetJobsSet/ns35:GetJobs">'
+                    - '          <nstrgdfl:Reportoutput xml:id="id_117">'
+                    - '            <nstrgdfl:SNo xml:id="id_147">'
+                    - '              <xsl:value-of xml:id="id_148" select="ns35:SNo"/>'
+                    - '            <nstrgdfl:documentDataContentType xml:id="id_149">'
+                    - '              <xsl:value-of xml:id="id_150" select="ns35:DocumentDataContentType"/>'
+                    - '            <nstrgdfl:documentDataAvaiable xml:id="id_151">'
+                    - '              <xsl:value-of xml:id="id_152" select="ns35:documentDataAvailable"/>'
+                    - '            <nstrgdfl:JobName xml:id="id_161">'
+                    - '              <xsl:value-of xml:id="id_162" select="$ESSJobName"/>'
+                    - '            <nstrgdfl:outputId xml:id="id_157">'
+                    - '              <xsl:value-of xml:id="id_158" select="ns35:OutputId"/>'
+                    - '            <nstrgdfl:statusDetail xml:id="id_153">'
+                    - '              <xsl:value-of xml:id="id_154" select="ns35:statusDetail"/>'
+                    - '            <nstrgdfl:status xml:id="id_155">'
+                    - '              <xsl:value-of xml:id="id_156" select="ns35:status"/>'
+                    - '            <nstrgdfl:outputName xml:id="id_159">'
+                    - '              <xsl:value-of xml:id="id_160" select="ns35:outputName"/>'
+                    - ""
+            - Route: Otherwise(sc22)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements:
+                - Map: Map(m11)
+                  xsltfilepath: ../resources/processor_20192/resourcegroup_20195/req_5bd6f84ad0744c3b9e1d71495cebd6f6.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST/types" xmlns:ns6="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getDocumentService" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns38="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINRES" xmlns:ns22="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/REST/getDocumentService/types" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getDocumentService_REQUEST/RESTINREQ" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath163080424" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath276029234" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1121297315" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath242206471">
+                    - '  <xsl:param name="ESSJobCompletionTime" xml:id="id_22"/>'
+                    - '  <xsl:param name="ESSJobName" xml:id="id_23"/>'
+                    - '  <xsl:param name="ESSJobScheduledTime" xml:id="id_24"/>'
+                    - '  <xsl:param name="ESSJobStatus" xml:id="id_25"/>'
+                    - '  <xsl:param name="ESSJobSubmissionTime" xml:id="id_26"/>'
+                    - '  <xsl:param name="ESSJobSubmittedBy" xml:id="id_27"/>'
+                    - '  <xsl:param name="ESSjobSubmissionNotes" xml:id="id_28"/>'
+                    - '  <xsl:param name="JobInstanceId" xml:id="id_36"/>'
+                    - '  <xsl:param name="LogFileFound" xml:id="id_39"/>'
+                    - '  <xsl:param name="MsgCode" xml:id="id_41"/>'
+                    - '  <xsl:param name="MsgDescr" xml:id="id_42"/>'
+                    - '  <xsl:param name="Status" xml:id="id_49"/>'
+                    - '  <xsl:param name="FileContent" xml:id="id_91"/>'
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:executeResponse xml:id="id_12">'
+                    - '      <ns23:response-wrapper xml:id="id_54">'
+                    - '        <ns23:Status xml:id="id_55">'
+                    - '          <xsl:value-of xml:id="id_56" select="$Status"/>'
+                    - '        <ns23:MsgCode xml:id="id_57">'
+                    - '          <xsl:value-of xml:id="id_58" select="$MsgCode"/>'
+                    - '        <ns23:ESSMsgDescr xml:id="id_59">'
+                    - '          <xsl:value-of xml:id="id_60" select="$MsgDescr"/>'
+                    - '        <ns23:ESSProcessID xml:id="id_61">'
+                    - '          <xsl:value-of xml:id="id_62" select="/nstrgmpr:execute/ns23:request-wrapper/ns23:ESSProcessId"/>'
+                    - '        <ns23:JobReportInstanceId xml:id="id_63">'
+                    - '          <xsl:value-of xml:id="id_64" select="$JobInstanceId"/>'
+                    - '        <ns23:ESSJobName xml:id="id_65">'
+                    - '          <xsl:value-of xml:id="id_66" select="$ESSJobName"/>'
+                    - '        <ns23:ExecutableStatus xml:id="id_67">'
+                    - '          <xsl:value-of xml:id="id_68" select="$ESSJobStatus"/>'
+                    - '        <ns23:ScheduledTime xml:id="id_69">'
+                    - '          <xsl:value-of xml:id="id_70" select="$ESSJobScheduledTime"/>'
+                    - '        <ns23:SubmissionTime xml:id="id_71">'
+                    - '          <xsl:value-of xml:id="id_72" select="$ESSJobSubmissionTime"/>'
+                    - '        <ns23:CompletionTime xml:id="id_73">'
+                    - '          <xsl:value-of xml:id="id_74" select="$ESSJobCompletionTime"/>'
+                    - '        <ns23:SubmittedBy xml:id="id_75">'
+                    - '          <xsl:value-of xml:id="id_76" select="$ESSJobSubmittedBy"/>'
+                    - '        <ns23:SubmissionNotes xml:id="id_77">'
+                    - '          <xsl:value-of xml:id="id_78" select="$ESSjobSubmissionNotes"/>'
+                    - '        <ns23:LogExists xml:id="id_79">'
+                    - '          <xsl:value-of xml:id="id_80" select="$LogFileFound"/>'
+                    - '        <ns23:FileContents xml:id="id_111">'
+                    - '          <xsl:value-of xml:id="id_112" select="$FileContent"/>'
+                    - ""
+        - CatchAll: CatchAll(ta1)
+          statements:
+            - Assignments: AssignLogFaultScope(l25)
+              name: AssignLogFaultScope
+              assignments:
+                - Assignment: Assignment(a97)
+                  variableName: ErrorFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErrorFlag
+                    variableDescription: Assign Y if Error
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a98)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableDescription: Status
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a99)
+                  variableName: MsgDetail
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: ora:getFaultAsString()
+                    namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDetail
+                    variableDescription: Message Detail
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a100)
+                  variableName: MsgDescr
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: concat('HC_CMN_LOGFILE_READ_ERROR','Details:',$Scope_ReadLogAndMapResponseFaultObject/nsmpr7:fault/nsmpr7:reason)
+                    namespaceList: nsmpr7=http://www.oracle.com/2014/03/ics/fault
+                    variableName: MsgDescr
+                    variableDescription: Message Description
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a101)
+                  variableName: MsgCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''HC_CMN_LOGFILE_READ_ERROR'''
+                    variableName: MsgCode
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_20279/resourcegroup_20280/ICSFault.xsd
+    - Reply: Reply(y0)
+      adapterjcareference: null
+      wsdlfilepath: ""

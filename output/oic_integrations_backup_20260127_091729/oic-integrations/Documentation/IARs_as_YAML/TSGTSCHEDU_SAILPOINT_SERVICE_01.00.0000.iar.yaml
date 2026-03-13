@@ -1,0 +1,602 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_205
+      xsdfilepath: ../resources/processor_205/resourcegroup_206/ICSIntegrationMetadata.xsd
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - xmlname:
+            space: http://www.oracle.com/2014/03/ics/flow/definition
+            local: scheduleReceive
+          attrs:
+            - name:
+                space: ""
+                local: trackingRefUri
+              value: processor_1
+            - name:
+                space: ""
+                local: id
+              value: sr0
+            - name:
+                space: ""
+                local: refUri
+              value: processor_8
+          content: ""
+          statements: []
+        - Assignments: AssignGlobalVariables(l1)
+          name: AssignGlobalVariables
+          assignments:
+            - Assignment: Assignment(a20)
+              variableName: INTEGRATION_IDENTIFIER
+              variableType: string
+              expressionProperties:
+                xpathExpression: dvm:lookupValue('TSGTHcmScheduler_LKP','SCHEDULER_IDENTIFIER',$self/nsmpr0:metadata/nsmpr0:integration/nsmpr0:identifier,'VB_INTEGRATION_IDENTIFIER','')
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue nsmpr0=http://www.oracle.com/2014/03/ic/integration/metadata
+                variableName: INTEGRATION_IDENTIFIER
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a4)
+              variableName: Status
+              variableType: string
+              expressionProperties:
+                xpathExpression: '"SUCCESS"'
+                variableName: Status
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a5)
+              variableName: ErrorMessage
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: ErrorMessage
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a6)
+              variableName: errorReason
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: errorReason
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a7)
+              variableName: errorDetails
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: errorDetails
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a12)
+              variableName: StatusOB
+              variableType: string
+              expressionProperties:
+                xpathExpression: '"SUCCESS"'
+                variableName: StatusOB
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a13)
+              variableName: ErrorMessageOB
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: ErrorMessageOB
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a14)
+              variableName: errorReasonOB
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: errorReasonOB
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a15)
+              variableName: errorDetailsOB
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: errorDetailsOB
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a16)
+              variableName: Framework_BaseURI
+              variableType: string
+              expressionProperties:
+                xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName','Framework_BaseURI','ConfigValue','')
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                variableName: Framework_BaseURI
+                variableDescription: VBCS integration Framework Base URL
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a17)
+              variableName: Framework_ResourceURI
+              variableType: string
+              expressionProperties:
+                xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName','Framework_ResourceURI_hcm','ConfigValue','')
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                variableName: Framework_ResourceURI
+                variableDescription: VBCS integration Framework Releative URL
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a18)
+              variableName: FileName
+              variableType: string
+              expressionProperties:
+                xpathExpression: ''''''
+                variableName: FileName
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Try: Try(t0)
+          username: InboundInvocation
+          statements:
+            - Map: Map(m0)
+              xsltfilepath: ../resources/processor_35/resourcegroup_38/req_02f7376cbb8442c8936c5117284887f9.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getInboundMetadataDetails" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails_REQUEST/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails/types" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1054450068" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath163080424" xmlns:orajs80="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath592165071" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs34="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath14018525" xmlns:orajs104="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1961812051" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs49="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath806893092" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1735454106" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs46="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath12241651" xmlns:orajs67="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs30="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1127054925" xmlns:orajs37="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2097630753" xmlns:orajs81="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1883716401" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:orajs76="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath698324541" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1951476419" xmlns:orajs100="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath486343990" xmlns:orajs65="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath204663797" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1347180628" xmlns:orajs35="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1872994349" xmlns:orajs48="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath142383697" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1500385946" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1525074871" xmlns:orajs96="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1855842459" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath384934510" xmlns:orajs74="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath358846682" xmlns:orajs77="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1707081963" xmlns:orajs40="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1748511852" xmlns:orajs63="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1826822789" xmlns:orajs87="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1266287611" xmlns:orajs33="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1270464756" xmlns:orajs53="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath537077560" xmlns:orajs91="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1701482229" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs66="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1087267344" xmlns:orajs61="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath343408006" xmlns:orajs71="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1126016822" xmlns:orajs99="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath823981861" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs52="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1775217526" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs60="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1985036956" xmlns:orajs64="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1766297774" xmlns:orajs55="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2042814374" xmlns:orajs42="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1174939396" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1370812183" xmlns:orajs44="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1530914355" xmlns:orajs78="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1201492479" xmlns:orajs84="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1057714831" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs94="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs85="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1815540921" xmlns:orajs57="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1186637812" xmlns:orajs101="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1751206515" xmlns:orajs93="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath98144710" xmlns:orajs38="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath689808667" xmlns:orajs39="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath849950693" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1275849111" xmlns:orajs31="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath648120492" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath779497283" xmlns:orajs41="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath390194174" xmlns:orajs62="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2086680201" xmlns:orajs73="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath30445405" xmlns:orajs106="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1998789874" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath307116223" xmlns:orajs47="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath74618405" xmlns:orajs51="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1397513105" xmlns:orajs56="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath702749336" xmlns:orajs95="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath495195734" xmlns:orajs83="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath127559331" xmlns:orajs59="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs29="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs102="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath255363942" xmlns:orajs72="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath981321393" xmlns:orajs69="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath537956896" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getInboundMetadataDetails_REQUEST/RESTOUTRES" xmlns:orajs45="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1240778610" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getInboundMetadataDetails_REQUEST/RESTOUTREQ" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1286191298" xmlns:orajs82="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath226578510" xmlns:orajs36="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1365598652" xmlns:orajs107="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1877919085" xmlns:orajs89="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1865179425" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath604094323" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1877344480" xmlns:orajs88="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs32="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1735900936" xmlns:orajs68="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs70="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1498215876" xmlns:orajs97="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath882621124" xmlns:orajs54="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath62178553" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath473550523" xmlns:orajs79="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2025735738" xmlns:orajs75="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath776843482" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath161348236" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath943039809" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs86="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs90="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590183926" xmlns:orajs98="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673429515" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns22="http://xml.oracle.com/types/REST/getInboundMetadataDetails_REQUEST" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1015305909" xmlns:orajs58="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath910881554" xmlns:orajs105="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1021825503" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath832599956" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:orajs43="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1677201779" xmlns:orajs108="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs92="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1378383666" xmlns:orajs103="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath487572452" xmlns:orajs50="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath308940992" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1279052434" xmlns:orajs109="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath402346545" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:ns12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:ns14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758">
+                - '  <xsl:param name="Framework_BaseURI" xml:id="id_30"/>'
+                - '  <xsl:param name="Framework_ResourceURI" xml:id="id_31"/>'
+                - '  <xsl:param name="INTEGRATION_IDENTIFIER" xml:id="id_72"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:execute xml:id="id_12">'
+                - '      <nstrgmpr:QueryParameters xml:id="id_21">'
+                - '        <!-- <ns22:q xml:id="id_22">'
+                - '                                <xsl:value-of xml:id="id_23" select="&quot;ACTIVE=''Y'' AND iSSCHEDULEDFLAG=''Y'' AND INTEGRATION_TYPE=''HCMIN''&quot;"/> '
+                - '        <ns22:q xml:id="id_64">'
+                - '          <xsl:value-of xml:id="id_65" select="concat (&quot;INTEGRATION_IDENTIFIER=&quot;, &quot;&apos;&quot;, $INTEGRATION_IDENTIFIER, &quot;&apos;&quot; )"/>'
+                - '      <ns21:ConnectivityProperties xml:id="id_42">'
+                - '        <ns21:RestAPI xml:id="id_43">'
+                - '          <ns21:BaseURI xml:id="id_44">'
+                - '            <xsl:value-of xml:id="id_45" select="$Framework_BaseURI"/>'
+                - '          <ns21:RelativeURI xml:id="id_46">'
+                - '            <xsl:value-of xml:id="id_47" select="concat ($Framework_ResourceURI, &quot;/FWKINBOUNDINTGMETADATA&quot; )"/>'
+                - ""
+            - Invoke: getInboundMetadataDetails(i0)
+              application:
+                Application: getInboundMetadataDetails(TSGTRESTVBCSBO_CONN)
+                name: getInboundMetadataDetails
+                adapter:
+                    code: TSGTRESTVBCSBO_CONN
+                properties:
+                    - name: operationPath
+                      value: http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails_REQUEST/execute
+                    - name: HttpVerb
+                      value: GET
+                    - name: QueryParameters
+                      value: q
+                    - name: ResourceURI
+                      value: /FWKINBOUNDINTGMETADATA
+            - ForLoop: ForLoop(f0)
+              expressionProperties:
+                xpathExpression: $getInboundMetadataDetails/nsmpr4:executeResponse/nsmpr5:response-wrapper/nsmpr5:items
+                namespaceList: nsmpr4=http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails_REQUEST/types nsmpr5=http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails/types
+                variableName: currInboundInterface
+              currentRecordVarName: currInboundInterface
+              statements:
+                - Switch: Switch(s0)
+                  routes:
+                    - Route: (sc0)
+                      exprProperties:
+                        xpathExpression: $currInboundInterface/nsmpr5:items/nsmpr5:lASTRUNDATETIME != ""
+                        namespaceList: nsmpr5=http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails/types
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: currInboundInterface
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails/types}items'
+                      statements:
+                        - Switch: Switch(s2)
+                          routes:
+                            - Route: (sc4)
+                              exprProperties:
+                                xpathExpression: fn:current-dateTime() >= (nssrcdfl:dateTime($currInboundInterface/nsmpr6:items/nsmpr6:lASTRUNDATETIME))
+                                namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails/types fn=http://www.w3.org/2005/xpath-functions nssrcdfl=http://www.w3.org/2001/XMLSchema
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: currInboundInterface
+                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails/types}items'
+                              statements:
+                                - Map: Map(m3)
+                                  xsltfilepath: ../resources/processor_1133/resourcegroup_1136/req_72b0b5c28972420294b294a932b46020.xsl
+                                  mapsentences:
+                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/launchHCMInboundLauncher_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/launchHCMInboundLauncher_REQUEST/types" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/launchHCMInboundLauncher" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails_REQUEST/types" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/launchHCMInboundLauncher_REQUEST/SKIPOUTREQ" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns29="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/launchHCMInboundLauncher_REQUEST" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails_REQUEST" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns26="http://xml.oracle.com/types/REST/getInboundMetadataDetails_REQUEST" xmlns:ns21="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getInboundMetadataDetails" xmlns:ns28="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Parameter/collocatedics/launchHCMInboundLauncher_REQUEST" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getInboundMetadataDetails_REQUEST/RESTOUTRES" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getInboundMetadataDetails_REQUEST/RESTOUTREQ" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:nsmpr4="http://www.oracle.com/2014/03/ics/callout" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadJobParameters_REQUEST/types" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/writeJSONToStage_REQUEST/types" xmlns:ns61="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadJobParameters_REQUEST" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:ns63="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns60="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadJobParameters/types" xmlns:ns62="http://xmlns.oracle.com/cloud/adapter/stagefile/writeJSONToStage_REQUEST" xmlns:ns65="http://xmlns.oracle.com/pcbpel/adapter/opaque/" xmlns:ns64="http://xmlns.oracle.com/cloud/staging/write" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:ns12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258">
+                                    - '  <xsl:param name="currInboundInterface" xml:id="id_33"/>'
+                                    - '  <xsl:param name="self" xml:id="id_40"/>'
+                                    - '  <xsl:param name="FileName" xml:id="id_59"/>'
+                                    - '  <xsl:template match="/" xml:id="id_11">'
+                                    - '    <nstrgmpr:POST xml:id="id_12">'
+                                    - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_44">'
+                                    - '        <ns29:InterfaceIdentifier xml:id="id_45">'
+                                    - '          <xsl:value-of xml:id="id_46" select="$currInboundInterface/nsmpr1:items/nsmpr1:INTEGRATION_IDENTIFIER"/>'
+                                    - '        <ns29:FileName xml:id="id_74">'
+                                    - '          <xsl:value-of xml:id="id_75" select="$FileName"/>'
+                                    - '        <ns29:SubmittedBy xml:id="id_47">'
+                                    - '          <xsl:value-of xml:id="id_48" select="$self/nsmpr3:metadata/nsmpr3:runtime/nsmpr3:invokedBy"/>'
+                                    - '        <ns29:Mode xml:id="id_120">'
+                                    - '          <xsl:value-of xml:id="id_167" select="&apos;Schedule&apos;"/>'
+                                    - ""
+                                - Invoke: launchHCMInboundLauncher(i3)
+                                  application:
+                                    Application: launchHCMInboundLauncher(PRESEEDED_COLLOCATED_CONN_1741)
+                                    name: launchHCMInboundLauncher
+                                    adapter:
+                                        code: PRESEEDED_COLLOCATED_CONN_1741
+                                    properties:
+                                        - name: operationPath
+                                          value: /InvokeLauncher
+                                        - name: HttpVerb
+                                          value: POST
+                                        - name: QueryParameters
+                                          value: ""
+                                        - name: ResourceURI
+                                          value: /InvokeLauncher
+                                        - name: integration_id
+                                          value: TSGTCMNHCMLAUNCH_SERVICE|01.00.0000
+                                        - name: integration_operation
+                                          value: POST
+                                        - name: serviceType
+                                          value: REST
+                            - Route: Otherwise(sc5)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements: []
+                    - Route: Otherwise(sc1)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements:
+                        - Map: Map(m2)
+                          xsltfilepath: ../resources/processor_1146/resourcegroup_1149/req_e805ebe947384459aaf51656889a8a52.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeHCMInboundLauncher_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/invokeHCMInboundLauncher" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeHCMInboundLauncher_REQUEST/types" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails_REQUEST/types" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns30="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Parameter/collocatedics/invokeHCMInboundLauncher_REQUEST" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails_REQUEST" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns26="http://xml.oracle.com/types/REST/getInboundMetadataDetails_REQUEST" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getInboundMetadataDetails" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns29="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeHCMInboundLauncher_REQUEST" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getInboundMetadataDetails_REQUEST/RESTOUTRES" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getInboundMetadataDetails_REQUEST/RESTOUTREQ" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/invokeHCMInboundLauncher_REQUEST/SKIPOUTREQ" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219">
+                            - '  <xsl:param name="currInboundInterface" xml:id="id_33"/>'
+                            - '  <xsl:param name="self" xml:id="id_40"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:POST xml:id="id_12">'
+                            - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_44">'
+                            - '        <ns29:InterfaceIdentifier xml:id="id_45">'
+                            - '          <xsl:value-of xml:id="id_46" select="$currInboundInterface/nsmpr1:items/nsmpr1:INTEGRATION_IDENTIFIER"/>'
+                            - '        <ns29:FileName xml:id="id_74"/>'
+                            - '        <ns29:SubmittedBy xml:id="id_47">'
+                            - '          <xsl:value-of xml:id="id_48" select="$self/nsmpr3:metadata/nsmpr3:runtime/nsmpr3:invokedBy"/>'
+                            - ""
+                        - Invoke: invokeHCMInboundLauncher(i2)
+                          application:
+                            Application: invokeHCMInboundLauncher(PRESEEDED_COLLOCATED_CONN_1741)
+                            name: invokeHCMInboundLauncher
+                            adapter:
+                                code: PRESEEDED_COLLOCATED_CONN_1741
+                            properties:
+                                - name: operationPath
+                                  value: /InvokeLauncher
+                                - name: HttpVerb
+                                  value: POST
+                                - name: QueryParameters
+                                  value: ""
+                                - name: ResourceURI
+                                  value: /InvokeLauncher
+                                - name: integration_id
+                                  value: TSGTCMNHCMLAUNCH_SERVICE|01.00.0000
+                                - name: integration_operation
+                                  value: POST
+                                - name: serviceType
+                                  value: REST
+                - xmlname:
+                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                    local: wait
+                  attrs:
+                    - name:
+                        space: ""
+                        local: id
+                      value: w0
+                    - name:
+                        space: ""
+                        local: refUri
+                      value: processor_471
+                  content: ""
+                  statements: []
+            - CatchAll: CatchAll(ta0)
+              statements:
+                - Assignments: AssignInboundErrors(l0)
+                  name: AssignInboundErrors
+                  assignments:
+                    - Assignment: Assignment(a0)
+                      variableName: errorDetails
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: ora:getContentAsString($InboundInvocationFaultObject/nsmpr1:fault/nsmpr1:details)
+                        namespaceList: nsmpr1=http://www.oracle.com/2014/03/ics/fault ora=http://schemas.oracle.com/xpath/extension
+                        variableName: errorDetails
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a1)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '"ERROR"'
+                        variableName: Status
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a2)
+                      variableName: ErrorMessage
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $InboundInvocationFaultObject/nsmpr1:fault/nsmpr1:details
+                        namespaceList: nsmpr1=http://www.oracle.com/2014/03/ics/fault
+                        variableName: ErrorMessage
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a3)
+                      variableName: errorReason
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $InboundInvocationFaultObject/nsmpr1:fault/nsmpr1:reason
+                        namespaceList: nsmpr1=http://www.oracle.com/2014/03/ics/fault
+                        variableName: errorReason
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+              icsfaultfilepath: ../resources/processor_210/resourcegroup_211/ICSFault.xsd
+        - Try: Try(t1)
+          username: OutboundInvocation
+          statements:
+            - Map: Map(m1)
+              xsltfilepath: ../resources/processor_52/resourcegroup_55/req_590d53999a8443f9a02059cdabd55f53.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails_REQUEST/types" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getOutboundMetadataDetails" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails/types" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01 ns14 ns16 ns8 ns10 ns18 ns12 ns13 ns9 ns20 ns11 ns15 ns17" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1054450068" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath163080424" xmlns:orajs80="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath592165071" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs34="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath14018525" xmlns:orajs107="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1961812051" xmlns:orajs50="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath806893092" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1735454106" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs46="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath12241651" xmlns:orajs67="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs30="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1127054925" xmlns:orajs37="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2097630753" xmlns:orajs82="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1883716401" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:orajs76="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath698324541" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1951476419" xmlns:orajs102="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath486343990" xmlns:orajs65="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath204663797" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1347180628" xmlns:orajs35="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1872994349" xmlns:orajs47="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath142383697" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1500385946" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1525074871" xmlns:orajs96="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1855842459" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath384934510" xmlns:orajs74="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath358846682" xmlns:orajs77="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1707081963" xmlns:orajs40="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1748511852" xmlns:orajs63="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1826822789" xmlns:orajs91="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1266287611" xmlns:orajs32="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1270464756" xmlns:orajs53="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath537077560" xmlns:orajs88="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1701482229" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs66="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1087267344" xmlns:orajs61="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath343408006" xmlns:orajs71="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1126016822" xmlns:orajs101="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath823981861" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs52="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1775217526" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs60="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1985036956" xmlns:orajs64="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1766297774" xmlns:orajs55="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2042814374" xmlns:orajs42="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1174939396" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1370812183" xmlns:orajs44="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1530914355" xmlns:orajs78="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1201492479" xmlns:orajs84="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1057714831" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs94="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs85="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1815540921" xmlns:ns22="http://xml.oracle.com/types/REST/getOutboundMetadataDetails_REQUEST" xmlns:orajs56="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1186637812" xmlns:orajs100="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1751206515" xmlns:orajs93="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath98144710" xmlns:orajs38="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath689808667" xmlns:orajs39="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath849950693" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1275849111" xmlns:orajs31="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath648120492" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath779497283" xmlns:orajs41="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath390194174" xmlns:orajs62="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2086680201" xmlns:orajs73="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath30445405" xmlns:orajs104="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1998789874" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath307116223" xmlns:orajs48="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath74618405" xmlns:orajs51="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1397513105" xmlns:orajs57="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath702749336" xmlns:orajs95="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath495195734" xmlns:orajs83="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath127559331" xmlns:orajs59="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs29="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs99="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath255363942" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getOutboundMetadataDetails_REQUEST/RESTOUTREQ" xmlns:orajs72="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath981321393" xmlns:ns19="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getOutboundMetadataDetails_REQUEST/RESTOUTRES" xmlns:orajs69="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath537956896" xmlns:orajs45="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1240778610" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1286191298" xmlns:orajs81="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath226578510" xmlns:orajs36="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1365598652" xmlns:orajs105="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1877919085" xmlns:orajs89="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1865179425" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath604094323" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1877344480" xmlns:orajs90="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs33="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1735900936" xmlns:orajs68="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs70="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1498215876" xmlns:orajs97="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath882621124" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs54="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath62178553" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath473550523" xmlns:orajs79="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2025735738" xmlns:orajs75="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath776843482" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath161348236" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath943039809" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs86="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs87="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590183926" xmlns:orajs98="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673429515" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1015305909" xmlns:orajs58="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath910881554" xmlns:orajs103="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1021825503" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath832599956" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:orajs43="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1677201779" xmlns:orajs108="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs92="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1378383666" xmlns:orajs106="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath487572452" xmlns:orajs49="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath308940992" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1279052434" xmlns:orajs109="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath402346545" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:ns16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:ns18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:ns12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:ns13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:ns15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258">
+                - '  <xsl:param name="Framework_BaseURI" xml:id="id_30"/>'
+                - '  <xsl:param name="Framework_ResourceURI" xml:id="id_31"/>'
+                - '  <xsl:param name="INTEGRATION_IDENTIFIER" xml:id="id_55"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:execute xml:id="id_12">'
+                - '      <nstrgmpr:QueryParameters xml:id="id_21">'
+                - '        <ns22:q xml:id="id_22">'
+                - '          <xsl:value-of xml:id="id_23" select="concat (&quot;INTEGRATION_IDENTIFIER=&quot;, &quot;&apos;&quot;, $INTEGRATION_IDENTIFIER, &quot;&apos;&quot; )"/>'
+                - '      <ns21:ConnectivityProperties xml:id="id_42">'
+                - '        <ns21:RestAPI xml:id="id_43">'
+                - '          <ns21:BaseURI xml:id="id_44">'
+                - '            <xsl:value-of xml:id="id_45" select="$Framework_BaseURI"/>'
+                - '          <ns21:RelativeURI xml:id="id_46">'
+                - '            <xsl:value-of xml:id="id_47" select="concat ($Framework_ResourceURI, &quot;/FWKOUTBOUNDINTGMETADATA&quot; )"/>'
+                - ""
+            - Invoke: getOutboundMetadataDetails(i1)
+              application:
+                Application: getOutboundMetadataDetails(TSGTRESTVBCSBO_CONN)
+                name: getOutboundMetadataDetails
+                adapter:
+                    code: TSGTRESTVBCSBO_CONN
+                properties:
+                    - name: operationPath
+                      value: http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails_REQUEST/execute
+                    - name: HttpVerb
+                      value: GET
+                    - name: QueryParameters
+                      value: q
+                    - name: ResourceURI
+                      value: /FWKOUTBOUNDINTGMETADATA
+            - xmlname:
+                space: http://www.oracle.com/2014/03/ics/flow/definition
+                local: callout
+              attrs:
+                - name:
+                    space: ""
+                    local: id
+                  value: co0
+                - name:
+                    space: ""
+                    local: refUri
+                  value: processor_1442
+              content: ""
+              statements: []
+            - Map: Map(m9)
+              xsltfilepath: ../resources/processor_1496/resourcegroup_1499/req_6d6fe577c7c4411cad7d628863b67c76.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/writeJSONToStage_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/stagefile/writeJSONToStage_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr oraext xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://www.oracle.com/2014/03/ics/callout" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails_REQUEST/types" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns27="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails/types" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns19="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getInboundMetadataDetails" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getInboundMetadataDetails_REQUEST/RESTOUTRES" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getInboundMetadataDetails_REQUEST/RESTOUTREQ" xmlns:ns29="http://xmlns.oracle.com/pcbpel/adapter/opaque/" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/getInboundMetadataDetails_REQUEST" xmlns:ns28="http://xmlns.oracle.com/cloud/staging/write" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns26="http://xml.oracle.com/types/REST/getInboundMetadataDetails_REQUEST" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111">
+                - '  <xsl:param name="GetJobParameters" xml:id="id_34"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:Write xml:id="id_12">'
+                - '      <ns29:opaqueElement xml:id="id_48">'
+                - '        <xsl:value-of xml:id="id_49" select="oraext:encodeBase64 ($GetJobParameters/nsmpr1:output_GetJobParameters_jsonStr )"/>'
+                - ""
+            - StageFile: writeJSONToStage(sf0)
+              operation: Write
+              expressionProperties:
+                xpathExpression: '''Job_parameter.json'''
+              statements: []
+            - StageFile: ReadJobParameters(sf1)
+              operation: Read
+              expressionProperties:
+                xpathExpression: $writeJSONToStage/nsmpr4:WriteResponse/nsmpr0:WriteResponse/nsmpr2:ICSFile/nsmpr2:FileReference
+                namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/ics/file/v1/types nsmpr4=http://xmlns.oracle.com/cloud/adapter/stagefile/writeJSONToStage_REQUEST/types nsmpr0=http://xmlns.oracle.com/cloud/staging/write
+              statements: []
+            - ForLoop: ForLoop(f1)
+              expressionProperties:
+                xpathExpression: $getOutboundMetadataDetails/nsmpr5:executeResponse/nsmpr7:response-wrapper/nsmpr7:items
+                namespaceList: nsmpr7=http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails/types nsmpr5=http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails_REQUEST/types
+                variableName: currOutboundInterface
+              currentRecordVarName: currOutboundInterface
+              statements:
+                - Switch: Switch(s1)
+                  routes:
+                    - Route: (sc2)
+                      exprProperties:
+                        xpathExpression: $currOutboundInterface/nsmpr7:items/nsmpr7:LAST_RUN_DATETIME != ""
+                        namespaceList: nsmpr7=http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails/types
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: currOutboundInterface
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails/types}items'
+                      statements:
+                        - Switch: Switch(s3)
+                          routes:
+                            - Route: (sc6)
+                              exprProperties:
+                                xpathExpression: fn:current-dateTime() >= (nssrcdfl:dateTime($currOutboundInterface/nsmpr13:items/nsmpr13:LAST_RUN_DATETIME) )
+                                namespaceList: nsmpr13=http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails/types fn=http://www.w3.org/2005/xpath-functions nssrcdfl=http://www.w3.org/2001/XMLSchema
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: currOutboundInterface
+                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails/types}items'
+                              statements:
+                                - Map: Map(m4)
+                                  xsltfilepath: ../resources/processor_1159/resourcegroup_1162/req_63562dec4df14da29584eeff16933524.xsl
+                                  mapsentences:
+                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeCommonOutboundLauncher_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeCommonOutboundLauncher_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/invokeCommonOutboundLauncher" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails_REQUEST/types" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns30="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Parameter/collocatedics/invokeCommonOutboundLauncher_REQUEST" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails_REQUEST" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns21="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getOutboundMetadataDetails" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getOutboundMetadataDetails_REQUEST/RESTOUTREQ" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getOutboundMetadataDetails_REQUEST/RESTOUTRES" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns29="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonOutboundLauncher_REQUEST" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns27="http://xml.oracle.com/types/REST/getOutboundMetadataDetails_REQUEST" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/invokeCommonOutboundLauncher_REQUEST/SKIPOUTREQ" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:nsmpr4="http://www.oracle.com/2014/03/ics/callout" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadJobParameters_REQUEST/types" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/writeJSONToStage_REQUEST/types" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:ns51="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadJobParameters_REQUEST" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:ns53="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns50="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadJobParameters/types" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns52="http://xmlns.oracle.com/cloud/adapter/stagefile/writeJSONToStage_REQUEST" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:ns55="http://xmlns.oracle.com/pcbpel/adapter/opaque/" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns54="http://xmlns.oracle.com/cloud/staging/write" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219">
+                                    - '  <xsl:param name="currOutboundInterface" xml:id="id_33"/>'
+                                    - '  <xsl:param name="self" xml:id="id_40"/>'
+                                    - '  <xsl:param name="ReadJobParameters" xml:id="id_80"/>'
+                                    - '  <xsl:template match="/" xml:id="id_11">'
+                                    - '    <nstrgmpr:POST xml:id="id_12">'
+                                    - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_44">'
+                                    - '        <ns29:InterfaceIdentifier xml:id="id_45">'
+                                    - '          <xsl:value-of xml:id="id_46" select="$currOutboundInterface/nsmpr1:items/nsmpr1:INTEGRATION_IDENTIFIER"/>'
+                                    - '        <ns29:FileName xml:id="id_143"/>'
+                                    - '        <ns29:SubmittedBy xml:id="id_47">'
+                                    - '          <xsl:value-of xml:id="id_48" select="$self/nsmpr3:metadata/nsmpr3:runtime/nsmpr3:invokedBy"/>'
+                                    - '        <ns29:Mode xml:id="id_94">'
+                                    - '          <xsl:value-of xml:id="id_95" select="&apos;Schedule&apos;"/>'
+                                    - '        <xsl:for-each xml:id="id_97" select="$ReadJobParameters/nsmpr5:ReadResponse/ns50:request-wrapper/ns50:Parameter">'
+                                    - '          <ns29:Parameter xml:id="id_98">'
+                                    - '            <ns30:ParameterValue xml:id="id_101">'
+                                    - '              <xsl:value-of xml:id="id_102" select="ns50:ParameterValue"/>'
+                                    - '            <ns30:ParameterName xml:id="id_99">'
+                                    - '              <xsl:value-of xml:id="id_100" select="ns50:ParameterName"/>'
+                                    - ""
+                                - Invoke: invokeCommonOutboundLauncher(i5)
+                                  application:
+                                    Application: invokeCommonOutboundLauncher(PRESEEDED_COLLOCATED_CONN_1741)
+                                    name: invokeCommonOutboundLauncher
+                                    adapter:
+                                        code: PRESEEDED_COLLOCATED_CONN_1741
+                                    properties:
+                                        - name: operationPath
+                                          value: /InvokeLauncher
+                                        - name: HttpVerb
+                                          value: POST
+                                        - name: QueryParameters
+                                          value: ""
+                                        - name: ResourceURI
+                                          value: /InvokeLauncher
+                                        - name: integration_id
+                                          value: TSGTCMNHCMLAUNCH_SERVICE|01.00.0000
+                                        - name: integration_operation
+                                          value: POST
+                                        - name: serviceType
+                                          value: REST
+                            - Route: Otherwise(sc7)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements: []
+                    - Route: Otherwise(sc3)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements:
+                        - Map: Map(m5)
+                          xsltfilepath: ../resources/processor_1172/resourcegroup_1175/req_f60d3ae530d24ac0b1b87a130425276c.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/callOutboundLauncher_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/callOutboundLauncher_REQUEST/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/callOutboundLauncher" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails_REQUEST/types" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/getOutboundMetadataDetails_REQUEST" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns30="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Parameter/collocatedics/callOutboundLauncher_REQUEST" xmlns:ns21="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/getOutboundMetadataDetails" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getOutboundMetadataDetails_REQUEST/RESTOUTREQ" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/getOutboundMetadataDetails_REQUEST/RESTOUTRES" xmlns:ns28="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/callOutboundLauncher_REQUEST" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/callOutboundLauncher_REQUEST/SKIPOUTREQ" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns27="http://xml.oracle.com/types/REST/getOutboundMetadataDetails_REQUEST" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:nsmpr4="http://www.oracle.com/2014/03/ics/callout" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadJobParameters_REQUEST/types" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/writeJSONToStage_REQUEST/types" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:ns51="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadJobParameters_REQUEST" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:ns53="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns50="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadJobParameters/types" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns52="http://xmlns.oracle.com/cloud/adapter/stagefile/writeJSONToStage_REQUEST" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:ns55="http://xmlns.oracle.com/pcbpel/adapter/opaque/" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns54="http://xmlns.oracle.com/cloud/staging/write" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219">
+                            - '  <xsl:param name="currOutboundInterface" xml:id="id_33"/>'
+                            - '  <xsl:param name="self" xml:id="id_40"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:POST xml:id="id_12">'
+                            - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_44">'
+                            - '        <ns28:InterfaceIdentifier xml:id="id_45">'
+                            - '          <xsl:value-of xml:id="id_46" select="$currOutboundInterface/nsmpr1:items/nsmpr1:INTEGRATION_IDENTIFIER"/>'
+                            - '        <ns28:FileName xml:id="id_94"/>'
+                            - '        <ns28:SubmittedBy xml:id="id_47">'
+                            - '          <xsl:value-of xml:id="id_48" select="$self/nsmpr3:metadata/nsmpr3:runtime/nsmpr3:invokedBy"/>'
+                            - ""
+                        - Invoke: callOutboundLauncher(i4)
+                          application:
+                            Application: callOutboundLauncher(PRESEEDED_COLLOCATED_CONN_1741)
+                            name: callOutboundLauncher
+                            adapter:
+                                code: PRESEEDED_COLLOCATED_CONN_1741
+                            properties:
+                                - name: operationPath
+                                  value: /InvokeLauncher
+                                - name: HttpVerb
+                                  value: POST
+                                - name: QueryParameters
+                                  value: ""
+                                - name: ResourceURI
+                                  value: /InvokeLauncher
+                                - name: integration_id
+                                  value: TSGTCMNHCMLAUNCH_SERVICE|01.00.0000
+                                - name: integration_operation
+                                  value: POST
+                                - name: serviceType
+                                  value: REST
+                - xmlname:
+                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                    local: wait
+                  attrs:
+                    - name:
+                        space: ""
+                        local: id
+                      value: w1
+                    - name:
+                        space: ""
+                        local: refUri
+                      value: processor_472
+                  content: ""
+                  statements: []
+            - CatchAll: CatchAll(ta1)
+              statements:
+                - Assignments: AssignOutboundErrors(l2)
+                  name: AssignOutboundErrors
+                  assignments:
+                    - Assignment: Assignment(a9)
+                      variableName: errorDetailsOB
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: ora:getContentAsString($OutboundInvocationFaultObject/nsmpr1:fault/nsmpr1:details)
+                        namespaceList: nsmpr1=http://www.oracle.com/2014/03/ics/fault ora=http://schemas.oracle.com/xpath/extension
+                        variableName: errorDetailsOB
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a8)
+                      variableName: StatusOB
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '"ERROR"'
+                        variableName: StatusOB
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a10)
+                      variableName: ErrorMessageOB
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $OutboundInvocationFaultObject/nsmpr1:fault/nsmpr1:details
+                        namespaceList: nsmpr1=http://www.oracle.com/2014/03/ics/fault
+                        variableName: ErrorMessageOB
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a11)
+                      variableName: errorReasonOB
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $OutboundInvocationFaultObject/nsmpr1:fault/nsmpr1:reason
+                        namespaceList: nsmpr1=http://www.oracle.com/2014/03/ics/fault
+                        variableName: errorReasonOB
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+              icsfaultfilepath: ../resources/processor_507/resourcegroup_508/ICSFault.xsd
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta2)
+          statements:
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_876/resourcegroup_877/ICSFault.xsd

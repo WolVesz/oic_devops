@@ -1,0 +1,20 @@
+flowchart LR
+%% Auto-generated from invoke_chain_group_001.csv — root TSG_MOV_FIL_FRO_OBJ_STO_TO_ERP_S
+classDef integ fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+classDef adapt fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+ TSG_MOV_FIL_FRO_OBJ_STO_TO_ERP_S["TSGT Move Files from Object Storage to ERP SFTP"]:::integ
+ TSGT_ENTERPRISENOTIFI["TSGT EnterpriseNotificationService"]:::integ
+ TSG_MOV_FIL_FRO_OBJ_STO_TO_ERP_S -->|sendEmailNotification| TSGT_ENTERPRISENOTIFI
+ TSG_MOV_FIL_FRO_OBJ_STO_TO_ERP_S -->|sendNotification| TSGT_ENTERPRISENOTIFI
+ TSG_MOV_FIL_FRO_OBJ_STO_TO_ERP_S -->|sendNotificationsForErrorFiles| TSGT_ENTERPRISENOTIFI
+ TSGTOBJECTSTORAG_CONN{{"TSGTObjectStorage_Conn"}}:::adapt
+ TSG_MOV_FIL_FRO_OBJ_STO_TO_ERP_S -->|deleteEachFilefromOriginalBucket| TSGTOBJECTSTORAG_CONN
+ TSG_MOV_FIL_FRO_OBJ_STO_TO_ERP_S -->|deleteEachFilefromOriginalObjectStorageBucket| TSGTOBJECTSTORAG_CONN
+ TSG_MOV_FIL_FRO_OBJ_STO_TO_ERP_S -->|fetchFilesFromObjectStorage| TSGTOBJECTSTORAG_CONN
+ TSGTRESTOI_CONN_WACS{{"TSGTRestOICInvoke_Conn_WACS"}}:::adapt
+ TSG_MOV_FIL_FRO_OBJ_STO_TO_ERP_S -->|getLookUpData| TSGTRESTOI_CONN_WACS
+ TSG_MOV_FIL_FRO_OBJ_STO_TO_ERP_S -->|moveEachFileToArchiveBucket| TSGTOBJECTSTORAG_CONN
+ TSG_MOV_FIL_FRO_OBJ_STO_TO_ERP_S -->|moveEachFileToErrorBucket| TSGTOBJECTSTORAG_CONN
+ TSGTFTP_CONN{{"TSGTFtp_Conn"}}:::adapt
+ TSG_MOV_FIL_FRO_OBJ_STO_TO_ERP_S -->|moveFileToSFTP| TSGTFTP_CONN
+ TSG_MOV_FIL_FRO_OBJ_STO_TO_ERP_S -->|readEachFileFromObjectStorage| TSGTOBJECTSTORAG_CONN

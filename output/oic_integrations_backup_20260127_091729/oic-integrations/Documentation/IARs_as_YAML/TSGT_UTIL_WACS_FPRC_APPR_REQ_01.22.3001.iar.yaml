@@ -1,0 +1,136 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_845
+      xsdfilepath: ../resources/processor_845/resourcegroup_846/ICSIntegrationMetadata.xsd
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: FPRC PR Header ID
+              xpath: /execute/TemplateParameters/FPRCRequisitionHeaderId
+            - role: tracking_var_2
+              name: FPRC PR Number
+              xpath: /execute/request-wrapper/FPRC_ReqNumber
+            - role: tracking_var_3
+              name: WACS PR Number
+              xpath: /execute/request-wrapper/WACS_ReqNumber
+        - Try: Try(t0)
+          username: ApprovePR
+          statements:
+            - Map: Map(m0)
+              xsltfilepath: ../resources/processor_91/resourcegroup_94/req_88ca5c4abf654a5a9fafed9e0886e445.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/ApprovePurchaseRequisition" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/erp/SubmitPRForApproval_REQUEST" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:types="http://xmlns.oracle.com/apps/crmCommon/salesParties/accountService/types/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/erp/SubmitPRForApproval_REQUEST/types" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/ApprovePurchaseRequisition_REQUEST/types" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/ApprovePurchaseRequisition_REQUEST" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:tns="http://xmlns.oracle.com/apps/crmCommon/salesParties/accountService/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" ns2 oraext xsd xp20 ora oracle-xsl-mapper nssrcmpr ns4 nssrcdfl xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns28="http://xml.oracle.com/types/REST/ApprovePurchaseRequisition_REQUEST" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:ns27="http://xml.oracle.com/adapters/extension" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/SubmitPRForApproval_REQUEST/RESTOUTREQ" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ApprovePurchaseRequisition_REQUEST/RESTINREQ" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:ns31="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PurchaseRequisitions/Item/submitRequisition/types" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns29="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd">
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:submitRequisition xml:id="id_12">'
+                - '      <nstrgmpr:TemplateParameters xml:id="id_21">'
+                - '        <nstrgmpr:id xml:id="id_22">'
+                - '          <xsl:value-of xml:id="id_23" select="/nssrcmpr:execute/nssrcmpr:TemplateParameters/ns28:FPRCRequisitionHeaderId"/>'
+                - '      <nstrgmpr:actionRequest xml:id="id_24">'
+                - '        <ns31:name xml:id="id_25">'
+                - '          <xsl:value-of xml:id="id_26" select="&apos;submitRequisition&apos;"/>'
+                - ""
+            - Invoke: SubmitPRForApproval(i0)
+              application:
+                Application: SubmitPRForApproval(OUTL-BRT-ERPCLOUD_WACSFPRC)
+                name: SubmitPRForApproval
+                adapter:
+                    code: OUTL-BRT-ERPCLOUD_WACSFPRC
+                properties:
+                    - name: operationPath
+                      value: http://xmlns.oracle.com/cloud/adapter/erp/SubmitPRForApproval_REQUEST/submitRequisition
+            - Catch: Catch(tc0)
+              faultname: APIInvocationError
+              statements:
+                - Stop: EHStop(eh1)
+            - CatchAll: CatchAll(ta1)
+              statements:
+                - Stop: EHStop(eh2)
+              icsfaultfilepath: ../resources/processor_106/resourcegroup_107/ICSFault.xsd
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Logger: Logger(lg0)
+              name: LogRequest
+              description: ""
+              propertyfile: ../resources/processor_908/resourcegroup_976/expr.properties
+              expressionProperties:
+                xpathExpression: oraext:get-content-as-string(/ns45:execute/ns49:request-wrapper)
+                namespaceList: ns45=http://xmlns.oracle.com/cloud/adapter/REST/ApprovePurchaseRequisition_REQUEST/types ns49=http://xmlns.oracle.com/cloud/adapter/REST/ApprovePurchaseRequisition/types oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                variableName: LogRequest
+            - Logger: Logger(lg1)
+              name: LogFault
+              description: ""
+              propertyfile: ../resources/processor_917/resourcegroup_984/expr.properties
+              expressionProperties:
+                xpathExpression: oraext:get-content-as-string($GlobalFaultObject/ics:fault)
+                namespaceList: ics=http://www.oracle.com/2014/03/ics/fault oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                variableName: LogFault
+            - Switch: Switch(s0)
+              routes:
+                - Route: (sc0)
+                  exprProperties:
+                    xpathExpression: orajs7:TSGT_DetermineEmailFlag(dvm:lookupValue('OUTL-BRT-WACS_FPRC_ConfigProps', 'PropertyName', 'email.flag', 'Value', 'true') , /ns13:execute/ns17:request-wrapper/ns17:email_flag_override_value) = 'true'
+                    namespaceList: ns13=http://xmlns.oracle.com/cloud/adapter/REST/ApprovePurchaseRequisition_REQUEST/types ns17=http://xmlns.oracle.com/cloud/adapter/REST/ApprovePurchaseRequisition/types dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue orajs7=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1885914742
+                  stateInfo:
+                    referencedFunctionsWithTrackFlag:
+                        - '@type': XPathFunctionImpl
+                          functionName: TSGT_DetermineEmailFlag
+                          functionNamespace: http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1885914742
+                          functionTracked: true
+                          lookupFunction: false
+                    variablesReferenced:
+                        - VariableName: /
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/ApprovePurchaseRequisition_REQUEST/types}execute'
+                    referencedLookupData:
+                        - lookup-table-name-with-location: '"OUTL-BRT-WACS_FPRC_ConfigProps"'
+                          source: '"PropertyName"'
+                          target: '"Value"'
+                  statements:
+                    - Assignments: AssignFault(l0)
+                      name: AssignFault
+                      assignments:
+                        - Assignment: Assignment(a0)
+                          variableName: Var_FaultDetail
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: ora:getContentAsString($GlobalFaultObject/nsmpr6:fault)
+                            namespaceList: nsmpr6=http://www.oracle.com/2014/03/ics/fault ora=http://schemas.oracle.com/xpath/extension
+                            variableName: Var_FaultDetail
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a1)
+                          variableName: Var_FaultText
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: substring-before(substring-after($Var_FaultDetail,'<nstrgmpr:instance>&lt;![CDATA['),']]&gt;</nstrgmpr:instance>')
+                            variableName: Var_FaultText
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: notification
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: n0
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_606
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc1)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: {}
+                  statements: []
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_101/resourcegroup_102/ICSFault.xsd

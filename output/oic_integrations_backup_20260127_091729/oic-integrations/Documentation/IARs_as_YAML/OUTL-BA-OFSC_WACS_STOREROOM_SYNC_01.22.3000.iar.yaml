@@ -1,0 +1,1098 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_527
+      xsdfilepath: ../resources/processor_527/resourcegroup_528/ICSIntegrationMetadata.xsd
+    - GlobalVariable: (gtv2)
+      variableName: tempQuantity
+      variableType: simpleType
+    - GlobalVariable: (gtv0)
+      variableName: buildInventoryNew
+      variableType: $bulkupdateinventories_REQUEST/ns35:execute/ns38:request-wrapper/ns38:resources
+    - GlobalVariable: (gtv1)
+      variableName: tempInventory
+      variableType: $bulkupdateinventories_REQUEST/ns35:execute/ns38:request-wrapper/ns38:resources/ns38:inventories
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: resource Id
+              xpath: /execute/request-wrapper/resourceId
+            - role: tracking_var_2
+              name: resource Type
+              xpath: /execute/request-wrapper/resourceType
+            - role: tracking_var_3
+              name: last Sync Date Time
+              xpath: /execute/request-wrapper/lastSyncDateTime
+        - Try: Try(t0)
+          username: MainScope
+          statements:
+            - Switch: Switch(s0)
+              routes:
+                - Route: Resource type of Truck(sc0)
+                  exprProperties:
+                    xpathExpression: /nsmpr5:execute/nsmpr0:request-wrapper/nsmpr0:resourceType = "TR"
+                    namespaceList: nsmpr5=http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST/types nsmpr0=http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom/types
+                    expressionName: Resource type of Truck
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: /
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST/types}execute'
+                  statements:
+                    - Map: Map(m2)
+                      xsltfilepath: ../resources/processor_1918/resourcegroup_1921/req_3bb2b1318e754f7e81d354c23c569d1e.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/SyncStoreroom" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetStoreroomInventoryFromWACS_REQUEST/types" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetStoreroomInventoryFromWACS_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:tns="http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ouaf="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST/types" exclude-result-prefixes=" ns1 ns2 oraext plnk xsd xp20 ora oracle-xsl-mapper nssrcdfl xsi fn xsl nssrcmpr ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:ns28="http://xml.oracle.com/adapters/extension" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/SyncStoreroom_REQUEST/RESTINREQ" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/SyncStoreroom_REQUEST/RESTINRES" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories_REQUEST/types" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:ns34="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/bulkupdateinventories" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom/types" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns30="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163">
+                        - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:W1-MobileStoreroomInventory xml:id="id_12">'
+                        - '      <tns:W1-MobileStoreroomInventory xml:id="id_32">'
+                        - '        <tns:storeroomId xml:id="id_33">'
+                        - '          <xsl:value-of xml:id="id_34" select="/nssrcmpr:execute/ns29:request-wrapper/ns29:resourceId"/>'
+                        - '        <xsl:if xml:id="id_36" test="/nssrcmpr:execute/ns29:request-wrapper/ns29:lastSyncDateTime != &quot; &quot;">'
+                        - '          <tns:transferDateTime xml:id="id_37">'
+                        - '            <xsl:value-of xml:id="id_38" select="/nssrcmpr:execute/ns29:request-wrapper/ns29:lastSyncDateTime"/>'
+                        - ""
+                    - Invoke: GetStoreroomInventoryFromWACS(i1)
+                      application:
+                        Application: GetStoreroomInventoryFromWACS(OUTL-BRT-SOAP-WACS_WACSOFSC)
+                        name: GetStoreroomInventoryFromWACS
+                        adapter:
+                            code: OUTL-BRT-SOAP-WACS_WACSOFSC
+                        properties:
+                            - name: operationPath
+                              value: http://den00tyu.us.oracle.com/webservices/W1-MobileStoreroomInventory#W1-MobileStoreroomInventory
+                    - Switch: Switch(s1)
+                      routes:
+                        - Route: Initial sync(sc2)
+                          exprProperties:
+                            xpathExpression: /nsmpr7:execute/nsmpr4:request-wrapper/nsmpr4:lastSyncDateTime = " "
+                            namespaceList: nsmpr7=http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST/types nsmpr4=http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom/types
+                            expressionName: Initial sync
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: /
+                                  rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST/types}execute'
+                          statements:
+                            - Try: Try(t1)
+                              username: InitialSync
+                              statements:
+                                - Map: Map(m4)
+                                  xsltfilepath: ../resources/processor_488/resourcegroup_491/req_b31122cee87d4cccb8d893864572b60d.xsl
+                                  mapsentences:
+                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                    - <xsl:stylesheet xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/resourceinventorybulk_REQUEST" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/SyncStoreroom" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/resourceinventorybulk" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/resourceinventorybulk_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/resourceinventorybulk/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST/types" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetStoreroomInventoryFromWACS_REQUEST/types" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns36="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/resourceinventorybulk_REQUEST/RESTOUTRES" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns37="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/resourceinventorybulk_REQUEST/RESTOUTREQ" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:ns25="http://xml.oracle.com/adapters/extension" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/SyncStoreroom_REQUEST/RESTINREQ" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/SyncStoreroom_REQUEST/RESTINRES" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom/types" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:tns="http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns29="http://ouaf.oracle.com/" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:ns34="http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetStoreroomInventoryFromWACS_REQUEST" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns27="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types" xmlns:ns58="http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories_REQUEST/types" xmlns:ns59="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/bulkupdateinventories" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories_REQUEST" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2095151203" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1617630239" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1776768683" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath165745235" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath63111071" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath569416338" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath933671094" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2006192724" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath241556730" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath636611926" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1104985556" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath832567826" version="2.0" xml:id="id_1" exclude-result-prefixes=" nsmpr0 ns2 oraext xsd xp20 ora oracle-xsl-mapper nssrcdfl xsi fn xsl nssrcmpr ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                                    - '  <xsl:param name="GetStoreroomInventoryFromWACS" xml:id="id_457"/>'
+                                    - '  <xsl:template match="/" xml:id="id_11">'
+                                    - '    <nstrgmpr:execute xml:id="id_12">'
+                                    - '      <nstrgdfl:request-wrapper xml:id="id_31">'
+                                    - '        <nstrgdfl:resources xml:id="id_32">'
+                                    - '          <nstrgdfl:resourceId xml:id="id_435">'
+                                    - '            <xsl:value-of xml:id="id_436" select="/nssrcmpr:execute/ns26:request-wrapper/ns26:resourceId"/>'
+                                    - '          <xsl:if test="count($GetStoreroomInventoryFromWACS/nsmpr2:W1-MobileStoreroomInventoryResponse/tns:W1-MobileStoreroomInventory/tns:inventory)=0">'
+                                    - '            <nstrgdfl:inventories/>'
+                                    - '          <xsl:if xml:id="id_357" test="($GetStoreroomInventoryFromWACS/nsmpr2:W1-MobileStoreroomInventoryResponse/tns:W1-MobileStoreroomInventory/tns:inventory != &apos;&apos;)">'
+                                    - '            <xsl:for-each xml:id="id_67" select="$GetStoreroomInventoryFromWACS/nsmpr2:W1-MobileStoreroomInventoryResponse/tns:W1-MobileStoreroomInventory/tns:inventory">'
+                                    - '              <nstrgdfl:inventories xml:id="id_68" xsi:nil="">'
+                                    - '                <xsl:choose xml:id="id_522">'
+                                    - '                  <xsl:when xml:id="id_523" test="tns:assetId">'
+                                    - '                    <nstrgdfl:inventoryType xml:id="id_172">'
+                                    - '                      <xsl:value-of xml:id="id_173" select="&apos;StockAsset&apos;"/>'
+                                    - '                  <xsl:otherwise xml:id="id_526">'
+                                    - '                    <nstrgdfl:inventoryType xml:id="id_172">'
+                                    - '                      <xsl:value-of xml:id="id_528" select="&apos;StockItem&apos;"/>'
+                                    - '                <xsl:choose xml:id="id_204">'
+                                    - '                  <xsl:when xml:id="id_205" test="tns:assetId">'
+                                    - '                    <nstrgdfl:wam_material_id xml:id="id_69">'
+                                    - '                      <xsl:value-of xml:id="id_79" select="concat (tns:stockItemDetailId, &quot;-&quot;, tns:assetId )"/>'
+                                    - '                  <xsl:otherwise xml:id="id_208">'
+                                    - '                    <nstrgdfl:wam_material_id xml:id="id_69">'
+                                    - '                      <xsl:value-of xml:id="id_210" select="tns:stockItemDetailId"/>'
+                                    - '                <nstrgdfl:wam_material_stockItemDetailId xml:id="id_241">'
+                                    - '                  <xsl:value-of xml:id="id_242" select="tns:stockItemDetailId"/>'
+                                    - '                <nstrgdfl:wam_material_lotId xml:id="id_243">'
+                                    - '                  <xsl:value-of xml:id="id_244" select="tns:lotId"/>'
+                                    - '                <xsl:if xml:id="id_553" test="tns:stockCode">'
+                                    - '                  <nstrgdfl:wam_material_stockCode xml:id="id_258">'
+                                    - '                    <xsl:value-of xml:id="id_259" select="tns:stockCode"/>'
+                                    - '                <nstrgdfl:wam_material_masterStockItemDetailId xml:id="id_466">'
+                                    - '                  <xsl:value-of xml:id="id_467" select="tns:masterStockItemDetailId"/>'
+                                    - '                <nstrgdfl:wam_material_stockItemId xml:id="id_237">'
+                                    - '                  <xsl:value-of xml:id="id_238" select="tns:stockItemId"/>'
+                                    - '                <xsl:if xml:id="id_581" test="tns:stockItemCategory">'
+                                    - '                  <nstrgdfl:wam_material_stockItemCategory xml:id="id_234">'
+                                    - '                    <xsl:value-of xml:id="id_235" select="tns:stockItemCategory"/>'
+                                    - '                <nstrgdfl:wam_material_stockItemDetailInfo xml:id="id_80">'
+                                    - '                  <xsl:value-of xml:id="id_81" select="tns:stockItemDetailInfo"/>'
+                                    - '                <nstrgdfl:quantity xml:id="id_82">'
+                                    - '                  <xsl:value-of xml:id="id_83" select="tns:quantity"/>'
+                                    - '                <xsl:if xml:id="id_190" test="tns:assetInformation/tns:validServiceHistoryTypes/tns:serviceHistoryTypeList">'
+                                    - '                  <nstrgdfl:wam_asset_valid_service_history_types xml:id="id_84">'
+                                    - '                    <xsl:value-of xml:id="id_157" select="oraext:get-content-as-string (tns:assetInformation/tns:validServiceHistoryTypes )"/>'
+                                    - '                <xsl:if xml:id="id_187" test="tns:assetInformation/tns:validMeasurementTypes/tns:measurementTypeList">'
+                                    - '                  <nstrgdfl:wam_valid_measurement_types xml:id="id_86">'
+                                    - '                    <xsl:value-of xml:id="id_158" select="oraext:get-content-as-string (tns:assetInformation/tns:validMeasurementTypes )"/>'
+                                    - '                <nstrgdfl:wam_asset_id xml:id="id_88">'
+                                    - '                  <xsl:value-of xml:id="id_89" select="tns:assetId"/>'
+                                    - '                <nstrgdfl:wam_badge_number xml:id="id_224">'
+                                    - '                  <xsl:value-of xml:id="id_236" select="tns:badgeNumber"/>'
+                                    - '                <nstrgdfl:wam_material_stockItemInfo xml:id="id_492">'
+                                    - '                  <xsl:value-of xml:id="id_493" select="tns:stockItemInfo"/>'
+                                    - '                <xsl:if xml:id="id_556" test="tns:uom">'
+                                    - '                  <nstrgdfl:wam_material_uom xml:id="id_494">'
+                                    - '                    <xsl:value-of xml:id="id_495" select="tns:uom"/>'
+                                    - '                <nstrgdfl:wam_material_isComponent xml:id="id_496">'
+                                    - '                  <xsl:value-of xml:id="id_497" select="tns:isComponent"/>'
+                                    - ""
+                                - Invoke: resourceinventorybulk(i3)
+                                  application:
+                                    Application: resourceinventorybulk(OUTL-BRT-REST-OFSC_WACSOFSC)
+                                    name: resourceinventorybulk
+                                    adapter:
+                                        code: OUTL-BRT-REST-OFSC_WACSOFSC
+                                    properties:
+                                        - name: operationPath
+                                          value: http://xmlns.oracle.com/cloud/adapter/REST/resourceinventorybulk_REQUEST/execute
+                                        - name: HttpVerb
+                                          value: POST
+                                        - name: ResourceURI
+                                          value: /ofscCore/v1/resources/custom-actions/bulkUpdateInventories
+                                - CatchAll: CatchAll(ta3)
+                                  statements:
+                                    - Logger: Logger(lg0)
+                                      name: InitialsyncLogger
+                                      description: ""
+                                      propertyfile: ../resources/processor_1772/resourcegroup_1779/expr.properties
+                                      expressionProperties:
+                                        xpathExpression: '"Error occurred in Initial Sync Scope"'
+                                        variableName: InitialsyncLogger
+                                    - Stop: EHStop(eh1)
+                                  icsfaultfilepath: ../resources/processor_1600/resourcegroup_1601/ICSFault.xsd
+                        - Route: Otherwise(sc3)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: null
+                          statements:
+                            - Try: Try(t2)
+                              username: IncrementalSync
+                              statements:
+                                - Map: Map(m5)
+                                  xsltfilepath: ../resources/processor_310/resourcegroup_313/req_47356c2a71a7495db69f392592da0c38.xsl
+                                  mapsentences:
+                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/SyncStoreroom" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/generic/rest/fault/OfscCloudAdapter/getResourceInventories_REQUEST" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/getResourceInventories_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/getResourceInventories_REQUEST/types" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST/types" exclude-result-prefixes=" ns1 ns2 oraext plnk xsd xp20 ora oracle-xsl-mapper nssrcdfl xsi fn xsl nssrcmpr ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetStoreroomInventoryFromWACS_REQUEST/types" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:ns39="http://xmlns.oracle.com/cloud/adapter/items/Item_0x737063_Type" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns40="http://xmlns.oracle.com/cloud/adapter/items/wam_deinstall_status" xmlns:ns43="http://xmlns.oracle.com/cloud/adapter/items/EQUIPMENT_RF_ENABLED" xmlns:ns45="http://xmlns.oracle.com/cloud/adapter/items/Item_0x737063_Model" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:ns48="http://xmlns.oracle.com/cloud/adapter/items/wam_asset_installed_in_ofsc" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:ns24="http://xml.oracle.com/adapters/extension" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/SyncStoreroom_REQUEST/RESTINREQ" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns34="http://www.oracle.rest.converters.autogeneratedns.com" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/SyncStoreroom_REQUEST/RESTINRES" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns35="http://xmlns.oracle.com/cloud/adapter/items/wam_asset_action_taken" xmlns:ns37="http://xmlns.oracle.com/cloud/adapter/items" xmlns:ns38="http://xmlns.oracle.com/cloud/adapter/items/wam_asset_or_component" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:ns41="http://xmlns.oracle.com/cloud/adapter/items/wam_remove_outOfService" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom/types" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:tns="http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns42="http://xmlns.oracle.com/cloud/adapter/items/Item_0x737063_Category" xmlns:ns44="http://xmlns.oracle.com/cloud/adapter/items/wam_measurements_reason" xmlns:ns28="http://ouaf.oracle.com/" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:ns36="http://xmlns.oracle.com/cloud/adapter/items/EQUIPMENT_BANDWIDTH" xmlns:ns33="http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetStoreroomInventoryFromWACS_REQUEST" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns46="http://xmlns.oracle.com/cloud/adapter/items/status" xmlns:ns47="http://xmlns.oracle.com/cloud/adapter/items/wam_attached_to_asset" xmlns:ns26="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns49="http://xmlns.oracle.com/cloud/adapter" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types">
+                                    - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                                    - '  <xsl:template match="/" xml:id="id_11">'
+                                    - '    <nstrgmpr:get_0x737063__0x736c68_rest_0x736c68_ofscCore_0x736c68_v1_0x736c68_resources_0x736c68__0x6c6362_resourceId_0x726362__0x736c68_inventories xml:id="id_12">'
+                                    - '      <nstrgmpr:TemplateParameters xml:id="id_31">'
+                                    - '        <ns49:resourceId xml:id="id_32">'
+                                    - '          <xsl:value-of xml:id="id_33" select="/nssrcmpr:execute/ns25:request-wrapper/ns25:resourceId"/>'
+                                    - ""
+                                - Invoke: getResourceInventories(i4)
+                                  application:
+                                    Application: getResourceInventories(OUTL-BRT-APP-OFSC_WACSOFSC)
+                                    name: getResourceInventories
+                                    adapter:
+                                        code: OUTL-BRT-APP-OFSC_WACSOFSC
+                                    properties:
+                                        - name: operationPath
+                                          value: https://tsgt.fs.ocs.oraclecloud.com/rest/ofscCore/v1/resources/{resourceId}/inventories
+                                        - name: HttpVerb
+                                          value: GET
+                                        - name: ResourceURI
+                                          value: https://tsgt.fs.ocs.oraclecloud.com/rest/ofscCore/v1/resources/{resourceId}/inventories
+                                - Try: Try(t3)
+                                  username: Inventories
+                                  statements:
+                                    - ForLoop: ForLoop(f2)
+                                      expressionProperties:
+                                        xpathExpression: $getResourceInventories/nsmpr18:get_0x737063__0x736c68_rest_0x736c68_ofscCore_0x736c68_v1_0x736c68_resources_0x736c68__0x6c6362_resourceId_0x726362__0x736c68_inventoriesResponse/nsmpr18:resourceInventories/nsmpr13:items
+                                        namespaceList: nsmpr13=http://xmlns.oracle.com/cloud/adapter nsmpr18=http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/getResourceInventories_REQUEST/types
+                                        variableName: OFSCItems
+                                      currentRecordVarName: OFSCItems
+                                      statements:
+                                        - Stitch: Stitch(sh8)
+                                          stitchNamespaceResolver:
+                                            prefixnamespacemap:
+                                                ns13: http://xmlns.oracle.com/cloud/adapter
+                                                ns34: http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types
+                                                ns41: http://xmlns.oracle.com/cloud/adapter/items
+                                          stitchVariables:
+                                            - name: tempInventory
+                                              datatype:
+                                                type: XMLComplex
+                                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types}inventories'
+                                                uriToSchema: ../../processor_989/resourcegroup_992/generated.wsdl
+                                              access: SOURCE_AND_TARGET
+                                            - name: OFSCItems
+                                              datatype:
+                                                type: XMLComplex
+                                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter}items'
+                                                uriToSchema: ../../processor_1865/resourcegroup_1872/generated.wsdl
+                                              access: SOURCE_AND_TARGET
+                                          stitchSentences:
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:inventoryType
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:inventoryType
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:wam_material_id
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_id
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:wam_material_stockItemDetailId
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_stockItemDetailId
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:wam_material_stockItemDetailInfo
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_stockItemDetailInfo
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:wam_material_stockCode
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_stockCode
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:wam_material_masterStockItemDetailId
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_masterStockItemDetailId
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:wam_material_lotId
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_lotId
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:wam_material_stockItemId
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_stockItemId
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:wam_material_stockItemCategory
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_stockItemCategory
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:quantity
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:quantity
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:wam_asset_valid_service_history_types
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_asset_valid_service_history_types
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:wam_valid_measurement_types
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_valid_measurement_types
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:wam_asset_id
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_asset_id
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:wam_badge_number
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_badge_number
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:wam_material_stockItemInfo
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_stockItemInfo
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:wam_material_uom
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_uom
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $OFSCItems/ns13:items/ns41:wam_material_isComponent
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_isComponent
+                                                isLastStepXsdAnyType: false
+                                        - Stitch: Stitch(sh3)
+                                          stitchNamespaceResolver:
+                                            prefixnamespacemap:
+                                                ns34: http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types
+                                          stitchVariables:
+                                            - name: buildInventoryNew
+                                              datatype:
+                                                type: XMLComplex
+                                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types}resources'
+                                                uriToSchema: ../../processor_980/resourcegroup_983/generated.wsdl
+                                              access: SOURCE_AND_TARGET
+                                            - name: tempInventory
+                                              datatype:
+                                                type: XMLComplex
+                                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types}inventories'
+                                                uriToSchema: ../../processor_989/resourcegroup_992/generated.wsdl
+                                              access: SOURCE_AND_TARGET
+                                          stitchSentences:
+                                            - operation: Append
+                                              from:
+                                                type: XPathExpression
+                                                expression: $tempInventory/ns34:inventories
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $buildInventoryNew/ns34:resources/ns34:inventories
+                                                isLastStepXsdAnyType: false
+                                    - ForLoop: ForLoop(f0)
+                                      expressionProperties:
+                                        xpathExpression: $GetStoreroomInventoryFromWACS/nsmpr22:W1-MobileStoreroomInventoryResponse/tns:W1-MobileStoreroomInventory/tns:inventory
+                                        namespaceList: nsmpr22=http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetStoreroomInventoryFromWACS_REQUEST/types tns=http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory
+                                        variableName: WAMInventory
+                                      currentRecordVarName: WAMInventory
+                                      statements:
+                                        - Assignments: initializeMatch(l0)
+                                          name: initializeMatch
+                                          assignments:
+                                            - Assignment: Assignment(a0)
+                                              variableName: matchFound
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: '"false"'
+                                                variableName: matchFound
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a2)
+                                              variableName: firstElement
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: '"true"'
+                                                variableName: firstElement
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Stitch: Stitch(sh4)
+                                          stitchNamespaceResolver:
+                                            prefixnamespacemap: {}
+                                          stitchVariables:
+                                            - name: tempQuantity
+                                              datatype:
+                                                type: XMLSimple
+                                                xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                                              access: SOURCE_AND_TARGET
+                                          stitchSentences:
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: "0"
+                                                returnType: XML_TYPE_ATOMIC
+                                              to:
+                                                type: XPathPath
+                                                path: $tempQuantity
+                                                isLastStepXsdAnyType: false
+                                        - ForLoop: ForLoop(f1)
+                                          expressionProperties:
+                                            xpathExpression: $getResourceInventories/nsmpr18:get_0x737063__0x736c68_rest_0x736c68_ofscCore_0x736c68_v1_0x736c68_resources_0x736c68__0x6c6362_resourceId_0x726362__0x736c68_inventoriesResponse/nsmpr18:resourceInventories/nsmpr13:items
+                                            namespaceList: nsmpr13=http://xmlns.oracle.com/cloud/adapter nsmpr18=http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/getResourceInventories_REQUEST/types
+                                            variableName: OFSCItem
+                                          currentRecordVarName: OFSCItem
+                                          statements:
+                                            - Switch: Switch(s2)
+                                              routes:
+                                                - Route: Inventory exists(sc4)
+                                                  exprProperties:
+                                                    xpathExpression: concat($WAMInventory/nssrcmpr:inventory/nssrcmpr:stockItemDetailId, "-", $WAMInventory/nssrcmpr:inventory/nssrcmpr:assetId) = $OFSCItem/nsmpr13:items/nsmpr21:wam_material_id or $WAMInventory/nssrcmpr:inventory/nssrcmpr:stockItemDetailId = $OFSCItem/nsmpr13:items/nsmpr21:wam_material_id
+                                                    namespaceList: nssrcmpr=http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory nsmpr13=http://xmlns.oracle.com/cloud/adapter nsmpr21=http://xmlns.oracle.com/cloud/adapter/items
+                                                    expressionName: Inventory exists
+                                                  stateInfo:
+                                                    variablesReferenced:
+                                                        - VariableName: WAMInventory
+                                                          rootElement: '{http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory}inventory'
+                                                        - VariableName: OFSCItem
+                                                          rootElement: '{http://xmlns.oracle.com/cloud/adapter}items'
+                                                  statements:
+                                                    - Assignments: matchFoundUpdate(l1)
+                                                      name: matchFoundUpdate
+                                                      assignments:
+                                                        - Assignment: Assignment(a1)
+                                                          variableName: matchFound
+                                                          variableType: string
+                                                          expressionProperties:
+                                                            xpathExpression: '"true"'
+                                                            variableName: matchFound
+                                                            variableType: string
+                                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                    - Stitch: Stitch(sh5)
+                                                      stitchNamespaceResolver:
+                                                        prefixnamespacemap:
+                                                            ns13: http://xmlns.oracle.com/cloud/adapter
+                                                            ns24: http://xmlns.oracle.com/cloud/adapter/items
+                                                            tns: http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory
+                                                      stitchVariables:
+                                                        - name: tempQuantity
+                                                          datatype:
+                                                            type: XMLSimple
+                                                            xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                                                          access: SOURCE_AND_TARGET
+                                                        - name: WAMInventory
+                                                          datatype:
+                                                            type: XMLComplex
+                                                            basedOnElement: '{http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory}inventory'
+                                                            uriToSchema: ../../processor_315/resourcegroup_1929/generated.wsdl
+                                                          access: SOURCE_AND_TARGET
+                                                        - name: OFSCItem
+                                                          datatype:
+                                                            type: XMLComplex
+                                                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter}items'
+                                                            uriToSchema: ../../processor_373/resourcegroup_567/generated.wsdl
+                                                          access: SOURCE_AND_TARGET
+                                                      stitchSentences:
+                                                        - operation: Assign
+                                                          from:
+                                                            type: XPathExpression
+                                                            expression: $OFSCItem/ns13:items/ns24:quantity + $WAMInventory/tns:inventory/tns:quantity
+                                                            returnType: XML_TYPE_ATOMIC
+                                                          to:
+                                                            type: XPathPath
+                                                            path: $tempQuantity
+                                                            isLastStepXsdAnyType: false
+                                                - Route: Otherwise(sc5)
+                                                  exprProperties:
+                                                    xpathExpression: "true"
+                                                    expressionName: Otherwise
+                                                  stateInfo: null
+                                                  statements: []
+                                        - Stitch: Stitch(sh0)
+                                          stitchNamespaceResolver:
+                                            prefixnamespacemap:
+                                                ns34: http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types
+                                                tns: http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory
+                                          stitchVariables:
+                                            - name: WAMInventory
+                                              datatype:
+                                                type: XMLComplex
+                                                basedOnElement: '{http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory}inventory'
+                                                uriToSchema: ../../processor_315/resourcegroup_1929/generated.wsdl
+                                              access: SOURCE_AND_TARGET
+                                            - name: tempInventory
+                                              datatype:
+                                                type: XMLComplex
+                                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types}inventories'
+                                                uriToSchema: ../../processor_989/resourcegroup_992/generated.wsdl
+                                              access: SOURCE_AND_TARGET
+                                          stitchSentences:
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $WAMInventory/tns:inventory/tns:stockItemDetailId
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_stockItemDetailId
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $WAMInventory/tns:inventory/tns:stockItemDetailInfo
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_stockItemDetailInfo
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $WAMInventory/tns:inventory/tns:stockCode
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_stockCode
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $WAMInventory/tns:inventory/tns:lotId
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_lotId
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $WAMInventory/tns:inventory/tns:stockItemId
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_stockItemId
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $WAMInventory/tns:inventory/tns:stockItemCategory
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_stockItemCategory
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $WAMInventory/tns:inventory/tns:assetId
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_asset_id
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $WAMInventory/tns:inventory/tns:badgeNumber
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_badge_number
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: '""'
+                                                returnType: XML_TYPE_ATOMIC
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_asset_valid_service_history_types
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: '""'
+                                                returnType: XML_TYPE_ATOMIC
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_valid_measurement_types
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $WAMInventory/tns:inventory/tns:masterStockItemDetailId
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_masterStockItemDetailId
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $WAMInventory/tns:inventory/tns:stockItemInfo
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_stockItemInfo
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $WAMInventory/tns:inventory/tns:uom
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_uom
+                                                isLastStepXsdAnyType: false
+                                            - operation: Assign
+                                              from:
+                                                type: XPathExpression
+                                                expression: $WAMInventory/tns:inventory/tns:isComponent
+                                                returnType: XML_TYPE_NODE_NODESET
+                                              to:
+                                                type: XPathPath
+                                                path: $tempInventory/ns34:inventories/ns34:wam_material_isComponent
+                                                isLastStepXsdAnyType: false
+                                        - Switch: Switch(s4)
+                                          routes:
+                                            - Route: (sc8)
+                                              exprProperties:
+                                                xpathExpression: $WAMInventory/nssrcmpr:inventory/nssrcmpr:assetInformation/nssrcmpr:validServiceHistoryTypes/nssrcmpr:serviceHistoryTypeList != ""
+                                                namespaceList: nssrcmpr=http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory
+                                              stateInfo:
+                                                variablesReferenced:
+                                                    - VariableName: WAMInventory
+                                                      rootElement: '{http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory}inventory'
+                                              statements:
+                                                - Stitch: Stitch(sh6)
+                                                  stitchNamespaceResolver:
+                                                    prefixnamespacemap:
+                                                        ns34: http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types
+                                                        ora: http://schemas.oracle.com/xpath/extension
+                                                        tns: http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory
+                                                  stitchVariables:
+                                                    - name: WAMInventory
+                                                      datatype:
+                                                        type: XMLComplex
+                                                        basedOnElement: '{http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory}inventory'
+                                                        uriToSchema: ../../processor_315/resourcegroup_1929/generated.wsdl
+                                                      access: SOURCE_AND_TARGET
+                                                    - name: tempInventory
+                                                      datatype:
+                                                        type: XMLComplex
+                                                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types}inventories'
+                                                        uriToSchema: ../../processor_989/resourcegroup_992/generated.wsdl
+                                                      access: SOURCE_AND_TARGET
+                                                  stitchSentences:
+                                                    - operation: Assign
+                                                      from:
+                                                        type: XPathExpression
+                                                        expression: ora:getContentAsString($WAMInventory/tns:inventory/tns:assetInformation/tns:validServiceHistoryTypes)
+                                                        returnType: XML_TYPE_ATOMIC
+                                                      to:
+                                                        type: XPathPath
+                                                        path: $tempInventory/ns34:inventories/ns34:wam_asset_valid_service_history_types
+                                                        isLastStepXsdAnyType: false
+                                            - Route: Otherwise(sc9)
+                                              exprProperties:
+                                                xpathExpression: "true"
+                                                expressionName: Otherwise
+                                              stateInfo: null
+                                              statements: []
+                                        - Switch: Switch(s5)
+                                          routes:
+                                            - Route: (sc10)
+                                              exprProperties:
+                                                xpathExpression: $WAMInventory/nssrcmpr:inventory/nssrcmpr:assetInformation/nssrcmpr:validMeasurementTypes/nssrcmpr:measurementTypeList != ""
+                                                namespaceList: nssrcmpr=http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory
+                                              stateInfo:
+                                                variablesReferenced:
+                                                    - VariableName: WAMInventory
+                                                      rootElement: '{http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory}inventory'
+                                              statements:
+                                                - Stitch: Stitch(sh7)
+                                                  stitchNamespaceResolver:
+                                                    prefixnamespacemap:
+                                                        ns34: http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types
+                                                        ora: http://schemas.oracle.com/xpath/extension
+                                                        tns: http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory
+                                                  stitchVariables:
+                                                    - name: WAMInventory
+                                                      datatype:
+                                                        type: XMLComplex
+                                                        basedOnElement: '{http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory}inventory'
+                                                        uriToSchema: ../../processor_315/resourcegroup_1929/generated.wsdl
+                                                      access: SOURCE_AND_TARGET
+                                                    - name: tempInventory
+                                                      datatype:
+                                                        type: XMLComplex
+                                                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types}inventories'
+                                                        uriToSchema: ../../processor_989/resourcegroup_992/generated.wsdl
+                                                      access: SOURCE_AND_TARGET
+                                                  stitchSentences:
+                                                    - operation: Assign
+                                                      from:
+                                                        type: XPathExpression
+                                                        expression: ora:getContentAsString($WAMInventory/tns:inventory/tns:assetInformation/tns:validMeasurementTypes)
+                                                        returnType: XML_TYPE_ATOMIC
+                                                      to:
+                                                        type: XPathPath
+                                                        path: $tempInventory/ns34:inventories/ns34:wam_valid_measurement_types
+                                                        isLastStepXsdAnyType: false
+                                            - Route: Otherwise(sc11)
+                                              exprProperties:
+                                                xpathExpression: "true"
+                                                expressionName: Otherwise
+                                              stateInfo: null
+                                              statements: []
+                                        - Switch: Switch(s3)
+                                          routes:
+                                            - Route: (sc6)
+                                              exprProperties:
+                                                xpathExpression: $matchFound = "true"
+                                              stateInfo:
+                                                variablesReferenced:
+                                                    - VariableName: matchFound
+                                                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                              statements:
+                                                - Stitch: Stitch(sh2)
+                                                  stitchNamespaceResolver:
+                                                    prefixnamespacemap:
+                                                        ns34: http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types
+                                                  stitchVariables:
+                                                    - name: tempQuantity
+                                                      datatype:
+                                                        type: XMLSimple
+                                                        xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                                                      access: SOURCE_AND_TARGET
+                                                    - name: buildInventoryNew
+                                                      datatype:
+                                                        type: XMLComplex
+                                                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types}resources'
+                                                        uriToSchema: ../../processor_980/resourcegroup_983/generated.wsdl
+                                                      access: SOURCE_AND_TARGET
+                                                    - name: tempInventory
+                                                      datatype:
+                                                        type: XMLComplex
+                                                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types}inventories'
+                                                        uriToSchema: ../../processor_989/resourcegroup_992/generated.wsdl
+                                                      access: SOURCE_AND_TARGET
+                                                  stitchSentences:
+                                                    - operation: Assign
+                                                      from:
+                                                        type: XPathExpression
+                                                        expression: $tempQuantity
+                                                        returnType: XML_TYPE_ATOMIC
+                                                      to:
+                                                        type: XPathPath
+                                                        path: $tempInventory/ns34:inventories/ns34:quantity
+                                                        isLastStepXsdAnyType: false
+                                                    - operation: Append
+                                                      from:
+                                                        type: XPathExpression
+                                                        expression: $tempInventory/ns34:inventories
+                                                        returnType: XML_TYPE_NODE_NODESET
+                                                      to:
+                                                        type: XPathPath
+                                                        path: $buildInventoryNew/ns34:resources/ns34:inventories
+                                                        isLastStepXsdAnyType: false
+                                            - Route: Otherwise(sc7)
+                                              exprProperties:
+                                                xpathExpression: "true"
+                                                expressionName: Otherwise
+                                              stateInfo: null
+                                              statements:
+                                                - Stitch: Stitch(sh1)
+                                                  stitchNamespaceResolver:
+                                                    prefixnamespacemap:
+                                                        ns34: http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types
+                                                        tns: http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory
+                                                  stitchVariables:
+                                                    - name: buildInventoryNew
+                                                      datatype:
+                                                        type: XMLComplex
+                                                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types}resources'
+                                                        uriToSchema: ../../processor_980/resourcegroup_983/generated.wsdl
+                                                      access: SOURCE_AND_TARGET
+                                                    - name: WAMInventory
+                                                      datatype:
+                                                        type: XMLComplex
+                                                        basedOnElement: '{http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory}inventory'
+                                                        uriToSchema: ../../processor_315/resourcegroup_1929/generated.wsdl
+                                                      access: SOURCE_AND_TARGET
+                                                    - name: tempInventory
+                                                      datatype:
+                                                        type: XMLComplex
+                                                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types}inventories'
+                                                        uriToSchema: ../../processor_989/resourcegroup_992/generated.wsdl
+                                                      access: SOURCE_AND_TARGET
+                                                  stitchSentences:
+                                                    - operation: Assign
+                                                      from:
+                                                        type: XPathExpression
+                                                        expression: $WAMInventory/tns:inventory/tns:quantity
+                                                        returnType: XML_TYPE_NODE_NODESET
+                                                      to:
+                                                        type: XPathPath
+                                                        path: $tempInventory/ns34:inventories/ns34:quantity
+                                                        isLastStepXsdAnyType: false
+                                                    - operation: Append
+                                                      from:
+                                                        type: XPathExpression
+                                                        expression: $tempInventory/ns34:inventories
+                                                        returnType: XML_TYPE_NODE_NODESET
+                                                      to:
+                                                        type: XPathPath
+                                                        path: $buildInventoryNew/ns34:resources/ns34:inventories
+                                                        isLastStepXsdAnyType: false
+                                    - Switch: Switch(s6)
+                                      routes:
+                                        - Route: (sc12)
+                                          exprProperties:
+                                            xpathExpression: $GetStoreroomInventoryFromWACS/nsmpr22:W1-MobileStoreroomInventoryResponse/tns:W1-MobileStoreroomInventory/tns:inventory != ""
+                                            namespaceList: nsmpr22=http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetStoreroomInventoryFromWACS_REQUEST/types tns=http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory
+                                          stateInfo:
+                                            variablesReferenced:
+                                                - VariableName: GetStoreroomInventoryFromWACS
+                                                  rootElement: '{http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetStoreroomInventoryFromWACS_REQUEST/types}W1-MobileStoreroomInventoryResponse'
+                                          statements:
+                                            - Map: Map(m6)
+                                              xsltfilepath: ../resources/processor_975/resourcegroup_978/req_a6140060bb3c4c0881302d2d33d5a18e.xsl
+                                              mapsentences:
+                                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/SyncStoreroom" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories_REQUEST" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/bulkupdateinventories" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST/types" exclude-result-prefixes=" ns1 ns2 oraext plnk xsd xp20 ora oracle-xsl-mapper nssrcdfl xsi fn xsl nssrcmpr ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetStoreroomInventoryFromWACS_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/getResourceInventories_REQUEST/types" xmlns:nsmpr4="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns45="http://xmlns.oracle.com/cloud/adapter/items/Item_0x737063_Type" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns46="http://xmlns.oracle.com/cloud/adapter/items/wam_deinstall_status" xmlns:ns49="http://xmlns.oracle.com/cloud/adapter/items/EQUIPMENT_RF_ENABLED" xmlns:ns51="http://xmlns.oracle.com/cloud/adapter/items/Item_0x737063_Model" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:ns54="http://xmlns.oracle.com/cloud/adapter/items/wam_asset_installed_in_ofsc" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:ns26="http://xml.oracle.com/adapters/extension" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/SyncStoreroom_REQUEST/RESTINREQ" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns37="http://www.oracle.rest.converters.autogeneratedns.com" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/SyncStoreroom_REQUEST/RESTINRES" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns41="http://xmlns.oracle.com/cloud/adapter/items/wam_asset_action_taken" xmlns:ns43="http://xmlns.oracle.com/cloud/adapter/items" xmlns:ns44="http://xmlns.oracle.com/cloud/adapter/items/wam_asset_or_component" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:ns47="http://xmlns.oracle.com/cloud/adapter/items/wam_remove_outOfService" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:ns9="http://xmlns.oracle.com/cloud/generic/rest/fault/ofsccloudadapter/getResourceInventories_REQUEST" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:ns57="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/bulkupdateinventories_REQUEST/RESTOUTREQ" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom/types" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:tns="http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory" xmlns:ns38="http://xmlns.oracle.com/cloud/generic/rest/fault/OfscCloudAdapter/getResourceInventories_REQUEST" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns48="http://xmlns.oracle.com/cloud/adapter/items/Item_0x737063_Category" xmlns:ns50="http://xmlns.oracle.com/cloud/adapter/items/wam_measurements_reason" xmlns:ns56="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/bulkupdateinventories_REQUEST/RESTOUTRES" xmlns:ns30="http://ouaf.oracle.com/" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:ns42="http://xmlns.oracle.com/cloud/adapter/items/EQUIPMENT_BANDWIDTH" xmlns:ns35="http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetStoreroomInventoryFromWACS_REQUEST" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/getResourceInventories_REQUEST" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns52="http://xmlns.oracle.com/cloud/adapter/items/status" xmlns:ns53="http://xmlns.oracle.com/cloud/adapter/items/wam_attached_to_asset" xmlns:ns28="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns55="http://xmlns.oracle.com/cloud/adapter" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971">
+                                                - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                                                - '  <xsl:param name="buildInventoryNew" xml:id="id_43"/>'
+                                                - '  <xsl:template match="/" xml:id="id_11">'
+                                                - '    <nstrgmpr:execute xml:id="id_12">'
+                                                - '      <nstrgdfl:request-wrapper xml:id="id_52">'
+                                                - '        <nstrgdfl:resources xml:id="id_53">'
+                                                - '          <nstrgdfl:resourceId xml:id="id_54">'
+                                                - '            <xsl:value-of xml:id="id_55" select="/nssrcmpr:execute/ns27:request-wrapper/ns27:resourceId"/>'
+                                                - '          <xsl:for-each xml:id="id_57" select="$buildInventoryNew/nstrgdfl:resources/nstrgdfl:inventories">'
+                                                - '            <nstrgdfl:inventories xml:id="id_58">'
+                                                - '              <xsl:choose xml:id="id_167">'
+                                                - '                <xsl:when xml:id="id_168" test="nstrgdfl:wam_asset_id">'
+                                                - '                  <nstrgdfl:inventoryType xml:id="id_59">'
+                                                - '                    <xsl:value-of xml:id="id_60" select="&quot;StockAsset&quot;"/>'
+                                                - '                <xsl:otherwise xml:id="id_171">'
+                                                - '                  <nstrgdfl:inventoryType xml:id="id_59">'
+                                                - '                    <xsl:value-of xml:id="id_173" select="&quot;StockItem&quot;"/>'
+                                                - '              <xsl:choose xml:id="id_62">'
+                                                - '                <xsl:when xml:id="id_63" test="nstrgdfl:wam_asset_id">'
+                                                - '                  <nstrgdfl:wam_material_id xml:id="id_64">'
+                                                - '                    <xsl:value-of xml:id="id_67" select="concat (nstrgdfl:wam_material_stockItemDetailId, &quot;-&quot;, nstrgdfl:wam_asset_id )"/>'
+                                                - '                <xsl:otherwise xml:id="id_65">'
+                                                - '                  <nstrgdfl:wam_material_id xml:id="id_66">'
+                                                - '                    <xsl:value-of xml:id="id_68" select="nstrgdfl:wam_material_stockItemDetailId"/>'
+                                                - '              <nstrgdfl:wam_material_stockItemDetailId xml:id="id_71">'
+                                                - '                <xsl:value-of xml:id="id_72" select="nstrgdfl:wam_material_stockItemDetailId"/>'
+                                                - '              <nstrgdfl:wam_material_stockItemDetailInfo xml:id="id_69">'
+                                                - '                <xsl:value-of xml:id="id_70" select="nstrgdfl:wam_material_stockItemDetailInfo"/>'
+                                                - '              <nstrgdfl:wam_material_stockCode xml:id="id_73">'
+                                                - '                <xsl:value-of xml:id="id_74" select="nstrgdfl:wam_material_stockCode"/>'
+                                                - '              <nstrgdfl:wam_material_masterStockItemDetailId xml:id="id_75">'
+                                                - '                <xsl:value-of xml:id="id_76" select="nstrgdfl:wam_material_masterStockItemDetailId"/>'
+                                                - '              <nstrgdfl:wam_material_lotId xml:id="id_77">'
+                                                - '                <xsl:value-of xml:id="id_78" select="nstrgdfl:wam_material_lotId"/>'
+                                                - '              <nstrgdfl:wam_material_stockItemId xml:id="id_79">'
+                                                - '                <xsl:value-of xml:id="id_80" select="nstrgdfl:wam_material_stockItemId"/>'
+                                                - '              <xsl:if xml:id="id_208" test="nstrgdfl:wam_material_stockItemCategory">'
+                                                - '                <nstrgdfl:wam_material_stockItemCategory xml:id="id_81">'
+                                                - '                  <xsl:value-of xml:id="id_82" select="nstrgdfl:wam_material_stockItemCategory"/>'
+                                                - '              <nstrgdfl:quantity xml:id="id_83">'
+                                                - '                <xsl:value-of xml:id="id_84" select="nstrgdfl:quantity"/>'
+                                                - '              <nstrgdfl:wam_asset_valid_service_history_types xml:id="id_85">'
+                                                - '                <xsl:value-of xml:id="id_86" select="nstrgdfl:wam_asset_valid_service_history_types"/>'
+                                                - '              <nstrgdfl:wam_valid_measurement_types xml:id="id_87">'
+                                                - '                <xsl:value-of xml:id="id_88" select="nstrgdfl:wam_valid_measurement_types"/>'
+                                                - '              <nstrgdfl:wam_asset_id xml:id="id_89">'
+                                                - '                <xsl:value-of xml:id="id_90" select="nstrgdfl:wam_asset_id"/>'
+                                                - '              <nstrgdfl:wam_badge_number xml:id="id_91">'
+                                                - '                <xsl:value-of xml:id="id_92" select="nstrgdfl:wam_badge_number"/>'
+                                                - '              <nstrgdfl:wam_material_stockItemInfo xml:id="id_127">'
+                                                - '                <xsl:value-of xml:id="id_128" select="nstrgdfl:wam_material_stockItemInfo"/>'
+                                                - '              <xsl:if xml:id="id_211" test="nstrgdfl:wam_material_uom">'
+                                                - '                <nstrgdfl:wam_material_uom xml:id="id_129">'
+                                                - '                  <xsl:value-of xml:id="id_130" select="nstrgdfl:wam_material_uom"/>'
+                                                - '              <nstrgdfl:wam_material_isComponent xml:id="id_131">'
+                                                - '                <xsl:value-of xml:id="id_132" select="nstrgdfl:wam_material_isComponent"/>'
+                                                - ""
+                                            - Invoke: bulkupdateinventories(i5)
+                                              application:
+                                                Application: bulkupdateinventories(OUTL-BRT-REST-OFSC_WACSOFSC)
+                                                name: bulkupdateinventories
+                                                adapter:
+                                                    code: OUTL-BRT-REST-OFSC_WACSOFSC
+                                                properties:
+                                                    - name: operationPath
+                                                      value: http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories_REQUEST/execute
+                                                    - name: HttpVerb
+                                                      value: POST
+                                                    - name: ResourceURI
+                                                      value: /ofscCore/v1/resources/custom-actions/bulkUpdateInventories
+                                        - Route: Otherwise(sc13)
+                                          exprProperties:
+                                            xpathExpression: "true"
+                                            expressionName: Otherwise
+                                          stateInfo: null
+                                          statements: []
+                                    - CatchAll: CatchAll(ta0)
+                                      statements:
+                                        - Logger: Logger(lg1)
+                                          name: InventoryLogger
+                                          description: ""
+                                          propertyfile: ../resources/processor_1786/resourcegroup_1793/expr.properties
+                                          expressionProperties:
+                                            xpathExpression: '"Error occurred in Inventory scope"'
+                                            variableName: InventoryLogger
+                                        - Stop: EHStop(eh4)
+                                      icsfaultfilepath: ../resources/processor_1007/resourcegroup_1008/ICSFault.xsd
+                                - CatchAll: CatchAll(ta2)
+                                  statements:
+                                    - Logger: Logger(lg2)
+                                      name: IncrementalSyncLogger
+                                      description: ""
+                                      propertyfile: ../resources/processor_1795/resourcegroup_1802/expr.properties
+                                      expressionProperties:
+                                        xpathExpression: '"Error occurred in Incremental Sync scope"'
+                                        variableName: IncrementalSyncLogger
+                                    - Stop: EHStop(eh3)
+                                  icsfaultfilepath: ../resources/processor_1017/resourcegroup_1018/ICSFault.xsd
+                    - Try: Try(t4)
+                      username: UpdateLastSyncDateTime
+                      statements:
+                        - Map: Map(m1)
+                          xsltfilepath: ../resources/processor_1244/resourcegroup_1247/req_56ad494e34a64d2b9055d9ef6305f89e.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/SyncStoreroom" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/UpdateResourceLastSyncDateTime_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/UpdateResourceLastSyncDateTime_REQUEST/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/generic/rest/fault/OfscCloudAdapter/UpdateResourceLastSyncDateTime_REQUEST" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST/types" exclude-result-prefixes=" ns1 ns2 oraext plnk xsd xp20 ora oracle-xsl-mapper nssrcdfl xsi fn xsl nssrcmpr ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetStoreroomInventoryFromWACS_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories/types" xmlns:nsmpr4="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:ns25="http://xml.oracle.com/adapters/extension" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/SyncStoreroom_REQUEST/RESTINREQ" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/SyncStoreroom_REQUEST/RESTINRES" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/REST/bulkupdateinventories_REQUEST/types" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:ns37="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/bulkupdateinventories" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom/types" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:tns="http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns39="http://xmlns.oracle.com/cloud/adapter/tech_photo/links" xmlns:ns29="http://ouaf.oracle.com/" xmlns:ns38="http://xmlns.oracle.com/cloud/adapter/tech_photo" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:ns34="http://xmlns.oracle.com/cloud/adapter/oracleutilities/GetStoreroomInventoryFromWACS_REQUEST" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns27="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns40="http://xmlns.oracle.com/cloud/adapter" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163">
+                            - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:update_PATCH xml:id="id_12">'
+                            - '      <nstrgmpr:TemplateParameters xml:id="id_43">'
+                            - '        <ns40:resourceId xml:id="id_44">'
+                            - '          <xsl:value-of xml:id="id_45" select="/nssrcmpr:execute/ns26:request-wrapper/ns26:resourceId"/>'
+                            - '      <nstrgmpr:resources.definitions.resource xml:id="id_46">'
+                            - '        <ns40:resourceId xml:id="id_47">'
+                            - '          <xsl:value-of xml:id="id_48" select="/nssrcmpr:execute/ns26:request-wrapper/ns26:resourceId"/>'
+                            - '        <ns40:wam_resource_lastUpdateDttm xml:id="id_79">'
+                            - '          <xsl:value-of xml:id="id_80" select="fn:current-dateTime ()"/>'
+                            - ""
+                        - Invoke: UpdateResourceLastSyncDateTime(i0)
+                          application:
+                            Application: UpdateResourceLastSyncDateTime(OUTL-BRT-APP-OFSC_WACSOFSC)
+                            name: UpdateResourceLastSyncDateTime
+                            adapter:
+                                code: OUTL-BRT-APP-OFSC_WACSOFSC
+                            properties:
+                                - name: operationPath
+                                  value: https://tsgt.fs.ocs.oraclecloud.com/rest/ofscCore/v1/resources/{resourceId}
+                                - name: HttpVerb
+                                  value: PATCH
+                                - name: ResourceURI
+                                  value: https://tsgt.fs.ocs.oraclecloud.com/rest/ofscCore/v1/resources/{resourceId}
+                        - CatchAll: CatchAll(ta4)
+                          statements:
+                            - Logger: Logger(lg3)
+                              name: UpdateLastSyncDatetimelogger
+                              description: ""
+                              propertyfile: ../resources/processor_1804/resourcegroup_1811/expr.properties
+                              expressionProperties:
+                                xpathExpression: '"Error occurred in UpdateLastSyncDateTime scope"'
+                                variableName: UpdateLastSyncDatetimelogger
+                            - Stop: EHStop(eh2)
+                          icsfaultfilepath: ../resources/processor_1249/resourcegroup_1250/ICSFault.xsd
+                - Route: Otherwise(sc1)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+            - Map: Map(m0)
+              xsltfilepath: ../resources/processor_29/resourcegroup_32/req_34a94e59d63c4537abc33d345ffc1213.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/SyncStoreroom" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom_REQUEST/types" exclude-result-prefixes=" ora oracle-xsl-mapper oraext xsi xsd fn xp20 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/REST/SyncStoreroom/types" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:ns18="http://xml.oracle.com/adapters/extension" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/SyncStoreroom_REQUEST/RESTINREQ" xmlns:ns16="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/SyncStoreroom_REQUEST/RESTINRES" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns20="http://xmlns.oracle.com/procmon" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:ns22="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163" xmlns:nsmpr1="http://ouaf.oracle.com/webservices/w1/W1-MobileStoreroomInventory">
+                - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:executeResponse xml:id="id_12">'
+                - '      <ns21:response-wrapper xml:id="id_21">'
+                - '        <ns21:resourceId xml:id="id_22">'
+                - '          <xsl:value-of xml:id="id_23" select="/nstrgmpr:execute/ns21:request-wrapper/ns21:resourceId"/>'
+                - '        <ns21:resourceType xml:id="id_24">'
+                - '          <xsl:value-of xml:id="id_25" select="/nstrgmpr:execute/ns21:request-wrapper/ns21:resourceType"/>'
+                - '        <ns21:lastSyncDateTime xml:id="id_26">'
+                - '          <xsl:value-of xml:id="id_27" select="/nstrgmpr:execute/ns21:request-wrapper/ns21:lastSyncDateTime"/>'
+                - '        <ns21:status xml:id="id_28">'
+                - '          <xsl:value-of xml:id="id_29" select="&quot;Success&quot;"/>'
+                - ""
+            - CatchAll: CatchAll(ta5)
+              statements:
+                - Stop: EHStop(eh5)
+              icsfaultfilepath: ../resources/processor_1254/resourcegroup_1255/ICSFault.xsd
+        - Reply: Reply(y0)
+          adapterjcareference: null
+          wsdlfilepath: ""
+        - CatchAll: CatchAll(ta1)
+          statements:
+            - Switch: Switch(s7)
+              routes:
+                - Route: send Email(sc14)
+                  exprProperties:
+                    xpathExpression: dvm:lookupValue("WAMOFSC_ConfigProps", "PropertyName", "email.flag", "Value", "false") = "true"
+                    namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                    expressionName: send Email
+                  stateInfo:
+                    referencedLookupData:
+                        - lookup-table-name-with-location: WAMOFSC_ConfigProps
+                          source: '"PropertyName"'
+                          target: '"Value"'
+                  statements:
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: notification
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: n0
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_1044
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc15)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_1012/resourcegroup_1013/ICSFault.xsd

@@ -1,0 +1,1009 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_4494
+      xsdfilepath: ../resources/processor_4494/resourcegroup_4495/ICSIntegrationMetadata.xsd
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - xmlname:
+            space: http://www.oracle.com/2014/03/ics/flow/definition
+            local: scheduleReceive
+          attrs:
+            - name:
+                space: ""
+                local: trackingRefUri
+              value: processor_6
+            - name:
+                space: ""
+                local: id
+              value: sr0
+            - name:
+                space: ""
+                local: refUri
+              value: processor_13
+          content: ""
+          statements: []
+        - Assignments: InitializeVariables(l0)
+          name: InitializeVariables
+          assignments:
+            - Assignment: Assignment(a0)
+              variableName: searchQuery
+              variableType: string
+              expressionProperties:
+                xpathExpression: concat("dDocTitle <STARTS> `",$docTitle,"`")
+                variableName: searchQuery
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a4)
+              variableName: fileReference
+              variableType: string
+              expressionProperties:
+                xpathExpression: ''''''
+                variableName: fileReference
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a15)
+              variableName: externalSystem
+              variableType: string
+              expressionProperties:
+                xpathExpression: dvm:lookupValue('OUTL-BRT-WACS_FPRC_ConfigProps','PropertyName','wacs.externalsystem','Value','FPRC')
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                variableName: externalSystem
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a16)
+              variableName: sendEmail
+              variableType: string
+              expressionProperties:
+                xpathExpression: dvm:lookupValue('OUTL-BRT-WACS_FPRC_ConfigProps','PropertyName','email.flag','Value','false')
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                variableName: sendEmail
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a17)
+              variableName: maxErrorCountPerEmail
+              variableType: string
+              expressionProperties:
+                xpathExpression: dvm:lookupValue('OUTL-BRT-WACS_FPRC_ConfigProps','PropertyName','maxerrorcount.per.emailnotification','Value','100')
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                variableName: maxErrorCountPerEmail
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a28)
+              variableName: recProcessedInfoPerFileCollection
+              variableType: string
+              expressionProperties:
+                xpathExpression: ''''''
+                variableName: recProcessedInfoPerFileCollection
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a30)
+              variableName: docTitle
+              variableType: string
+              expressionProperties:
+                xpathExpression: oraext:left-trim(oraext:right-trim($docTitle))
+                namespaceList: oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                variableName: docTitle
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a5)
+              variableName: hasError
+              variableType: string
+              expressionProperties:
+                xpathExpression: '''N'''
+                variableName: hasError
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a35)
+              variableName: autoPayValue
+              variableType: string
+              expressionProperties:
+                xpathExpression: dvm:lookupValue('OUTL-BRT-WACS_FPRC_ConfigProps','PropertyName','wacs.autoPay.value','Value','W1NA')
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                variableName: autoPayValue
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Try: Try(t1)
+          username: CheckWACSHealth
+          statements:
+            - Map: Map(m1)
+              xsltfilepath: ../resources/processor_222/resourcegroup_225/req_451a15bef1c74af8b6e211d25e5ed464.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/oracleutilities/invokeHealthCheck" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/invokeHealthCheck_REQUEST/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/oracleutilities/invokeHealthCheck_REQUEST" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:components.schemas.get xml:id="id_12"/>'
+                - ""
+            - Invoke: invokeHealthCheck(i1)
+              application:
+                Application: invokeHealthCheck(OUTL-BRT-REST-WACS_WACSFPRC)
+                name: invokeHealthCheck
+                adapter:
+                    code: OUTL-BRT-REST-WACS_WACSFPRC
+                properties:
+                    - name: operationPath
+                      value: https://slc15ayp.us.oracle.com:7012/ouaf/rest/apis/common/system/healthCheck/
+                    - name: HttpVerb
+                      value: GET
+                    - name: ResourceURI
+                      value: https://us-phoenix-1.utilities-cloud.oracleindustry.com:443/c2g65p/prod/wac/rest/apis/common/system/healthCheck/
+            - CatchAll: CatchAll(ta3)
+              statements:
+                - xmlname:
+                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                    local: throw
+                  attrs:
+                    - name:
+                        space: ""
+                        local: id
+                      value: th3
+                    - name:
+                        space: ""
+                        local: refUri
+                      value: processor_3450
+                  content: ""
+                  statements: []
+              icsfaultfilepath: ../resources/processor_3445/resourcegroup_3446/ICSFault.xsd
+        - Try: Try(t0)
+          username: GetVendorLocationFile
+          statements:
+            - Map: Map(m0)
+              xsltfilepath: ../resources/processor_45/resourcegroup_48/req_495323054844413c8f68069c564430a4.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:tns="urn:GenericSoap" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nstrgmpr="http://xmlns.oracle.com/types/searchVendorLocationFile/1607548577136/OutboundSOAPRequestDocument" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://www.oracle.com/UCM" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+                - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                - '  <xsl:param name="searchQuery" xml:id="id_18"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                - '      <nstrgmpr:Body xml:id="id_23">'
+                - '        <ns0:GenericRequest xml:id="id_24" webKey="{&apos;cs&apos;}">'
+                - '          <ns0:Service xml:id="id_25" IdcService="{&apos;GET_SEARCH_RESULTS&apos;}">'
+                - '            <ns0:Document xml:id="id_26">'
+                - '              <ns0:Field xml:id="id_27" name="{&apos;SortField&apos;}">'
+                - '                <xsl:value-of xml:id="id_28" select="&apos;dInDate&apos;"/>'
+                - '              <ns0:Field xml:id="id_31" name="{&apos;QueryText&apos;}">'
+                - '                <xsl:value-of xml:id="id_32" select="$searchQuery"/>'
+                - '              <ns0:Field xml:id="id_29" name="{&apos;SortOrder&apos;}">'
+                - '                <xsl:value-of xml:id="id_30" select="&apos;Asc&apos;"/>'
+                - ""
+            - Invoke: searchVendorLocationFile(i0)
+              application:
+                Application: searchVendorLocationFile(OUTL-BRT-SOAP-UCM_WACSFPRC)
+                name: searchVendorLocationFile
+                adapter:
+                    code: OUTL-BRT-SOAP-UCM_WACSFPRC
+                properties:
+                    - name: operationPath
+                      value: urn:GenericSoap/GenericSoapOperation
+            - Switch: Switch(s0)
+              routes:
+                - Route: NoFileFound(sc0)
+                  exprProperties:
+                    xpathExpression: $searchVendorLocationFile/ns0:GenericResponse/ns0:Service/ns0:Document/ns0:Field[(@name = "TotalRows")] = 0.0
+                    namespaceList: ns0=http://www.oracle.com/UCM
+                    expressionName: NoFileFound
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: searchVendorLocationFile
+                          rootElement: '{http://www.oracle.com/UCM}GenericResponse'
+                  statements:
+                    - Logger: Logger(lg0)
+                      name: NoFileFoundLog
+                      description: ""
+                      propertyfile: ../resources/processor_105/resourcegroup_112/expr.properties
+                      expressionProperties:
+                        xpathExpression: '''TotalRecord number = 0'''
+                        variableName: NoFileFoundLog
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: throw
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: th0
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_92
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc1)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements:
+                    - Switch: Switch(s1)
+                      routes:
+                        - Route: searchError(sc2)
+                          exprProperties:
+                            xpathExpression: $searchVendorLocationFile/ns0:GenericResponse/ns0:Service/ns0:Document/ns0:Field[(@name = "StatusCode")] = -(1.0)
+                            namespaceList: ns0=http://www.oracle.com/UCM
+                            expressionName: searchError
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: searchVendorLocationFile
+                                  rootElement: '{http://www.oracle.com/UCM}GenericResponse'
+                          statements:
+                            - Logger: Logger(lg1)
+                              name: searchErrorLog
+                              description: ""
+                              propertyfile: ../resources/processor_142/resourcegroup_149/expr.properties
+                              expressionProperties:
+                                xpathExpression: '''Status Code on Search Results returned -1'''
+                                variableName: searchErrorLog
+                            - xmlname:
+                                space: http://www.oracle.com/2014/03/ics/flow/definition
+                                local: throw
+                              attrs:
+                                - name:
+                                    space: ""
+                                    local: id
+                                  value: th1
+                                - name:
+                                    space: ""
+                                    local: refUri
+                                  value: processor_151
+                              content: ""
+                              statements: []
+                        - Route: Otherwise(sc3)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: null
+                          statements: []
+            - ForLoop: ForLoop(f0)
+              expressionProperties:
+                xpathExpression: $searchVendorLocationFile/ns0:GenericResponse/ns0:Service/ns0:Document/ns0:ResultSet
+                namespaceList: ns0=http://www.oracle.com/UCM
+                variableName: currentResultSet
+              currentRecordVarName: currentResultSet
+              statements:
+                - Switch: Switch(s2)
+                  routes:
+                    - Route: ResultSet_SearchResults(sc4)
+                      exprProperties:
+                        xpathExpression: $currentResultSet/ns0:ResultSet[(@name = "SearchResults")] != "SearchResults"\n\n
+                        namespaceList: ns0=http://www.oracle.com/UCM
+                        expressionName: ResultSet_SearchResults
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: currentResultSet
+                              rootElement: '{http://www.oracle.com/UCM}ResultSet'
+                      statements:
+                        - ForLoop: ForLoop(f1)
+                          expressionProperties:
+                            xpathExpression: $currentResultSet/ns0:ResultSet/ns0:Row
+                            namespaceList: ns0=http://www.oracle.com/UCM
+                            variableName: currentFile
+                          currentRecordVarName: currentFile
+                          statements:
+                            - Switch: Switch(s7)
+                              routes:
+                                - Route: (sc14)
+                                  exprProperties:
+                                    xpathExpression: $hasError != "Y"
+                                  stateInfo:
+                                    variablesReferenced:
+                                        - VariableName: hasError
+                                          rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                  statements:
+                                    - Assignments: assignFileDetails(l1)
+                                      name: assignFileDetails
+                                      assignments:
+                                        - Assignment: Assignment(a1)
+                                          variableName: docId
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: $currentFile/ns0:Row/ns0:Field[@name='dID']
+                                            namespaceList: ns0=http://www.oracle.com/UCM
+                                            variableName: docId
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a2)
+                                          variableName: docName
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: $currentFile/ns0:Row/ns0:Field[@name='dDocName']
+                                            namespaceList: ns0=http://www.oracle.com/UCM
+                                            variableName: docName
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a31)
+                                          variableName: vendorLocCounter
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: "0"
+                                            variableName: vendorLocCounter
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a32)
+                                          variableName: totalErrorCount
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: "0"
+                                            variableName: totalErrorCount
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a33)
+                                          variableName: recProcessedInfoPerFile
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: ''''''
+                                            variableName: recProcessedInfoPerFile
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a12)
+                                          variableName: errorCount
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: "0"
+                                            variableName: errorCount
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a14)
+                                          variableName: vendorLocErrorRec
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: ''''''
+                                            variableName: vendorLocErrorRec
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a22)
+                                          variableName: vendorLocErrRecCollection
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: ''''''
+                                            variableName: vendorLocErrRecCollection
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a26)
+                                          variableName: completeDocTitle
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: $currentFile/ns0:Row/ns0:Field[@name='dDocTitle']
+                                            namespaceList: ns0=http://www.oracle.com/UCM
+                                            variableName: completeDocTitle
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a25)
+                                          variableName: updatedDocTitle
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: ''''''
+                                            variableName: updatedDocTitle
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Try: Try(t2)
+                                      username: getVendorFile
+                                      statements:
+                                        - Map: Map(m2)
+                                          xsltfilepath: ../resources/processor_353/resourcegroup_356/req_3361f0fd5b604fe686c447c611fad5b1.xsl
+                                          mapsentences:
+                                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:nstrgmpr="http://xmlns.oracle.com/types/GetFileFromUCM/1607629651740/OutboundSOAPRequestDocument" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:tns="urn:GenericSoap" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://www.oracle.com/UCM" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/types/searchVendorLocationFile/1607548577136/OutboundSOAPRequestDocument" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125">
+                                            - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                                            - '  <xsl:param name="docId" xml:id="id_35"/>'
+                                            - '  <xsl:template match="/" xml:id="id_11">'
+                                            - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                                            - '      <nstrgmpr:Body xml:id="id_45">'
+                                            - '        <ns0:GenericRequest xml:id="id_46" webKey="{&quot;cs&quot;}">'
+                                            - '          <ns0:Service xml:id="id_47" IdcService="{&quot;GET_FILE&quot;}">'
+                                            - '            <ns0:Document xml:id="id_48">'
+                                            - '              <ns0:Field xml:id="id_49" name="{&quot;dID&quot;}">'
+                                            - '                <xsl:value-of xml:id="id_50" select="$docId"/>'
+                                            - ""
+                                        - Invoke: GetFileFromUCM(i2)
+                                          application:
+                                            Application: GetFileFromUCM(OUTL-BRT-SOAP-UCM_WACSFPRC)
+                                            name: GetFileFromUCM
+                                            adapter:
+                                                code: OUTL-BRT-SOAP-UCM_WACSFPRC
+                                            properties:
+                                                - name: operationPath
+                                                  value: urn:GenericSoap/GenericSoapOperation
+                                        - StageFile: UnZipVendorFile(sf0)
+                                          operation: Unzip
+                                          expressionProperties:
+                                            xpathExpression: $GetFileFromUCM/ns0:GenericResponse/ns0:Service/ns0:Document/ns0:File/ns0:Contents
+                                            namespaceList: ns0=http://www.oracle.com/UCM
+                                          statements: []
+                                        - Assignments: AssignVendorFileReference(l2)
+                                          name: AssignVendorFileReference
+                                          assignments:
+                                            - Assignment: Assignment(a3)
+                                              variableName: fileReference
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: $UnZipVendorFile/nsmpr5:UnzipResponse/nsmpr1:ListFilesResponse/nsmpr1:FileList/nsmpr2:ICSFile/nsmpr2:FileReference
+                                                namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/ics/file/v1/types nsmpr5=http://xmlns.oracle.com/cloud/adapter/stagefile/UnZipVendorFile_REQUEST/types nsmpr1=http://xmlns.oracle.com/cloud/staging/list
+                                                variableName: fileReference
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - CatchAll: CatchAll(ta6)
+                                          statements:
+                                            - Stop: EHStop(eh2)
+                                          icsfaultfilepath: ../resources/processor_7279/resourcegroup_7280/ICSFault.xsd
+                                    - Try: Try(t3)
+                                      username: ReadAndSync
+                                      statements:
+                                        - StageFile: ReadFileInSegments(sf1)
+                                          operation: Read
+                                          expressionProperties:
+                                            xpathExpression: $fileReference
+                                          statements:
+                                            - Logger: Logger(lg3)
+                                              name: insideSegment
+                                              description: ""
+                                              propertyfile: ../resources/processor_4858/resourcegroup_4865/expr.properties
+                                              expressionProperties:
+                                                xpathExpression: '''Inside Seg'''
+                                                variableName: insideSegment
+                                            - ForLoop: ForLoop(f2)
+                                              expressionProperties:
+                                                xpathExpression: $ReadFileInSegments/nsmpr2:ReadResponse/nsmpr0:vendor/nsmpr0:vendorLocation
+                                                namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileInSegments_REQUEST/types nsmpr0=http://TargetNamespace.com/fileReference/ReadFileInSegments
+                                                variableName: currentVendorLoc
+                                              currentRecordVarName: currentVendorLoc
+                                              statements:
+                                                - Try: Try(t4)
+                                                  username: InvokeWACSForSync
+                                                  statements:
+                                                    - Map: Map(m3)
+                                                      xsltfilepath: ../resources/processor_8405/resourcegroup_8408/req_d24b7119cfa34592bf00603e82a0fab8.xsl
+                                                      mapsentences:
+                                                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                                        - <xsl:stylesheet xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/InvokeWACSVendorLocSync_REQUEST/types" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/oracleutilities/InvokeWACSVendorLocSync" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns10="http://xmlns.oracle.com/cloud/adapter/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileInSegments_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/UCM" xmlns:nsmpr2="http://TargetNamespace.com/fileReference/ReadFileInSegments" xmlns:nsmpr3="http://xmlns.oracle.com/types/searchVendorLocationFile/1607548577136/OutboundSOAPRequestDocument" xmlns:nsmpr4="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileInSegments_REQUEST" xmlns:ns31="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_response/W1VndLocSyn/input/vendorLocation/carrierFlag/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:ns32="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_response/W1VndLocSyn/input/vendorLocation/payToFlag/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:ns35="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_response/W1VndLocSyn/input/vendorLocation/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:ns36="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_request/W1VndLocSyn/input/vendorLocation/payTaxToVendor/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.oracle.rest.converters.autogeneratedns.com" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns38="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_request/W1VndLocSyn/input/vendorLocation/carrierFlag/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:ns41="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_request/W1VndLocSyn/input/vendorLocation/location/houseType/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:ns42="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_response/W1VndLocSyn/input/vendorLocation/location/houseType/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2047256691" xmlns:ns45="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_response/W1VndLocSyn/output/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:ns46="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_request/W1VndLocSyn/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns28="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_response/W1VndLocSyn/input/vendorLocation/orderFromFlag/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:ns51="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_request/W1VndLocSyn/input/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:ns30="http://www.oracle.rest.converters.autogeneratedns.com/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns33="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_response/W1VndLocSyn/input/vendorLocation/payTaxToVendor/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:ns34="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_response/W1VndLocSyn/input/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:ns37="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_request/W1VndLocSyn/input/vendorLocation/payToFlag/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:ns39="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_request/W1VndLocSyn/input/vendorLocation/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:ns40="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_response/W1VndLocSyn/input/vendorLocation/location/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:ns43="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_request/W1VndLocSyn/input/vendorLocation/location/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2068686068" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns44="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_response/W1VndLocSyn/input/vendorLocation/emailPoFlag/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:ns47="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_request/W1VndLocSyn/output/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns48="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_request/W1VndLocSyn/input/vendorLocation/emailPoFlag/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:ns49="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_request/W1VndLocSyn/input/vendorLocation/orderFromFlag/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns50="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCVENDORLOCATION_response/W1VndLocSyn/oracleutilities/InvokeWACSVendorLocSync_REQUEST" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                                                        - '  <xsl:param name="autoPayValue" xml:id="id_42"/>'
+                                                        - '  <xsl:param name="currentVendorLoc" xml:id="id_46"/>'
+                                                        - '  <xsl:param name="externalSystem" xml:id="id_51"/>'
+                                                        - '  <xsl:template match="/" xml:id="id_11">'
+                                                        - '    <nstrgmpr:syncVendorLocation xml:id="id_12">'
+                                                        - '      <nstrgmpr:components.schemas.SYNCVENDORLOCATION_request>'
+                                                        - '        <ns30:W1VndLocSyn>'
+                                                        - '          <ns46:input>'
+                                                        - '            <ns51:externalSystem xml:id="id_209">'
+                                                        - '              <xsl:value-of xml:id="id_210" select="$externalSystem"/>'
+                                                        - '            <ns51:externalReferenceId xml:id="id_207">'
+                                                        - '              <xsl:value-of xml:id="id_1243" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:VENDORSITEID"/>'
+                                                        - '            <ns51:initialLoad xml:id="id_155">'
+                                                        - '              <xsl:value-of xml:id="id_156" select="&apos;F1IC&apos;"/>'
+                                                        - '            <ns51:vendorLocation xml:id="id_914">'
+                                                        - '              <ns39:vendorExternalId xml:id="id_915">'
+                                                        - '                <xsl:value-of xml:id="id_916" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERVENDORID"/>'
+                                                        - '              <ns39:vendor xml:id="id_917">'
+                                                        - '                <xsl:value-of xml:id="id_918" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERSEGMENT1"/>'
+                                                        - '              <ns39:vendorName xml:id="id_919">'
+                                                        - '                <xsl:value-of xml:id="id_920" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPPARTYPARTYNAME"/>'
+                                                        - '              <ns39:website xml:id="id_921">'
+                                                        - '                <xsl:value-of xml:id="id_922" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERCORPORATEWEBSITE"/>'
+                                                        - '              <xsl:choose xml:id="id_1028">'
+                                                        - '                <xsl:when xml:id="id_1029" test="($currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERENDDATEACTIVE = &quot;&quot;) and ($currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERSITEINACTIVEDATE = &quot;&quot;)">'
+                                                        - '                  <ns39:status xml:id="id_1030">'
+                                                        - '                    <xsl:value-of xml:id="id_1347" select="&apos;ACTIVE&apos;"/>'
+                                                        - '                <xsl:otherwise xml:id="id_1032">'
+                                                        - '                  <ns39:status xml:id="id_1033">'
+                                                        - '                    <xsl:value-of xml:id="id_1034" select="&apos;INACTIVE&apos;"/>'
+                                                        - '              <ns39:vendorLocationExternalId xml:id="id_925">'
+                                                        - '                <xsl:value-of xml:id="id_1242" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:VENDORSITEID"/>'
+                                                        - '              <ns39:locationName xml:id="id_927">'
+                                                        - '                <xsl:value-of xml:id="id_928" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERSITEVENDORSITECODE"/>'
+                                                        - '              <xsl:if xml:id="id_930" test="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERSITECREATIONDATE != &quot;&quot;">'
+                                                        - '                <ns39:creationDateTime xml:id="id_931">'
+                                                        - '                  <xsl:value-of xml:id="id_932" select="concat (substring-before ($currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERSITECREATIONDATE, &quot; &quot; ), &quot;T&quot;, substring-after ($currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERSITECREATIONDATE, &quot; &quot; ) )"/>'
+                                                        - '              <ns39:location xml:id="id_933">'
+                                                        - '                <ns43:address1 xml:id="id_934">'
+                                                        - '                  <xsl:value-of xml:id="id_935" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:LOCATIONADDRESS1"/>'
+                                                        - '                <ns43:address2 xml:id="id_936">'
+                                                        - '                  <xsl:value-of xml:id="id_937" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:LOCATIONADDRESS2"/>'
+                                                        - '                <ns43:address3 xml:id="id_938">'
+                                                        - '                  <xsl:value-of xml:id="id_939" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:LOCATIONADDRESS3"/>'
+                                                        - '                <ns43:address4 xml:id="id_940">'
+                                                        - '                  <xsl:value-of xml:id="id_941" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:LOCATIONADDRESS4"/>'
+                                                        - '                <ns43:city xml:id="id_942">'
+                                                        - '                  <xsl:value-of xml:id="id_943" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:LOCATIONCITY"/>'
+                                                        - '                <ns43:county xml:id="id_944">'
+                                                        - '                  <xsl:value-of xml:id="id_945" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:LOCATIONCOUNTY"/>'
+                                                        - '                <xsl:choose xml:id="id_947">'
+                                                        - '                  <xsl:when xml:id="id_948" test="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:LOCATIONSTATE != &quot;&quot;">'
+                                                        - '                    <ns43:state xml:id="id_949">'
+                                                        - '                      <xsl:value-of xml:id="id_952" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_State&quot;, &quot;FPRC_State&quot;, $currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:LOCATIONSTATE, &quot;WACS_State&quot;, &quot;&quot; )"/>'
+                                                        - '                  <xsl:otherwise xml:id="id_950">'
+                                                        - '                    <ns43:state xml:id="id_951">'
+                                                        - '                      <xsl:value-of xml:id="id_953" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_State&quot;, &quot;FPRC_State&quot;, $currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:LOCATIONPROVINCE, &quot;WACS_State&quot;, &quot;&quot; )"/>'
+                                                        - '                <ns43:postal xml:id="id_954">'
+                                                        - '                  <xsl:value-of xml:id="id_955" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:LOCATIONPOSTALCODE"/>'
+                                                        - '                <ns43:country xml:id="id_956">'
+                                                        - '                  <xsl:value-of xml:id="id_957" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_Country&quot;, &quot;FPRC_Country&quot;, $currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:LOCATIONCOUNTRY, &quot;WACS_Country&quot;, &quot;&quot; )"/>'
+                                                        - '              <xsl:choose xml:id="id_959">'
+                                                        - '                <xsl:when xml:id="id_960" test="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERSITEPURCHASINGSITEFLAG = &quot;Y&quot;">'
+                                                        - '                  <ns39:orderFromFlag xml:id="id_961">'
+                                                        - '                    <xsl:value-of xml:id="id_964" select="&apos;W1AL&apos;"/>'
+                                                        - '                <xsl:otherwise xml:id="id_962">'
+                                                        - '                  <ns39:orderFromFlag xml:id="id_963">'
+                                                        - '                    <xsl:value-of xml:id="id_965" select="&apos;W1NA&apos;"/>'
+                                                        - '              <xsl:choose xml:id="id_967">'
+                                                        - '                <xsl:when xml:id="id_968" test="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERSITEPAYSITEFLAG = &quot;Y&quot;">'
+                                                        - '                  <ns39:payToFlag xml:id="id_969">'
+                                                        - '                    <xsl:value-of xml:id="id_970" select="&apos;W1AL&apos;"/>'
+                                                        - '                <xsl:otherwise xml:id="id_971">'
+                                                        - '                  <ns39:payToFlag xml:id="id_972">'
+                                                        - '                    <xsl:value-of xml:id="id_973" select="&apos;W1NA&apos;"/>'
+                                                        - '              <ns39:payToVendorLocationExternalId xml:id="id_974">'
+                                                        - '                <xsl:value-of xml:id="id_1241" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERSITEDEFAULTPAYSITEID"/>'
+                                                        - '              <ns39:currency xml:id="id_975">'
+                                                        - '                <xsl:value-of xml:id="id_987" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_CurrencyCode&quot;, &quot;FPRC_CurrencyCode&quot;, $currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERSITEINVOICECURRENCYCODE, &quot;WACS_CurrencyCode&quot;, &quot;&quot; )"/>'
+                                                        - '              <ns39:paymentTerm xml:id="id_976">'
+                                                        - '                <xsl:value-of xml:id="id_988" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_PaymentTerm&quot;, &quot;FPRC_PaymentTerm&quot;, $currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERSITETERMSID, &quot;WACS_PaymentTerm&quot;, &quot;&quot; )"/>'
+                                                        - '              <xsl:choose xml:id="id_989">'
+                                                        - '                <xsl:when xml:id="id_990" test="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERMINORDERAMOUNT != &quot;&quot;">'
+                                                        - '                  <ns39:minimumOrderAmount xml:id="id_991">'
+                                                        - '                    <xsl:value-of xml:id="id_994" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERMINORDERAMOUNT"/>'
+                                                        - '                <xsl:otherwise xml:id="id_992">'
+                                                        - '                  <ns39:minimumOrderAmount xml:id="id_993">'
+                                                        - '                    <xsl:value-of xml:id="id_995" select="0"/>'
+                                                        - '              <ns39:autoPay xml:id="id_1295">'
+                                                        - '                <xsl:value-of xml:id="id_1296" select="$autoPayValue"/>'
+                                                        - '              <ns39:carrierLocationId xml:id="id_980"/>'
+                                                        - '              <ns39:fob xml:id="id_981">'
+                                                        - '                <xsl:value-of xml:id="id_1012" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_FOB&quot;, &quot;FPRC_FOB&quot;, $currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERSITEFOBLOOKUPCODE, &quot;WACS_FOB&quot;, &quot;&quot; )"/>'
+                                                        - '              <xsl:choose xml:id="id_1013">'
+                                                        - '                <xsl:when xml:id="id_1014" test="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERSITESUPPLIERNOTIFMETHOD = &quot;EMAIL&quot;">'
+                                                        - '                  <ns39:emailPoFlag xml:id="id_1015">'
+                                                        - '                    <xsl:value-of xml:id="id_1018" select="&apos;W1AL&apos;"/>'
+                                                        - '                <xsl:otherwise xml:id="id_1016">'
+                                                        - '                  <ns39:emailPoFlag xml:id="id_1017">'
+                                                        - '                    <xsl:value-of xml:id="id_1019" select="&apos;W1NA&apos;"/>'
+                                                        - '              <ns39:poEmailAddress xml:id="id_983">'
+                                                        - '                <xsl:value-of xml:id="id_1020" select="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERSITEEMAILADDRESS"/>'
+                                                        - '              <xsl:choose xml:id="id_1021">'
+                                                        - '                <xsl:when xml:id="id_1022" test="$currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:SUPPLIERALLOWAWTFLAG = &quot;Y&quot;">'
+                                                        - '                  <ns39:payTaxToVendor xml:id="id_1023">'
+                                                        - '                    <xsl:value-of xml:id="id_1026" select="&apos;W1NO&apos;"/>'
+                                                        - '                <xsl:otherwise xml:id="id_1024">'
+                                                        - '                  <ns39:payTaxToVendor xml:id="id_1025">'
+                                                        - '                    <xsl:value-of xml:id="id_1027" select="&apos;W1YS&apos;"/>'
+                                                        - ""
+                                                    - Invoke: InvokeWACSVendorLocSync(i3)
+                                                      application:
+                                                        Application: InvokeWACSVendorLocSync(OUTL-BRT-REST-WACS_WACSFPRC)
+                                                        name: InvokeWACSVendorLocSync
+                                                        adapter:
+                                                            code: OUTL-BRT-REST-WACS_WACSFPRC
+                                                        properties:
+                                                            - name: operationPath
+                                                              value: /
+                                                            - name: HttpVerb
+                                                              value: POST
+                                                            - name: ResourceURI
+                                                              value: https://us-phoenix-1.utilities-cloud.oracleindustry.com:443/c2g65p/prod/wac/rest/apis/asset/purchasing/vendorLocationSynchronization/
+                                                    - Assignments: incrementVendLocCount(l3)
+                                                      name: incrementVendLocCount
+                                                      assignments:
+                                                        - Assignment: Assignment(a24)
+                                                          variableName: vendorLocCounter
+                                                          variableType: string
+                                                          expressionProperties:
+                                                            xpathExpression: number($vendorLocCounter + 1)
+                                                            variableName: vendorLocCounter
+                                                            variableType: string
+                                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                    - CatchAll: CatchAll(ta0)
+                                                      statements:
+                                                        - Switch: Switch(s3)
+                                                          routes:
+                                                            - Route: WACS Error Not 400 or 500(sc6)
+                                                              exprProperties:
+                                                                xpathExpression: $InvokeWACSForSyncFaultObject/nsmpr1:fault/nsmpr1:errorCode = "http://schemas.oracle.com/bpel/extension}remoteFault" and substring-after(substring-before(ora:getContentAsString($InvokeWACSForSyncFaultObject/nsmpr1:fault/nsmpr1:details), ", reason="), "status=") != "400" and substring-after(substring-before(ora:getContentAsString($InvokeWACSForSyncFaultObject/nsmpr1:fault/nsmpr1:details), ", reason="), "status=") != "500"
+                                                                namespaceList: nsmpr1=http://www.oracle.com/2014/03/ics/fault ora=http://schemas.oracle.com/xpath/extension
+                                                                expressionName: WACS Error Not 400 or 500
+                                                              stateInfo:
+                                                                variablesReferenced:
+                                                                    - VariableName: InvokeWACSForSyncFaultObject
+                                                                      rootElement: '{http://www.oracle.com/2014/03/ics/fault}fault'
+                                                              statements:
+                                                                - xmlname:
+                                                                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                                                                    local: throw
+                                                                  attrs:
+                                                                    - name:
+                                                                        space: ""
+                                                                        local: id
+                                                                      value: th2
+                                                                    - name:
+                                                                        space: ""
+                                                                        local: refUri
+                                                                      value: processor_697
+                                                                  content: ""
+                                                                  statements: []
+                                                            - Route: Otherwise(sc7)
+                                                              exprProperties:
+                                                                xpathExpression: "true"
+                                                                expressionName: Otherwise
+                                                              stateInfo: null
+                                                              statements:
+                                                                - Assignments: Assign_ErrorDetails(l4)
+                                                                  name: Assign_ErrorDetails
+                                                                  assignments:
+                                                                    - Assignment: Assignment(a6)
+                                                                      variableName: faultDetail
+                                                                      variableType: string
+                                                                      expressionProperties:
+                                                                        xpathExpression: ora:getContentAsString($InvokeWACSForSyncFaultObject/nsmpr1:fault)
+                                                                        namespaceList: nsmpr1=http://www.oracle.com/2014/03/ics/fault ora=http://schemas.oracle.com/xpath/extension
+                                                                        variableName: faultDetail
+                                                                        variableType: string
+                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                    - Assignment: Assignment(a8)
+                                                                      variableName: faultText
+                                                                      variableType: string
+                                                                      expressionProperties:
+                                                                        xpathExpression: substring-before( substring-after( $faultDetail, 'title":"'), '","httpStatus')
+                                                                        variableName: faultText
+                                                                        variableType: string
+                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                    - Assignment: Assignment(a7)
+                                                                      variableName: vendorLocErrorRec
+                                                                      variableType: string
+                                                                      expressionProperties:
+                                                                        xpathExpression: 'concat( "<tr> <td>VendorLocation Id ", $currentVendorLoc/nsmpr2:vendorLocation/nsmpr2:VENDORSITEID, " --- Error: ", $faultText, "</td> </tr>")'
+                                                                        namespaceList: nsmpr2=http://TargetNamespace.com/fileReference/ReadFileInSegments
+                                                                        variableName: vendorLocErrorRec
+                                                                        variableType: string
+                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                    - Assignment: Assignment(a9)
+                                                                      variableName: vendorLocErrRecCollection
+                                                                      variableType: string
+                                                                      expressionProperties:
+                                                                        xpathExpression: concat($vendorLocErrRecCollection,$vendorLocErrorRec)
+                                                                        variableName: vendorLocErrRecCollection
+                                                                        variableType: string
+                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                    - Assignment: Assignment(a10)
+                                                                      variableName: errorCount
+                                                                      variableType: string
+                                                                      expressionProperties:
+                                                                        xpathExpression: number($errorCount + 1)
+                                                                        variableName: errorCount
+                                                                        variableType: string
+                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                    - Assignment: Assignment(a23)
+                                                                      variableName: hasError
+                                                                      variableType: string
+                                                                      expressionProperties:
+                                                                        xpathExpression: '''Y'''
+                                                                        variableName: hasError
+                                                                        variableType: string
+                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                    - Assignment: Assignment(a13)
+                                                                      variableName: totalErrorCount
+                                                                      variableType: string
+                                                                      expressionProperties:
+                                                                        xpathExpression: number($totalErrorCount + 1)
+                                                                        variableName: totalErrorCount
+                                                                        variableType: string
+                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                      icsfaultfilepath: ../resources/processor_635/resourcegroup_636/ICSFault.xsd
+                                                - Switch: Switch(s4)
+                                                  routes:
+                                                    - Route: (sc8)
+                                                      exprProperties:
+                                                        xpathExpression: $sendEmail = "true" and number($errorCount) = number($maxErrorCountPerEmail)
+                                                      stateInfo:
+                                                        variablesReferenced:
+                                                            - VariableName: sendEmail
+                                                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                                            - VariableName: errorCount
+                                                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                                            - VariableName: maxErrorCountPerEmail
+                                                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                                      statements:
+                                                        - xmlname:
+                                                            space: http://www.oracle.com/2014/03/ics/flow/definition
+                                                            local: notification
+                                                          attrs:
+                                                            - name:
+                                                                space: ""
+                                                                local: id
+                                                              value: n0
+                                                            - name:
+                                                                space: ""
+                                                                local: refUri
+                                                              value: processor_1354
+                                                          content: ""
+                                                          statements: []
+                                                        - Assignments: ResetErrorParams(l5)
+                                                          name: ResetErrorParams
+                                                          assignments:
+                                                            - Assignment: Assignment(a18)
+                                                              variableName: errorCount
+                                                              variableType: string
+                                                              expressionProperties:
+                                                                xpathExpression: "0"
+                                                                variableName: errorCount
+                                                                variableType: string
+                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                            - Assignment: Assignment(a19)
+                                                              variableName: vendorLocErrRecCollection
+                                                              variableType: string
+                                                              expressionProperties:
+                                                                xpathExpression: '""'
+                                                                variableName: vendorLocErrRecCollection
+                                                                variableType: string
+                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                    - Route: Otherwise(sc9)
+                                                      exprProperties:
+                                                        xpathExpression: "true"
+                                                        expressionName: Otherwise
+                                                      stateInfo: null
+                                                      statements: []
+                                        - CatchAll: CatchAll(ta5)
+                                          statements:
+                                            - Stop: EHStop(eh3)
+                                          icsfaultfilepath: ../resources/processor_4136/resourcegroup_4137/ICSFault.xsd
+                                    - Switch: Switch(s8)
+                                      routes:
+                                        - Route: ErrorCountNotZero(sc16)
+                                          exprProperties:
+                                            xpathExpression: $errorCount > 0.0 and $sendEmail = "true"
+                                            expressionName: ErrorCountNotZero
+                                          stateInfo:
+                                            variablesReferenced:
+                                                - VariableName: errorCount
+                                                  rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                                - VariableName: sendEmail
+                                                  rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                          statements:
+                                            - xmlname:
+                                                space: http://www.oracle.com/2014/03/ics/flow/definition
+                                                local: notification
+                                              attrs:
+                                                - name:
+                                                    space: ""
+                                                    local: id
+                                                  value: n1
+                                                - name:
+                                                    space: ""
+                                                    local: refUri
+                                                  value: processor_1494
+                                              content: ""
+                                              statements: []
+                                            - Assignments: ResetAllErrorParams(l6)
+                                              name: ResetAllErrorParams
+                                              assignments:
+                                                - Assignment: Assignment(a20)
+                                                  variableName: errorCount
+                                                  variableType: string
+                                                  expressionProperties:
+                                                    xpathExpression: "0.0"
+                                                    variableName: errorCount
+                                                    variableType: string
+                                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                - Assignment: Assignment(a21)
+                                                  variableName: vendorLocErrRecCollection
+                                                  variableType: string
+                                                  expressionProperties:
+                                                    xpathExpression: '""'
+                                                    variableName: vendorLocErrRecCollection
+                                                    variableType: string
+                                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Route: Otherwise(sc17)
+                                          exprProperties:
+                                            xpathExpression: "true"
+                                            expressionName: Otherwise
+                                          stateInfo: null
+                                          statements: []
+                                    - Try: Try(t5)
+                                      username: RenameFile
+                                      statements:
+                                        - Switch: Switch(s6)
+                                          routes:
+                                            - Route: NoErrorInProcessing(sc12)
+                                              exprProperties:
+                                                xpathExpression: $hasError = "N"
+                                                expressionName: NoErrorInProcessing
+                                              stateInfo:
+                                                variablesReferenced:
+                                                    - VariableName: hasError
+                                                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                              statements:
+                                                - Assignments: Assign_ProcessedTitle(l7)
+                                                  name: Assign_ProcessedTitle
+                                                  assignments:
+                                                    - Assignment: Assignment(a34)
+                                                      variableName: updatedDocTitle
+                                                      variableType: string
+                                                      expressionProperties:
+                                                        xpathExpression: concat('PROCESSED_',$completeDocTitle)
+                                                        variableName: updatedDocTitle
+                                                        variableType: string
+                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Route: Otherwise(sc13)
+                                              exprProperties:
+                                                xpathExpression: "true"
+                                                expressionName: Otherwise
+                                              stateInfo: null
+                                              statements:
+                                                - Assignments: Assign_ErrorTitle(l8)
+                                                  name: Assign_ErrorTitle
+                                                  assignments:
+                                                    - Assignment: Assignment(a11)
+                                                      variableName: updatedDocTitle
+                                                      variableType: string
+                                                      expressionProperties:
+                                                        xpathExpression: concat('ERROR_',$completeDocTitle)
+                                                        variableName: updatedDocTitle
+                                                        variableType: string
+                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Map: Map(m4)
+                                          xsltfilepath: ../resources/processor_1930/resourcegroup_1933/req_b025d19d003a47f781428b40e3bcdfbe.xsl
+                                          mapsentences:
+                                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:tns="urn:GenericSoap" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/types/renameFileInUCM/1607981097085/OutboundSOAPRequestDocument" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://www.oracle.com/UCM" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/types/searchVendorLocationFile/1607548577136/OutboundSOAPRequestDocument" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/">
+                                            - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                                            - '  <xsl:param name="docId" xml:id="id_35"/>'
+                                            - '  <xsl:param name="docName" xml:id="id_123"/>'
+                                            - '  <xsl:param name="updatedDocTitle" xml:id="id_186"/>'
+                                            - '  <xsl:template match="/" xml:id="id_11">'
+                                            - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                                            - '      <nstrgmpr:Body xml:id="id_53">'
+                                            - '        <ns0:GenericRequest xml:id="id_54" webKey="{&quot;cs&quot;}">'
+                                            - '          <ns0:Service xml:id="id_55" IdcService="{&quot;UPDATE_DOCINFO&quot;}">'
+                                            - '            <ns0:Document xml:id="id_56">'
+                                            - '              <ns0:Field xml:id="id_57" name="{&quot;dID&quot;}">'
+                                            - '                <xsl:value-of xml:id="id_58" select="$docId"/>'
+                                            - '              <ns0:Field xml:id="id_57" name="{&apos;dDocName&apos;}">'
+                                            - '                <xsl:value-of xml:id="id_145" select="$docName"/>'
+                                            - '              <ns0:Field xml:id="id_59" name="{&apos;dDocTitle&apos;}">'
+                                            - '                <xsl:value-of xml:id="id_190" select="$updatedDocTitle"/>'
+                                            - ""
+                                        - Invoke: renameFileInUCM(i4)
+                                          application:
+                                            Application: renameFileInUCM(OUTL-BRT-SOAP-UCM_WACSFPRC)
+                                            name: renameFileInUCM
+                                            adapter:
+                                                code: OUTL-BRT-SOAP-UCM_WACSFPRC
+                                            properties:
+                                                - name: operationPath
+                                                  value: urn:GenericSoap/GenericSoapOperation
+                                        - Switch: Switch(s5)
+                                          routes:
+                                            - Route: StatusCodeInErr(sc10)
+                                              exprProperties:
+                                                xpathExpression: $renameFileInUCM/ns0:GenericResponse/ns0:Service/ns0:Document/ns0:Field[(@name = "StatusCode")] = -(1.0)
+                                                namespaceList: ns0=http://www.oracle.com/UCM
+                                                expressionName: StatusCodeInErr
+                                              stateInfo:
+                                                variablesReferenced:
+                                                    - VariableName: renameFileInUCM
+                                                      rootElement: '{http://www.oracle.com/UCM}GenericResponse'
+                                              statements:
+                                                - xmlname:
+                                                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                                                    local: throw
+                                                  attrs:
+                                                    - name:
+                                                        space: ""
+                                                        local: id
+                                                      value: th5
+                                                    - name:
+                                                        space: ""
+                                                        local: refUri
+                                                      value: processor_7371
+                                                  content: ""
+                                                  statements: []
+                                            - Route: Otherwise(sc11)
+                                              exprProperties:
+                                                xpathExpression: "true"
+                                                expressionName: Otherwise
+                                              stateInfo: null
+                                              statements: []
+                                        - CatchAll: CatchAll(ta4)
+                                          statements:
+                                            - Stop: EHStop(eh4)
+                                          icsfaultfilepath: ../resources/processor_3491/resourcegroup_3492/ICSFault.xsd
+                                    - Assignments: Assign_ProcessedDetails(l9)
+                                      name: Assign_ProcessedDetails
+                                      assignments:
+                                        - Assignment: Assignment(a27)
+                                          variableName: recProcessedInfoPerFile
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: 'concat( "<tr> <td> File Processed: ", $completeDocTitle, "[", $docName, "] ", " - Records Processed: ",$vendorLocCounter, " Records In Error:", $totalErrorCount, "</td> </tr>")'
+                                            variableName: recProcessedInfoPerFile
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a29)
+                                          variableName: recProcessedInfoPerFileCollection
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: concat($recProcessedInfoPerFileCollection,$recProcessedInfoPerFile)
+                                            variableName: recProcessedInfoPerFileCollection
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                - Route: Otherwise(sc15)
+                                  exprProperties:
+                                    xpathExpression: "true"
+                                    expressionName: Otherwise
+                                  stateInfo: null
+                                  statements: []
+                    - Route: Otherwise(sc5)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements: []
+            - Switch: Switch(s9)
+              routes:
+                - Route: (sc18)
+                  exprProperties:
+                    xpathExpression: $sendEmail = "true"
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: sendEmail
+                          rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                  statements:
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: notification
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: n3
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_2886
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc19)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+            - CatchAll: CatchAll(ta2)
+              statements:
+                - Stop: EHStop(eh1)
+              icsfaultfilepath: ../resources/processor_3435/resourcegroup_3436/ICSFault.xsd
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta1)
+          statements:
+            - Switch: Switch(s10)
+              routes:
+                - Route: (sc20)
+                  exprProperties:
+                    xpathExpression: dvm:lookupValue("OUTL-BRT-WACS_FPRC_ConfigProps", "PropertyName", "email.flag", "Value", "true") = "true"
+                    namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                  stateInfo:
+                    referencedLookupData:
+                        - lookup-table-name-with-location: OUTL-BRT-WACS_FPRC_ConfigProps
+                          source: '"PropertyName"'
+                          target: '"Value"'
+                  statements:
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: notification
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: n4
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_3065
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc21)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_3044/resourcegroup_3045/ICSFault.xsd

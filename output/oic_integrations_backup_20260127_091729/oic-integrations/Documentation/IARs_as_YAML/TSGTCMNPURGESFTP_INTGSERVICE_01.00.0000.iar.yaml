@@ -1,0 +1,110 @@
+Orchestration: ""
+statements:
+    - xmlname:
+        space: http://www.oracle.com/2014/03/ics/flow/definition
+        local: scheduleReceive
+      attrs:
+        - name:
+            space: ""
+            local: trackingRefUri
+          value: processor_1
+        - name:
+            space: ""
+            local: id
+          value: sr0
+        - name:
+            space: ""
+            local: refUri
+          value: processor_8
+      content: ""
+      statements: []
+    - Assignments: InitVariables(l0)
+      name: InitVariables
+      assignments:
+        - Assignment: Assignment(a5)
+          variableName: FromEmail
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName','FROM_EMAIL','ConfigValue','')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: FromEmail
+            variableDescription: Set the From Email Id from Config Lookup
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a6)
+          variableName: ToEmail
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName','Integration_Admin_emailIDs','ConfigValue','')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: ToEmail
+            variableDescription: Set the To Email Id from Config Lookup
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a7)
+          variableName: EmailSubject
+          variableType: string
+          expressionProperties:
+            xpathExpression: '"Common Purge - SFTP Service"'
+            variableName: EmailSubject
+            variableDescription: Set the Email Subject
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+    - Try: Try(t1)
+      username: ScopeInvokePurgeSFTPService
+      statements:
+        - Map: Map(m1)
+          xsltfilepath: ../resources/processor_223/resourcegroup_226/req_958568182f2b4c32a58f13a53877e68b.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/InvokePurgeSFTPService_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/InvokePurgeSFTPService_REQUEST" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/InvokePurgeSFTPService" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/InvokePurgeSFTPService_REQUEST/SKIPOUTREQ" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:ns18="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Filepath/collocatedics/InvokePurgeSFTPService_REQUEST" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns19="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/InvokePurgeSFTPService_REQUEST" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+            - '  <xsl:param name="EmailSubject" xml:id="id_17"/>'
+            - '  <xsl:param name="ToEmail" xml:id="id_62"/>'
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:POST xml:id="id_12">'
+            - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_24">'
+            - '        <ns19:IntegrationType xml:id="id_25">'
+            - '          <xsl:value-of xml:id="id_26" select="&quot;ALL&quot;"/>'
+            - '        <ns19:PurgeType xml:id="id_27">'
+            - '          <xsl:value-of xml:id="id_28" select="&quot;ALL&quot;"/>'
+            - '        <ns19:OverrideMetadata xml:id="id_72">'
+            - '          <xsl:value-of xml:id="id_73" select="&quot;N&quot;"/>'
+            - '        <ns19:OverrideRetentionDays xml:id="id_74">'
+            - '          <xsl:value-of xml:id="id_75" select="&quot;N&quot;"/>'
+            - '        <ns19:Retentiondays xml:id="id_36"/>'
+            - '        <ns19:Integrationid xml:id="id_37"/>'
+            - '        <ns19:Integrationname xml:id="id_38"/>'
+            - '        <ns19:SendEmail xml:id="id_33">'
+            - '          <xsl:value-of xml:id="id_34" select="&quot;Y&quot;"/>'
+            - '        <ns19:FromEmailId xml:id="id_35"/>'
+            - '        <ns19:ToEmailId xml:id="id_39">'
+            - '          <xsl:value-of xml:id="id_56" select="$ToEmail"/>'
+            - '        <ns19:EmailSubject xml:id="id_40">'
+            - '          <xsl:value-of xml:id="id_41" select="$EmailSubject"/>'
+            - '        <ns19:AttachmentType xml:id="id_42">'
+            - '          <xsl:value-of xml:id="id_43" select="&quot;INLINE&quot;"/>'
+            - '        <ns19:Filepath xml:id="id_44">'
+            - '          <ns18:Directory xml:id="id_45"/>'
+            - ""
+        - Invoke: InvokePurgeSFTPService(i1)
+          application:
+            Application: InvokePurgeSFTPService(PRESEEDED_COLLOCATED_CONN_1741)
+            name: InvokePurgeSFTPService
+            adapter:
+                code: PRESEEDED_COLLOCATED_CONN_1741
+            properties:
+                - name: operationPath
+                  value: /
+                - name: HttpVerb
+                  value: POST
+                - name: QueryParameters
+                  value: ""
+                - name: ResourceURI
+                  value: /
+                - name: integration_id
+                  value: TSGTCMNSFTPPURGE_SERVICE|01.00.0000
+                - name: integration_operation
+                  value: POST
+                - name: serviceType
+                  value: REST
+    - Stop: Stop(st0)

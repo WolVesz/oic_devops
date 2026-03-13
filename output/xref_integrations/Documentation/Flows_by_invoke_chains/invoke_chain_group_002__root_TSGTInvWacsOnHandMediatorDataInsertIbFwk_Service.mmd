@@ -1,0 +1,14 @@
+flowchart LR
+%% Auto-generated from invoke_chain_group_002.csv — root TSGTINVWACSONHAN_SERVICE
+classDef integ fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+classDef adapt fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+ TSGTINVWACSONHAN_SERVICE["TSGTInvWacsOnHandMediatorDataInsertIbFwk_Service"]:::integ
+ TSGTCMNUPSERTINS_SERVICE["TSGTCmnUpsertInstanceTransaction_Service"]:::integ
+ TSGTRESTVBCSBO_CONN{{"TSGTRestVBCSBO_Conn"}}:::adapt
+ TSGTCMNUPSERTINS_SERVICE -->|UpdateInstanceBO| TSGTRESTVBCSBO_CONN
+ TSGTCMNUPSERTINS_SERVICE -->|UpdateTransactionBoStatus| TSGTRESTVBCSBO_CONN
+ TSGTINVWACSONHAN_SERVICE -->|UpdateDataInsertStatusToInstance| TSGTCMNUPSERTINS_SERVICE
+ TSGTOBJECTSTORAG_CONN{{"TSGTObjectStorage_Conn"}}:::adapt
+ TSGTINVWACSONHAN_SERVICE -->|DownloadFileFromBucket| TSGTOBJECTSTORAG_CONN
+ TSGTATPCLOUDDB_CONN{{"TSGTAtpCloudDB_Conn"}}:::adapt
+ TSGTINVWACSONHAN_SERVICE -->|InsertIntoIbStageTbl| TSGTATPCLOUDDB_CONN

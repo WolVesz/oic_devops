@@ -1,0 +1,470 @@
+Orchestration: ""
+statements:
+    - Receive: Receive(r0)
+      trackingvariables:
+        - role: tracking_var_1
+          primary: true
+          name: LOCK_ FLAG
+          xpath: /execute/request-wrapper/LOCK_FLAG
+        - role: tracking_var_2
+          name: ERROR_ FLAG
+          xpath: /execute/request-wrapper/ERROR_FLAG
+        - role: tracking_var_3
+          name: tracking_var_3
+    - Assignments: AssignVariable(l0)
+      name: AssignVariable
+      assignments:
+        - Assignment: Assignment(a0)
+          variableName: Status
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: Status
+            variableDescription: Set the status
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a1)
+          variableName: ErrorFlag
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: ErrorFlag
+            variableDescription: Set the Error Flag
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a2)
+          variableName: MessageCode
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: MessageCode
+            variableDescription: Set the Message Code
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a3)
+          variableName: MessageDescr
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: MessageDescr
+            variableDescription: Set the Message Description
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a4)
+          variableName: AssignLock_Flag
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: AssignLock_Flag
+            variableDescription: Set the Lock Flag
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+    - Try: Try(t2)
+      username: datavalidationscope
+      statements:
+        - Switch: Switch(s3)
+          routes:
+            - Route: (sc2)
+              exprProperties:
+                xpathExpression: /nsmpr7:execute/nsmpr3:request-wrapper/nsmpr3:OPERATION != "LOCK" or /nsmpr7:execute/nsmpr3:request-wrapper/nsmpr3:OPERATION != 'UNLOCK'
+                namespaceList: nsmpr7=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types}execute'
+              statements:
+                - Assignments: AssignInvalidOperation(l3)
+                  name: AssignInvalidOperation
+                  assignments:
+                    - Assignment: Assignment(a10)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '"ERROR"'
+                        variableName: Status
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a11)
+                      variableName: MessageCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''TSGT_MINGEN_INVALID_OPERATION'''
+                        variableName: MessageCode
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a12)
+                      variableName: MessageDescr
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_MINGEN_INVALID_OPERATION','MessageDescr','')
+                        namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                        variableName: MessageDescr
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a23)
+                      variableName: ErrorFlag
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''Y'''
+                        variableName: ErrorFlag
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: Otherwise(sc9)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+    - Switch: Switch(s1)
+      routes:
+        - Route: (sc3)
+          exprProperties:
+            xpathExpression: /nsmpr7:execute/nsmpr3:request-wrapper/nsmpr3:ERROR_FLAG = "N"
+            namespaceList: nsmpr7=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService/types
+          stateInfo:
+            variablesReferenced:
+                - VariableName: /
+                  rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types}execute'
+          statements:
+            - Try: Try(t0)
+              username: Validation
+              statements:
+                - Map: Map(m1)
+                  xsltfilepath: ../resources/processor_126/resourcegroup_129/req_d740b0084152403a890748dedf7d1379.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:flt="http://xmlns.oracle.com/cloud/generic/service/fault" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InvokeTriggerService" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:tns="http://xmlns.oracle.com/cloud/adapter/atpdatabase/LockFlagCheck_REQUEST" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/atpdatabase/LockFlagCheck_REQUEST/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns23="http://xml.oracle.com/adapters/extension" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs29="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs30="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InvokeTriggerService_REQUEST/RESTINRES" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InvokeTriggerService_REQUEST/RESTINREQ" xmlns:ns59="http://xmlns.oracle.com/procmon" xmlns:ns60="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext ns2 xsd xp20 nssrcmpr ns1 ora nssrcdfl oracle-xsl-mapper xsi fn xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:LockFlagCheckInput xml:id="id_12">'
+                    - '      <nstrgmpr:ID>'
+                    - '        <xsl:value-of select="1.0"/>'
+                    - ""
+                - Invoke: LockFlagCheck(i0)
+                  application:
+                    Application: LockFlagCheck(TSGTATPCLOUDDB_CONN)
+                    name: LockFlagCheck
+                    adapter:
+                        code: TSGTATPCLOUDDB_CONN
+                    properties: []
+                - Assignments: AssignLockFlagVariable(l7)
+                  name: AssignLockFlagVariable
+                  assignments:
+                    - Assignment: Assignment(a24)
+                      variableName: AssignLock_Flag
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $LockFlagCheck/nsmpr6:LockFlagCheckOutputCollection/nsmpr6:LockFlagCheckOutput/nsmpr6:LOCK_FLAG
+                        namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapter/atpdatabase/LockFlagCheck_REQUEST/types
+                        variableName: AssignLock_Flag
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Switch: Switch(s0)
+                  routes:
+                    - Route: (sc0)
+                      exprProperties:
+                        xpathExpression: $LockFlagCheck/nsmpr6:LockFlagCheckOutputCollection/nsmpr6:LockFlagCheckOutput/nsmpr6:LOCK_FLAG = "Y" and /nsmpr4:execute/nsmpr5:request-wrapper/nsmpr5:OPERATION = "LOCK"
+                        namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapter/atpdatabase/LockFlagCheck_REQUEST/types nsmpr4=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types nsmpr5=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService/types
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: LockFlagCheck
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/atpdatabase/LockFlagCheck_REQUEST/types}LockFlagCheckOutputCollection'
+                            - VariableName: /
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types}execute'
+                      statements:
+                        - Assignments: AssignLockStatus(l1)
+                          name: AssignLockStatus
+                          assignments:
+                            - Assignment: Assignment(a5)
+                              variableName: Status
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '"ERROR"'
+                                variableName: Status
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a6)
+                              variableName: MessageCode
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''TSGT_MINGEN_ALREADY_LOCKED''\n\n'
+                                variableName: MessageCode
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a21)
+                              variableName: ErrorFlag
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '"Y"'
+                                variableName: ErrorFlag
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a22)
+                              variableName: MessageDescr
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_MINGEN_ALREADY_LOCKED','MessageDescr','')
+                                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                                variableName: MessageDescr
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: (sc4)
+                      exprProperties:
+                        xpathExpression: $LockFlagCheck/nsmpr6:LockFlagCheckOutputCollection/nsmpr6:LockFlagCheckOutput/nsmpr6:LOCK_FLAG = "N" and /nsmpr4:execute/nsmpr5:request-wrapper/nsmpr5:OPERATION = "UNLOCK"
+                        namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapter/atpdatabase/LockFlagCheck_REQUEST/types nsmpr4=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types nsmpr5=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService/types
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: LockFlagCheck
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/atpdatabase/LockFlagCheck_REQUEST/types}LockFlagCheckOutputCollection'
+                            - VariableName: /
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types}execute'
+                      statements:
+                        - Assignments: AssignUnlockStatus(l2)
+                          name: AssignUnlockStatus
+                          assignments:
+                            - Assignment: Assignment(a7)
+                              variableName: Status
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '"ERROR"'
+                                variableName: Status
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a8)
+                              variableName: ErrorFlag
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''Y'''
+                                variableName: ErrorFlag
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a9)
+                              variableName: MessageCode
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''TSGT_MINGEN_ALREADY_UNLOCKED''\n'
+                                variableName: MessageCode
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a20)
+                              variableName: MessageDescr
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_MINGEN_ALREADY_UNLOCKED','MessageDescr','')
+                                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                                variableName: MessageDescr
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: Otherwise(sc1)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements: []
+                - CatchAll: CatchAll(ta0)
+                  statements:
+                    - Assignments: AssignFaultValidationScope(l4)
+                      name: AssignFaultValidationScope
+                      assignments:
+                        - Assignment: Assignment(a13)
+                          variableName: Status
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: '"ERROR"'
+                            variableName: Status
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a14)
+                          variableName: MessageCode
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: '"Lock Operation Failed"'
+                            variableName: MessageCode
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a15)
+                          variableName: ErrorFlag
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: '"Y"'
+                            variableName: ErrorFlag
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                  icsfaultfilepath: ../resources/processor_447/resourcegroup_448/ICSFault.xsd
+        - Route: Otherwise(sc5)
+          exprProperties:
+            xpathExpression: "true"
+            expressionName: Otherwise
+          stateInfo: null
+          statements: []
+    - Try: Try(t1)
+      username: UpdateLockFlagScope
+      statements:
+        - Switch: Switch(s2)
+          routes:
+            - Route: (sc6)
+              exprProperties:
+                xpathExpression: /nsmpr7:execute/nsmpr3:request-wrapper/nsmpr3:ERROR_FLAG = "N" and /nsmpr4:execute/nssrcdfl:request-wrapper/nssrcdfl:OPERATION = "LOCK" and $AssignLock_Flag = "N"
+                namespaceList: nsmpr7=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService/types nsmpr4=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types nssrcdfl=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types}execute'
+                    - VariableName: AssignLock_Flag
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - Map: Map(m2)
+                  xsltfilepath: ../resources/processor_534/resourcegroup_537/req_c9b7acaa39c04015a019a9d629f32bd9.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InvokeTriggerService" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/atpdatabase/UpdateLockFlag_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tns="http://xmlns.oracle.com/cloud/adapter/atpdatabase/UpdateLockFlag_REQUEST" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns22="http://xml.oracle.com/adapters/extension" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs29="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs30="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InvokeTriggerService_REQUEST/RESTINRES" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InvokeTriggerService_REQUEST/RESTINREQ" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext ns2 xsd xp20 nssrcmpr ns1 ora nssrcdfl oracle-xsl-mapper xsi fn xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                    - '  <xsl:param name="MessageCode" xml:id="id_23"/>'
+                    - '  <xsl:param name="MessageDescr" xml:id="id_24"/>'
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:UpdateLockFlagInput xml:id="id_12">'
+                    - '      <nstrgmpr:MSG_CODE xml:id="id_30">'
+                    - '        <xsl:value-of xml:id="id_31" select="$MessageCode"/>'
+                    - '      <nstrgmpr:MSG_DESCR xml:id="id_32">'
+                    - '        <xsl:value-of xml:id="id_33" select="$MessageDescr"/>'
+                    - ""
+                - Invoke: UpdateLockFlag(i1)
+                  application:
+                    Application: UpdateLockFlag(TSGTATPCLOUDDB_CONN)
+                    name: UpdateLockFlag
+                    adapter:
+                        code: TSGTATPCLOUDDB_CONN
+                    properties: []
+                - Assignments: AssignStatus(l5)
+                  name: AssignStatus
+                  assignments:
+                    - Assignment: Assignment(a16)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '"SUCCESS"'
+                        variableName: Status
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a17)
+                      variableName: MessageCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''TSGT_MINGEN_LOCK_COMPLETED''\n'
+                        variableName: MessageCode
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a18)
+                      variableName: MessageDescr
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_MINGEN_LOCK_COMPLETED','MessageDescr','Successfully Locked.')
+                        namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                        variableName: MessageDescr
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a19)
+                      variableName: ErrorFlag
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''N'''
+                        variableName: ErrorFlag
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: (sc8)
+              exprProperties:
+                xpathExpression: /nsmpr7:execute/nsmpr3:request-wrapper/nsmpr3:ERROR_FLAG = "N" and /nsmpr4:execute/nssrcdfl:request-wrapper/nssrcdfl:OPERATION = "UNLOCK" and $AssignLock_Flag = "Y"
+                namespaceList: nsmpr7=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService/types nsmpr4=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types nssrcdfl=http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types}execute'
+                    - VariableName: AssignLock_Flag
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - Map: Map(m3)
+                  xsltfilepath: ../resources/processor_889/resourcegroup_892/req_15e49f2094194c179a391d10c9d6e1e4.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InvokeTriggerService" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/atpdatabase/UpdateMingenLockTable_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tns="http://xmlns.oracle.com/cloud/adapter/atpdatabase/UpdateMingenLockTable_REQUEST" exclude-result-prefixes=" oraext ns2 xsd xp20 nssrcmpr ns4 ora nssrcdfl oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs29="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs30="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InvokeTriggerService_REQUEST/RESTINRES" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InvokeTriggerService_REQUEST/RESTINREQ">
+                    - '  <xsl:param name="MessageCode" xml:id="id_19"/>'
+                    - '  <xsl:param name="MessageDescr" xml:id="id_20"/>'
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:UpdateMingenLockTableInput xml:id="id_12">'
+                    - '      <nstrgmpr:MSG_CODE xml:id="id_26">'
+                    - '        <xsl:value-of xml:id="id_27" select="$MessageCode"/>'
+                    - '      <nstrgmpr:MSG_DESCR xml:id="id_28">'
+                    - '        <xsl:value-of xml:id="id_29" select="$MessageDescr"/>'
+                    - ""
+                - Invoke: UpdateMingenLockTable(i2)
+                  application:
+                    Application: UpdateMingenLockTable(TSGTATPCLOUDDB_CONN)
+                    name: UpdateMingenLockTable
+                    adapter:
+                        code: TSGTATPCLOUDDB_CONN
+                    properties: []
+                - Assignments: AssignLockStatusScope(l8)
+                  name: AssignLockStatusScope
+                  assignments:
+                    - Assignment: Assignment(a25)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '"SUCCESS"'
+                        variableName: Status
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a26)
+                      variableName: MessageCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''TSGT_MINGEN_UNLOCK_COMPLETED''\n\n'
+                        variableName: MessageCode
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a27)
+                      variableName: MessageDescr
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_MINGEN_UNLOCK_COMPLETED','MessageDescr','')
+                        namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                        variableName: MessageDescr
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a28)
+                      variableName: ErrorFlag
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '"N"'
+                        variableName: ErrorFlag
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: Otherwise(sc7)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+    - Map: Map(m0)
+      xsltfilepath: ../resources/processor_24/resourcegroup_27/req_f4aae2aebfb74c33906881cee3b5fd3a.xsl
+      mapsentences:
+        - <?xml version = '1.0' encoding = 'UTF-8'?>
+        - <xsl:stylesheet xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InvokeTriggerService" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/InvokeTriggerService/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns19="http://xml.oracle.com/adapters/extension" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs29="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs30="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InvokeTriggerService_REQUEST/RESTINRES" xmlns:ns17="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InvokeTriggerService_REQUEST/RESTINREQ" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+        - '  <xsl:param name="ErrorFlag" xml:id="id_18"/>'
+        - '  <xsl:param name="MessageCode" xml:id="id_19"/>'
+        - '  <xsl:param name="MessageDescr" xml:id="id_20"/>'
+        - '  <xsl:param name="Status" xml:id="id_21"/>'
+        - '  <xsl:template match="/" xml:id="id_11">'
+        - '    <nstrgmpr:executeResponse xml:id="id_12">'
+        - '      <nstrgdfl:response-wrapper xml:id="id_26">'
+        - '        <nstrgdfl:STATUS xml:id="id_27">'
+        - '          <xsl:value-of xml:id="id_28" select="$Status"/>'
+        - '        <nstrgdfl:MSG_CODE xml:id="id_44">'
+        - '          <xsl:value-of xml:id="id_45" select="$MessageCode"/>'
+        - '        <nstrgdfl:MSG_DETAILS xml:id="id_33"/>'
+        - '        <nstrgdfl:ERROR_FLAG xml:id="id_29">'
+        - '          <xsl:value-of xml:id="id_30" select="$ErrorFlag"/>'
+        - '        <nstrgdfl:MSG_DESCR xml:id="id_31">'
+        - '          <xsl:value-of xml:id="id_32" select="$MessageDescr"/>'
+        - ""
+    - Reply: Reply(y0)
+      adapterjcareference: null
+      wsdlfilepath: ""

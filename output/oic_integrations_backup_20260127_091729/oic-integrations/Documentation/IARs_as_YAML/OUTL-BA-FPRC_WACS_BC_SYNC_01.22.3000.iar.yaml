@@ -1,0 +1,1472 @@
+Orchestration: ""
+statements:
+    - GlobalVariable: (gtv1)
+      variableName: UOMVals_XML
+      variableType: $StageReadstrToXML/ns18:ReadResponse
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - xmlname:
+            space: http://www.oracle.com/2014/03/ics/flow/definition
+            local: scheduleReceive
+          attrs:
+            - name:
+                space: ""
+                local: trackingRefUri
+              value: processor_1
+            - name:
+                space: ""
+                local: id
+              value: sr0
+            - name:
+                space: ""
+                local: refUri
+              value: processor_8
+          content: ""
+          statements: []
+        - Assignments: initializeVariables(l0)
+          name: initializeVariables
+          assignments:
+            - Assignment: Assignment(a40)
+              variableName: DocTitle
+              variableType: string
+              expressionProperties:
+                xpathExpression: oraext:left-trim(oraext:right-trim($DocTitle))
+                namespaceList: oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                variableName: DocTitle
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a58)
+              variableName: ContentId
+              variableType: string
+              expressionProperties:
+                xpathExpression: oraext:left-trim(oraext:right-trim($ContentId))
+                namespaceList: oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                variableName: ContentId
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a0)
+              variableName: searchQuery
+              variableType: string
+              expressionProperties:
+                xpathExpression: concat("dDocTitle <MATCHES> `",$DocTitle,"` <AND> dDocName <MATCHES> `",$ContentId,"`")
+                variableName: searchQuery
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a1)
+              variableName: hasError
+              variableType: string
+              expressionProperties:
+                xpathExpression: '''N'''
+                variableName: hasError
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a3)
+              variableName: fileReference
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: fileReference
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a6)
+              variableName: sendEmail
+              variableType: string
+              expressionProperties:
+                xpathExpression: dvm:lookupValue('OUTL-BRT-WACS_FPRC_ConfigProps','PropertyName','email.flag','Value','false')
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                variableName: sendEmail
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a7)
+              variableName: maxErrorCountPerEmail
+              variableType: string
+              expressionProperties:
+                xpathExpression: dvm:lookupValue('OUTL-BRT-WACS_FPRC_ConfigProps','PropertyName','maxerrorcount.per. emailnotification','Value','100')
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                variableName: maxErrorCountPerEmail
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a33)
+              variableName: recsProccesedPerFileCollection
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: recsProccesedPerFileCollection
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a38)
+              variableName: blanketContractCounter
+              variableType: string
+              expressionProperties:
+                xpathExpression: "0"
+                variableName: blanketContractCounter
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Switch: Switch(s10)
+          routes:
+            - Route: contentId is null(sc20)
+              exprProperties:
+                xpathExpression: oraext:compare-ignore-case($ContentId, "null") = 0.0 and oraext:compare-ignore-case($DocTitle, "null") != 0.0
+                namespaceList: oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                expressionName: contentId is null
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: ContentId
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                    - VariableName: DocTitle
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - Assignments: QueryNoContentId(l16)
+                  name: QueryNoContentId
+                  assignments:
+                    - Assignment: Assignment(a57)
+                      variableName: searchQuery
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: concat("dDocTitle <MATCHES> `",$DocTitle,"`")
+                        variableName: searchQuery
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: docTitle is null(sc27)
+              exprProperties:
+                xpathExpression: oraext:compare-ignore-case($DocTitle,'null') = 0 and oraext:compare-ignore-case($ContentId,'null') != 0
+                namespaceList: oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                expressionName: docTitle is null
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: DocTitle
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                    - VariableName: ContentId
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - Assignments: QueryNoDocTitle(l17)
+                  name: QueryNoDocTitle
+                  assignments:
+                    - Assignment: Assignment(a59)
+                      variableName: searchQuery
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: concat("dDocName <MATCHES> `",$ContentId,"`")
+                        variableName: searchQuery
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: paramsNull(sc30)
+              exprProperties:
+                xpathExpression: oraext:compare-ignore-case($DocTitle,'null') = 0 and oraext:compare-ignore-case($ContentId,'null') = 0
+                namespaceList: oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                expressionName: paramsNull
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: DocTitle
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                    - VariableName: ContentId
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - xmlname:
+                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                    local: throw
+                  attrs:
+                    - name:
+                        space: ""
+                        local: id
+                      value: th6
+                    - name:
+                        space: ""
+                        local: refUri
+                      value: processor_11336
+                  content: ""
+                  statements: []
+            - Route: Otherwise(sc21)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - Try: Try(t0)
+          username: CheckWACSHealth
+          statements:
+            - Map: Map(m0)
+              xsltfilepath: ../resources/processor_12757/resourcegroup_12760/req_e658578d323348a8af764821a99e3516.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/invokeWACS_HealthCheck_REQUEST/types" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/oracleutilities/invokeWACS_HealthCheck_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/oracleutilities/invokeWACS_HealthCheck" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/stagefile/StageReadstrToXML_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:components.schemas.get xml:id="id_12"/>'
+                - ""
+            - Invoke: invokeWACS_HealthCheck(i0)
+              application:
+                Application: invokeWACS_HealthCheck(OUTL-BRT-REST-WACS_WACSFPRC)
+                name: invokeWACS_HealthCheck
+                adapter:
+                    code: OUTL-BRT-REST-WACS_WACSFPRC
+                properties:
+                    - name: operationPath
+                      value: /
+                    - name: HttpVerb
+                      value: GET
+                    - name: ResourceURI
+                      value: https://us-phoenix-1.utilities-cloud.oracleindustry.com:443/c2g65p/prod/wac/rest/apis/common/system/healthCheck/
+            - CatchAll: CatchAll(ta1)
+              statements:
+                - xmlname:
+                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                    local: throw
+                  attrs:
+                    - name:
+                        space: ""
+                        local: id
+                      value: th4
+                    - name:
+                        space: ""
+                        local: refUri
+                      value: processor_2561
+                  content: ""
+                  statements: []
+              icsfaultfilepath: ../resources/processor_2556/resourcegroup_2557/ICSFault.xsd
+        - Try: Try(t1)
+          username: BlanketContractSyncScope
+          statements:
+            - Map: Map(m1)
+              xsltfilepath: ../resources/processor_76/resourcegroup_79/req_768e4874de3641c7af9e50863833e5e8.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:tns="urn:GenericSoap" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:nstrgmpr="http://xmlns.oracle.com/types/searchBlanketContractFile/1631525338952/OutboundSOAPRequestDocument" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://www.oracle.com/UCM" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01 nxsd ns30 ns32" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/stagefile/StageReadstrToXML_REQUEST/types" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/StageReadstrToXML" xmlns:ns32="http://xmlns.oracle.com/cloud/adapter/stagefile/StageReadstrToXML_REQUEST">
+                - '  <xsl:param name="searchQuery" xml:id="id_57"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                - '      <nstrgmpr:Body xml:id="id_22">'
+                - '        <ns0:GenericRequest xml:id="id_23" webKey="{&quot;cs&quot;}">'
+                - '          <ns0:Service xml:id="id_24" IdcService="{&quot;GET_SEARCH_RESULTS&quot;}">'
+                - '            <ns0:Document xml:id="id_25">'
+                - '              <ns0:Field xml:id="id_26" name="{&quot;QueryText&quot;}">'
+                - '                <xsl:value-of xml:id="id_42" select="$searchQuery"/>'
+                - '              <ns0:Field xml:id="id_27" name="{&quot;SortField&quot;}">'
+                - '                <xsl:value-of xml:id="id_29" select="&apos;dInDate&apos;"/>'
+                - '              <ns0:Field xml:id="id_30" name="{&quot;SortOrder&quot;}">'
+                - '                <xsl:value-of xml:id="id_31" select="&quot;Asc&quot;"/>'
+                - ""
+            - Invoke: searchBlanketContractFile(i1)
+              application:
+                Application: searchBlanketContractFile(OUTL-BRT-SOAP-UCM_WACSFPRC)
+                name: searchBlanketContractFile
+                adapter:
+                    code: OUTL-BRT-SOAP-UCM_WACSFPRC
+                properties:
+                    - name: operationPath
+                      value: urn:GenericSoap/GenericSoapOperation
+            - Switch: Switch(s0)
+              routes:
+                - Route: NoFile(sc0)
+                  exprProperties:
+                    xpathExpression: $searchBlanketContractFile/ns0:GenericResponse/ns0:Service/ns0:Document/ns0:Field[(@name = "TotalRows")] = 0.0
+                    namespaceList: ns0=http://www.oracle.com/UCM
+                    expressionName: NoFile
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: searchBlanketContractFile
+                          rootElement: '{http://www.oracle.com/UCM}GenericResponse'
+                  statements:
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: throw
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: th0
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_127
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc1)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements:
+                    - Switch: Switch(s1)
+                      routes:
+                        - Route: InvalidSearch(sc2)
+                          exprProperties:
+                            xpathExpression: $searchBlanketContractFile/ns0:GenericResponse/ns0:Service/ns0:Document/ns0:Field[(@name = "StatusCode")] = -(1.0)
+                            namespaceList: ns0=http://www.oracle.com/UCM
+                            expressionName: InvalidSearch
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: searchBlanketContractFile
+                                  rootElement: '{http://www.oracle.com/UCM}GenericResponse'
+                          statements:
+                            - xmlname:
+                                space: http://www.oracle.com/2014/03/ics/flow/definition
+                                local: throw
+                              attrs:
+                                - name:
+                                    space: ""
+                                    local: id
+                                  value: th1
+                                - name:
+                                    space: ""
+                                    local: refUri
+                                  value: processor_161
+                              content: ""
+                              statements: []
+                        - Route: Otherwise(sc3)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: null
+                          statements: []
+            - ForLoop: ForLoop(f0)
+              expressionProperties:
+                xpathExpression: $searchBlanketContractFile/ns0:GenericResponse/ns0:Service/ns0:Document/ns0:ResultSet
+                namespaceList: ns0=http://www.oracle.com/UCM
+                variableName: currentResultSet
+              currentRecordVarName: currentResultSet
+              statements:
+                - Switch: Switch(s2)
+                  routes:
+                    - Route: (sc4)
+                      exprProperties:
+                        xpathExpression: $currentResultSet/ns0:ResultSet[(@name = "SearchResults")] != "SearchResults"
+                        namespaceList: ns0=http://www.oracle.com/UCM
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: currentResultSet
+                              rootElement: '{http://www.oracle.com/UCM}ResultSet'
+                      statements:
+                        - ForLoop: ForLoop(f1)
+                          expressionProperties:
+                            xpathExpression: $currentResultSet/ns0:ResultSet/ns0:Row
+                            namespaceList: ns0=http://www.oracle.com/UCM
+                            variableName: currentBCfile
+                          currentRecordVarName: currentBCfile
+                          statements:
+                            - Switch: Switch(s3)
+                              routes:
+                                - Route: (sc6)
+                                  exprProperties:
+                                    xpathExpression: $hasError != "Y"
+                                  stateInfo:
+                                    variablesReferenced:
+                                        - VariableName: hasError
+                                          rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                  statements:
+                                    - Assignments: assignFileDetails(l1)
+                                      name: assignFileDetails
+                                      assignments:
+                                        - Assignment: Assignment(a2)
+                                          variableName: docID
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: $currentBCfile/ns0:Row/ns0:Field[@name="dID"]
+                                            namespaceList: ns0=http://www.oracle.com/UCM
+                                            variableName: docID
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a13)
+                                          variableName: blanketContractErrRec
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: '""'
+                                            variableName: blanketContractErrRec
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a14)
+                                          variableName: blanketContractErrRecCollection
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: '""'
+                                            variableName: blanketContractErrRecCollection
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a16)
+                                          variableName: errorCount
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: "0"
+                                            variableName: errorCount
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a17)
+                                          variableName: totalErrorCount
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: "0"
+                                            variableName: totalErrorCount
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a25)
+                                          variableName: updatedDocTitle
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: '""'
+                                            variableName: updatedDocTitle
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a28)
+                                          variableName: docName
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: $currentBCfile/ns0:Row/ns0:Field[@name='dDocName']
+                                            namespaceList: ns0=http://www.oracle.com/UCM
+                                            variableName: docName
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a30)
+                                          variableName: recsProccesedPerFile
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: '""'
+                                            variableName: recsProccesedPerFile
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a35)
+                                          variableName: errorCode
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: '""'
+                                            variableName: errorCode
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a8)
+                                          variableName: fileFormat
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: $currentBCfile/ns0:Row/ns0:Field[@name='dExtension']
+                                            namespaceList: ns0=http://www.oracle.com/UCM
+                                            variableName: fileFormat
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a24)
+                                          variableName: documentTitle
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: $currentBCfile/ns0:Row/ns0:Field[@name='dDocTitle']
+                                            namespaceList: ns0=http://www.oracle.com/UCM
+                                            variableName: documentTitle
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a60)
+                                          variableName: blanketContractCounter
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: "0"
+                                            variableName: blanketContractCounter
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Logger: Logger(lg0)
+                                      name: logdocID
+                                      description: ""
+                                      propertyfile: ../resources/processor_3481/resourcegroup_3488/expr.properties
+                                      expressionProperties:
+                                        xpathExpression: $docID
+                                        variableName: logdocID
+                                    - Try: Try(t2)
+                                      username: GetBCfile
+                                      statements:
+                                        - Map: Map(m2)
+                                          xsltfilepath: ../resources/processor_284/resourcegroup_287/req_4d530285e67049db8ea3a16553717a40.xsl
+                                          mapsentences:
+                                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:nstrgmpr="http://xmlns.oracle.com/types/GetFileFromUCM/1631529572190/OutboundSOAPRequestDocument" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:tns="urn:GenericSoap" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://www.oracle.com/UCM" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/types/searchBlanketContractFile/1631525338952/OutboundSOAPRequestDocument" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/StageReadstrToXML_REQUEST/types" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns32="http://xmlns.oracle.com/cloud/adapter/stagefile/StageReadstrToXML_REQUEST" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/StageReadstrToXML">
+                                            - '  <xsl:param name="docID" xml:id="id_84"/>'
+                                            - '  <xsl:template match="/" xml:id="id_11">'
+                                            - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                                            - '      <nstrgmpr:Body xml:id="id_44">'
+                                            - '        <ns0:GenericRequest xml:id="id_45" webKey="{&apos;cs&apos;}">'
+                                            - '          <ns0:Service xml:id="id_46" IdcService="{&apos;GET_FILE&apos;}">'
+                                            - '            <ns0:Document xml:id="id_47">'
+                                            - '              <ns0:Field xml:id="id_48" name="{&apos;dID&apos;}">'
+                                            - '                <xsl:value-of xml:id="id_102" select="$docID"/>'
+                                            - ""
+                                        - Invoke: GetFileFromUCM(i2)
+                                          application:
+                                            Application: GetFileFromUCM(OUTL-BRT-SOAP-UCM_WACSFPRC)
+                                            name: GetFileFromUCM
+                                            adapter:
+                                                code: OUTL-BRT-SOAP-UCM_WACSFPRC
+                                            properties:
+                                                - name: operationPath
+                                                  value: urn:GenericSoap/GenericSoapOperation
+                                        - StageFile: UnZipBCFile(sf0)
+                                          operation: Unzip
+                                          expressionProperties:
+                                            xpathExpression: $GetFileFromUCM/ns0:GenericResponse/ns0:Service/ns0:Document/ns0:File/ns0:Contents
+                                            namespaceList: ns0=http://www.oracle.com/UCM
+                                          statements: []
+                                        - Assignments: assignBCFileReference(l2)
+                                          name: assignBCFileReference
+                                          assignments:
+                                            - Assignment: Assignment(a4)
+                                              variableName: fileReference
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: $UnZipBCFile/nsmpr5:UnzipResponse/nsmpr1:ListFilesResponse/nsmpr1:FileList/nsmpr2:ICSFile/nsmpr2:FileReference
+                                                namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/ics/file/v1/types nsmpr5=http://xmlns.oracle.com/cloud/adapter/stagefile/UnZipBCFile_REQUEST/types nsmpr1=http://xmlns.oracle.com/cloud/staging/list
+                                                variableName: fileReference
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - CatchAll: CatchAll(ta3)
+                                          statements:
+                                            - Switch: Switch(s14)
+                                              routes:
+                                                - Route: (sc28)
+                                                  exprProperties:
+                                                    xpathExpression: $fileFormat != "zip"
+                                                  stateInfo:
+                                                    variablesReferenced:
+                                                        - VariableName: fileFormat
+                                                          rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                                  statements:
+                                                    - xmlname:
+                                                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                                                        local: throw
+                                                      attrs:
+                                                        - name:
+                                                            space: ""
+                                                            local: id
+                                                          value: th5
+                                                        - name:
+                                                            space: ""
+                                                            local: refUri
+                                                          value: processor_8894
+                                                      content: ""
+                                                      statements: []
+                                                - Route: Otherwise(sc29)
+                                                  exprProperties:
+                                                    xpathExpression: "true"
+                                                    expressionName: Otherwise
+                                                  stateInfo: null
+                                                  statements:
+                                                    - Stop: EHStop(eh2)
+                                          icsfaultfilepath: ../resources/processor_2593/resourcegroup_2594/ICSFault.xsd
+                                    - Try: Try(t3)
+                                      username: ReadFileAndSync
+                                      statements:
+                                        - StageFile: ReadFileInSegments(sf1)
+                                          operation: Read
+                                          expressionProperties:
+                                            xpathExpression: $fileReference
+                                          statements:
+                                            - ForLoop: ForLoop(f2)
+                                              expressionProperties:
+                                                xpathExpression: $ReadFileInSegments/nsmpr3:ReadResponse/nsmpr1:DATA_DS/nsmpr1:G_BPA_CPA_HEADER
+                                                namespaceList: nsmpr3=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileInSegments_REQUEST/types nsmpr1=http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments
+                                                variableName: currentSegment
+                                              currentRecordVarName: currentSegment
+                                              statements:
+                                                - Assignments: assignUOMColVars(l18)
+                                                  name: assignUOMColVars
+                                                  assignments:
+                                                    - Assignment: Assignment(a32)
+                                                      variableName: UOMConvRes
+                                                      variableType: string
+                                                      expressionProperties:
+                                                        xpathExpression: '""'
+                                                        variableName: UOMConvRes
+                                                        variableType: string
+                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                    - Assignment: Assignment(a41)
+                                                      variableName: UOMConvResCol
+                                                      variableType: string
+                                                      expressionProperties:
+                                                        xpathExpression: '""'
+                                                        variableName: UOMConvResCol
+                                                        variableType: string
+                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                    - Assignment: Assignment(a46)
+                                                      variableName: unitOfIssueFlag
+                                                      variableType: string
+                                                      expressionProperties:
+                                                        xpathExpression: '""'
+                                                        variableName: unitOfIssueFlag
+                                                        variableType: string
+                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                - Try: Try(t6)
+                                                  username: UOMConversionScope
+                                                  statements:
+                                                    - Switch: Switch(s12)
+                                                      routes:
+                                                        - Route: lineExists(sc24)
+                                                          exprProperties:
+                                                            xpathExpression: fn:exists($currentSegment/nsmpr2:G_BPA_CPA_HEADER/nsmpr2:G_BPA_CPA_LINES)
+                                                            namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments fn=http://www.w3.org/2005/xpath-functions
+                                                            expressionName: lineExists
+                                                          stateInfo:
+                                                            variablesReferenced:
+                                                                - VariableName: currentSegment
+                                                                  rootElement: '{http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments}G_BPA_CPA_HEADER'
+                                                          statements:
+                                                            - ForLoop: ForLoop(f4)
+                                                              expressionProperties:
+                                                                xpathExpression: $currentSegment/nsmpr2:G_BPA_CPA_HEADER/nsmpr2:G_BPA_CPA_LINES
+                                                                namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments
+                                                                variableName: currenBCline
+                                                              currentRecordVarName: currenBCline
+                                                              statements:
+                                                                - Switch: Switch(s15)
+                                                                  routes:
+                                                                    - Route: isItem(sc26)
+                                                                      exprProperties:
+                                                                        xpathExpression: fn:exists($currenBCline/nsmpr2:G_BPA_CPA_LINES/nsmpr2:ITEM_ID)
+                                                                        namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments fn=http://www.w3.org/2005/xpath-functions
+                                                                        expressionName: isItem
+                                                                      stateInfo:
+                                                                        variablesReferenced:
+                                                                            - VariableName: currenBCline
+                                                                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments}G_BPA_CPA_LINES'
+                                                                      statements:
+                                                                        - Switch: Switch(s13)
+                                                                          routes:
+                                                                            - Route: (sc36)
+                                                                              exprProperties:
+                                                                                xpathExpression: fn:exists($currenBCline/nsmpr2:G_BPA_CPA_LINES/nsmpr2:ITEM_PUR_UNIT_OF_ISSUE_CODE) and $currenBCline/nsmpr2:G_BPA_CPA_LINES/nsmpr2:ITEM_PUR_UNIT_OF_ISSUE_CODE!= ''
+                                                                                namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments fn=http://www.w3.org/2005/xpath-functions
+                                                                              stateInfo:
+                                                                                variablesReferenced:
+                                                                                    - VariableName: currenBCline
+                                                                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments}G_BPA_CPA_LINES'
+                                                                              statements:
+                                                                                - Assignments: assignUOMflag(l19)
+                                                                                  name: assignUOMflag
+                                                                                  assignments:
+                                                                                    - Assignment: Assignment(a45)
+                                                                                      variableName: unitOfIssueFlag
+                                                                                      variableType: string
+                                                                                      expressionProperties:
+                                                                                        xpathExpression: '''true'''
+                                                                                        variableName: unitOfIssueFlag
+                                                                                        variableType: string
+                                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                            - Route: Otherwise(sc37)
+                                                                              exprProperties:
+                                                                                xpathExpression: "true"
+                                                                                expressionName: Otherwise
+                                                                              stateInfo: null
+                                                                              statements: []
+                                                                        - Switch: Switch(s16)
+                                                                          routes:
+                                                                            - Route: sameCodes(sc32)
+                                                                              exprProperties:
+                                                                                xpathExpression: ($unitOfIssueFlag!='' and ($currenBCline/nsmpr2:G_BPA_CPA_LINES/nsmpr2:ITEM_PUR_UNIT_OF_ISSUE_CODE = $currenBCline/nsmpr2:G_BPA_CPA_LINES/nsmpr2:AGREEMENT_UOM_CODE)) or \n($unitOfIssueFlag='' and \n($currenBCline/nsmpr2:G_BPA_CPA_LINES/nsmpr2:ITEM_PRI_UOM_CODE =$currenBCline/nsmpr2:G_BPA_CPA_LINES/nsmpr2:AGREEMENT_UOM_CODE))
+                                                                                namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments
+                                                                                expressionName: sameCodes
+                                                                              stateInfo:
+                                                                                variablesReferenced:
+                                                                                    - VariableName: unitOfIssueFlag
+                                                                                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                                                                    - VariableName: currenBCline
+                                                                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments}G_BPA_CPA_LINES'
+                                                                              statements:
+                                                                                - Assignments: AssignUOMConvCol(l15)
+                                                                                  name: AssignUOMConvCol
+                                                                                  assignments:
+                                                                                    - Assignment: Assignment(a53)
+                                                                                      variableName: UOMConvRes
+                                                                                      variableType: string
+                                                                                      expressionProperties:
+                                                                                        xpathExpression: concat("<UOMConvVals><ConversionFactor>","1","</ConversionFactor><ItemId>", $currenBCline/nsmpr2:G_BPA_CPA_LINES/nsmpr2:ITEM_ID,"</ItemId><lineNum>",$currenBCline/nsmpr2:G_BPA_CPA_LINES/nsmpr2:LINE_NUM,"</lineNum></UOMConvVals>")
+                                                                                        namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments
+                                                                                        variableName: UOMConvRes
+                                                                                        variableType: string
+                                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                                    - Assignment: Assignment(a54)
+                                                                                      variableName: UOMConvResCol
+                                                                                      variableType: string
+                                                                                      expressionProperties:
+                                                                                        xpathExpression: concat($UOMConvResCol,$UOMConvRes)
+                                                                                        variableName: UOMConvResCol
+                                                                                        variableType: string
+                                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                            - Route: Otherwise(sc33)
+                                                                              exprProperties:
+                                                                                xpathExpression: "true"
+                                                                                expressionName: Otherwise
+                                                                              stateInfo: null
+                                                                              statements:
+                                                                                - Map: Map(m5)
+                                                                                  xsltfilepath: ../resources/processor_3206/resourcegroup_3209/req_010af4e8f81e443e91de342b15a13f20.xsl
+                                                                                  mapsentences:
+                                                                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                                                                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:tns="http://xmlns.oracle.com/apps/financials/generalLedger/accounts/codeCombinations/accountCombinationService/" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/erp/invoke_UOMConversionRest_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns5="http://xmlns.oracle.com/cloud/adapter/erp/invoke_UOMConversionRest_REQUEST" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:types="http://xmlns.oracle.com/apps/financials/generalLedger/accounts/codeCombinations/accountCombinationService/types/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01 connprop orajs4 ns3 orajs6 orajs5 orajs8 orajs7" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileInSegments_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/UCM" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments" xmlns:nsmpr3="http://xmlns.oracle.com/types/searchBlanketContractFile/1631525338952/OutboundSOAPRequestDocument" xmlns:nsmpr4="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileInSegments_REQUEST" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns32="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/invoke_UOMConversionRest_REQUEST/RESTOUTREQ" xmlns:ns31="http://xmlns.oracle.com/cloud/adapters/fscmRestApp" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/StageReadstrToXML_REQUEST/types" xmlns:ns43="http://xmlns.oracle.com/cloud/adapter/stagefile/StageReadstrToXML_REQUEST" xmlns:ns42="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/StageReadstrToXML" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971">
+                                                                                    - '  <xsl:param name="currenBCline" xml:id="id_132"/>'
+                                                                                    - '  <xsl:template match="/" xml:id="id_11">'
+                                                                                    - '    <nstrgmpr:create xml:id="id_12">'
+                                                                                    - '      <nstrgmpr:UnitOfMeasureConversions xml:id="id_74">'
+                                                                                    - '        <ns31:FromUOM xml:id="id_75">'
+                                                                                    - '          <xsl:value-of xml:id="id_76" select="$currenBCline/nsmpr2:G_BPA_CPA_LINES/nsmpr2:AGREEMENT_UOM_CODE"/>'
+                                                                                    - '        <xsl:choose xml:id="id_78">'
+                                                                                    - '          <xsl:when xml:id="id_79" test="fn:exists ($currenBCline/nsmpr2:G_BPA_CPA_LINES/nsmpr2:ITEM_PUR_UNIT_OF_ISSUE_CODE ) and ($currenBCline/nsmpr2:G_BPA_CPA_LINES/nsmpr2:ITEM_PUR_UNIT_OF_ISSUE_CODE != &quot;&quot;)">'
+                                                                                    - '            <ns31:ToUOM xml:id="id_80">'
+                                                                                    - '              <xsl:value-of xml:id="id_81" select="$currenBCline/nsmpr2:G_BPA_CPA_LINES/nsmpr2:ITEM_PUR_UNIT_OF_ISSUE_CODE"/>'
+                                                                                    - '          <xsl:otherwise xml:id="id_82">'
+                                                                                    - '            <ns31:ToUOM xml:id="id_83">'
+                                                                                    - '              <xsl:value-of xml:id="id_84" select="$currenBCline/nsmpr2:G_BPA_CPA_LINES/nsmpr2:ITEM_PRI_UOM_CODE"/>'
+                                                                                    - '        <ns31:ItemId xml:id="id_85">'
+                                                                                    - '          <xsl:value-of xml:id="id_196" select="$currenBCline/nsmpr2:G_BPA_CPA_LINES/nsmpr2:ITEM_ID"/>'
+                                                                                    - ""
+                                                                                - Invoke: invoke_UOMConversionRest(i5)
+                                                                                  application:
+                                                                                    Application: invoke_UOMConversionRest(OUTL-BRT-ERPCLOUD_WACSFPRC)
+                                                                                    name: invoke_UOMConversionRest
+                                                                                    adapter:
+                                                                                        code: OUTL-BRT-ERPCLOUD_WACSFPRC
+                                                                                    properties:
+                                                                                        - name: operationPath
+                                                                                          value: http://xmlns.oracle.com/cloud/adapter/erp/invoke_UOMConversionRest_REQUEST/create
+                                                                                - Switch: Switch(s17)
+                                                                                  routes:
+                                                                                    - Route: (sc34)
+                                                                                      exprProperties:
+                                                                                        xpathExpression: $invoke_UOMConversionRest/nsmpr4:createResponse/nsmpr4:UnitOfMeasureConversions/nsmpr2:ReturnStatus != "ERROR"
+                                                                                        namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/adapters/fscmRestApp nsmpr4=http://xmlns.oracle.com/cloud/adapter/erp/invoke_UOMConversionRest_REQUEST/types
+                                                                                      stateInfo:
+                                                                                        variablesReferenced:
+                                                                                            - VariableName: invoke_UOMConversionRest
+                                                                                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/erp/invoke_UOMConversionRest_REQUEST/types}createResponse'
+                                                                                      statements:
+                                                                                        - Assignments: AssignUOMConvCollection(l11)
+                                                                                          name: AssignUOMConvCollection
+                                                                                          assignments:
+                                                                                            - Assignment: Assignment(a43)
+                                                                                              variableName: UOMConvRes
+                                                                                              variableType: string
+                                                                                              expressionProperties:
+                                                                                                xpathExpression: concat("<UOMConvVals><ConversionFactor>",$invoke_UOMConversionRest/nsmpr6:createResponse/nsmpr6:UnitOfMeasureConversions/nsmpr2:ConversionFactor,"</ConversionFactor><ItemId>",$invoke_UOMConversionRest/nsmpr6:createResponse/nsmpr6:UnitOfMeasureConversions/nsmpr2:ItemId,"</ItemId><lineNum>",$currenBCline/nsmpr3:G_BPA_CPA_LINES/nsmpr3:LINE_NUM,"</lineNum></UOMConvVals>")
+                                                                                                namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapter/erp/invoke_UOMConversionRest_REQUEST/types nsmpr2=http://xmlns.oracle.com/cloud/adapters/fscmRestApp nsmpr3=http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments
+                                                                                                variableName: UOMConvRes
+                                                                                                variableType: string
+                                                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                                            - Assignment: Assignment(a44)
+                                                                                              variableName: UOMConvResCol
+                                                                                              variableType: string
+                                                                                              expressionProperties:
+                                                                                                xpathExpression: concat($UOMConvResCol,$UOMConvRes)
+                                                                                                variableName: UOMConvResCol
+                                                                                                variableType: string
+                                                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                                    - Route: Otherwise(sc35)
+                                                                                      exprProperties:
+                                                                                        xpathExpression: "true"
+                                                                                        expressionName: Otherwise
+                                                                                      stateInfo: null
+                                                                                      statements:
+                                                                                        - Assignments: AssignUOMConvEmpty(l9)
+                                                                                          name: AssignUOMConvEmpty
+                                                                                          assignments:
+                                                                                            - Assignment: Assignment(a36)
+                                                                                              variableName: UOMConvRes
+                                                                                              variableType: string
+                                                                                              expressionProperties:
+                                                                                                xpathExpression: concat("<UOMConvVals><ConversionFactor>","","</ConversionFactor><ItemId>", $invoke_UOMConversionRest/nsmpr4:createResponse/nsmpr4:UnitOfMeasureConversions/nsmpr2:ItemId,"</ItemId><lineNum",$currenBCline/nsmpr3:G_BPA_CPA_LINES/nsmpr3:LINE_NUM,"</lineNum></UOMConvVals>")
+                                                                                                namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/adapters/fscmRestApp nsmpr3=http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments nsmpr4=http://xmlns.oracle.com/cloud/adapter/erp/invoke_UOMConversionRest_REQUEST/types
+                                                                                                variableName: UOMConvRes
+                                                                                                variableType: string
+                                                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                                            - Assignment: Assignment(a37)
+                                                                                              variableName: UOMConvResCol
+                                                                                              variableType: string
+                                                                                              expressionProperties:
+                                                                                                xpathExpression: concat($UOMConvResCol,$UOMConvRes)
+                                                                                                variableName: UOMConvResCol
+                                                                                                variableType: string
+                                                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                                            - Assignment: Assignment(a39)
+                                                                                              variableName: hasError
+                                                                                              variableType: string
+                                                                                              expressionProperties:
+                                                                                                xpathExpression: '"Y"'
+                                                                                                variableName: hasError
+                                                                                                variableType: string
+                                                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                    - Route: Otherwise(sc31)
+                                                                      exprProperties:
+                                                                        xpathExpression: "true"
+                                                                        expressionName: Otherwise
+                                                                      stateInfo: null
+                                                                      statements: []
+                                                            - Assignments: UOMCol(l12)
+                                                              name: UOMCol
+                                                              assignments:
+                                                                - Assignment: Assignment(a47)
+                                                                  variableName: UOMConvResCol
+                                                                  variableType: string
+                                                                  expressionProperties:
+                                                                    xpathExpression: concat("<root>",$UOMConvResCol,"</root>")
+                                                                    variableName: UOMConvResCol
+                                                                    variableType: string
+                                                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                            - Map: Map(m6)
+                                                              xsltfilepath: ../resources/processor_5818/resourcegroup_5821/req_f345747bcbe64ecc9e28b85969f36981.xsl
+                                                              mapsentences:
+                                                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                                                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/StageWriteXMLStr_REQUEST/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/stagefile/StageWriteXMLStr_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileInSegments_REQUEST/types" xmlns:nsmpr2="http://www.oracle.com/UCM" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments" xmlns:nsmpr4="http://xmlns.oracle.com/types/searchBlanketContractFile/1631525338952/OutboundSOAPRequestDocument" xmlns:nsmpr5="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/erp/invoke_UOMConversionRest_REQUEST/types" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:ns36="http://TargetNamespace.com/fileReference/StageWriteXMLStr" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileInSegments_REQUEST" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns7="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/invoke_UOMConversionRest_REQUEST/RESTOUTREQ" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:ns6="http://xmlns.oracle.com/cloud/adapters/fscmRestApp" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns37="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns38="http://xmlns.oracle.com/cloud/staging/write" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:ns3="http://xmlns.oracle.com/cloud/adapter/erp/invoke_UOMConversionRest_REQUEST" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://xmlns.oracle.com/apps/financials/generalLedger/accounts/codeCombinations/accountCombinationService/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:types="http://xmlns.oracle.com/apps/financials/generalLedger/accounts/codeCombinations/accountCombinationService/types/">
+                                                                - '  <xsl:param name="UOMConvResCol" xml:id="id_50"/>'
+                                                                - '  <xsl:template match="/" xml:id="id_11">'
+                                                                - '    <nstrgmpr:Write xml:id="id_12">'
+                                                                - '      <ns36:Response xml:id="id_77">'
+                                                                - '        <ns36:root xml:id="id_78">'
+                                                                - '          <ns36:a xml:id="id_79">'
+                                                                - '            <xsl:value-of xml:id="id_80" select="$UOMConvResCol"/>'
+                                                                - ""
+                                                            - StageFile: StageWriteXMLStr(sf2)
+                                                              operation: Write
+                                                              expressionProperties:
+                                                                xpathExpression: '"UOMXMLString"'
+                                                              statements: []
+                                                            - StageFile: StageReadstrToXML(sf3)
+                                                              operation: Read
+                                                              expressionProperties:
+                                                                xpathExpression: $StageWriteXMLStr/nsmpr6:WriteResponse/nsmpr1:WriteResponse/nsmpr3:ICSFile/nsmpr3:FileReference
+                                                                namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapter/stagefile/StageWriteXMLStr_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/ics/file/v1/types nsmpr1=http://xmlns.oracle.com/cloud/staging/write
+                                                              statements: []
+                                                            - Stitch: Stitch(sh0)
+                                                              stitchNamespaceResolver:
+                                                                prefixnamespacemap:
+                                                                    ns18: http://xmlns.oracle.com/cloud/adapter/stagefile/StageReadstrToXML_REQUEST/types
+                                                              stitchVariables:
+                                                                - name: StageReadstrToXML
+                                                                  datatype:
+                                                                    type: XMLComplex
+                                                                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/StageReadstrToXML_REQUEST/types}ReadResponse'
+                                                                    uriToSchema: ../../processor_5823/resourcegroup_5824/StageReadstrToXML_REQUEST.wsdl
+                                                                  access: SOURCE_AND_TARGET
+                                                                - name: UOMVals_XML
+                                                                  datatype:
+                                                                    type: XMLComplex
+                                                                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/StageReadstrToXML_REQUEST/types}ReadResponse'
+                                                                    uriToSchema: ../../processor_5823/resourcegroup_5824/StageReadstrToXML_REQUEST.wsdl
+                                                                  access: SOURCE_AND_TARGET
+                                                              stitchSentences:
+                                                                - operation: Assign
+                                                                  from:
+                                                                    type: XPathExpression
+                                                                    expression: $StageReadstrToXML/ns18:ReadResponse
+                                                                    returnType: XML_TYPE_NODE_NODESET
+                                                                  to:
+                                                                    type: XPathPath
+                                                                    path: $UOMVals_XML/ns18:ReadResponse
+                                                                    isLastStepXsdAnyType: false
+                                                        - Route: Otherwise(sc25)
+                                                          exprProperties:
+                                                            xpathExpression: "true"
+                                                            expressionName: Otherwise
+                                                          stateInfo: null
+                                                          statements: []
+                                                    - Catch: Catch(tc2)
+                                                      faultname: APIInvocationError
+                                                      statements:
+                                                        - Assignments: AssignUOMConvError(l13)
+                                                          name: AssignUOMConvError
+                                                          assignments:
+                                                            - Assignment: Assignment(a42)
+                                                              variableName: Var_UOMConvErr
+                                                              variableType: string
+                                                              expressionProperties:
+                                                                xpathExpression: 'concat("Title",$CurrentFaultObject/nsmpr4:APIInvocationError/nsmpr4:errorDetails/nsmpr4:title,"<br/> ErrorCode: ", $CurrentFaultObject/nsmpr4:APIInvocationError/nsmpr4:errorDetails/nsmpr4:errorCode, "ErrorDetails: ", ora:getContentAsString($CurrentFaultObject/nsmpr4:APIInvocationError/nsmpr4:errorDetails/nsmpr4:instance))'
+                                                                namespaceList: nsmpr4=http://xmlns.oracle.com/cloud/adapter/erp/invoke_UOMConversionRest_REQUEST/types ora=http://schemas.oracle.com/xpath/extension
+                                                                variableName: Var_UOMConvErr
+                                                                variableType: string
+                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                            - Assignment: Assignment(a48)
+                                                              variableName: blanketContractErrRecCollection
+                                                              variableType: string
+                                                              expressionProperties:
+                                                                xpathExpression: 'concat($blanketContractErrRecCollection,  ''<hr/>'', ''<B>Error in UOM Conversion API invocation: </B><br/>'',$Var_UOMConvErr )'
+                                                                variableName: blanketContractErrRecCollection
+                                                                variableType: string
+                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                            - Assignment: Assignment(a49)
+                                                              variableName: errorCount
+                                                              variableType: string
+                                                              expressionProperties:
+                                                                xpathExpression: number($errorCount + 1)
+                                                                variableName: errorCount
+                                                                variableType: string
+                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                            - Assignment: Assignment(a55)
+                                                              variableName: hasError
+                                                              variableType: string
+                                                              expressionProperties:
+                                                                xpathExpression: '"Y"'
+                                                                variableName: hasError
+                                                                variableType: string
+                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                    - CatchAll: CatchAll(ta7)
+                                                      statements:
+                                                        - Assignments: assignErrMessage(l14)
+                                                          name: assignErrMessage
+                                                          assignments:
+                                                            - Assignment: Assignment(a50)
+                                                              variableName: Var_UOMConvErr
+                                                              variableType: string
+                                                              expressionProperties:
+                                                                xpathExpression: 'concat("Error Code: ", $UOMConversionScopeFaultObject/nsmpr3:fault/nsmpr3:errorCode,\n"<br/>Error Reason: ", $UOMConversionScopeFaultObject/nsmpr3:fault/nsmpr3:reason,\n"<br/>Error Details: ", $UOMConversionScopeFaultObject/nsmpr3:fault/nsmpr3:details)'
+                                                                namespaceList: nsmpr3=http://www.oracle.com/2014/03/ics/fault
+                                                                variableName: Var_UOMConvErr
+                                                                variableType: string
+                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                            - Assignment: Assignment(a51)
+                                                              variableName: blanketContractErrRecCollection
+                                                              variableType: string
+                                                              expressionProperties:
+                                                                xpathExpression: 'concat($blanketContractErrRecCollection, ''<hr/>'', ''<B>Error in UOM conversion: </B><br/>'', $Var_UOMConvErr)'
+                                                                variableName: blanketContractErrRecCollection
+                                                                variableType: string
+                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                            - Assignment: Assignment(a52)
+                                                              variableName: errorCount
+                                                              variableType: string
+                                                              expressionProperties:
+                                                                xpathExpression: number($errorCount+1)
+                                                                variableName: errorCount
+                                                                variableType: string
+                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                            - Assignment: Assignment(a56)
+                                                              variableName: hasError
+                                                              variableType: string
+                                                              expressionProperties:
+                                                                xpathExpression: '"Y"'
+                                                                variableName: hasError
+                                                                variableType: string
+                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                      icsfaultfilepath: ../resources/processor_6304/resourcegroup_6305/ICSFault.xsd
+                                                - Try: Try(t4)
+                                                  username: invokeWACS
+                                                  statements:
+                                                    - Map: Map(m3)
+                                                      xsltfilepath: ../resources/processor_12785/resourcegroup_12788/req_60dc0a80498e4a838fa31afcb8ba6f92.xsl
+                                                      mapsentences:
+                                                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                                        - <xsl:stylesheet xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:ns14="http://xmlns.oracle.com/cloud/adapter/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/oracleutilities/InvokeWACSBCSync" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/InvokeWACSBCSync_REQUEST/types" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileInSegments_REQUEST/types" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/stagefile/StageReadstrToXML_REQUEST/types" xmlns:nsmpr2="http://www.oracle.com/UCM" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments" xmlns:nsmpr4="http://xmlns.oracle.com/types/searchBlanketContractFile/1631525338952/OutboundSOAPRequestDocument" xmlns:nsmpr5="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns32="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_response/W1BlnktSyn/input/blanketContract/header/blanketCategory/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns39="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_response/W1BlnktSyn/input/blanketContract/lines/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadFileInSegments_REQUEST" xmlns:ns41="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_response/W1BlnktSyn/input/blanketContract/lines/_data/requisitionInfo/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:ns44="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_request/W1BlnktSyn/input/blanketContract/lines/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:ns47="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_response/W1BlnktSyn/input/blanketContract/lines/_data/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:ns48="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_request/W1BlnktSyn/input/blanketContract/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns50="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_request/W1BlnktSyn/input/blanketContract/header/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns34="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_request/W1BlnktSyn/input/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:ns37="http://www.oracle.rest.converters.autogeneratedns.com/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2047256691" xmlns:ns42="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_request/W1BlnktSyn/input/blanketContract/lines/_data/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns49="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_request/W1BlnktSyn/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:ns33="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_request/W1BlnktSyn/output/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:ns35="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_response/W1BlnktSyn/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:ns36="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_request/W1BlnktSyn/input/blanketContract/lines/_data/allowOnPo/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:ns38="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_response/W1BlnktSyn/input/blanketContract/header/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:ns40="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_request/W1BlnktSyn/input/blanketContract/header/blanketCategory/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns43="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_request/W1BlnktSyn/input/blanketContract/lines/_data/requisitionInfo/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:ns46="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_response/W1BlnktSyn/input/blanketContract/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2068686068" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/stagefile/StageReadstrToXML_REQUEST" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:ns45="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_response/W1BlnktSyn/input/blanketContract/lines/_data/allowOnPo/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns31="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_response/W1BlnktSyn/output/oracleutilities/InvokeWACSBCSync_REQUEST" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/StageReadstrToXML" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ns51="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCBLANKETCONTRACT_response/W1BlnktSyn/input/oracleutilities/InvokeWACSBCSync_REQUEST" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                                                        - '  <xsl:param name="UOMVals_XML" xml:id="id_50"/>'
+                                                        - '  <xsl:param name="currentSegment" xml:id="id_56"/>'
+                                                        - '  <xsl:template match="/" xml:id="id_11">'
+                                                        - '    <nstrgmpr:syncBlanketContract xml:id="id_12">'
+                                                        - '      <nstrgmpr:components.schemas.SYNCBLANKETCONTRACT_request>'
+                                                        - '        <ns37:W1BlnktSyn>'
+                                                        - '          <ns49:input>'
+                                                        - '            <ns34:externalSystem xml:id="id_218">'
+                                                        - '              <xsl:value-of xml:id="id_219" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.externalsystem&quot;, &quot;Value&quot;, &quot;&quot; )"/>'
+                                                        - '            <ns34:externalReferenceId>'
+                                                        - '              <xsl:value-of select="$currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:PO_HEADER_ID"/>'
+                                                        - '            <ns34:blanketContract>'
+                                                        - '              <ns48:header>'
+                                                        - '                <ns50:blanketContractHeaderExternalId>'
+                                                        - '                  <xsl:value-of select="$currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:PO_HEADER_ID"/>'
+                                                        - '                <ns50:blanketContractNumber>'
+                                                        - '                  <xsl:value-of select="$currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:DOCUMENT_NUMBER"/>'
+                                                        - '                <ns50:revisionNumber>'
+                                                        - '                  <xsl:value-of select="$currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:PO_REVISION_NUMBER"/>'
+                                                        - '                <ns50:status>'
+                                                        - '                  <xsl:value-of select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_BCStatus&quot;, &quot;FPRC_BC_Status&quot;, $currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:DOCUMENT_STATUS, &quot;WACS_BC_Status&quot;, &quot;&quot; )"/>'
+                                                        - '                <ns50:blanketCategory>'
+                                                        - '                  <xsl:value-of select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_BCCategory&quot;, &quot;FPRC_BC_Category&quot;, $currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:TYPE_LOOKUP_CODE, &quot;WACS_BC_Category&quot;, &quot;&quot; )"/>'
+                                                        - '                <ns50:creationDateTime>'
+                                                        - '                  <xsl:value-of select="$currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:CREATION_DATE"/>'
+                                                        - '                <xsl:choose>'
+                                                        - '                  <xsl:when test="$currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:BLANKET_TOTAL_AMOUNT">'
+                                                        - '                    <ns50:limitAmount>'
+                                                        - '                      <xsl:value-of select="$currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:BLANKET_TOTAL_AMOUNT"/>'
+                                                        - '                  <xsl:otherwise>'
+                                                        - '                    <ns50:limitAmount>'
+                                                        - '                      <xsl:value-of select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.default.bc.limit.amount&quot;, &quot;Value&quot;, &quot;&quot; )"/>'
+                                                        - '                <xsl:choose>'
+                                                        - '                  <xsl:when test="$currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:START_DATE">'
+                                                        - '                    <ns50:initiationDate>'
+                                                        - '                      <xsl:value-of select="substring-before ($currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:START_DATE, &quot;T&quot; )"/>'
+                                                        - '                  <xsl:otherwise>'
+                                                        - '                    <ns50:initiationDate>'
+                                                        - '                      <xsl:value-of select="substring-before ($currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:CREATION_DATE, &quot;T&quot; )"/>'
+                                                        - '                <xsl:choose>'
+                                                        - '                  <xsl:when test="$currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:END_DATE">'
+                                                        - '                    <ns50:expirationDate>'
+                                                        - '                      <xsl:value-of select="substring-before ($currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:END_DATE, &quot;T&quot; )"/>'
+                                                        - '                  <xsl:otherwise>'
+                                                        - '                    <ns50:expirationDate>'
+                                                        - '                      <xsl:value-of select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.default.bc.end.date&quot;, &quot;Value&quot;, &quot;&quot; )"/>'
+                                                        - '                <ns50:vendorLocationExternalId>'
+                                                        - '                  <xsl:value-of select="$currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:VENDOR_SITE_ID"/>'
+                                                        - '                <ns50:currency>'
+                                                        - '                  <xsl:value-of select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_CurrencyCode&quot;, &quot;FPRC_CurrencyCode&quot;, $currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:CURRENCY_CODE, &quot;WACS_CurrencyCode&quot;, &quot;&quot; )"/>'
+                                                        - '                <ns50:fob>'
+                                                        - '                  <xsl:value-of select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_FOB&quot;, &quot;FPRC_FOB&quot;, $currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:FOB_LOOKUP_CODE, &quot;WACS_FOB&quot;, &quot;&quot; )"/>'
+                                                        - '                <ns50:paymentTerms>'
+                                                        - '                  <xsl:value-of select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_PaymentTerm&quot;, &quot;FPRC_PaymentTerm&quot;, $currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:TERMS_ID, &quot;WACS_PaymentTerm&quot;, &quot;&quot; )"/>'
+                                                        - '              <xsl:if test="fn:exists ($currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:G_BPA_CPA_LINES )"/>'
+                                                        - '              <ns48:lines xml:id="id_135">'
+                                                        - '                <xsl:for-each xml:id="id_137" select="$currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:G_BPA_CPA_LINES">'
+                                                        - '                  <ns44:_data xml:id="id_138">'
+                                                        - '                    <ns42:blanketContractLineExternalId xml:id="id_139">'
+                                                        - '                      <xsl:value-of xml:id="id_140" select="nsmpr3:PO_LINE_ID"/>'
+                                                        - '                    <ns42:creationDateTime xml:id="id_141">'
+                                                        - '                      <xsl:value-of xml:id="id_142" select="$currentSegment/nsmpr3:G_BPA_CPA_HEADER/nsmpr3:CREATION_DATE"/>'
+                                                        - '                    <ns42:description xml:id="id_143">'
+                                                        - '                      <xsl:value-of xml:id="id_144" select="nsmpr3:ITEM_DESCRIPTION"/>'
+                                                        - '                    <ns42:resourceTypeExternalId xml:id="id_145">'
+                                                        - '                      <xsl:value-of xml:id="id_146" select="nsmpr3:ITEM_ID"/>'
+                                                        - '                    <ns42:lineNumber xml:id="id_147">'
+                                                        - '                      <xsl:value-of xml:id="id_148" select="nsmpr3:LINE_NUM"/>'
+                                                        - '                    <xsl:choose xml:id="id_150">'
+                                                        - '                      <xsl:when xml:id="id_151" test="((nsmpr3:LINE_STATUS = &quot;CANCELED&quot;) or ((nsmpr3:LINE_STATUS = &quot;FINALLY CLOSED&quot;) or (nsmpr3:LINE_STATUS = &quot;ON HOLD&quot;)))">'
+                                                        - '                        <ns42:allowOnPo xml:id="id_152">'
+                                                        - '                          <xsl:value-of xml:id="id_153" select="&quot;W1NA&quot;"/>'
+                                                        - '                      <xsl:otherwise xml:id="id_154">'
+                                                        - '                        <ns42:allowOnPo xml:id="id_155">'
+                                                        - '                          <xsl:value-of xml:id="id_156" select="&quot;W1AL&quot;"/>'
+                                                        - '                    <ns42:requisitionInfo xml:id="id_157">'
+                                                        - '                      <ns43:unitPrice xml:id="id_158">'
+                                                        - '                        <xsl:value-of xml:id="id_159" select="nsmpr3:LINE_LEVEL_PRICE"/>'
+                                                        - '                      <ns43:unitOfPurchase xml:id="id_160">'
+                                                        - '                        <xsl:value-of xml:id="id_161" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_UOM&quot;, &quot;FPRC_UOMName&quot;, nsmpr3:AGREEMENT_UOM_NAME, &quot;WACS_UOMCode&quot;, &quot;&quot; )"/>'
+                                                        - '                      <ns43:purchaseToIssueRatio xml:id="id_162">'
+                                                        - '                        <xsl:value-of xml:id="id_163" select="$UOMVals_XML/nsmpr1:ReadResponse/ns26:root/ns26:UOMConvVals[ns26:ItemId = current()/nsmpr3:ITEM_ID and ns26:lineNum = current()/nsmpr3:LINE_NUM]/ns26:ConversionFactor"/>'
+                                                        - ""
+                                                    - Invoke: InvokeWACSBCSync(i6)
+                                                      application:
+                                                        Application: InvokeWACSBCSync(OUTL-BRT-REST-WACS_WACSFPRC)
+                                                        name: InvokeWACSBCSync
+                                                        adapter:
+                                                            code: OUTL-BRT-REST-WACS_WACSFPRC
+                                                        properties:
+                                                            - name: operationPath
+                                                              value: /
+                                                            - name: HttpVerb
+                                                              value: POST
+                                                            - name: ResourceURI
+                                                              value: https://us-phoenix-1.utilities-cloud.oracleindustry.com:443/c2g65p/prod/wac/rest/apis/asset/purchasing/blanketContractSynchronization/
+                                                    - Assignments: IncrementBCcounter(l10)
+                                                      name: IncrementBCcounter
+                                                      assignments:
+                                                        - Assignment: Assignment(a5)
+                                                          variableName: blanketContractCounter
+                                                          variableType: string
+                                                          expressionProperties:
+                                                            xpathExpression: number($blanketContractCounter+1)
+                                                            variableName: blanketContractCounter
+                                                            variableType: string
+                                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                    - CatchAll: CatchAll(ta0)
+                                                      statements:
+                                                        - Switch: Switch(s4)
+                                                          routes:
+                                                            - Route: (sc8)
+                                                              exprProperties:
+                                                                xpathExpression: $invokeWACSFaultObject/nsmpr2:fault/nsmpr2:errorCode = "http://schemas.oracle.com/bpel/extension}remoteFault" and substring-after(substring-before(ora:getContentAsString($invokeWACSFaultObject/nsmpr2:fault/nsmpr2:details), ", reason="), "status=") != 400.0 and substring-after(substring-before(ora:getContentAsString($invokeWACSFaultObject/nsmpr2:fault/nsmpr2:details), ", reason="), "status=") != 500.0
+                                                                namespaceList: nsmpr2=http://www.oracle.com/2014/03/ics/fault ora=http://schemas.oracle.com/xpath/extension
+                                                              stateInfo:
+                                                                variablesReferenced:
+                                                                    - VariableName: invokeWACSFaultObject
+                                                                      rootElement: '{http://www.oracle.com/2014/03/ics/fault}fault'
+                                                              statements:
+                                                                - xmlname:
+                                                                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                                                                    local: throw
+                                                                  attrs:
+                                                                    - name:
+                                                                        space: ""
+                                                                        local: id
+                                                                      value: th2
+                                                                    - name:
+                                                                        space: ""
+                                                                        local: refUri
+                                                                      value: processor_802
+                                                                  content: ""
+                                                                  statements: []
+                                                            - Route: Otherwise(sc9)
+                                                              exprProperties:
+                                                                xpathExpression: "true"
+                                                                expressionName: Otherwise
+                                                              stateInfo: null
+                                                              statements:
+                                                                - Assignments: assignErrorDetails(l3)
+                                                                  name: assignErrorDetails
+                                                                  assignments:
+                                                                    - Assignment: Assignment(a34)
+                                                                      variableName: errorCode
+                                                                      variableType: string
+                                                                      expressionProperties:
+                                                                        xpathExpression: substring-after(substring-before(ora:getContentAsString($invokeWACSFaultObject/nsmpr3:fault/nsmpr3:details), ", reason="), "status=")
+                                                                        namespaceList: nsmpr3=http://www.oracle.com/2014/03/ics/fault ora=http://schemas.oracle.com/xpath/extension
+                                                                        variableName: errorCode
+                                                                        variableType: string
+                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                    - Assignment: Assignment(a9)
+                                                                      variableName: faultDetails
+                                                                      variableType: string
+                                                                      expressionProperties:
+                                                                        xpathExpression: ora:getContentAsString($invokeWACSFaultObject/nsmpr2:fault)
+                                                                        namespaceList: nsmpr2=http://www.oracle.com/2014/03/ics/fault ora=http://schemas.oracle.com/xpath/extension
+                                                                        variableName: faultDetails
+                                                                        variableType: string
+                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                    - Assignment: Assignment(a10)
+                                                                      variableName: faultTitle
+                                                                      variableType: string
+                                                                      expressionProperties:
+                                                                        xpathExpression: substring-before( substring-after( $faultDetails, 'title":"'), '","httpStatus')
+                                                                        variableName: faultTitle
+                                                                        variableType: string
+                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                    - Assignment: Assignment(a11)
+                                                                      variableName: blanketContractErrRec
+                                                                      variableType: string
+                                                                      expressionProperties:
+                                                                        xpathExpression: 'concat( "BlanketContract Number: ", $currentSegment/nsmpr2:G_BPA_CPA_HEADER/nsmpr2:DOCUMENT_NUMBER,"<br/>Error Code:",$errorCode, "<br/>Error Reason: ", $faultTitle)'
+                                                                        namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadFileInSegments
+                                                                        variableName: blanketContractErrRec
+                                                                        variableType: string
+                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                    - Assignment: Assignment(a12)
+                                                                      variableName: blanketContractErrRecCollection
+                                                                      variableType: string
+                                                                      expressionProperties:
+                                                                        xpathExpression: concat($blanketContractErrRecCollection,"<hr/>", "<B>Error while invoking WACS for Blanket Contract Sync</B><br/>",$blanketContractErrRec)
+                                                                        variableName: blanketContractErrRecCollection
+                                                                        variableType: string
+                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                    - Assignment: Assignment(a15)
+                                                                      variableName: errorCount
+                                                                      variableType: string
+                                                                      expressionProperties:
+                                                                        xpathExpression: number($errorCount+1)
+                                                                        variableName: errorCount
+                                                                        variableType: string
+                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                    - Assignment: Assignment(a18)
+                                                                      variableName: totalErrorCount
+                                                                      variableType: string
+                                                                      expressionProperties:
+                                                                        xpathExpression: number($totalErrorCount+1)
+                                                                        variableName: totalErrorCount
+                                                                        variableType: string
+                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                                    - Assignment: Assignment(a19)
+                                                                      variableName: hasError
+                                                                      variableType: string
+                                                                      expressionProperties:
+                                                                        xpathExpression: '''Y'''
+                                                                        variableName: hasError
+                                                                        variableType: string
+                                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                      icsfaultfilepath: ../resources/processor_781/resourcegroup_782/ICSFault.xsd
+                                                - Switch: Switch(s5)
+                                                  routes:
+                                                    - Route: (sc10)
+                                                      exprProperties:
+                                                        xpathExpression: $sendEmail = "true" and number($errorCount) = number($maxErrorCountPerEmail)
+                                                      stateInfo:
+                                                        variablesReferenced:
+                                                            - VariableName: sendEmail
+                                                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                                            - VariableName: errorCount
+                                                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                                            - VariableName: maxErrorCountPerEmail
+                                                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                                      statements:
+                                                        - xmlname:
+                                                            space: http://www.oracle.com/2014/03/ics/flow/definition
+                                                            local: notification
+                                                          attrs:
+                                                            - name:
+                                                                space: ""
+                                                                local: id
+                                                              value: n0
+                                                            - name:
+                                                                space: ""
+                                                                local: refUri
+                                                              value: processor_1600
+                                                          content: ""
+                                                          statements: []
+                                                        - Assignments: resetErrorParam(l4)
+                                                          name: resetErrorParam
+                                                          assignments:
+                                                            - Assignment: Assignment(a20)
+                                                              variableName: errorCount
+                                                              variableType: string
+                                                              expressionProperties:
+                                                                xpathExpression: "0"
+                                                                variableName: errorCount
+                                                                variableType: string
+                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                            - Assignment: Assignment(a21)
+                                                              variableName: blanketContractErrRecCollection
+                                                              variableType: string
+                                                              expressionProperties:
+                                                                xpathExpression: '""'
+                                                                variableName: blanketContractErrRecCollection
+                                                                variableType: string
+                                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                    - Route: Otherwise(sc11)
+                                                      exprProperties:
+                                                        xpathExpression: "true"
+                                                        expressionName: Otherwise
+                                                      stateInfo: null
+                                                      statements: []
+                                        - CatchAll: CatchAll(ta5)
+                                          statements:
+                                            - Stop: EHStop(eh4)
+                                          icsfaultfilepath: ../resources/processor_2980/resourcegroup_2981/ICSFault.xsd
+                                    - Switch: Switch(s6)
+                                      routes:
+                                        - Route: errorcountNotZero(sc12)
+                                          exprProperties:
+                                            xpathExpression: $sendEmail = "true" and $errorCount > 0.0
+                                            expressionName: errorcountNotZero
+                                          stateInfo:
+                                            variablesReferenced:
+                                                - VariableName: sendEmail
+                                                  rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                                - VariableName: errorCount
+                                                  rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                          statements:
+                                            - xmlname:
+                                                space: http://www.oracle.com/2014/03/ics/flow/definition
+                                                local: notification
+                                              attrs:
+                                                - name:
+                                                    space: ""
+                                                    local: id
+                                                  value: n1
+                                                - name:
+                                                    space: ""
+                                                    local: refUri
+                                                  value: processor_1751
+                                              content: ""
+                                              statements: []
+                                            - Assignments: resetErrorParams(l5)
+                                              name: resetErrorParams
+                                              assignments:
+                                                - Assignment: Assignment(a22)
+                                                  variableName: errorCount
+                                                  variableType: string
+                                                  expressionProperties:
+                                                    xpathExpression: "0"
+                                                    variableName: errorCount
+                                                    variableType: string
+                                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                - Assignment: Assignment(a23)
+                                                  variableName: blanketContractErrRecCollection
+                                                  variableType: string
+                                                  expressionProperties:
+                                                    xpathExpression: '""'
+                                                    variableName: blanketContractErrRecCollection
+                                                    variableType: string
+                                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Route: Otherwise(sc13)
+                                          exprProperties:
+                                            xpathExpression: "true"
+                                            expressionName: Otherwise
+                                          stateInfo: null
+                                          statements: []
+                                    - Try: Try(t5)
+                                      username: renameFile
+                                      statements:
+                                        - Switch: Switch(s7)
+                                          routes:
+                                            - Route: (sc14)
+                                              exprProperties:
+                                                xpathExpression: $hasError = "N"
+                                              stateInfo:
+                                                variablesReferenced:
+                                                    - VariableName: hasError
+                                                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                              statements:
+                                                - Assignments: assignProcessedDocTitle(l6)
+                                                  name: assignProcessedDocTitle
+                                                  assignments:
+                                                    - Assignment: Assignment(a26)
+                                                      variableName: updatedDocTitle
+                                                      variableType: string
+                                                      expressionProperties:
+                                                        xpathExpression: concat("PROCESSED_",$documentTitle)
+                                                        variableName: updatedDocTitle
+                                                        variableType: string
+                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Route: Otherwise(sc15)
+                                              exprProperties:
+                                                xpathExpression: "true"
+                                                expressionName: Otherwise
+                                              stateInfo: null
+                                              statements:
+                                                - Assignments: assignErrorDocTitle(l7)
+                                                  name: assignErrorDocTitle
+                                                  assignments:
+                                                    - Assignment: Assignment(a27)
+                                                      variableName: updatedDocTitle
+                                                      variableType: string
+                                                      expressionProperties:
+                                                        xpathExpression: concat("ERROR_",$documentTitle)
+                                                        variableName: updatedDocTitle
+                                                        variableType: string
+                                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Map: Map(m4)
+                                          xsltfilepath: ../resources/processor_2112/resourcegroup_2115/req_b9ce193bd61a48d6961ad5344a10c72a.xsl
+                                          mapsentences:
+                                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:tns="urn:GenericSoap" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/types/remaneFileInUCM/1631713788620/OutboundSOAPRequestDocument" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://www.oracle.com/UCM" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/types/searchBlanketContractFile/1631525338952/OutboundSOAPRequestDocument" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue">
+                                            - '  <xsl:param name="docID" xml:id="id_86"/>'
+                                            - '  <xsl:param name="docName" xml:id="id_87"/>'
+                                            - '  <xsl:param name="updatedDocTitle" xml:id="id_102"/>'
+                                            - '  <xsl:template match="/" xml:id="id_11">'
+                                            - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                                            - '      <nstrgmpr:Body xml:id="id_56">'
+                                            - '        <ns0:GenericRequest xml:id="id_57" webKey="{&quot;cs&quot;}">'
+                                            - '          <ns0:Service xml:id="id_58" IdcService="{&quot;UPDATE_DOCINFO&quot;}">'
+                                            - '            <ns0:Document xml:id="id_103">'
+                                            - '              <ns0:Field xml:id="id_104" name="{&apos;dID&apos;}">'
+                                            - '                <xsl:value-of xml:id="id_107" select="$docID"/>'
+                                            - '              <ns0:Field xml:id="id_105" name="{&quot;dDocName&quot;}">'
+                                            - '                <xsl:value-of xml:id="id_108" select="$docName"/>'
+                                            - '              <ns0:Field xml:id="id_106" name="{&quot;dDocTitle&quot;}">'
+                                            - '                <xsl:value-of xml:id="id_109" select="$updatedDocTitle"/>'
+                                            - ""
+                                        - Invoke: remaneFileInUCM(i4)
+                                          application:
+                                            Application: remaneFileInUCM(OUTL-BRT-SOAP-UCM_WACSFPRC)
+                                            name: remaneFileInUCM
+                                            adapter:
+                                                code: OUTL-BRT-SOAP-UCM_WACSFPRC
+                                            properties:
+                                                - name: operationPath
+                                                  value: urn:GenericSoap/GenericSoapOperation
+                                        - Switch: Switch(s8)
+                                          routes:
+                                            - Route: (sc16)
+                                              exprProperties:
+                                                xpathExpression: $remaneFileInUCM/ns0:GenericResponse/ns0:Service/ns0:Document/ns0:File[(@name = "StatusCode")] = -(1.0)
+                                                namespaceList: ns0=http://www.oracle.com/UCM
+                                              stateInfo:
+                                                variablesReferenced:
+                                                    - VariableName: remaneFileInUCM
+                                                      rootElement: '{http://www.oracle.com/UCM}GenericResponse'
+                                              statements:
+                                                - xmlname:
+                                                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                                                    local: throw
+                                                  attrs:
+                                                    - name:
+                                                        space: ""
+                                                        local: id
+                                                      value: th3
+                                                    - name:
+                                                        space: ""
+                                                        local: refUri
+                                                      value: processor_2189
+                                                  content: ""
+                                                  statements: []
+                                            - Route: Otherwise(sc17)
+                                              exprProperties:
+                                                xpathExpression: "true"
+                                                expressionName: Otherwise
+                                              stateInfo: null
+                                              statements: []
+                                        - CatchAll: CatchAll(ta4)
+                                          statements:
+                                            - Stop: EHStop(eh5)
+                                          icsfaultfilepath: ../resources/processor_2975/resourcegroup_2976/ICSFault.xsd
+                                    - Assignments: assignProcessedDetails(l8)
+                                      name: assignProcessedDetails
+                                      assignments:
+                                        - Assignment: Assignment(a29)
+                                          variableName: recsProccesedPerFile
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: 'concat( "File Processed: ", $documentTitle, "[", $docName, "] ", "<br/> Records Processed: ", $blanketContractCounter, " <br/>Records In Error:", $totalErrorCount)'
+                                            variableName: recsProccesedPerFile
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                        - Assignment: Assignment(a31)
+                                          variableName: recsProccesedPerFileCollection
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: concat($recsProccesedPerFileCollection,"<br/><br/>",$recsProccesedPerFile)
+                                            variableName: recsProccesedPerFileCollection
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                - Route: Otherwise(sc7)
+                                  exprProperties:
+                                    xpathExpression: "true"
+                                    expressionName: Otherwise
+                                  stateInfo: null
+                                  statements: []
+                    - Route: Otherwise(sc5)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements: []
+            - Switch: Switch(s9)
+              routes:
+                - Route: (sc18)
+                  exprProperties:
+                    xpathExpression: $sendEmail = "true"
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: sendEmail
+                          rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                  statements:
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: notification
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: n2
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_2469
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc19)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+            - CatchAll: CatchAll(ta2)
+              statements:
+                - Stop: EHStop(eh1)
+              icsfaultfilepath: ../resources/processor_2588/resourcegroup_2589/ICSFault.xsd
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta6)
+          statements:
+            - Switch: Switch(s11)
+              routes:
+                - Route: sendEmail is true(sc22)
+                  exprProperties:
+                    xpathExpression: dvm:lookupValue("OUTL-BRT-WACS_FPRC_ConfigProps", "PropertyName", "email.flag", "Value", "") = "true"
+                    namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                    expressionName: sendEmail is true
+                  stateInfo:
+                    referencedLookupData:
+                        - lookup-table-name-with-location: OUTL-BRT-WACS_FPRC_ConfigProps
+                          source: '"PropertyName"'
+                          target: '"Value"'
+                  statements:
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: notification
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: n3
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_3016
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc23)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+            - Stop: EHStop(eh6)
+          icsfaultfilepath: ../resources/processor_2990/resourcegroup_2991/ICSFault.xsd

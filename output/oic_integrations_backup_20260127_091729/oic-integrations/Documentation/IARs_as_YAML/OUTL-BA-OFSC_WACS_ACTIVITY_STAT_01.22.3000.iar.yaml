@@ -1,0 +1,143 @@
+Orchestration: ""
+statements:
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: activity Id
+              xpath: /notify_POST/events.definitions.activityEvent/activityDetails/activityId
+            - role: tracking_var_2
+              name: appt Number
+              xpath: /notify_POST/events.definitions.activityEvent/activityDetails/apptNumber
+            - role: tracking_var_3
+              name: tracking_var_3
+        - Try: Try(t0)
+          username: mainScope
+          statements:
+            - Map: Map(m1)
+              xsltfilepath: ../resources/processor_44/resourcegroup_47/req_8f59a39cee5d463e8661f6c245f9d4e5.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/receiveOFSCActivity_REQUEST" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/OfscCloudAdapter/getActivityDetails_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/getActivityDetails_REQUEST/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/receiveOFSCActivity_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/getActivityDetails_REQUEST" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" ns1 oraext xsd xp20 nssrcmpr ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr1="https://api.etadirect.com/rest/ofscCore/v1/metadata-catalog/http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/getActivityDetails_REQUEST/types" xmlns:nsmpr2="https://api.etadirect.com/rest/ofscCore/v1/metadata-catalog/http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/receiveOFSCActivity_REQUEST/types">
+                - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:canonical_GET xml:id="id_12">'
+                - '      <nstrgmpr:TemplateParameters xml:id="id_16">'
+                - '        <nsmpr1:activityId xml:id="id_17">'
+                - '          <xsl:value-of select="/nssrcmpr:notify_POST/nssrcmpr:events.definitions.activityEvent/nsmpr2:activityDetails/nsmpr2:activityId" xml:id="id_18"/>'
+                - ""
+            - Invoke: getActivityDetails(i1)
+              application:
+                Application: getActivityDetails(OUTL-BRT-APP-OFSC_WACSOFSC)
+                name: getActivityDetails
+                adapter:
+                    code: OUTL-BRT-APP-OFSC_WACSOFSC
+                properties:
+                    - name: operationPath
+                      value: https://tsgt.fs.ocs.oraclecloud.com/rest/ofscCore/v1/activities/{activityId}
+                    - name: HttpVerb
+                      value: GET
+                    - name: ResourceURI
+                      value: https://tsgt.fs.ocs.oraclecloud.com/rest/ofscCore/v1/activities/{activityId}
+            - Switch: Switch(s1)
+              routes:
+                - Route: Check for wam Activity(sc2)
+                  exprProperties:
+                    xpathExpression: $getActivityDetails/nsmpr5:canonical_GETResponse/nsmpr5:activities.definitions.getActivitySchema/nsmpr1:common_utilities_product_code = dvm:lookupValue("WAMOFSC_ConfigProps", "PropertyName", "source.system", "Value", "true")
+                    namespaceList: nsmpr5=http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/getActivityDetails_REQUEST/types dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue nsmpr1=https://api.etadirect.com/rest/ofscCore/v1/metadata-catalog/http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/getActivityDetails_REQUEST/types
+                    expressionName: Check for wam Activity
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: getActivityDetails
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/getActivityDetails_REQUEST/types}canonical_GETResponse'
+                        - VariableName: /
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/receiveOFSCActivity_REQUEST/types}notify_POST'
+                    referencedLookupData:
+                        - lookup-table-name-with-location: WAMOFSC_ConfigProps
+                          source: '"PropertyName"'
+                          target: '"Value"'
+                  statements: []
+                - Route: Otherwise(sc3)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements:
+                    - Stop: Stop(st1)
+            - Map: Map(m0)
+              xsltfilepath: ../resources/processor_531/resourcegroup_534/req_2751dffca08b42828426cfe9f3d9e8c1.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns5="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/receiveOFSCActivity_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/Oracle_Utilities/ref/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/receiveOFSCActivity_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:tns="http://ouaf.oracle.com/webservices/f1/F1-HealthCheck" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ouaf="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/Oracle_Utilities/ref" exclude-result-prefixes=" ns5 oraext plnk xsd xp20 nssrcmpr ora oracle-xsl-mapper xsi fn xsl ignore01 ns45 ns46 ns47" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/getActivityDetails_REQUEST/types" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_SOMOFSC_DATETIMEZONECONVERSION_01_00_0000_DateTimeConversion_SOMOFSC_DateTimeZoneConversion_dateVal_OFSC_Offset_SOM_Offset" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_SOMOFSC_COUNTNOOFOCCURANCES_01_00_0000_C2M_OFSC_CountNoOfOccurances_SOMOFSC_NoOfOccurances_siteAddress" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_SOMOFSC_DATETIMECONVERSION_01_00_0000_DateTimeConversion_SOMOFSC_DateTimeZoneConversion_dateVal_OFSC_Offset_SOM_Offset" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_EXTRACT_01_00_0000_extractFromCDATA_extractfromCDATA1_message" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_SOMOFSC_APPOINTMENTSLOTS_01_00_0000_AppointmentTimeSlots_SOMOFSC_Appt_EndTime_dateVal_timestampVal_offsetVal" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_SOMOFSC_APPOINTMENTSLOTS_01_00_0000_AppointmentTimeSlots_SOMOFSC_Appt_StartTime_dateVal_timestampVal_offsetVal" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_SOMOFSC_ADDRESSFORMAT_01_00_0000_Address_SOMOFSC_addressFormat_addr1_addr2_addr3_addr4_city_state" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_WAMOFSC_OFSCDATETIMECONV_01_00_0000_WAMOFSC_OFSCDateTimeConversion_WAMOFSC_OFSCDateTimeZoneConversion_dateVal_OFSC_Offset_WAM_Offset" xmlns:ns24="http://xml.oracle.com/adapters/extension" xmlns:ns28="https://api.etadirect.com/rest/ofscCore/v1/metadata-catalog/http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/getActivityDetails_REQUEST/types" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_CONCATADDRESS_01_00_0000_ConcatAddress_WAMOFSC_ConcatAddress_address1_address2_address3_address4" xmlns:ns25="http://xmlns.oracle.com/cloud/generic/rest/fault/OfscCloudAdapter/getActivityDetails_REQUEST" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_SOMOFSC_NOOFOCCURANCES_01_00_0000_CountNoOfOccurances_SOMOFSC_NoOfOccurances_siteAddress" xmlns:ns29="http://ouaf.oracle.com/webservices/w1/W1-UpdateActivityStatus" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/getActivityDetails_REQUEST" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_WAMOFSC_DATETIMEZONECONVERSION_01_00_0000_WAMOFSC_DateTimeConversion_WAMOFSC_DateTimeZoneConversion_dateVal_OFSC_Offset_WAM_Offset" xmlns:ns23="https://api.etadirect.com/rest/ofscCore/v1/metadata-catalog/http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/receiveOFSCActivity_REQUEST/types" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_EXTRACTFROMCDATA_01_00_0000_extractFromCDATA_extractfromCDATA_message" xmlns:ns45="http://xmlns.oracle.com/procmon" xmlns:ns46="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns47="http://xmlns.oracle.com/cloud/generic/rest/fault/ofsccloudadapter/getActivityDetails_REQUEST">
+                - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:W1-ActStaUpd xml:id="id_12">'
+                - '      <ns29:W1-ActStaUpd xml:id="id_26">'
+                - '        <ns29:input xml:id="id_27">'
+                - '          <ns29:activityId xml:id="id_28">'
+                - '            <xsl:value-of xml:id="id_45" select="/nssrcmpr:notify_POST/nssrcmpr:events.definitions.activityEvent/ns23:activityDetails/ns23:apptNumber"/>'
+                - '          <ns29:currentStatus xml:id="id_59">'
+                - '            <xsl:value-of xml:id="id_60" select="dvm:lookupValue (&quot;WAMOFSC_ActivityStatus&quot;, &quot;OFSC_ActStatus&quot;, /nssrcmpr:notify_POST/nssrcmpr:events.definitions.activityEvent/ns23:activityChanges/ns23:status, &quot;WAM_PreviousActStatus&quot;, /nssrcmpr:notify_POST/nssrcmpr:events.definitions.activityEvent/ns23:activityChanges/ns23:status )"/>'
+                - '          <ns29:newStatus xml:id="id_30">'
+                - '            <xsl:value-of xml:id="id_31" select="dvm:lookupValue (&quot;WAMOFSC_ActivityStatus&quot;, &quot;OFSC_ActStatus&quot;, /nssrcmpr:notify_POST/nssrcmpr:events.definitions.activityEvent/ns23:activityChanges/ns23:status, &quot;WAM_ActStatus&quot;, /nssrcmpr:notify_POST/nssrcmpr:events.definitions.activityEvent/ns23:activityChanges/ns23:status )"/>'
+                - ""
+            - Invoke: UpdateInterimStatus(i0)
+              application:
+                Application: UpdateInterimStatus(OUTL-BRT-SOAP-WACS_WACSOFSC)
+                name: UpdateInterimStatus
+                adapter:
+                    code: OUTL-BRT-SOAP-WACS_WACSOFSC
+                properties:
+                    - name: operationPath
+                      value: http://den00tyu.us.oracle.com/webservices/W1-UpdateActivityStatus#W1-ActStaUpd
+            - CatchAll: CatchAll(ta1)
+              statements:
+                - Logger: Logger(lg0)
+                  name: mainScopeLogger
+                  description: ""
+                  propertyfile: ../resources/processor_664/resourcegroup_679/expr.properties
+                  expressionProperties:
+                    xpathExpression: '"Error in main scope"'
+                    variableName: mainScopeLogger
+                - Stop: EHStop(eh1)
+              icsfaultfilepath: ../resources/processor_659/resourcegroup_660/ICSFault.xsd
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Switch: Switch(s0)
+              routes:
+                - Route: send email notification(sc0)
+                  exprProperties:
+                    xpathExpression: dvm:lookupValue("WAMOFSC_ConfigProps", "PropertyName", "email.flag", "Value", "false") = "true"
+                    namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                    expressionName: send email notification
+                  stateInfo:
+                    referencedLookupData:
+                        - lookup-table-name-with-location: WAMOFSC_ConfigProps
+                          source: '"PropertyName"'
+                          target: '"Value"'
+                  statements:
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: notification
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: n0
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_104
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc1)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_83/resourcegroup_84/ICSFault.xsd

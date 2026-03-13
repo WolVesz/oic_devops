@@ -1,0 +1,261 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_654
+      xsdfilepath: ../resources/processor_654/resourcegroup_655/ICSIntegrationMetadata.xsd
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: Record Name
+              xpath: /execute/request-wrapper/RecordName
+            - role: tracking_var_2
+              name: Update Field Name
+              xpath: /execute/request-wrapper/UpdateFields/UpdateFieldName
+            - role: tracking_var_3
+              name: Update Msg Text
+              xpath: /execute/request-wrapper/UpdateFields/UpdateMsgText
+        - Assignments: AssignGlobalVariable(l0)
+          name: AssignGlobalVariable
+          assignments:
+            - Assignment: Assignment(a0)
+              variableName: MsgCode
+              variableType: string
+              expressionProperties:
+                xpathExpression: /nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:MessageCode
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/InvokeRESTAPIUpdateService_REQUEST/types nssrcdfl=http://xmlns.oracle.com/cloud/adapter/REST/InvokeRESTAPIUpdateService/types
+                variableName: MsgCode
+                variableDescription: Holds the Message Code
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a1)
+              variableName: MsgDesc
+              variableType: string
+              expressionProperties:
+                xpathExpression: /nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:MessageDescr
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/InvokeRESTAPIUpdateService_REQUEST/types nssrcdfl=http://xmlns.oracle.com/cloud/adapter/REST/InvokeRESTAPIUpdateService/types
+                variableName: MsgDesc
+                variableDescription: Holds the Message Description
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a2)
+              variableName: MsgDetails
+              variableType: string
+              expressionProperties:
+                xpathExpression: /nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:MessageDetails
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/InvokeRESTAPIUpdateService_REQUEST/types nssrcdfl=http://xmlns.oracle.com/cloud/adapter/REST/InvokeRESTAPIUpdateService/types
+                variableName: MsgDetails
+                variableDescription: Holds the Message Details
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a7)
+              variableName: Status
+              variableType: string
+              expressionProperties:
+                xpathExpression: '''SUCCESS'''
+                variableName: Status
+                variableDescription: Holds the Processing Status
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a12)
+              variableName: ContentType
+              variableType: string
+              expressionProperties:
+                xpathExpression: '''application/json'''
+                variableName: ContentType
+                variableDescription: Holds the Content Type of the REST API Update Body
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - xmlname:
+            space: http://www.oracle.com/2014/03/ics/flow/definition
+            local: wait
+          attrs:
+            - name:
+                space: ""
+                local: id
+              value: w0
+            - name:
+                space: ""
+                local: refUri
+              value: processor_648
+          content: ""
+          statements: []
+        - Map: Map(m1)
+          xsltfilepath: ../resources/processor_51/resourcegroup_54/req_980461cb156944ca934549c30c6b5959.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/InvokeRESTAPIUpdateService/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/GetFieldDetails_REQUEST" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InvokeRESTAPIUpdateService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InvokeRESTAPIUpdateService_REQUEST/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetFieldDetails_REQUEST/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/GetFieldDetails/types" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/InvokeRESTAPIUpdateService_REQUEST" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetFieldDetails" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcdfl oraext xsd xp20 ns2 ora nssrcmpr oracle-xsl-mapper nsmpr0 xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns23="http://xml.oracle.com/adapters/extension" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InvokeRESTAPIUpdateService_REQUEST/RESTINREQ" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InvokeRESTAPIUpdateService_REQUEST/RESTINRES" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFieldDetails_REQUEST/RESTOUTREQ" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFieldDetails_REQUEST/RESTOUTRES" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns25="http://xml.oracle.com/types/REST/GetFieldDetails_REQUEST" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns59="http://xmlns.oracle.com/procmon" xmlns:ns60="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd">
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:execute xml:id="id_12">'
+            - '      <nstrgmpr:TemplateParameters xml:id="id_21">'
+            - '        <ns25:CustomObject xml:id="id_22">'
+            - '          <xsl:value-of xml:id="id_23" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CustomObjectName"/>'
+            - '      <nstrgmpr:QueryParameters xml:id="id_36">'
+            - '        <ns25:q xml:id="id_37">'
+            - '          <xsl:value-of xml:id="id_38" select="concat (&quot;RecordName=&quot;, /nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:RecordName )"/>'
+            - ""
+        - Invoke: GetFieldDetails(i0)
+          application:
+            Application: GetFieldDetails(TSGTRESTERPCLOUD_CONN)
+            name: GetFieldDetails
+            adapter:
+                code: TSGTRESTERPCLOUD_CONN
+            properties:
+                - name: operationPath
+                  value: http://xmlns.oracle.com/cloud/adapter/REST/GetFieldDetails_REQUEST/execute
+                - name: HttpVerb
+                  value: GET
+                - name: QueryParameters
+                  value: q
+                - name: ResourceURI
+                  value: /fscmRestApi/resources/latest/{CustomObject}
+        - ForLoop: ForLoop(f0)
+          expressionProperties:
+            xpathExpression: /nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:UpdateFields
+            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/InvokeRESTAPIUpdateService_REQUEST/types nssrcdfl=http://xmlns.oracle.com/cloud/adapter/REST/InvokeRESTAPIUpdateService/types
+            variableName: CurrentForEachFields
+          currentRecordVarName: CurrentForEachFields
+          statements:
+            - Try: Try(t0)
+              username: UpdateFieldScope
+              statements:
+                - Map: Map(m2)
+                  xsltfilepath: ../resources/processor_68/resourcegroup_71/req_111911370afc4be18fe28cc0cbc4d81e.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/InvokeRESTAPIUpdateService/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InvokeRESTAPIUpdateService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InvokeRESTAPIUpdateService_REQUEST/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/InvokeRESTAPIUpdateService_REQUEST" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/UpdateRESTAPI_REQUEST" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/UpdateRESTAPI_REQUEST/types" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/UpdateRESTAPI" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/REST/GetFieldDetails_REQUEST/types" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/REST/GetFieldDetails/types" xmlns:ns23="http://xml.oracle.com/adapters/extension" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InvokeRESTAPIUpdateService_REQUEST/RESTINREQ" xmlns:ns33="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateRESTAPI_REQUEST/RESTOUTRES" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns34="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateRESTAPI_REQUEST/RESTOUTREQ" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InvokeRESTAPIUpdateService_REQUEST/RESTINRES" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/REST/UpdateRESTAPI_REQUEST/request/types" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns26="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetFieldDetails" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFieldDetails_REQUEST/RESTOUTREQ" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns32="http://xmlns.oracle.com/cloud/ics/binary/v1/types" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFieldDetails_REQUEST/RESTOUTRES" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns25="http://xml.oracle.com/types/REST/GetFieldDetails_REQUEST" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/GetFieldDetails_REQUEST" xmlns:ns67="http://xmlns.oracle.com/procmon" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns68="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcdfl oraext xsd xp20 ns2 ora nssrcmpr oracle-xsl-mapper ns1 xsi fn xsl ignore01 ns67 ns68" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                    - '  <xsl:param name="GetFieldDetails" xml:id="id_80"/>'
+                    - '  <xsl:param name="ContentType" xml:id="id_95"/>'
+                    - '  <xsl:param name="CurrentForEachFields" xml:id="id_108"/>'
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:execute xml:id="id_12">'
+                    - '      <nstrgmpr:HTTPHeaders xml:id="id_55">'
+                    - '        <ns31:StandardHTTPHeaders xml:id="id_56">'
+                    - '          <ns31:Content-Type xml:id="id_57">'
+                    - '            <xsl:value-of xml:id="id_58" select="$ContentType"/>'
+                    - '      <ns32:streamReference xml:id="id_126">'
+                    - '        <xsl:choose xml:id="id_127">'
+                    - '          <xsl:when xml:id="id_128" test="$CurrentForEachFields/nssrcdfl:UpdateFields/nssrcdfl:UpdateMsgText != &quot; &quot;">'
+                    - '            <xsl:value-of xml:id="id_129" select="oraext:decodeBase64ToReference (oraext:encodeBase64 ($CurrentForEachFields/nssrcdfl:UpdateFields/nssrcdfl:UpdateMsgText ) )"/>'
+                    - '          <xsl:otherwise xml:id="id_130">'
+                    - '            <xsl:value-of xml:id="id_131" select="oraext:decodeBase64ToReference (oraext:encodeBase64 ($CurrentForEachFields/nssrcdfl:UpdateFields/nssrcdfl:UpdateMsgText ) )"/>'
+                    - '      <ns34:ConnectivityProperties xml:id="id_31">'
+                    - '        <ns34:RestAPI xml:id="id_32">'
+                    - '          <xsl:if xml:id="id_66" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:RelativeURL = &quot;&quot;">'
+                    - '            <ns34:AbsoluteEndpointURI xml:id="id_67">'
+                    - '              <xsl:value-of xml:id="id_86" select="$GetFieldDetails/nsmpr2:executeResponse/ns27:response-wrapper/ns27:items/ns27:links[ns27:name=$CurrentForEachFields/nssrcdfl:UpdateFields/nssrcdfl:UpdateFieldName]/ns27:href"/>'
+                    - '          <xsl:if xml:id="id_34" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:BaseUrl != &quot;&quot;">'
+                    - '            <ns34:BaseURI xml:id="id_35">'
+                    - '              <xsl:value-of xml:id="id_36" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:BaseUrl"/>'
+                    - '          <xsl:if xml:id="id_62" test="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:RelativeURL != &quot;&quot;">'
+                    - '            <ns34:RelativeURI xml:id="id_63">'
+                    - '              <xsl:value-of xml:id="id_64" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:RelativeURL"/>'
+                    - ""
+                - Invoke: UpdateRESTAPI(i1)
+                  application:
+                    Application: UpdateRESTAPI(TSGTRESTERPCLOUD_CONN)
+                    name: UpdateRESTAPI
+                    adapter:
+                        code: TSGTRESTERPCLOUD_CONN
+                    properties:
+                        - name: operationPath
+                          value: http://xmlns.oracle.com/cloud/adapter/REST/UpdateRESTAPI_REQUEST/execute
+                        - name: HttpVerb
+                          value: PATCH
+                        - name: ResourceURI
+                          value: /fscmRestApi/resources/latest
+                - CatchAll: CatchAll(ta0)
+                  statements:
+                    - Assignments: AssignErrorMsg(l1)
+                      name: AssignErrorMsg
+                      assignments:
+                        - Assignment: Assignment(a3)
+                          variableName: MsgCode
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: $UpdateFieldScopeFaultObject/nsmpr7:fault/nsmpr7:errorCode
+                            namespaceList: nsmpr7=http://www.oracle.com/2014/03/ics/fault
+                            variableName: MsgCode
+                            variableDescription: Set the Error Code
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a4)
+                          variableName: MsgDesc
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: $UpdateFieldScopeFaultObject/nsmpr7:fault/nsmpr7:reason
+                            namespaceList: nsmpr7=http://www.oracle.com/2014/03/ics/fault
+                            variableName: MsgDesc
+                            variableDescription: Set the Error Description
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a5)
+                          variableName: MsgDetails
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: $UpdateFieldScopeFaultObject/nsmpr7:fault/nsmpr7:details
+                            namespaceList: nsmpr7=http://www.oracle.com/2014/03/ics/fault
+                            variableName: MsgDetails
+                            variableDescription: Set the Error Details
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a6)
+                          variableName: Status
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: '''ERROR'''
+                            variableName: Status
+                            variableDescription: Set the Processing Status
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                  icsfaultfilepath: ../resources/processor_165/resourcegroup_166/ICSFault.xsd
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta1)
+          statements:
+            - Assignments: AssignGlobalErrorMsg(l2)
+              name: AssignGlobalErrorMsg
+              assignments:
+                - Assignment: Assignment(a8)
+                  variableName: MsgCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: $GlobalFaultObject/nsmpr7:fault/nsmpr7:errorCode
+                    namespaceList: nsmpr7=http://www.oracle.com/2014/03/ics/fault
+                    variableName: MsgCode
+                    variableDescription: Holds the Error Code
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a9)
+                  variableName: MsgDesc
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: $GlobalFaultObject/nsmpr7:fault/nsmpr7:reason
+                    namespaceList: nsmpr7=http://www.oracle.com/2014/03/ics/fault
+                    variableName: MsgDesc
+                    variableDescription: Holds the Error Description
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a10)
+                  variableName: MsgDetails
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: $GlobalFaultObject/nsmpr7:fault/nsmpr7:details
+                    namespaceList: nsmpr7=http://www.oracle.com/2014/03/ics/fault
+                    variableName: MsgDetails
+                    variableDescription: Holds the Error Details
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a11)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Error'''
+                    variableName: Status
+                    variableDescription: Holds the Processing Status
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_270/resourcegroup_271/ICSFault.xsd

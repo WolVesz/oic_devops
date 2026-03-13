@@ -1,0 +1,11 @@
+flowchart LR
+%% Auto-generated from invoke_chain_group_005.csv — root TSGT_ORAC_UTIL_HCM_WACS_ABSE_SYN
+classDef integ fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+classDef adapt fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+ TSGT_ORAC_UTIL_HCM_WACS_ABSE_SYN["TSGT Oracle Utilities HCM WACS Absence Sync"]:::integ
+ TSGTSOAPHCMBIP_CONN{{"TSGTSoapHcmBip_Conn"}}:::adapt
+ TSGT_ORAC_UTIL_HCM_WACS_ABSE_SYN -->|ExternalReportWSSService| TSGTSOAPHCMBIP_CONN
+ OUTL_BRT_APP_HCM_HCMWACS{{"Oracle Utilities HCM for HCM-WACS"}}:::adapt
+ TSGT_ORAC_UTIL_HCM_WACS_ABSE_SYN -->|ReceiveAbsenceFile| OUTL_BRT_APP_HCM_HCMWACS
+ OUTL_BRT_REST_WACS_HCMWACS{{"Oracle Utilities REST WACS for HCM-WACS"}}:::adapt
+ TSGT_ORAC_UTIL_HCM_WACS_ABSE_SYN -->|WACS_EmployeeLeave| OUTL_BRT_REST_WACS_HCMWACS

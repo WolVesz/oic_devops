@@ -1,0 +1,13 @@
+flowchart LR
+%% Auto-generated from invoke_chain_group_005.csv — root TSGT_PROJEC_CAPITA_BURDEN_CORREC
+classDef integ fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+classDef adapt fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+ TSGT_PROJEC_CAPITA_BURDEN_CORREC["TSGT Project Capitalizable Burden Correction"]:::integ
+ TSGTSOAPERPBIP_CONN{{"TSGTSoapErpBip_Conn"}}:::adapt
+ TSGT_PROJEC_CAPITA_BURDEN_CORREC -->|CallExpIDLevelReport| TSGTSOAPERPBIP_CONN
+ TSGTERPCLOUD_CONN{{"TSGTErpCloud_Conn"}}:::adapt
+ TSGT_PROJEC_CAPITA_BURDEN_CORREC -->|CallFBDIProcess| TSGTERPCLOUD_CONN
+ TSGT_PROJEC_CAPITA_BURDEN_CORREC -->|Callexptypelevelreport| TSGTSOAPERPBIP_CONN
+ TSGT_PROJEC_CAPITA_BURDEN_CORREC -->|callgetgldaterep| TSGTSOAPERPBIP_CONN
+ TSGTFTP_CONN{{"TSGTFtp_Conn"}}:::adapt
+ TSGT_PROJEC_CAPITA_BURDEN_CORREC -->|writeexpitemlevelreporttoSFTP| TSGTFTP_CONN

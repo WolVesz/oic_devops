@@ -1,0 +1,204 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_1
+      xsdfilepath: ../resources/processor_1/resourcegroup_2/ICSIntegrationMetadata.xsd
+    - xmlname:
+        space: http://www.oracle.com/2014/03/ics/flow/definition
+        local: integrationProperties
+      attrs:
+        - name:
+            space: ""
+            local: id
+          value: ip0
+        - name:
+            space: ""
+            local: refUri
+          value: processor_20
+      content: ""
+      statements: []
+    - GlobalVariable: (gtv0)
+      variableName: MESSAGESS
+      variableType: simpleType
+    - GlobalVariable: (gtv1)
+      variableName: msg_template
+      variableType: simpleType
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: primary_identifier
+              xpath: /execute/request-wrapper/primary_identifier
+            - role: tracking_var_2
+              name: integration_name
+              xpath: /execute/request-wrapper/integration_name
+            - role: tracking_var_3
+              name: tracking_var_3
+        - Switch: Switch(s0)
+          routes:
+            - Route: validation(sc0)
+              exprProperties:
+                xpathExpression: fn:string-length(/ns53:execute/ns56:request-wrapper/ns56:to_email) < 1 or fn:string-length(/ns53:execute/ns56:request-wrapper/ns56:subject) < 1 or fn:string-length(/ns53:execute/ns56:request-wrapper/ns56:integration_name) < 1 or fn:string-length(/ns53:execute/ns56:request-wrapper/ns56:messages[1]) < 1 or fn:string-length(/ns53:execute/ns56:request-wrapper/ns56:primary_identifier) < 1
+                namespaceList: ns53=http://xmlns.oracle.com/cloud/adapter/REST/send_email_REQUEST/types ns56=http://xmlns.oracle.com/cloud/adapter/REST/send_email/types fn=http://www.w3.org/2005/xpath-functions
+                expressionName: validation
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/send_email_REQUEST/types}execute'
+              statements:
+                - xmlname:
+                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                    local: throw
+                  attrs:
+                    - name:
+                        space: ""
+                        local: id
+                      value: th0
+                    - name:
+                        space: ""
+                        local: refUri
+                      value: processor_170
+                  content: ""
+                  statements: []
+        - Stitch: Stitch(sh0)
+          stitchNamespaceResolver:
+            prefixnamespacemap: {}
+          stitchVariables:
+            - name: MESSAGESS
+              datatype:
+                type: XMLSimple
+                xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+              access: SOURCE_AND_TARGET
+            - name: msg_template
+              datatype:
+                type: XMLSimple
+                xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+              access: SOURCE_AND_TARGET
+          stitchSentences:
+            - operation: Assign
+              from:
+                type: XPathExpression
+                expression: ''''''
+                returnType: XML_TYPE_ATOMIC
+              to:
+                type: XPathPath
+                path: $MESSAGESS
+                isLastStepXsdAnyType: false
+            - operation: Assign
+              from:
+                type: XPathExpression
+                expression: "' <tr> \n        <td>FAQUI</td> \n        <td  class=\"even\"><textarea>VAQUI</textarea></td>\n    </tr>\n'"
+                returnType: XML_TYPE_ATOMIC
+              to:
+                type: XPathPath
+                path: $msg_template
+                isLastStepXsdAnyType: false
+        - ForLoop: ForLoop(f0)
+          expressionProperties:
+            xpathExpression: /ns53:execute/ns57:request-wrapper/ns57:messages
+            namespaceList: ns53=http://xmlns.oracle.com/cloud/adapter/REST/send_email_REQUEST/types ns57=http://xmlns.oracle.com/cloud/adapter/REST/send_email/types
+            variableName: msg
+          currentRecordVarName: msg
+          statements:
+            - Stitch: Stitch(sh1)
+              stitchNamespaceResolver:
+                prefixnamespacemap:
+                    fn: http://www.w3.org/2005/xpath-functions
+                    ns1: http://xmlns.oracle.com/cloud/adapter/REST/send_email/types
+              stitchVariables:
+                - name: MESSAGESS
+                  datatype:
+                    type: XMLSimple
+                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                  access: SOURCE_AND_TARGET
+                - name: msg_template
+                  datatype:
+                    type: XMLSimple
+                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                  access: SOURCE_AND_TARGET
+                - name: msg
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/send_email/types}messages'
+                    uriToSchema: ../../processor_940/resourcegroup_947/generated.wsdl
+                  access: SOURCE_AND_TARGET
+              stitchSentences:
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: fn:concat($MESSAGESS, $msg_template)
+                    returnType: XML_TYPE_ATOMIC
+                  to:
+                    type: XPathPath
+                    path: $MESSAGESS
+                    isLastStepXsdAnyType: false
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: "fn:replace($MESSAGESS, \n \"FAQUI\",\n$msg/ns1:messages/ns1:fieldName)"
+                    returnType: XML_TYPE_ATOMIC
+                  to:
+                    type: XPathPath
+                    path: $MESSAGESS
+                    isLastStepXsdAnyType: false
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: "fn:replace($MESSAGESS, \n \"VAQUI\",\n$msg/ns1:messages/ns1:value)"
+                    returnType: XML_TYPE_ATOMIC
+                  to:
+                    type: XPathPath
+                    path: $MESSAGESS
+                    isLastStepXsdAnyType: false
+        - xmlname:
+            space: http://www.oracle.com/2014/03/ics/flow/definition
+            local: notification
+          attrs:
+            - name:
+                space: ""
+                local: id
+              value: n1
+            - name:
+                space: ""
+                local: refUri
+              value: processor_187
+          content: ""
+          statements: []
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Logger: Logger(lg0)
+              name: LogFault
+              description: ""
+              propertyfile: ../resources/processor_33/resourcegroup_1422/expr.properties
+              expressionProperties:
+                xpathExpression: oraext:get-content-as-string($GlobalFaultObject/ics:fault)
+                namespaceList: ics=http://www.oracle.com/2014/03/ics/fault oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                variableName: LogFault
+            - Logger: Logger(lg1)
+              name: LogPayload
+              description: ""
+              propertyfile: ../resources/processor_42/resourcegroup_1395/expr.properties
+              expressionProperties:
+                xpathExpression: oraext:get-content-as-string(/ns53:execute/ns56:request-wrapper)
+                namespaceList: ns53=http://xmlns.oracle.com/cloud/adapter/REST/send_email_REQUEST/types ns56=http://xmlns.oracle.com/cloud/adapter/REST/send_email/types oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                variableName: LogPayload
+            - xmlname:
+                space: http://www.oracle.com/2014/03/ics/flow/definition
+                local: notification
+              attrs:
+                - name:
+                    space: ""
+                    local: id
+                  value: n0
+                - name:
+                    space: ""
+                    local: refUri
+                  value: processor_51
+              content: ""
+              statements: []
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_28/resourcegroup_29/ICSFault.xsd

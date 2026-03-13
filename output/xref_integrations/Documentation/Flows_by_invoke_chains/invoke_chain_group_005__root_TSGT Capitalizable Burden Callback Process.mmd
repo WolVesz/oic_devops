@@ -1,0 +1,13 @@
+flowchart LR
+%% Auto-generated from invoke_chain_group_005.csv — root TSGT_CAPITA_BURDEN_CALLBA_PROCES
+classDef integ fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+classDef adapt fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+ TSGT_CAPITA_BURDEN_CALLBA_PROCES["TSGT Capitalizable Burden Callback Process"]:::integ
+ TSGTSOAPERPBIP_CONN{{"TSGTSoapErpBip_Conn"}}:::adapt
+ TSGT_CAPITA_BURDEN_CALLBA_PROCES -->|CallBIPrepforrecordcounts| TSGTSOAPERPBIP_CONN
+ TSGTFTP_CONN{{"TSGTFtp_Conn"}}:::adapt
+ TSGT_CAPITA_BURDEN_CALLBA_PROCES -->|downloadexpidfilefromFTP| TSGTFTP_CONN
+ TSGT_CAPITA_BURDEN_CALLBA_PROCES -->|rungeneratereport| TSGTSOAPERPBIP_CONN
+ TSGT_CAPITA_BURDEN_CALLBA_PROCES -->|runsuccessreportbybatch| TSGTSOAPERPBIP_CONN
+ TSGTERPCLOUD_CONN{{"TSGTErpCloud_Conn"}}:::adapt
+ TSGT_CAPITA_BURDEN_CALLBA_PROCES -->|updateexpitemdff| TSGTERPCLOUD_CONN

@@ -1,0 +1,172 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_1
+      xsdfilepath: ../resources/processor_1/resourcegroup_2/ICSIntegrationMetadata.xsd
+    - GlobalVariable: (gtv0)
+      variableName: deleteResult
+      variableType: simpleType
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: filename
+              xpath: /execute/request-wrapper/filename
+            - role: tracking_var_2
+              name: directory
+              xpath: /execute/request-wrapper/directory
+            - role: tracking_var_3
+              name: tracking_var_3
+        - Logger: Logger(lg0)
+          name: LogInput
+          description: ""
+          propertyfile: ../resources/processor_44/resourcegroup_122/expr.properties
+          expressionProperties:
+            xpathExpression: oraext:get-content-as-string(/ns11:execute/ns14:request-wrapper)
+            namespaceList: ns11=http://xmlns.oracle.com/cloud/adapter/REST/testDeleteFile_REQUEST/types ns14=http://xmlns.oracle.com/cloud/adapter/REST/testDeleteFile/types oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+            variableName: LogInput
+        - Map: Map(m2)
+          xsltfilepath: ../resources/processor_63/resourcegroup_66/req_404ea8dfdfac4b40a10cf68876930029.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/testDeleteFile_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/ftp/ListFolder_REQUEST/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext nssrcmpr xsi xsd fn xp20 xsl ignore01 nsmpr0" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns22="http://xmlns.oracle.com/cloud/list/pull" xmlns:ns19="http://xmlns.oracle.com/cloud/adapter/REST/testDeleteFile/types">
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:ListFile xml:id="id_12">'
+            - '      <ns22:ListRequest xml:id="id_21">'
+            - '        <ns22:FTPListHeader xml:id="id_22">'
+            - '          <ns22:fileNamePattern xml:id="id_25">'
+            - '            <xsl:value-of xml:id="id_26" select="/nssrcmpr:execute/ns19:request-wrapper/ns19:filename"/>'
+            - '          <ns22:directory xml:id="id_23">'
+            - '            <xsl:value-of xml:id="id_24" select="/nssrcmpr:execute/ns19:request-wrapper/ns19:directory"/>'
+            - ""
+        - Invoke: ListFolder(i1)
+          application:
+            Application: ListFolder(TSGTFTP_CONN)
+            name: ListFolder
+            adapter:
+                code: TSGTFTP_CONN
+            properties:
+                - name: Operation
+                  value: ListFile
+                - name: Host
+                  value: '%%TSGTFTP_CONN_Host'
+                - name: Port
+                  value: '%%TSGTFTP_CONN_Port'
+                - name: SecurePort
+                  value: "990"
+        - Stitch: Stitch(sh0)
+          stitchNamespaceResolver:
+            prefixnamespacemap: {}
+          stitchVariables:
+            - name: deleteResult
+              datatype:
+                type: XMLSimple
+                xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+              access: SOURCE_AND_TARGET
+          stitchSentences:
+            - operation: Assign
+              from:
+                type: XPathExpression
+                expression: '''file not found'''
+                returnType: XML_TYPE_ATOMIC
+              to:
+                type: XPathPath
+                path: $deleteResult
+                isLastStepXsdAnyType: false
+        - Switch: Switch(s0)
+          routes:
+            - Route: FildeFound(sc0)
+              exprProperties:
+                xpathExpression: $ListFolder/ns46:ListFileResponse/ns45:ListResponse/ns45:ItemCount > 0
+                namespaceList: ns46=http://xmlns.oracle.com/cloud/adapter/ftp/ListFolder_REQUEST/types ns45=http://xmlns.oracle.com/cloud/list/pull
+                expressionName: FildeFound
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: ListFolder
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/ftp/ListFolder_REQUEST/types}ListFileResponse'
+              statements:
+                - Map: Map(m1)
+                  xsltfilepath: ../resources/processor_98/resourcegroup_101/req_bb923697d8e940cfb75b45af020f7000.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/testDeleteFile_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/ftp/DeleteFile_REQUEST/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext nssrcmpr xsi xsd fn xp20 xsl ignore01 nsmpr0 nsmpr1" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/ftp/ListFolder_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns24="http://xmlns.oracle.com/ics/cloud/ftp/delete/pull" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/REST/testDeleteFile/types">
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:DeleteFile xml:id="id_12">'
+                    - '      <ns24:FileDeleteRequest xml:id="id_32">'
+                    - '        <ns24:directory xml:id="id_33">'
+                    - '          <xsl:value-of xml:id="id_34" select="/nssrcmpr:execute/ns20:request-wrapper/ns20:directory"/>'
+                    - '        <ns24:filename xml:id="id_35">'
+                    - '          <xsl:value-of xml:id="id_36" select="/nssrcmpr:execute/ns20:request-wrapper/ns20:filename"/>'
+                    - ""
+                - Invoke: DeleteFile(i0)
+                  application:
+                    Application: DeleteFile(TSGTFTP_CONN)
+                    name: DeleteFile
+                    adapter:
+                        code: TSGTFTP_CONN
+                    properties:
+                        - name: Operation
+                          value: DeleteFile
+                        - name: Host
+                          value: '%%TSGTFTP_CONN_Host'
+                        - name: Port
+                          value: '%%TSGTFTP_CONN_Port'
+                        - name: SecurePort
+                          value: "990"
+                - Stitch: Stitch(sh1)
+                  stitchNamespaceResolver:
+                    prefixnamespacemap:
+                        ns8: http://xmlns.oracle.com/ics/cloud/ftp/delete/pull
+                        ns13: http://xmlns.oracle.com/cloud/adapter/ftp/DeleteFile_REQUEST/types
+                  stitchVariables:
+                    - name: deleteResult
+                      datatype:
+                        type: XMLSimple
+                        xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                      access: SOURCE_AND_TARGET
+                    - name: DeleteFile
+                      datatype:
+                        type: XMLComplex
+                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/ftp/DeleteFile_REQUEST/types}DeleteFileResponse'
+                        uriToSchema: ../../application_88/inbound_89/resourcegroup_90/DeleteFile_REQUEST.wsdl
+                      access: SOURCE_AND_TARGET
+                  stitchSentences:
+                    - operation: Assign
+                      from:
+                        type: XPathExpression
+                        expression: $DeleteFile/ns13:DeleteFileResponse/ns8:FileDeleteResponse/ns8:success
+                        returnType: XML_TYPE_NODE_NODESET
+                      to:
+                        type: XPathPath
+                        path: $deleteResult
+                        isLastStepXsdAnyType: false
+        - Map: Map(m0)
+          xsltfilepath: ../resources/processor_24/resourcegroup_27/req_d7acf93c70b3452bb6736183c3be59c8.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/testDeleteFile_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/ftp/Borralo_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns19="http://xmlns.oracle.com/cloud/adapter/REST/testDeleteFile/types" xmlns:ns22="http://xmlns.oracle.com/ics/cloud/ftp/delete/pull" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/ftp/ListFolder_REQUEST/types" version="2.0" xml:id="id_1" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi xsd fn xp20 xsl ignore01 nsmpr0 nsmpr1 nsmpr2" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+            - '  <xsl:param name="deleteResult" xml:id="id_48"/>'
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:executeResponse xml:id="id_12">'
+            - '      <ns19:response-wrapper xml:id="id_31">'
+            - '        <ns19:success xml:id="id_67">'
+            - '          <xsl:value-of xml:id="id_68" select="$deleteResult"/>'
+            - ""
+        - Reply: Reply(y0)
+          adapterjcareference: null
+          wsdlfilepath: ""
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Logger: Logger(lg1)
+              name: LogFault
+              description: ""
+              propertyfile: ../resources/processor_108/resourcegroup_120/expr.properties
+              expressionProperties:
+                xpathExpression: $GlobalFaultObject/ics:fault
+                namespaceList: ics=http://www.oracle.com/2014/03/ics/fault
+                variableName: LogFault
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_103/resourcegroup_104/ICSFault.xsd

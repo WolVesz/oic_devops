@@ -1,0 +1,201 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_92
+      xsdfilepath: ../resources/processor_92/resourcegroup_93/ICSIntegrationMetadata.xsd
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: Batch ID
+              xpath: /execute/request-wrapper/EmployeeOutbound/BatchID
+            - role: tracking_var_2
+              name: tracking_var_2
+            - role: tracking_var_3
+              name: tracking_var_3
+        - Map: Map(m0)
+          xsltfilepath: ../resources/processor_146/resourcegroup_149/req_7d2769c1f4cb4182ae8cc549e73019f4.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/hcm/GetEmployeeUpdate_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger_REQUEST/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns3="http://xmlns.oracle.com/cloud/adapter/hcm/GetEmployeeUpdate_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger_REQUEST" exclude-result-prefixes=" oraext xsd xp20 ora nssrcmpr oracle-xsl-mapper nssrcdfl xsi fn xsl ns1 ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger/types" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns25="http://xmlns.oracle.com/cloud/adapters/hcmRestApp" xmlns:ns24="http://xml.oracle.com/types" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns21="http://xml.oracle.com/adapters/extension" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns19="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/OutboundTrigger_REQUEST/RESTINREQ" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns23="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd">
+            - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:EmployeeUpdateFeedWithBO xml:id="id_12">'
+            - '      <nstrgmpr:ApplicationPullParameter xml:id="id_21">'
+            - '        <ns24:updated-min xml:id="id_22">'
+            - '          <xsl:value-of xml:id="id_23" select="/nssrcmpr:execute/ns22:request-wrapper/ns22:EmployeeOutbound/ns22:StartTime"/>'
+            - ""
+        - Invoke: GetEmployeeUpdate(i0)
+          application:
+            Application: GetEmployeeUpdate(TSGTADAPTERHCM_CONN)
+            name: GetEmployeeUpdate
+            adapter:
+                code: TSGTADAPTERHCM_CONN
+            properties:
+                - name: operationPath
+                  value: http://xmlns.oracle.com/cloud/adapter/hcm/GetEmployeeUpdate_REQUEST/EmployeeUpdateFeedWithBO
+        - xmlname:
+            space: http://www.oracle.com/2014/03/ics/flow/definition
+            local: wait
+          attrs:
+            - name:
+                space: ""
+                local: id
+              value: w0
+            - name:
+                space: ""
+                local: refUri
+              value: processor_177
+          content: ""
+          statements: []
+        - Switch: Switch(s0)
+          routes:
+            - Route: NonEmpty(sc0)
+              exprProperties:
+                xpathExpression: count($GetEmployeeUpdate/nssrcmpr:EmployeeUpdateFeedWithBOResponse/nssrcmpr:EmployeeUpdateFeedWithBO_Update) > 0
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/hcm/GetEmployeeUpdate_REQUEST/types
+                expressionName: NonEmpty
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: GetEmployeeUpdate
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/hcm/GetEmployeeUpdate_REQUEST/types}EmployeeUpdateFeedWithBOResponse'
+              statements:
+                - Map: Map(m1)
+                  xsltfilepath: ../resources/processor_186/resourcegroup_189/req_a61b57c2b56b4d749c008cee4f318d05.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:per="http://xmlns.oracle.com/cloud/adapter/collocatedics/PublishEmployees_REQUEST/types" xmlns:peb="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/PublishEmployees_REQUEST" xmlns:pe1="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/EmployeesBatch/collocatedics/PublishEmployees_REQUEST" xmlns:pe3="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/EmployeesBatch/Employees/ChangedAttributes/collocatedics/PublishEmployees_REQUEST" xmlns:pe2="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/EmployeesBatch/Employees/collocatedics/PublishEmployees_REQUEST" xmlns:eur="http://xmlns.oracle.com/cloud/adapter/hcm/GetEmployeeUpdate_REQUEST/types" xmlns:trir="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger_REQUEST/types" xmlns:tri="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/PublishEmployees_REQUEST" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" version="2.0" exclude-result-prefixes=" oraext plnk xsd xp20 ora nssrcmpr oracle-xsl-mapper nssrcdfl xsi fn xsl nsmpr0 ignore01" ignore01:ignorexmlids="true">
+                    - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                    - '  <xsl:param name="GetEmployeeUpdate"/>'
+                    - '  <xsl:param name="GetEmployeeUpdate_REQUEST"/>'
+                    - '  <xsl:param name="self"/>'
+                    - '  <xsl:param name="tracking_var_1"/>'
+                    - '  <xsl:param name="tracking_var_2"/>'
+                    - '  <xsl:param name="tracking_var_3"/>'
+                    - '  <xsl:template match="/">'
+                    - '    <per:PUT>'
+                    - '      <per:components.schemas.request-wrapper>'
+                    - '        <peb:EmployeesBatch>'
+                    - '          <pe1:BatchID>'
+                    - '            <xsl:value-of select="/trir:execute/tri:request-wrapper/tri:EmployeeOutbound/tri:BatchID"/>'
+                    - '          <pe1:DateTime>'
+                    - '            <xsl:value-of select="substring-after(/trir:execute/tri:request-wrapper/tri:EmployeeOutbound/tri:BatchID,&apos;-&apos;)"/>'
+                    - '          <xsl:for-each select="$GetEmployeeUpdate/eur:EmployeeUpdateFeedWithBOResponse/eur:EmployeeUpdateFeedWithBO_Update">'
+                    - '            <xsl:if test="eur:EmployeeUpdateFeedWithBO_Context/eur:WorkerType != &apos;CWK&apos;">'
+                    - '              <pe1:Employees>'
+                    - '                <pe2:PersonNumber>'
+                    - '                  <xsl:value-of select="eur:EmployeeUpdateFeedWithBO_Context/eur:PersonNumber"/>'
+                    - '                <pe2:PeriodType>'
+                    - '                  <xsl:value-of select="eur:EmployeeUpdateFeedWithBO_Context/eur:PeriodType"/>'
+                    - '                <xsl:for-each select="eur:ChangedAttributes">'
+                    - '                  <pe2:ChangedAttributes>'
+                    - '                    <pe3:OldValue>'
+                    - '                      <xsl:value-of select="eur:OldValue"/>'
+                    - '                    <pe3:AttributeName>'
+                    - '                      <xsl:value-of select="eur:AttributeName"/>'
+                    - '                    <pe3:NewValue>'
+                    - '                      <xsl:value-of select="eur:NewValue"/>'
+                    - '                <pe2:PersonName>'
+                    - '                  <xsl:value-of select="eur:EmployeeUpdateFeedWithBO_Context/eur:PersonName"/>'
+                    - '                <pe2:WorkerType>'
+                    - '                  <xsl:value-of select="eur:EmployeeUpdateFeedWithBO_Context/eur:WorkerType"/>'
+                    - '                <pe2:PersonID>'
+                    - '                  <xsl:value-of select="eur:EmployeeUpdateFeedWithBO_Context/eur:PersonId"/>'
+                    - '                <pe2:PhoneNumber>'
+                    - '                  <xsl:value-of select="eur:EmployeeUpdateFeedWithBO_Context/eur:PrimaryPhoneNumber"/>'
+                    - '                <pe2:WorkEmail>'
+                    - '                  <xsl:value-of select="eur:EmployeeUpdateFeedWithBO_Context/eur:WorkEmail"/>'
+                    - '                <pe2:Operation>UPDATE</pe2:Operation>'
+                    - '                <pe2:EffectiveStartDate>'
+                    - '                  <xsl:value-of select="eur:EmployeeUpdateFeedWithBO_Context/eur:EffectiveStartDate"/>'
+                    - '                <pe2:EffectiveDate>'
+                    - '                  <xsl:value-of select="eur:EmployeeUpdateFeedWithBO_Context/eur:EffectiveDate"/>'
+                    - '          <pe1:DateTime>'
+                    - '            <xsl:value-of select="fn:current-dateTime ()"/>'
+                    - '          <pe1:Interface>'
+                    - '            <xsl:value-of select="/trir:execute/tri:request-wrapper/tri:EmployeeOutbound/tri:Interface"/>'
+                    - ""
+                - Invoke: PublishEmployees(i1)
+                  application:
+                    Application: PublishEmployees(PRESEEDED_COLLOCATED_CONN_1741)
+                    name: PublishEmployees
+                    adapter:
+                        code: PRESEEDED_COLLOCATED_CONN_1741
+                    properties:
+                        - name: operationPath
+                          value: /employee
+                        - name: HttpVerb
+                          value: PUT
+                        - name: QueryParameters
+                          value: ""
+                        - name: ResourceURI
+                          value: /employee
+                        - name: integration_id
+                          value: TSGTPUBLISHEMPLO_SERVICE|01.00.0000
+                        - name: integration_operation
+                          value: PUT
+                        - name: serviceType
+                          value: REST
+            - Route: Otherwise(sc1)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Map: Map(m2)
+              xsltfilepath: ../resources/processor_114/resourcegroup_117/req_9d81d9602a0c43ac8fe2e6e65c146f9a.xsl
+              mapsentences:
+                - <xsl:stylesheet xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/PublishAuditing_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/PublishAuditing_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger_REQUEST/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/PublishAuditing" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger_REQUEST" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr1="http://www.oracle.com/2014/03/ics/fault" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns27="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Auditing/Notification/collocatedics/PublishAuditing_REQUEST" xmlns:req="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger/types" xmlns:oic="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:paw="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Auditing/collocatedics/PublishAuditing_REQUEST" xmlns:pa="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/PublishAuditing_REQUEST" version="2.0" exclude-result-prefixes=" oraext plnk xsd xp20 ora nssrcmpr oracle-xsl-mapper nssrcdfl xsi fn xsl nsmpr0 ignore01" ignore01:ignorexmlids="true">
+                - '  <xsl:param name="GlobalFaultObject"/>'
+                - '  <xsl:param name="self"/>'
+                - '  <xsl:param name="tracking_var_1"/>'
+                - '  <xsl:param name="tracking_var_2"/>'
+                - '  <xsl:param name="tracking_var_3"/>'
+                - '  <xsl:template match="/">'
+                - '    <nstrgmpr:PUT>'
+                - '      <nstrgmpr:components.schemas.request-wrapper>'
+                - '        <pa:Auditing>'
+                - '          <paw:AuditingType>'
+                - '            <xsl:value-of select="&apos;Error&apos;"/>'
+                - '          <paw:FlowInstanceID>'
+                - '            <xsl:value-of select="oic:getFlowId()"/>'
+                - '          <paw:TrackingID>'
+                - '            <xsl:value-of select="/nssrcmpr:execute/req:request-wrapper/req:EmployeeOutbound/req:BatchID"/>'
+                - '          <paw:ReferenceID>'
+                - '            <xsl:value-of select="concat ($self/nsmpr2:metadata/nsmpr2:integration/nsmpr2:name, &quot;-&quot;, /nssrcmpr:execute/req:request-wrapper/req:EmployeeOutbound/req:StartTime )"/>'
+                - '          <paw:InterfaceName>'
+                - '            <xsl:value-of select="$self/nsmpr2:metadata/nsmpr2:integration/nsmpr2:name"/>'
+                - '          <paw:Payload>'
+                - '            <xsl:value-of select="concat (&quot;ErrorCode:&quot;, $GlobalFaultObject/nsmpr1:fault/nsmpr1:errorCode, &quot;; reason:&quot;, $GlobalFaultObject/nsmpr1:fault/nsmpr1:reason, &quot;; details:&quot;, $GlobalFaultObject/nsmpr1:fault/nsmpr1:details )"/>'
+                - '          <paw:AuditingID>'
+                - '            <xsl:value-of select="oraext:generate-guid ()"/>'
+                - ""
+            - Invoke: PublishAuditing(i2)
+              application:
+                Application: PublishAuditing(PRESEEDED_COLLOCATED_CONN_1741)
+                name: PublishAuditing
+                adapter:
+                    code: PRESEEDED_COLLOCATED_CONN_1741
+                properties:
+                    - name: operationPath
+                      value: /auditing
+                    - name: HttpVerb
+                      value: PUT
+                    - name: QueryParameters
+                      value: ""
+                    - name: ResourceURI
+                      value: /auditing
+                    - name: integration_id
+                      value: AUDITINGINBOUND|01.00.0000
+                    - name: integration_operation
+                      value: PUT
+                    - name: serviceType
+                      value: REST
+            - Stop: Stop(st1)
+          icsfaultfilepath: ../resources/processor_97/resourcegroup_98/ICSFault.xsd

@@ -1,0 +1,15 @@
+flowchart LR
+%% Auto-generated from invoke_chain_group_001.csv — root TSGT_SYNC_EMP_LEAVE_WACS_TO_OFSC
+classDef integ fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+classDef adapt fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+ TSGT_SYNC_EMP_LEAVE_WACS_TO_OFSC["TSGT Sync Employee Leave WACS To OFSC"]:::integ
+ TSGT_ENTERPRISENOTIFI["TSGT EnterpriseNotificationService"]:::integ
+ TSGT_SYNC_EMP_LEAVE_WACS_TO_OFSC -->|SendErrorNotification| TSGT_ENTERPRISENOTIFI
+ TSGT_SYNC_EMP_LEAVE_WACS_TO_OFSC -->|sendEmailNotification| TSGT_ENTERPRISENOTIFI
+ TSGT_SYNC_EMP_LEAVE_WACS_TO_OFSC -->|sendErrorEmailNotification| TSGT_ENTERPRISENOTIFI
+ TSGT_SYNC_EMP_LEAVE_WACS_TO_OFSC -->|sendNotification| TSGT_ENTERPRISENOTIFI
+ OUTL_BRT_APP_OFSC_WACSOFSC{{"Oracle Utilities OFSC for WACS-OFSC"}}:::adapt
+ TSGT_SYNC_EMP_LEAVE_WACS_TO_OFSC -->|getResourceDetails| OUTL_BRT_APP_OFSC_WACSOFSC
+ TSGT_OFSC_REST_FOR_WACS_OFSC{{"TSGT OFSC REST for WACS-OFSC"}}:::adapt
+ TSGT_SYNC_EMP_LEAVE_WACS_TO_OFSC -->|invokeBulkUpdateActivitiesRestApi| TSGT_OFSC_REST_FOR_WACS_OFSC
+ TSGT_SYNC_EMP_LEAVE_WACS_TO_OFSC -->|invokeBulkUpdateWorkSchedulesRestApi| TSGT_OFSC_REST_FOR_WACS_OFSC

@@ -1,0 +1,242 @@
+Orchestration: ""
+statements:
+    - Receive: Receive(r0)
+      trackingvariables:
+        - role: tracking_var_1
+          primary: true
+          name: TRANSACTION_ ID
+          xpath: /execute/request-wrapper/STAGE_RECORDS/TRANSACTION_ID
+        - role: tracking_var_2
+          name: INTEGRATIONIDENTIFER
+          xpath: /execute/request-wrapper/STAGE_RECORDS/INTEGRATIONIDENTIFER
+        - role: tracking_var_3
+          name: INTEGRATIONDESC
+          xpath: /execute/request-wrapper/STAGE_RECORDS/INTEGRATIONDESC
+    - Assignments: Assign_Globa_Variables(l1)
+      name: Assign_Globa_Variables
+      assignments:
+        - Assignment: Assignment(a1)
+          variableName: Msg_Descr
+          variableType: string
+          expressionProperties:
+            xpathExpression: 'concat( ''Data insert into HC_FND_OB_STG table. Total Rows inserted : '', count(/nssrcmpr:execute/nsmpr2:request-wrapper/nsmpr2:STAGE_RECORDS))'
+            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/InsertOBStage_REQUEST/types nsmpr2=http://xmlns.oracle.com/cloud/adapter/REST/InsertOBStage/types
+            variableName: Msg_Descr
+            variableDescription: Message Descr - Default
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a2)
+          variableName: Msg_Code
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: Msg_Code
+            variableDescription: Unique code for status
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a3)
+          variableName: Msg_Detail
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: Msg_Detail
+            variableDescription: Details of the Message
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a4)
+          variableName: ErrorFlag
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''N'''
+            variableName: ErrorFlag
+            variableDescription: Flag to Identify error or success
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a5)
+          variableName: Status
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''SUCCESS'''
+            variableName: Status
+            variableDescription: Status of the Flow
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a6)
+          variableName: FlowID
+          variableType: string
+          expressionProperties:
+            xpathExpression: ora:getFlowId()
+            namespaceList: ora=http://schemas.oracle.com/xpath/extension
+            variableName: FlowID
+            variableDescription: Flow Id of the Integration
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+    - Try: Try(t0)
+      username: InsertDB
+      statements:
+        - Map: Map(m0)
+          xsltfilepath: ../resources/processor_540/resourcegroup_543/req_ec52e2033e9b4d7481b4a1d56016d22e.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/InsertOBStage/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:tns="http://xmlns.oracle.com/cloud/adapter/atpdatabase/InsertintoOBStageTable_REQUEST" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/atpdatabase/InsertintoOBStageTable_REQUEST/types" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InsertOBStage_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns13="http://xmlns.oracle.com/cloud/adapter/REST/InsertOBStage_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InsertOBStage_REQUEST/RESTINREQ" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcdfl oraext xsd xp20 ora oracle-xsl-mapper nssrcmpr xsi fn ns13 xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:ns36="http://xmlns.oracle.com/procmon" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns37="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd">
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:TsgtCmnObfileStageTblCollection xml:id="id_12">'
+            - '      <xsl:for-each xml:id="id_28" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:STAGE_RECORDS">'
+            - '        <nstrgmpr:TsgtCmnObfileStageTbl xml:id="id_29">'
+            - '          <nstrgmpr:recordId xml:id="id_30">'
+            - '            <xsl:value-of xml:id="id_31" select="nssrcdfl:RECORDID"/>'
+            - '          <nstrgmpr:transactionId xml:id="id_32">'
+            - '            <xsl:value-of xml:id="id_33" select="nssrcdfl:TRANSACTION_ID"/>'
+            - '          <nstrgmpr:intgIdentifier xml:id="id_34">'
+            - '            <xsl:value-of xml:id="id_35" select="nssrcdfl:INTEGRATIONIDENTIFER"/>'
+            - '          <nstrgmpr:intgDescr xml:id="id_36">'
+            - '            <xsl:value-of xml:id="id_37" select="nssrcdfl:INTEGRATIONDESC"/>'
+            - '          <nstrgmpr:column1 xml:id="id_38">'
+            - '            <xsl:value-of xml:id="id_39" select="nssrcdfl:COLUMN1"/>'
+            - '          <nstrgmpr:column2 xml:id="id_40">'
+            - '            <xsl:value-of xml:id="id_41" select="nssrcdfl:COLUMN2"/>'
+            - '          <nstrgmpr:column3 xml:id="id_42">'
+            - '            <xsl:value-of xml:id="id_43" select="nssrcdfl:COLUMN3"/>'
+            - '          <nstrgmpr:column4 xml:id="id_44">'
+            - '            <xsl:value-of xml:id="id_45" select="nssrcdfl:COLUMN4"/>'
+            - '          <nstrgmpr:column5 xml:id="id_46">'
+            - '            <xsl:value-of xml:id="id_47" select="nssrcdfl:COLUMN5"/>'
+            - '          <nstrgmpr:column6 xml:id="id_48">'
+            - '            <xsl:value-of xml:id="id_49" select="nssrcdfl:COLUMN6"/>'
+            - '          <nstrgmpr:column7 xml:id="id_50">'
+            - '            <xsl:value-of xml:id="id_51" select="nssrcdfl:COLUMN7"/>'
+            - '          <nstrgmpr:column8 xml:id="id_52">'
+            - '            <xsl:value-of xml:id="id_53" select="nssrcdfl:COLUMN8"/>'
+            - '          <nstrgmpr:column9 xml:id="id_54">'
+            - '            <xsl:value-of xml:id="id_55" select="nssrcdfl:COLUMN9"/>'
+            - '          <nstrgmpr:column10 xml:id="id_56">'
+            - '            <xsl:value-of xml:id="id_57" select="nssrcdfl:COLUMN10"/>'
+            - '          <nstrgmpr:column11 xml:id="id_72">'
+            - '            <xsl:value-of xml:id="id_105" select="nssrcdfl:COLUMN11"/>'
+            - '          <nstrgmpr:column12 xml:id="id_74">'
+            - '            <xsl:value-of xml:id="id_106" select="nssrcdfl:COLUMN12"/>'
+            - '          <nstrgmpr:column13 xml:id="id_76">'
+            - '            <xsl:value-of xml:id="id_107" select="nssrcdfl:COLUMN13"/>'
+            - '          <nstrgmpr:column14 xml:id="id_78">'
+            - '            <xsl:value-of xml:id="id_108" select="nssrcdfl:COLUMN14"/>'
+            - '          <nstrgmpr:column15 xml:id="id_80">'
+            - '            <xsl:value-of xml:id="id_109" select="nssrcdfl:COLUMN15"/>'
+            - '          <nstrgmpr:column16 xml:id="id_82">'
+            - '            <xsl:value-of xml:id="id_110" select="nssrcdfl:COLUMN16"/>'
+            - '          <nstrgmpr:column17 xml:id="id_84">'
+            - '            <xsl:value-of xml:id="id_111" select="nssrcdfl:COLUMN17"/>'
+            - '          <nstrgmpr:column18 xml:id="id_86">'
+            - '            <xsl:value-of xml:id="id_112" select="nssrcdfl:COLUMN18"/>'
+            - '          <nstrgmpr:column19 xml:id="id_88">'
+            - '            <xsl:value-of xml:id="id_127" select="nssrcdfl:COLUMN19"/>'
+            - '          <nstrgmpr:column20 xml:id="id_90">'
+            - '            <xsl:value-of xml:id="id_128" select="nssrcdfl:COLUMN20"/>'
+            - '          <nstrgmpr:column21 xml:id="id_129">'
+            - '            <xsl:value-of xml:id="id_130" select="nssrcdfl:COLUMN21"/>'
+            - '          <nstrgmpr:column22 xml:id="id_131">'
+            - '            <xsl:value-of xml:id="id_132" select="nssrcdfl:COLUMN22"/>'
+            - '          <nstrgmpr:column23 xml:id="id_133">'
+            - '            <xsl:value-of xml:id="id_134" select="nssrcdfl:COLUMN23"/>'
+            - '          <nstrgmpr:column24 xml:id="id_135">'
+            - '            <xsl:value-of xml:id="id_136" select="nssrcdfl:COLUMN24"/>'
+            - '          <nstrgmpr:column25 xml:id="id_137">'
+            - '            <xsl:value-of xml:id="id_138" select="nssrcdfl:COLUMN25"/>'
+            - '          <nstrgmpr:column26 xml:id="id_139">'
+            - '            <xsl:value-of xml:id="id_140" select="nssrcdfl:COLUMN26"/>'
+            - '          <nstrgmpr:column27 xml:id="id_141">'
+            - '            <xsl:value-of xml:id="id_142" select="nssrcdfl:COLUMN27"/>'
+            - '          <nstrgmpr:column28 xml:id="id_143">'
+            - '            <xsl:value-of xml:id="id_144" select="nssrcdfl:COLUMN28"/>'
+            - '          <nstrgmpr:column29 xml:id="id_145">'
+            - '            <xsl:value-of xml:id="id_146" select="nssrcdfl:COLUMN29"/>'
+            - '          <nstrgmpr:column30 xml:id="id_147">'
+            - '            <xsl:value-of xml:id="id_148" select="nssrcdfl:COLUMN30"/>'
+            - '          <nstrgmpr:column31 xml:id="id_149">'
+            - '            <xsl:value-of xml:id="id_150" select="nssrcdfl:COLUMN31"/>'
+            - '          <nstrgmpr:column32 xml:id="id_151">'
+            - '            <xsl:value-of xml:id="id_152" select="nssrcdfl:COLUMN32"/>'
+            - '          <nstrgmpr:column33 xml:id="id_153">'
+            - '            <xsl:value-of xml:id="id_154" select="nssrcdfl:COLUMN33"/>'
+            - '          <nstrgmpr:column34 xml:id="id_155">'
+            - '            <xsl:value-of xml:id="id_156" select="nssrcdfl:COLUMN34"/>'
+            - '          <nstrgmpr:column35 xml:id="id_157">'
+            - '            <xsl:value-of xml:id="id_158" select="nssrcdfl:COLUMN35"/>'
+            - '          <nstrgmpr:column36 xml:id="id_159">'
+            - '            <xsl:value-of xml:id="id_160" select="nssrcdfl:COLUMN36"/>'
+            - '          <nstrgmpr:column37 xml:id="id_163">'
+            - '            <xsl:value-of xml:id="id_164" select="nssrcdfl:COLUMN37"/>'
+            - '          <nstrgmpr:column38 xml:id="id_161">'
+            - '            <xsl:value-of xml:id="id_162" select="nssrcdfl:COLUMN38"/>'
+            - '          <nstrgmpr:column39 xml:id="id_165">'
+            - '            <xsl:value-of xml:id="id_166" select="nssrcdfl:COLUMN39"/>'
+            - '          <nstrgmpr:column40 xml:id="id_167">'
+            - '            <xsl:value-of xml:id="id_168" select="nssrcdfl:COLUMN40"/>'
+            - '          <nstrgmpr:column41 xml:id="id_169">'
+            - '            <xsl:value-of xml:id="id_170" select="nssrcdfl:COLUMN41"/>'
+            - '          <nstrgmpr:column42 xml:id="id_171">'
+            - '            <xsl:value-of xml:id="id_172" select="nssrcdfl:COLUMN42"/>'
+            - '          <nstrgmpr:column43 xml:id="id_173">'
+            - '            <xsl:value-of xml:id="id_174" select="nssrcdfl:COLUMN43"/>'
+            - '          <nstrgmpr:column44 xml:id="id_175">'
+            - '            <xsl:value-of xml:id="id_176" select="nssrcdfl:COLUMN44"/>'
+            - '          <nstrgmpr:column45 xml:id="id_177">'
+            - '            <xsl:value-of xml:id="id_178" select="nssrcdfl:COLUMN45"/>'
+            - ""
+        - Invoke: InsertintoOBStageTable(i0)
+          application:
+            Application: InsertintoOBStageTable(TSGTATPCLOUDDB_CONN)
+            name: InsertintoOBStageTable
+            adapter:
+                code: TSGTATPCLOUDDB_CONN
+            properties: []
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Assignments: Assign_Errors(l0)
+              name: Assign_Errors
+              assignments:
+                - Assignment: Assignment(a0)
+                  variableName: Msg_Descr
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: concat($InsertDBFaultObject/nssrcmpr:fault/nssrcmpr:errorCode, '---', $InsertDBFaultObject/nssrcmpr:fault/nssrcmpr:reason, '---', $InsertDBFaultObject/nssrcmpr:fault/nssrcmpr:details, ' Failed to insert in HC_FND_OB_STG table / Total rows in Error ', count(/nsmpr3:execute/nsmpr2:request-wrapper/nsmpr2:STAGE_RECORDS))
+                    namespaceList: nssrcmpr=http://www.oracle.com/2014/03/ics/fault nsmpr2=http://xmlns.oracle.com/cloud/adapter/REST/InsertOBStage/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/InsertOBStage_REQUEST/types
+                    variableName: Msg_Descr
+                    variableDescription: Message_Descr
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a7)
+                  variableName: ErrorFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErrorFlag
+                    variableDescription: Set the Error flag to Y in case of System Error
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a8)
+                  variableName: Msg_Code
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''HC_DATA_INSERT_SYSTEM_ERROR'''
+                    variableName: Msg_Code
+                    variableDescription: Assign Unique Message code
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a9)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableDescription: Status to Error
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_111/resourcegroup_112/ICSFault.xsd
+    - Logger: Logger(lg0)
+      name: Print_Log
+      description: ""
+      propertyfile: ../resources/processor_132/resourcegroup_479/expr.properties
+      expressionProperties:
+        xpathExpression: concat('Results -->> ', $Msg_Descr)
+        variableName: Print_Log
+    - Stop: Stop(st0)

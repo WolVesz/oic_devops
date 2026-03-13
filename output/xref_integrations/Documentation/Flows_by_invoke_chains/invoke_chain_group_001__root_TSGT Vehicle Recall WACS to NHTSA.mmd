@@ -1,0 +1,14 @@
+flowchart LR
+%% Auto-generated from invoke_chain_group_001.csv — root TSGT_VEHIC_RECAL_WACS_TO_NHTSA
+classDef integ fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+classDef adapt fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+ TSGT_VEHIC_RECAL_WACS_TO_NHTSA["TSGT Vehicle Recall WACS to NHTSA"]:::integ
+ TSGT_ENTERPRISENOTIFI["TSGT EnterpriseNotificationService"]:::integ
+ TSGT_VEHIC_RECAL_WACS_TO_NHTSA -->|sendNotification| TSGT_ENTERPRISENOTIFI
+ TSGT_VEHIC_RECAL_WACS_TO_NHTSA -->|sendNotificationBODetails| TSGT_ENTERPRISENOTIFI
+ TSGT_VEHIC_RECAL_WACS_TO_NHTSA -->|sendVehicleRecallNotification| TSGT_ENTERPRISENOTIFI
+ OUTL_BRT_REST_WACS_WACSERPPIM{{"Oracle Utilities REST WACS for WACS-ERPPIM"}}:::adapt
+ TSGT_VEHIC_RECAL_WACS_TO_NHTSA -->|GetVehicleRecallDetails| OUTL_BRT_REST_WACS_WACSERPPIM
+ TSGT_NHTSA_REST_CONNECTI{{"TSGT NHTSA Rest Connection"}}:::adapt
+ TSGT_VEHIC_RECAL_WACS_TO_NHTSA -->|GetVehicleRecallDetailsByMakeModelAndYear| TSGT_NHTSA_REST_CONNECTI
+ TSGT_VEHIC_RECAL_WACS_TO_NHTSA -->|POSTVehicleRecallDetails| OUTL_BRT_REST_WACS_WACSERPPIM

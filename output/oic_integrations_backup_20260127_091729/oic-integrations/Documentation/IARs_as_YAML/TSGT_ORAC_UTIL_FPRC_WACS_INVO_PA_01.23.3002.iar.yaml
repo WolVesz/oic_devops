@@ -1,0 +1,604 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_1324
+      xsdfilepath: ../resources/processor_1324/resourcegroup_1325/ICSIntegrationMetadata.xsd
+    - xmlname:
+        space: http://www.oracle.com/2014/03/ics/flow/definition
+        local: integrationProperties
+      attrs:
+        - name:
+            space: ""
+            local: id
+          value: ip0
+        - name:
+            space: ""
+            local: refUri
+          value: processor_1714
+      content: ""
+      statements: []
+    - GlobalVariable: (gtv0)
+      variableName: GetRelatedInvPymntResp_GV
+      variableType: $GetRelatedInvoicePayment/ns21:getResponse
+    - GlobalVariable: (gtv1)
+      variableName: GetInvoiceResp_GV
+      variableType: $GetInvoice/ns18:getResponse
+    - GlobalVariable: (gtv2)
+      variableName: getSupplierSites_GV
+      variableType: $getSupplierSites/ns61:getAllResponse
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: Check ID
+              xpath: /onEvent/ApPaymentCreatedInfo/CheckId/newValue/@value
+            - role: tracking_var_2
+              name: Payment Type
+              xpath: /onEvent/ApPaymentCreatedInfo/PaymentTypeFlag/newValue/@value
+            - role: tracking_var_3
+              name: tracking_var_3
+        - Assignments: InitializeVariables(l0)
+          name: InitializeVariables
+          assignments:
+            - Assignment: Assignment(a0)
+              variableName: Var_POHeaderId
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: Var_POHeaderId
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a4)
+              variableName: Var_InvoiceFrExternalPRFlag
+              variableType: string
+              expressionProperties:
+                xpathExpression: '''true'''
+                variableName: Var_InvoiceFrExternalPRFlag
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a5)
+              variableName: Var_VendorSiteId
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: Var_VendorSiteId
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a6)
+              variableName: Var_ItemContent
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: Var_ItemContent
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a7)
+              variableName: Var_ImportSourceValue
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: Var_ImportSourceValue
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Try: Try(t0)
+          username: Scope_GetRelatedInvPymnt
+          statements:
+            - Map: Map(m0)
+              xsltfilepath: ../resources/processor_79/resourcegroup_82/req_6c448362649e4179b62ea7991c37e19d.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:client="http://xmlns.oracle.com/fa/event" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/erp/GetRelatedInvoicePayment_REQUEST" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:nsmpr0="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:types="http://xmlns.oracle.com/apps/crmCommon/salesParties/accountService/types/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nssrcdfl="http://xmlns.oracle.com/apps/financials/payables/payments/singlePayments/model/entity/events" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/erp/GetRelatedInvoicePayment_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/erp/subscribePayablesPaymentCreatedEvent_REQUEST" xmlns:tns="http://xmlns.oracle.com/apps/crmCommon/salesParties/accountService/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/subscribePayablesPaymentCreatedEvent_REQUEST/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" plnk client oraext xsd xp20 nssrcdfl ora oracle-xsl-mapper nsmpr1 xsi fn nssrcmpr xsl ignore01 orajs14 ns6 orajs4 orajs9 orajs5 orajs13 ns5 orajs11 orajs8 orajs10 ns7 orajs12 orajs7" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/GetRelatedInvoicePayment_REQUEST/RESTOUTREQ" xmlns:ns31="http://xmlns.oracle.com/cloud/adapters/fscmRestApp" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:ns26="http://xml.oracle.com/adapters/extension" xmlns:ns29="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns27="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/relatedInvoices" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns4="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/relatedInvoices/relatedInvoiceGdf" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/erp/GetInvoice_REQUEST/types" xmlns:ns49="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/paymentGdf" xmlns:ns48="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceDistributions" xmlns:ns50="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/paymentDff" xmlns:ns46="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices" xmlns:ns47="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines" xmlns:ns45="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceDistributions/invoiceDistributionDff" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns3="http://xmlns.oracle.com/cloud/adapter/erp/GetInvoice_REQUEST" xmlns:ns42="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/GetInvoice_REQUEST/RESTOUTREQ" xmlns:ns40="http://xmlns.oracle.com/procmon" xmlns:ns41="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940">
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:get xml:id="id_12">'
+                - '      <nstrgmpr:TemplateParameters xml:id="id_21">'
+                - '        <nstrgmpr:id xml:id="id_22">'
+                - '          <xsl:value-of xml:id="id_43" select="/nssrcmpr:onEvent/nssrcdfl:ApPaymentCreatedInfo/nssrcdfl:CheckId/nssrcdfl:newValue/@value"/>'
+                - '      <nstrgmpr:QueryParameters xml:id="id_63">'
+                - '        <nstrgmpr:expand xml:id="id_64">'
+                - '          <xsl:value-of xml:id="id_65" select="&apos;relatedInvoices&apos;"/>'
+                - '        <nstrgmpr:onlyData xml:id="id_66">'
+                - '          <xsl:value-of xml:id="id_67" select="&apos;true&apos;"/>'
+                - ""
+            - Invoke: GetRelatedInvoicePayment(i0)
+              application:
+                Application: GetRelatedInvoicePayment(OUTL-BRT-ERPCLOUD_WACSFPRC)
+                name: GetRelatedInvoicePayment
+                adapter:
+                    code: OUTL-BRT-ERPCLOUD_WACSFPRC
+                properties:
+                    - name: operationPath
+                      value: http://xmlns.oracle.com/cloud/adapter/erp/GetRelatedInvoicePayment_REQUEST/get
+            - Map: Map(m4)
+              xsltfilepath: ../resources/processor_1633/resourcegroup_1636/req_d91dec4cc4a94a37bd227c92fbfbc65e.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:client="http://xmlns.oracle.com/fa/event" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/erp/getSupplierSites_REQUEST" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:types="http://xmlns.oracle.com/apps/financials/expenses/shared/common/expenseExternalService/types/" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/erp/getSupplierSites_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:inp1="http://xmlns.oracle.com/apps/financials/payables/payments/singlePayments/model/entity/events" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Suppliers/sites/globalDFF" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:ns5="http://xmlns.oracle.com/cloud/adapter/erp/subscribePayablesPaymentCreatedEvent_REQUEST" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/subscribePayablesPaymentCreatedEvent_REQUEST/types" xmlns:tns="http://xmlns.oracle.com/apps/financials/expenses/shared/common/expenseExternalService/" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" client oraext xsd xp20 inp1 ora oracle-xsl-mapper ns5 nssrcdfl xsi fn nssrcmpr xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/erp/GetInvoice_REQUEST/types" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/erp/GetRelatedInvoicePayment_REQUEST/types" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns48="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Suppliers" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns45="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/GetRelatedInvoicePayment_REQUEST/RESTOUTREQ" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns33="http://xmlns.oracle.com/apps/crmCommon/salesParties/accountService/" xmlns:ns39="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceDistributions" xmlns:ns29="http://xml.oracle.com/adapters/extension" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns41="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/relatedInvoices" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns50="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Suppliers/sites/assignments" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns43="http://xmlns.oracle.com/cloud/adapter/erp/GetRelatedInvoicePayment_REQUEST" xmlns:ns37="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices" xmlns:ns38="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:ns40="http://xmlns.oracle.com/cloud/adapters/fscmRestApp" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:ns36="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceDistributions/invoiceDistributionDff" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns51="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/getSupplierSites_REQUEST/RESTOUTREQ" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns44="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments" xmlns:ns3="http://xmlns.oracle.com/cloud/adapter/erp/GetInvoice_REQUEST" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/GetInvoice_REQUEST/RESTOUTREQ" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns34="http://xmlns.oracle.com/apps/crmCommon/salesParties/accountService/types/" xmlns:ns46="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Suppliers/sites/DFF" xmlns:ns47="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Suppliers/sites" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns49="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Suppliers/sites/thirdPartyPaymentRelationships" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns30="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns15="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/relatedInvoices/relatedInvoiceGdf">
+                - '  <xsl:param name="GetRelatedInvoicePayment" xml:id="id_70"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:getAll xml:id="id_12">'
+                - '      <nstrgmpr:QueryParameters xml:id="id_46">'
+                - '        <nstrgmpr:expand xml:id="id_104">'
+                - '          <xsl:value-of xml:id="id_105" select="&apos;sites&apos;"/>'
+                - '        <nstrgmpr:query xml:id="id_47">'
+                - '          <xsl:value-of xml:id="id_48" select="concat (&quot;SupplierNumber=&quot;, $GetRelatedInvoicePayment/nsmpr1:getResponse/nsmpr1:PayablesPayments/ns40:SupplierNumber )"/>'
+                - ""
+            - Invoke: getSupplierSites(i4)
+              application:
+                Application: getSupplierSites(OUTL-BRT-APP-ERPPIM_WACSERPPIM)
+                name: getSupplierSites
+                adapter:
+                    code: OUTL-BRT-APP-ERPPIM_WACSERPPIM
+                properties:
+                    - name: operationPath
+                      value: http://xmlns.oracle.com/cloud/adapter/erp/getSupplierSites_REQUEST/getAll
+            - Stitch: Stitch(sh0)
+              stitchNamespaceResolver:
+                prefixnamespacemap:
+                    ns23: http://xmlns.oracle.com/cloud/adapter/erp/GetRelatedInvoicePayment_REQUEST/types
+                    ns60: http://xmlns.oracle.com/cloud/adapter/erp/getSupplierSites_REQUEST/types
+              stitchVariables:
+                - name: GetRelatedInvoicePayment
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/erp/GetRelatedInvoicePayment_REQUEST/types}getResponse'
+                    uriToSchema: ../../application_67/inbound_68/resourcegroup_69/GetRelatedInvoicePayment_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+                - name: getSupplierSites
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/erp/getSupplierSites_REQUEST/types}getAllResponse'
+                    uriToSchema: ../../application_1621/inbound_1622/resourcegroup_1623/getSupplierSites_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+                - name: getSupplierSites_GV
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/erp/getSupplierSites_REQUEST/types}getAllResponse'
+                    uriToSchema: ../../application_1621/inbound_1622/resourcegroup_1623/getSupplierSites_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+                - name: GetRelatedInvPymntResp_GV
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/erp/GetRelatedInvoicePayment_REQUEST/types}getResponse'
+                    uriToSchema: ../../application_67/inbound_68/resourcegroup_69/GetRelatedInvoicePayment_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+              stitchSentences:
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: $GetRelatedInvoicePayment/ns23:getResponse
+                    returnType: XML_TYPE_NODE_NODESET
+                  to:
+                    type: XPathPath
+                    path: $GetRelatedInvPymntResp_GV/ns23:getResponse
+                    isLastStepXsdAnyType: false
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: $getSupplierSites/ns60:getAllResponse
+                    returnType: XML_TYPE_NODE_NODESET
+                  to:
+                    type: XPathPath
+                    path: $getSupplierSites_GV/ns60:getAllResponse
+                    isLastStepXsdAnyType: false
+            - Catch: Catch(tc2)
+              faultname: APIInvocationError
+              statements:
+                - Stop: EHStop(eh4)
+            - CatchAll: CatchAll(ta2)
+              statements:
+                - Stop: EHStop(eh5)
+              icsfaultfilepath: ../resources/processor_671/resourcegroup_672/ICSFault.xsd
+        - ForLoop: ForLoop(f0)
+          expressionProperties:
+            xpathExpression: $GetRelatedInvPymntResp_GV/nsmpr11:getResponse/nsmpr11:PayablesPayments/nsmpr5:relatedInvoices
+            namespaceList: nsmpr11=http://xmlns.oracle.com/cloud/adapter/erp/GetRelatedInvoicePayment_REQUEST/types nsmpr5=http://xmlns.oracle.com/cloud/adapters/fscmRestApp
+            variableName: CurrentRelatedInv
+          currentRecordVarName: CurrentRelatedInv
+          statements:
+            - Try: Try(t1)
+              username: Scope_GetInvoice
+              statements:
+                - Map: Map(m1)
+                  xsltfilepath: ../resources/processor_239/resourcegroup_242/req_2c2c0b6becbf4e76a6b3bc280913755f.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:client="http://xmlns.oracle.com/fa/event" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/erp/GetInvoice_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:nsmpr0="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:types="http://xmlns.oracle.com/apps/crmCommon/salesParties/accountService/types/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nssrcdfl="http://xmlns.oracle.com/apps/financials/payables/payments/singlePayments/model/entity/events" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/erp/GetInvoice_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/erp/subscribePayablesPaymentCreatedEvent_REQUEST" xmlns:tns="http://xmlns.oracle.com/apps/crmCommon/salesParties/accountService/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/subscribePayablesPaymentCreatedEvent_REQUEST/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" plnk client oraext xsd xp20 nssrcdfl ora oracle-xsl-mapper nsmpr1 xsi fn nssrcmpr xsl ignore01 ns51 ns52 ns53 ns54" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/erp/GetPO_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/erp/GetRelatedInvoicePayment_REQUEST/types" xmlns:nsmpr4="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns40="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceDistributions/invoiceDistributionProjectDff" xmlns:ns34="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/GetRelatedInvoicePayment_REQUEST/RESTOUTREQ" xmlns:ns39="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceDistributions" xmlns:ns28="http://xml.oracle.com/adapters/extension" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns42="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceDistributions/invoiceDistributionGdf" xmlns:ns31="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/relatedInvoices" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns37="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices" xmlns:ns38="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns29="http://xmlns.oracle.com/cloud/adapters/fscmRestApp" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:ns41="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceLineProjectDff" xmlns:ns33="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/GetPO_REQUEST/RESTOUTREQ" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns35="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/GetInvoice_REQUEST/RESTOUTREQ" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns43="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceLineGdf" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns4="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/relatedInvoices/relatedInvoiceGdf" xmlns:ns51="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PurchaseOrders/lines/schedules/distributions" xmlns:ns52="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PurchaseOrders/lines/schedules" xmlns:ns53="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PurchaseOrders/lines" xmlns:ns54="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PurchaseOrders" xmlns:ns59="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/paymentGdf" xmlns:ns60="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/paymentDff" xmlns:ns3="http://xmlns.oracle.com/cloud/adapter/erp/GetRelatedInvoicePayment_REQUEST" xmlns:ns58="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceDistributions/invoiceDistributionDff" xmlns:ns55="http://xmlns.oracle.com/procmon" xmlns:ns56="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd">
+                    - '  <xsl:param name="CurrentRelatedInv" xml:id="id_50"/>'
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:get xml:id="id_12">'
+                    - '      <nstrgmpr:TemplateParameters xml:id="id_31">'
+                    - '        <nstrgmpr:id xml:id="id_32">'
+                    - '          <xsl:value-of xml:id="id_33" select="$CurrentRelatedInv/ns29:relatedInvoices/ns33:InvoiceId"/>'
+                    - '      <nstrgmpr:QueryParameters xml:id="id_70">'
+                    - '        <nstrgmpr:expand xml:id="id_71">'
+                    - '          <xsl:value-of xml:id="id_72" select="&quot;invoiceLines.invoiceDistributions&quot;"/>'
+                    - ""
+                - Invoke: GetInvoice(i1)
+                  application:
+                    Application: GetInvoice(OUTL-BRT-ERPCLOUD_WACSFPRC)
+                    name: GetInvoice
+                    adapter:
+                        code: OUTL-BRT-ERPCLOUD_WACSFPRC
+                    properties:
+                        - name: operationPath
+                          value: http://xmlns.oracle.com/cloud/adapter/erp/GetInvoice_REQUEST/get
+                - Stitch: Stitch(sh1)
+                  stitchNamespaceResolver:
+                    prefixnamespacemap:
+                        ns20: http://xmlns.oracle.com/cloud/adapter/erp/GetInvoice_REQUEST/types
+                  stitchVariables:
+                    - name: GetInvoice
+                      datatype:
+                        type: XMLComplex
+                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/erp/GetInvoice_REQUEST/types}getResponse'
+                        uriToSchema: ../../application_227/inbound_228/resourcegroup_229/GetInvoice_REQUEST.wsdl
+                      access: SOURCE_AND_TARGET
+                    - name: GetInvoiceResp_GV
+                      datatype:
+                        type: XMLComplex
+                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/erp/GetInvoice_REQUEST/types}getResponse'
+                        uriToSchema: ../../application_227/inbound_228/resourcegroup_229/GetInvoice_REQUEST.wsdl
+                      access: SOURCE_AND_TARGET
+                  stitchSentences:
+                    - operation: Assign
+                      from:
+                        type: XPathExpression
+                        expression: $GetInvoice/ns20:getResponse
+                        returnType: XML_TYPE_NODE_NODESET
+                      to:
+                        type: XPathPath
+                        path: $GetInvoiceResp_GV/ns20:getResponse
+                        isLastStepXsdAnyType: false
+                - ForLoop: ForLoop(f1)
+                  expressionProperties:
+                    xpathExpression: $GetInvoice/nsmpr9:getResponse/nsmpr9:Invoices/nsmpr5:invoiceLines
+                    namespaceList: nsmpr9=http://xmlns.oracle.com/cloud/adapter/erp/GetInvoice_REQUEST/types nsmpr5=http://xmlns.oracle.com/cloud/adapters/fscmRestApp
+                    variableName: CurrentInvoiceLine
+                  currentRecordVarName: CurrentInvoiceLine
+                  statements:
+                    - Switch: Switch(s5)
+                      routes:
+                        - Route: Check Line Type(sc10)
+                          exprProperties:
+                            xpathExpression: $CurrentInvoiceLine/nsmpr5:invoiceLines/nsmpr6:LineType != "Tax" and $Var_InvoiceFrExternalPRFlag = "false"
+                            namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices nsmpr5=http://xmlns.oracle.com/cloud/adapters/fscmRestApp
+                            expressionName: Check Line Type
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: CurrentInvoiceLine
+                                  rootElement: '{http://xmlns.oracle.com/cloud/adapters/fscmRestApp}invoiceLines'
+                                - VariableName: Var_InvoiceFrExternalPRFlag
+                                  rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                          statements:
+                            - ForLoop: ForLoop(f3)
+                              expressionProperties:
+                                xpathExpression: $CurrentInvoiceLine/nsmpr5:invoiceLines/nsmpr6:invoiceDistributions
+                                namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices nsmpr5=http://xmlns.oracle.com/cloud/adapters/fscmRestApp
+                                variableName: CurreILInvDist
+                              currentRecordVarName: CurreILInvDist
+                              statements:
+                                - ForLoop: ForLoop(f4)
+                                  expressionProperties:
+                                    xpathExpression: $CurreILInvDist/nsmpr6:invoiceDistributions/nsmpr4:links
+                                    namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices nsmpr4=http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines
+                                    variableName: CurrentInvDistLink
+                                  currentRecordVarName: CurrentInvDistLink
+                                  statements:
+                                    - Switch: Switch(s6)
+                                      routes:
+                                        - Route: Invoice Distribution DFF(sc12)
+                                          exprProperties:
+                                            xpathExpression: $CurrentInvDistLink/nsmpr4:links/nsmpr4:name = "invoiceDistributionDff"
+                                            namespaceList: nsmpr4=http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines
+                                            expressionName: Invoice Distribution DFF
+                                          stateInfo:
+                                            variablesReferenced:
+                                                - VariableName: CurrentInvDistLink
+                                                  rootElement: '{http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines}links'
+                                          statements:
+                                            - Map: Map(m2)
+                                              xsltfilepath: ../resources/processor_1426/resourcegroup_1429/req_f210d50e811b4149848345c0e4a8490b.xsl
+                                              mapsentences:
+                                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:client="http://xmlns.oracle.com/fa/event" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/erp/GetInvoiceDistributionDFF_REQUEST" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:types="http://xmlns.oracle.com/apps/crmCommon/salesParties/accountService/types/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/erp/GetInvoiceDistributionDFF_REQUEST/types" xmlns:inp1="http://xmlns.oracle.com/apps/financials/payables/payments/singlePayments/model/entity/events" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:ns5="http://xmlns.oracle.com/cloud/adapter/erp/subscribePayablesPaymentCreatedEvent_REQUEST" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:tns="http://xmlns.oracle.com/apps/crmCommon/salesParties/accountService/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/subscribePayablesPaymentCreatedEvent_REQUEST/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" client oraext xsd xp20 inp1 ora oracle-xsl-mapper ns5 nssrcdfl xsi fn nssrcmpr xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapters/fscmRestApp" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/erp/GetInvoice_REQUEST/types" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/erp/GetRelatedInvoicePayment_REQUEST/types" xmlns:nsmpr5="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns42="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/GetRelatedInvoicePayment_REQUEST/RESTOUTREQ" xmlns:ns35="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceDistributions" xmlns:ns31="http://xml.oracle.com/adapters/extension" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns38="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/relatedInvoices" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns37="http://xmlns.oracle.com/cloud/adapter/erp/GetRelatedInvoicePayment_REQUEST" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns34="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceDistributions/invoiceDistributionDff" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:ns43="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/GetInvoiceDistributionDFF_REQUEST/RESTOUTREQ" xmlns:ns13="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments" xmlns:ns3="http://xmlns.oracle.com/cloud/adapter/erp/GetInvoice_REQUEST" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns40="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/GetInvoice_REQUEST/RESTOUTREQ" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns32="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns39="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/relatedInvoices/relatedInvoiceGdf">
+                                                - '  <xsl:param name="CurrentInvDistLink" xml:id="id_50"/>'
+                                                - '  <xsl:template match="/" xml:id="id_11">'
+                                                - '    <nstrgmpr:getAll xml:id="id_12">'
+                                                - '      <ns43:ConnectivityProperties xml:id="id_64">'
+                                                - '        <ns43:RestAPI xml:id="id_65">'
+                                                - '          <ns43:AbsoluteEndpointURI xml:id="id_66">'
+                                                - '            <xsl:value-of xml:id="id_67" select="$CurrentInvDistLink/nsmpr1:links/nsmpr1:href"/>'
+                                                - ""
+                                            - Invoke: GetInvoiceDistributionDFF(i2)
+                                              application:
+                                                Application: GetInvoiceDistributionDFF(OUTL-BRT-ERPCLOUD_WACSFPRC)
+                                                name: GetInvoiceDistributionDFF
+                                                adapter:
+                                                    code: OUTL-BRT-ERPCLOUD_WACSFPRC
+                                                properties:
+                                                    - name: operationPath
+                                                      value: http://xmlns.oracle.com/cloud/adapter/erp/GetInvoiceDistributionDFF_REQUEST/getAll
+                                            - Assignments: AssignImportSrcValue(l4)
+                                              name: AssignImportSrcValue
+                                              assignments:
+                                                - Assignment: Assignment(a8)
+                                                  variableName: Var_ItemContent
+                                                  variableType: string
+                                                  expressionProperties:
+                                                    xpathExpression: $GetInvoiceDistributionDFF/nsmpr7:getAllResponse/nsmpr7:items[1]
+                                                    namespaceList: nsmpr7=http://xmlns.oracle.com/cloud/adapter/erp/GetInvoiceDistributionDFF_REQUEST/types
+                                                    variableName: Var_ItemContent
+                                                    variableType: string
+                                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                - Assignment: Assignment(a9)
+                                                  variableName: Var_ImportSourceValue
+                                                  variableType: string
+                                                  expressionProperties:
+                                                    xpathExpression: substring-before(substring-after( $Var_ItemContent ,'WACSWACS'),'selfhttp')
+                                                    variableName: Var_ImportSourceValue
+                                                    variableType: string
+                                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Switch: Switch(s7)
+                                              routes:
+                                                - Route: Check source value(sc14)
+                                                  exprProperties:
+                                                    xpathExpression: $Var_ImportSourceValue = dvm:lookupValue("OUTL-BRT-WACS_FPRC_ConfigProps", "PropertyName", "fprc.interface.sourcecode", "Value", "fprc.interface.sourcecode.error")
+                                                    namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                                                    expressionName: Check source value
+                                                  stateInfo:
+                                                    variablesReferenced:
+                                                        - VariableName: Var_ImportSourceValue
+                                                          rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                                                    referencedLookupData:
+                                                        - lookup-table-name-with-location: OUTL-BRT-WACS_FPRC_ConfigProps
+                                                          source: '"PropertyName"'
+                                                          target: '"Value"'
+                                                  statements:
+                                                    - Assignments: AssignTrueToInvRelatedToExtPRFlag(l3)
+                                                      name: AssignTrueToInvRelatedToExtPRFlag
+                                                      assignments:
+                                                        - Assignment: Assignment(a3)
+                                                          variableName: Var_InvoiceFrExternalPRFlag
+                                                          variableType: string
+                                                          expressionProperties:
+                                                            xpathExpression: '''true'''
+                                                            variableName: Var_InvoiceFrExternalPRFlag
+                                                            variableType: string
+                                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                                - Route: Otherwise(sc15)
+                                                  exprProperties:
+                                                    xpathExpression: "true"
+                                                    expressionName: Otherwise
+                                                  stateInfo: null
+                                                  statements: []
+                                        - Route: Otherwise(sc13)
+                                          exprProperties:
+                                            xpathExpression: "true"
+                                            expressionName: Otherwise
+                                          stateInfo: null
+                                          statements: []
+                        - Route: Otherwise(sc11)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: null
+                          statements: []
+                - Catch: Catch(tc1)
+                  faultname: APIInvocationError
+                  statements:
+                    - Stop: EHStop(eh2)
+                - CatchAll: CatchAll(ta1)
+                  statements:
+                    - Stop: EHStop(eh3)
+                  icsfaultfilepath: ../resources/processor_663/resourcegroup_664/ICSFault.xsd
+            - Switch: Switch(s0)
+              routes:
+                - Route: Invoice From External PR(sc0)
+                  exprProperties:
+                    xpathExpression: $Var_InvoiceFrExternalPRFlag = "true"
+                    expressionName: Invoice From External PR
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: Var_InvoiceFrExternalPRFlag
+                          rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                  statements:
+                    - Try: Try(t3)
+                      username: Scope_InvokeWACS_InvoiceSync_Pmnt
+                      statements:
+                        - Map: Map(m3)
+                          xsltfilepath: ../resources/processor_390/resourcegroup_393/req_7366592cf25d492e9b78525f82b8af0e.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:client="http://xmlns.oracle.com/fa/event" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nssrcdfl="http://xmlns.oracle.com/apps/financials/payables/payments/singlePayments/model/entity/events" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/oracleutilities/WACS_InvoiceSync_Pmnt" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/erp/subscribePayablesPaymentCreatedEvent_REQUEST" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST/types" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/subscribePayablesPaymentCreatedEvent_REQUEST/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/erp/GetInvoice_REQUEST/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/erp/GetPO_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/erp/GetRelatedInvoicePayment_REQUEST/types" xmlns:nsmpr4="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:ns36="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceDistributions/invoiceDistributionProjectDff" xmlns:ns28="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns49="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/GetRelatedInvoicePayment_REQUEST/RESTOUTREQ" xmlns:tns="http://xmlns.oracle.com/apps/crmCommon/salesParties/accountService/" xmlns:ns35="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceDistributions" xmlns:ns25="http://xml.oracle.com/adapters/extension" xmlns:ns50="http://www.oracle.rest.converters.autogeneratedns.com" xmlns:ns42="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PurchaseOrders/lines/schedules/distributions" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:ns45="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PurchaseOrders" xmlns:ns38="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceDistributions/invoiceDistributionGdf" xmlns:ns46="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/relatedInvoices" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns51="http://www.oracle.rest.converters.autogeneratedns.com/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:ns33="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices" xmlns:ns34="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:ns40="http://xmlns.oracle.com/cloud/adapters/fscmRestApp" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:ns44="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PurchaseOrders/lines" xmlns:ns37="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceLineProjectDff" xmlns:ns48="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments" xmlns:ns41="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/GetPO_REQUEST/RESTOUTREQ" xmlns:ns43="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PurchaseOrders/lines/schedules" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/GetInvoice_REQUEST/RESTOUTREQ" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:types="http://xmlns.oracle.com/apps/crmCommon/salesParties/accountService/types/" xmlns:ns39="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceLineGdf" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns4="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/relatedInvoices/relatedInvoiceGdf" xmlns:ns60="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Invoices/invoiceLines/invoiceDistributions/invoiceDistributionDff" xmlns:ns61="http://xmlns.oracle.com/cloud/adapter/erp/GetRelatedInvoicePayment_REQUEST" xmlns:ns62="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/paymentGdf" xmlns:ns3="http://xmlns.oracle.com/cloud/adapter/erp/GetInvoice_REQUEST" xmlns:ns63="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/PayablesPayments/paymentDff" xmlns:ns64="http://xmlns.oracle.com/procmon" xmlns:ns65="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:ns77="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_response/W1InvoiceSyn/input/invoice/lines/_data/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:ns79="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_response/W1InvoiceSyn/input/invoice/lines/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:ns67="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_request/W1InvoiceSyn/input/invoice/header/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2047256691" xmlns:ns70="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_response/W1InvoiceSyn/output/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:ns71="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_request/W1InvoiceSyn/input/invoice/header/paymentType/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:ns73="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_request/W1InvoiceSyn/output/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:ns66="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_request/W1InvoiceSyn/input/invoice/lines/_data/itemType/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:ns80="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_request/W1InvoiceSyn/input/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:ns81="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_response/W1InvoiceSyn/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:ns82="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_request/W1InvoiceSyn/input/invoice/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:ns83="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_request/W1InvoiceSyn/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2068686068" xmlns:ns68="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_response/W1InvoiceSyn/input/invoice/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:ns69="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_response/W1InvoiceSyn/input/invoice/lines/_data/itemType/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:ns72="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_request/W1InvoiceSyn/input/invoice/lines/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:ns74="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_response/W1InvoiceSyn/input/invoice/header/paymentType/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:ns75="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_response/W1InvoiceSyn/input/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns76="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_request/W1InvoiceSyn/input/invoice/lines/_data/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" xmlns:ns78="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.SYNCINVOICE_response/W1InvoiceSyn/input/invoice/header/oracleutilities/WACS_InvoiceSync_Pmnt_REQUEST" version="2.0" xml:id="id_1" exclude-result-prefixes=" plnk client oraext xsd xp20 nssrcdfl ora oracle-xsl-mapper nsmpr0 xsi fn nssrcmpr xsl soap ignore01 ns60 ns61 ns62 ns3 ns63 ns8 orajs13 ns12 ns9 orajs5 orajs14 orajs12 ns7 ns13 ns11 ns10 ns14 ns109 ns110 ns111 ns112 ns108 ns113 ns107 ns106 ns114" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:ns13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:ns14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/erp/getSupplierSites_REQUEST/types" xmlns:ns109="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Suppliers/sites" xmlns:ns110="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Suppliers" xmlns:ns111="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Suppliers/sites/thirdPartyPaymentRelationships" xmlns:ns112="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Suppliers/sites/assignments" xmlns:ns108="http://xmlns.oracle.com/apps/financials/expenses/shared/common/expenseExternalService/types/" xmlns:ns113="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/erp/getSupplierSites_REQUEST/RESTOUTREQ" xmlns:ns107="http://xmlns.oracle.com/apps/financials/expenses/shared/common/expenseExternalService/" xmlns:ns106="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Suppliers/sites/DFF" xmlns:ns114="http://xmlns.oracle.com/cloud/adapters/fscmRestApp/Suppliers/sites/globalDFF">
+                            - '  <xsl:param name="GetInvoiceResp_GV" xml:id="id_29"/>'
+                            - '  <xsl:param name="CurrentRelatedInv" xml:id="id_87"/>'
+                            - '  <xsl:param name="getSupplierSites_GV" xml:id="id_285"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:syncInvoice xml:id="id_12">'
+                            - '      <nstrgmpr:components.schemas.SYNCINVOICE_request>'
+                            - '        <ns51:W1InvoiceSyn>'
+                            - '          <ns83:input>'
+                            - '            <ns80:externalSystem>'
+                            - '              <xsl:value-of select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.externalsystem&quot;, &quot;Value&quot;, &quot;wacs.externalsystem.error&quot; )"/>'
+                            - '            <ns80:externalReferenceId>'
+                            - '              <xsl:value-of select="$GetInvoiceResp_GV/nsmpr1:getResponse/nsmpr1:Invoices/ns40:InvoiceId"/>'
+                            - '            <ns80:invoice>'
+                            - '              <ns82:header>'
+                            - '                <ns67:invoiceHeaderExternalId>'
+                            - '                  <xsl:value-of select="$GetInvoiceResp_GV/nsmpr1:getResponse/nsmpr1:Invoices/ns40:InvoiceId"/>'
+                            - '                <ns67:invoiceNumber>'
+                            - '                  <xsl:value-of select="$GetInvoiceResp_GV/nsmpr1:getResponse/nsmpr1:Invoices/ns40:InvoiceNumber"/>'
+                            - '                <ns67:vendorLocationExternalId>'
+                            - '                  <xsl:value-of select="$getSupplierSites_GV/nsmpr5:getAllResponse/nsmpr5:items[1]/ns40:sites[1]/ns110:SupplierSiteId"/>'
+                            - '                <ns67:payToVendorLocationExternalId>'
+                            - '                  <xsl:value-of select="$getSupplierSites_GV/nsmpr5:getAllResponse/nsmpr5:items[1]/ns40:sites[1]/ns110:SupplierSiteId"/>'
+                            - '                <ns67:paymentTerms>'
+                            - '                  <xsl:value-of select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_PaymentTerm&quot;, &quot;FPRC_PaymentTerm&quot;, $GetInvoiceResp_GV/nsmpr1:getResponse/nsmpr1:Invoices/ns40:PaymentTerms, &quot;WACS_PaymentTerm&quot;, $GetInvoiceResp_GV/nsmpr1:getResponse/nsmpr1:Invoices/ns40:PaymentTerms )"/>'
+                            - '                <ns67:numberOfDays>'
+                            - '                  <xsl:value-of select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_PaymentTerm&quot;, &quot;FPRC_PaymentTerm&quot;, $GetInvoiceResp_GV/nsmpr1:getResponse/nsmpr1:Invoices/ns40:PaymentTerms, &quot;FPRC_NumberOfDays&quot;, &quot;&quot; )"/>'
+                            - '                <ns67:vendorDate>'
+                            - '                  <xsl:value-of select="$GetInvoiceResp_GV/nsmpr1:getResponse/nsmpr1:Invoices/ns40:InvoiceDate"/>'
+                            - '                <ns67:currency>'
+                            - '                  <xsl:value-of select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_CurrencyCode&quot;, &quot;FPRC_CurrencyCode&quot;, $GetInvoiceResp_GV/nsmpr1:getResponse/nsmpr1:Invoices/ns40:PaymentCurrency, &quot;WACS_CurrencyCode&quot;, $GetInvoiceResp_GV/nsmpr1:getResponse/nsmpr1:Invoices/ns40:PaymentCurrency )"/>'
+                            - '                <xsl:choose xml:id="id_159">'
+                            - '                  <xsl:when xml:id="id_160" test="$GetInvoiceResp_GV/nsmpr1:getResponse/nsmpr1:Invoices/ns40:ConversionRate != &quot;&quot;">'
+                            - '                    <ns67:exchangeRate>'
+                            - '                      <xsl:value-of select="number (fn:format-number (number ($GetInvoiceResp_GV/nsmpr1:getResponse/nsmpr1:Invoices/ns40:ConversionRate ), &quot;#.#######&quot; ) )"/>'
+                            - '                  <xsl:otherwise xml:id="id_175">'
+                            - '                    <ns67:exchangeRate xml:id="id_71">'
+                            - '                      <xsl:value-of xml:id="id_177" select="1"/>'
+                            - '                <ns67:paymentDate>'
+                            - '                  <xsl:value-of select="substring-before (/nssrcmpr:onEvent/nssrcdfl:ApPaymentCreatedInfo/nssrcdfl:CheckDate/nssrcdfl:newValue/@value, &quot;T&quot; )"/>'
+                            - '                <ns67:paymentNumber>'
+                            - '                  <xsl:value-of select="/nssrcmpr:onEvent/nssrcdfl:ApPaymentCreatedInfo/nssrcdfl:CheckNumber/nssrcdfl:newValue/@value"/>'
+                            - '                <ns67:paymentType>'
+                            - '                  <xsl:value-of select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_PaymentType&quot;, &quot;FPRC_PaymentType&quot;, /nssrcmpr:onEvent/nssrcdfl:ApPaymentCreatedInfo/nssrcdfl:PaymentTypeFlag/nssrcdfl:newValue/@value, &quot;WACS_CheckType&quot;, /nssrcmpr:onEvent/nssrcdfl:ApPaymentCreatedInfo/nssrcdfl:PaymentTypeFlag/nssrcdfl:newValue/@value )"/>'
+                            - '                <ns67:paymentAmount>'
+                            - '                  <xsl:value-of select="number (fn:format-number (number ($CurrentRelatedInv/ns40:relatedInvoices/ns48:AmountPaidPaymentCurrency ), &quot;#.###&quot; ) )"/>'
+                            - '              <xsl:if xml:id="id_266" test="$CurrentRelatedInv/ns40:relatedInvoices/ns48:DiscountTaken != 0">'
+                            - '                <ns82:lines>'
+                            - '                  <ns72:_data>'
+                            - '                    <ns76:invoiceLineExternalId>'
+                            - '                      <xsl:value-of select="$CurrentRelatedInv/ns40:relatedInvoices/ns48:InvoicePaymentId"/>'
+                            - '                    <ns76:description>'
+                            - '                      <xsl:value-of select="&apos;Discount&apos;"/>'
+                            - '                    <ns76:itemType>'
+                            - '                      <xsl:value-of select="&apos;W1DS&apos;"/>'
+                            - '                    <ns76:quantity>'
+                            - '                      <xsl:value-of select="1"/>'
+                            - '                    <ns76:unitPrice>'
+                            - '                      <xsl:value-of select="0 - $CurrentRelatedInv/ns40:relatedInvoices/ns48:DiscountTaken"/>'
+                            - '                    <ns76:lineAmount>'
+                            - '                      <xsl:value-of select="0 - $CurrentRelatedInv/ns40:relatedInvoices/ns48:DiscountTaken"/>'
+                            - ""
+                        - Invoke: WACS_InvoiceSync_Pmnt(i3)
+                          application:
+                            Application: WACS_InvoiceSync_Pmnt(OUTL-BRT-REST-WACS_WACSFPRC)
+                            name: WACS_InvoiceSync_Pmnt
+                            adapter:
+                                code: OUTL-BRT-REST-WACS_WACSFPRC
+                            properties:
+                                - name: operationPath
+                                  value: /
+                                - name: HttpVerb
+                                  value: POST
+                                - name: ResourceURI
+                                  value: https://us-phoenix-1.utilities-cloud.oracleindustry.com:443/c2g65p/prod/wac/rest/apis/asset/purchasing/invoiceSynchronization/
+                        - CatchAll: CatchAll(ta0)
+                          statements:
+                            - Switch: Switch(s2)
+                              routes:
+                                - Route: (sc4)
+                                  exprProperties:
+                                    xpathExpression: $Scope_InvokeWACS_InvoiceSync_PmntFaultObject/nsmpr10:fault/nsmpr10:errorCode != "http://schemas.oracle.com/bpel/extension}remoteFault"
+                                    namespaceList: nsmpr10=http://www.oracle.com/2014/03/ics/fault
+                                  stateInfo:
+                                    variablesReferenced:
+                                        - VariableName: Scope_InvokeWACS_InvoiceSync_PmntFaultObject
+                                          rootElement: '{http://www.oracle.com/2014/03/ics/fault}fault'
+                                  statements:
+                                    - Assignments: Assign_ErrorData(l1)
+                                      name: Assign_ErrorData
+                                      assignments:
+                                        - Assignment: Assignment(a1)
+                                          variableName: Var_ErrorText
+                                          variableType: string
+                                          expressionProperties:
+                                            xpathExpression: concat($Scope_InvokeWACS_InvoiceSync_PmntFaultObject/nsmpr10:fault/nsmpr10:details,":", substring-before(substring-after(ora:getContentAsString($Scope_InvokeWACS_InvoiceSync_PmntFaultObject/nsmpr10:fault),'"messageText":"'),'","longDescription'))
+                                            namespaceList: nsmpr10=http://www.oracle.com/2014/03/ics/fault ora=http://schemas.oracle.com/xpath/extension
+                                            variableName: Var_ErrorText
+                                            variableType: string
+                                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - xmlname:
+                                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                                        local: throw
+                                      attrs:
+                                        - name:
+                                            space: ""
+                                            local: id
+                                          value: th0
+                                        - name:
+                                            space: ""
+                                            local: refUri
+                                          value: processor_802
+                                      content: ""
+                                      statements: []
+                                - Route: Otherwise(sc5)
+                                  exprProperties:
+                                    xpathExpression: "true"
+                                    expressionName: Otherwise
+                                  stateInfo: null
+                                  statements: []
+                          icsfaultfilepath: ../resources/processor_652/resourcegroup_653/ICSFault.xsd
+                - Route: Otherwise(sc1)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta3)
+          statements:
+            - Logger: Logger(lg0)
+              name: LogFault
+              description: ""
+              propertyfile: ../resources/processor_1727/resourcegroup_1745/expr.properties
+              expressionProperties:
+                xpathExpression: oraext:get-content-as-string($GlobalFaultObject/ics:fault)
+                namespaceList: ics=http://www.oracle.com/2014/03/ics/fault oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                variableName: LogFault
+            - Switch: Switch(s1)
+              routes:
+                - Route: SendEmail(sc2)
+                  exprProperties:
+                    xpathExpression: orajs5:TSGT_DetermineEmailFlag(dvm:lookupValue('OUTL-BRT-WACS_FPRC_ConfigProps', 'PropertyName', 'email.flag', 'Value', 'true') ,$selfProperties/ns50:properties/ns50:email_flag_override_value)
+                    namespaceList: orajs5=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1885914742 ns50=http://www.oracle.com/2014/03/ic/integration/properties dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                    expressionName: SendEmail
+                  stateInfo:
+                    referencedFunctionsWithTrackFlag:
+                        - '@type': XPathFunctionImpl
+                          functionName: TSGT_DetermineEmailFlag
+                          functionNamespace: http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1885914742
+                          functionTracked: true
+                          lookupFunction: false
+                    variablesReferenced:
+                        - VariableName: selfProperties
+                          rootElement: '{http://www.oracle.com/2014/03/ic/integration/properties}properties'
+                    referencedLookupData:
+                        - lookup-table-name-with-location: '"OUTL-BRT-WACS_FPRC_ConfigProps"'
+                          source: '"PropertyName"'
+                          target: '"Value"'
+                  statements:
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: notification
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: n0
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_702
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc3)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: {}
+                  statements:
+                    - Logger: Logger(lg1)
+                      name: LogPayload
+                      description: ""
+                      propertyfile: ../resources/processor_1736/resourcegroup_1743/expr.properties
+                      expressionProperties:
+                        xpathExpression: oraext:get-content-as-string(/ns44:onEvent)
+                        namespaceList: ns44=http://xmlns.oracle.com/cloud/adapter/erp/subscribePayablesPaymentCreatedEvent_REQUEST/types oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                        variableName: LogPayload
+            - Stop: EHStop(eh6)
+          icsfaultfilepath: ../resources/processor_681/resourcegroup_682/ICSFault.xsd

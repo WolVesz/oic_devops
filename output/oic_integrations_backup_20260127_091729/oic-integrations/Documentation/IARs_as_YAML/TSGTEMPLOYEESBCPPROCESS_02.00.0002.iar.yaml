@@ -1,0 +1,981 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_222
+      xsdfilepath: ../resources/processor_222/resourcegroup_223/ICSIntegrationMetadata.xsd
+    - GlobalVariable: (gtv2)
+      variableName: ContactsJob
+      variableType: $UpdateContacts/ns33:upsertResponse/ns33:bulkResponse
+    - GlobalVariable: (gtv3)
+      variableName: IsEmpty
+      variableType: simpleType
+    - GlobalVariable: (gtv0)
+      variableName: InProgress
+      variableType: simpleType
+    - GlobalVariable: (gtv4)
+      variableName: JobStatus
+      variableType: $GetStatus/ns26:getStatusForAllBatchesResponse/ns26:batchInfoList
+    - GlobalVariable: (gtv5)
+      variableName: CompleteResponse
+      variableType: $CompleteJob/ns14:finalBatchResponse/ns14:bulkResponse
+    - GlobalVariable: (gtv6)
+      variableName: TerminationJob
+      variableType: $UpdateTermination/ns47:upsertResponse/ns47:bulkResponse
+    - GlobalVariable: (gtv1)
+      variableName: Configs
+      variableType: $GetConfigs/ns22:executeResponse/ns25:response-wrapper
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: Batch ID
+              xpath: /execute/request-wrapper/EmployeesBatch/BatchID
+            - role: tracking_var_2
+              name: FileName
+              xpath: /execute/request-wrapper/EmployeesBatch/Extract/FileName
+            - role: tracking_var_3
+              name: tracking_var_3
+        - Switch: Switch(s6)
+          routes:
+            - Route: Adhoc(sc13)
+              exprProperties:
+                xpathExpression: boolean(string(normalize-space(/nsmpr8:execute/nsmpr2:request-wrapper/nsmpr2:EmployeesBatch/nsmpr2:Interface))) and normalize-space(/nsmpr8:execute/nsmpr2:request-wrapper/nsmpr2:EmployeesBatch/nsmpr2:Interface) != 'BCP'
+                namespaceList: nsmpr8=http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types nsmpr2=http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types
+                expressionName: Adhoc
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types}execute'
+              statements:
+                - Stop: Stop(st2)
+            - Route: Otherwise(sc14)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - Try: Try(t1)
+          username: Scope_GetConfigs
+          statements:
+            - Map: Map(m2)
+              xsltfilepath: ../resources/processor_1583/resourcegroup_1586/req_89017a76e59d41768366c5b58af50245.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetConfigs" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns9="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" exclude-result-prefixes=" oraext plnk xsd xp20 ns9 ora oracle-xsl-mapper nssrcmpr nssrcdfl xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/salesforce/CompleteJob_REQUEST" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateContacts_REQUEST" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateTermination_REQUEST" xmlns:nsmpr4="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns35="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigs_REQUEST/RESTOUTREQ" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:tns="urn:enterprise.soap.sforce.com" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/EmployeeTrigger_REQUEST/RESTINREQ" xmlns:ns27="http://xml.oracle.com/adapters/extension" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:ens="urn:sobject.enterprise.soap.sforce.com" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:fns="urn:fault.enterprise.soap.sforce.com" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns37="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigs_REQUEST/RESTOUTRES" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:casdk="http://xml.oracle.com/wsdl/extensions" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns29="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111">
+                - '  <xsl:param name="self" xml:id="id_44"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:execute xml:id="id_12">'
+                - '      <nstrgdfl:request-wrapper xml:id="id_48">'
+                - '        <nstrgdfl:Config xml:id="id_49">'
+                - '          <nstrgdfl:Interface xml:id="id_50">'
+                - '            <xsl:value-of xml:id="id_51" select="$self/nsmpr4:metadata/nsmpr4:integration/nsmpr4:name"/>'
+                - ""
+            - Invoke: GetConfigs(i1)
+              application:
+                Application: GetConfigs(TSGTRESTOICINVOK_CONN)
+                name: GetConfigs
+                adapter:
+                    code: TSGTRESTOICINVOK_CONN
+                properties:
+                    - name: operationPath
+                      value: http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/execute
+                    - name: HttpVerb
+                      value: POST
+                    - name: ResourceURI
+                      value: /api/integration/v1/flows/rest/TSGTGETCONFIGS_SERVICE/1.0/configs
+            - Stitch: Stitch(sh1)
+              stitchNamespaceResolver:
+                prefixnamespacemap:
+                    ns81: http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types
+                    ns83: http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types
+              stitchVariables:
+                - name: IsEmpty
+                  datatype:
+                    type: XMLSimple
+                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                  access: SOURCE_AND_TARGET
+                - name: InProgress
+                  datatype:
+                    type: XMLSimple
+                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                  access: SOURCE_AND_TARGET
+                - name: GetConfigs
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types}executeResponse'
+                    uriToSchema: ../../application_1571/inbound_1572/resourcegroup_1573/GetConfigs_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+                - name: Configs
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types}response-wrapper'
+                    uriToSchema: ../../application_1571/inbound_1572/resourcegroup_1573/GetConfigs_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+              stitchSentences:
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: $GetConfigs/ns81:executeResponse/ns83:response-wrapper
+                    returnType: XML_TYPE_NODE_NODESET
+                  to:
+                    type: XPathPath
+                    path: $Configs/ns83:response-wrapper
+                    isLastStepXsdAnyType: false
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: '''true'''
+                    returnType: XML_TYPE_ATOMIC
+                  to:
+                    type: XPathPath
+                    path: $IsEmpty
+                    isLastStepXsdAnyType: false
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: '''true'''
+                    returnType: XML_TYPE_ATOMIC
+                  to:
+                    type: XPathPath
+                    path: $InProgress
+                    isLastStepXsdAnyType: false
+        - Try: Try(t0)
+          username: Scope_CopyFile
+          statements:
+            - Map: Map(m0)
+              xsltfilepath: ../resources/processor_139/resourcegroup_142/req_1884b9540f1948a09fe64c980a0ed652.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns7="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/ftp/ReadExtract_REQUEST/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/ftp/ReadExtract_REQUEST" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" exclude-result-prefixes=" oraext plnk xsd xp20 ns7 ora oracle-xsl-mapper nssrcmpr xsi fn xsl nssrcdfl ignore01 nsmpr5 nsmpr6" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/EmployeeTrigger_REQUEST/RESTINREQ" xmlns:ns20="http://xml.oracle.com/adapters/extension" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/ftp/ReadExtract_REQUEST/types/dynamicftp" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns22="http://xmlns.oracle.com/ics/cloud/ftp/read/file/pull" xmlns:ns24="http://xmlns.oracle.com/pcbpel/adapter/opaque/" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/salesforce/CompleteJob_REQUEST" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateContacts_REQUEST" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateTermination_REQUEST">
+                - '  <xsl:param name="CompleteResponse" xml:id="id_50"/>'
+                - '  <xsl:param name="Configs" xml:id="id_51"/>'
+                - '  <xsl:param name="ContactsJob" xml:id="id_52"/>'
+                - '  <xsl:param name="InProgress" xml:id="id_53"/>'
+                - '  <xsl:param name="IsEmpty" xml:id="id_54"/>'
+                - '  <xsl:param name="JobStatus" xml:id="id_55"/>'
+                - '  <xsl:param name="TerminationJob" xml:id="id_56"/>'
+                - '  <xsl:param name="self" xml:id="id_57"/>'
+                - '  <xsl:param name="tracking_var_1" xml:id="id_58"/>'
+                - '  <xsl:param name="tracking_var_2" xml:id="id_59"/>'
+                - '  <xsl:param name="tracking_var_3" xml:id="id_60"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:SyncReadFile xml:id="id_12">'
+                - '      <ns22:FileReadRequest xml:id="id_21">'
+                - '        <ns22:filename xml:id="id_22">'
+                - '          <xsl:value-of xml:id="id_23" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:EmployeesBatch/nssrcdfl:Extract/nssrcdfl:FileName"/>'
+                - '        <ns22:directory xml:id="id_24">'
+                - '          <xsl:value-of xml:id="id_25" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:EmployeesBatch/nssrcdfl:Extract/nssrcdfl:FileFolder"/>'
+                - ""
+            - Invoke: ReadExtract(i0)
+              application:
+                Application: ReadExtract(TSGTFTP_CONN)
+                name: ReadExtract
+                adapter:
+                    code: TSGTFTP_CONN
+                properties:
+                    - name: Operation
+                      value: SyncReadFile
+                    - name: FtpConnectionType
+                      value: SFTP
+                    - name: Host
+                      value: '%%TSGTFTP_CONN_Host'
+                    - name: Port
+                      value: '%%TSGTFTP_CONN_Port'
+                    - name: SecurePort
+                      value: "990"
+            - Map: Map(m1)
+              xsltfilepath: ../resources/processor_159/resourcegroup_162/req_190d6c550d314aff93296938e0856a61.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns9="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteFile_REQUEST" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteFile_REQUEST/types" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" exclude-result-prefixes=" oraext plnk xp20 ns9 ora oracle-xsl-mapper nssrcmpr xsi fn xsl nssrcdfl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/ftp/ReadExtract_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns27="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns28="http://xmlns.oracle.com/cloud/staging/write" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/EmployeeTrigger_REQUEST/RESTINREQ" xmlns:ns21="http://xml.oracle.com/adapters/extension" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/ftp/ReadExtract_REQUEST" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/ftp/ReadExtract_REQUEST/types/dynamicftp" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns24="http://xmlns.oracle.com/ics/cloud/ftp/read/file/pull" xmlns:ns26="http://xmlns.oracle.com/pcbpel/adapter/opaque/" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST/types">
+                - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                - '  <xsl:param name="ReadExtract" xml:id="id_25"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:Write xml:id="id_12">'
+                - '      <ns26:opaqueElement xml:id="id_31">'
+                - '        <xsl:value-of xml:id="id_32" select="$ReadExtract/nsmpr0:SyncReadFileResponse/ns25:FileReadResponse/ns26:opaqueElement"/>'
+                - ""
+            - StageFile: WriteFile(sf0)
+              operation: Write
+              expressionProperties:
+                xpathExpression: /nsmpr4:execute/nsmpr6:request-wrapper/nsmpr6:EmployeesBatch/nsmpr6:Extract/nsmpr6:FileName
+                namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types nsmpr4=http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types
+              statements: []
+            - Switch: Switch(s4)
+              routes:
+                - Route: EmloyeeExtract(sc8)
+                  exprProperties:
+                    xpathExpression: starts-with(/nsmpr15:execute/nsmpr19:request-wrapper/nsmpr19:EmployeesBatch/nsmpr19:Extract/nsmpr19:FileName,'Employee_Extract')
+                    namespaceList: nsmpr15=http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types nsmpr19=http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types
+                    expressionName: EmloyeeExtract
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: /
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types}execute'
+                  statements:
+                    - Try: Try(t2)
+                      username: Scope_Extract
+                      statements:
+                        - StageFile: ReadExtractFile(sf2)
+                          operation: Read
+                          expressionProperties:
+                            xpathExpression: $WriteFile/nsmpr12:WriteResponse/nsmpr0:WriteResponse/nsmpr2:ICSFile/nsmpr2:FileReference
+                            namespaceList: nsmpr12=http://xmlns.oracle.com/cloud/adapter/stagefile/WriteFile_REQUEST/types nsmpr2=http://xmlns.oracle.com/cloud/ics/file/v1/types nsmpr0=http://xmlns.oracle.com/cloud/staging/write
+                          statements: []
+                        - Switch: Switch(s5)
+                          routes:
+                            - Route: not empty(sc10)
+                              exprProperties:
+                                xpathExpression: count($ReadExtractFile/nsmpr8:ReadResponse/nsmpr16:DATA_DS/nsmpr16:G_1/nsmpr16:G_2/nsmpr16:FILE_FRAGMENT/nsmpr16:Employee_Feed_V2/nsmpr16:Person) > 0
+                                namespaceList: nsmpr16=http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadExtractFile nsmpr8=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadExtractFile_REQUEST/types
+                                expressionName: not empty
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: ReadExtractFile
+                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/ReadExtractFile_REQUEST/types}ReadResponse'
+                              statements:
+                                - Map: Map(m3)
+                                  xsltfilepath: ../resources/processor_375/resourcegroup_378/req_530497e65a474a2f9475f43c06bb004b.xsl
+                                  mapsentences:
+                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                    - <xsl:stylesheet xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ctar="http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateContacts_REQUEST" xmlns:stgfr="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadExtractFile_REQUEST/types" xmlns:stgf="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadExtractFile" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:tns="urn:enterprise.soap.sforce.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fns="urn:fault.enterprise.soap.sforce.com" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/salesforce/CompleteJob_REQUEST" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/ftp/ReadExtract_REQUEST/types" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateTermination_REQUEST" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteFile_REQUEST/types" xmlns:nsmpr6="http://www.oracle.com/2014/03/ic/integration/metadata" version="2.0" exclude-result-prefixes=" oraext plnk xsd xp20 ns9 ora oracle-xsl-mapper nssrcmpr nssrcdfl xsi fn xsl ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6" ignore01:ignorexmlids="true">
+                                    - '  <xsl:param name="ReadExtractFile"/>'
+                                    - '  <xsl:template match="/">'
+                                    - '    <ctar:upsert>'
+                                    - '      <ctar:FF__Key_Contact__cs>'
+                                    - '        <xsl:for-each select="$ReadExtractFile/stgfr:ReadResponse/stgf:DATA_DS/stgf:G_1/stgf:G_2/stgf:FILE_FRAGMENT/stgf:Employee_Feed_V2/stgf:Person">'
+                                    - '          <xsl:variable name="assignment">'
+                                    - '            <xsl:choose>'
+                                    - '              <xsl:when test="count(stgf:Assignments/stgf:Assignment) = 1">'
+                                    - '                <xsl:copy-of select="stgf:Assignments/stgf:Assignment"/>'
+                                    - '              <xsl:when test="count(stgf:Assignments/stgf:Assignment) &gt; 1">'
+                                    - '                <xsl:copy-of select="stgf:Assignments/stgf:Assignment[./stgf:Assignment_Details/stgf:Type = &apos;E&apos; or ./stgf:Assignment_Details/stgf:Type = &apos;C&apos;][1]"/>'
+                                    - '          <ctar:FF__Key_Contact__c>'
+                                    - '            <ctar:externalIDFieldName>'
+                                    - '              <xsl:value-of select="&apos;Employee_ID__c&apos;"/>'
+                                    - '            <ctar:City__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(stgf:Person_Details/stgf:City)))">'
+                                    - '                  <xsl:value-of select="stgf:Person_Details/stgf:City"/>'
+                                    - '            <ctar:Employee_ID__c>'
+                                    - '              <xsl:value-of select="stgf:Person_Details/stgf:PersonNumber"/>'
+                                    - '            <ctar:FF__Email__c>'
+                                    - '              <xsl:value-of select="stgf:Person_Details/stgf:WorkEmail"/>'
+                                    - '            <ctar:FF__Company_Organization__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="stgf:Person_Details/stgf:EmpType = &apos;EMP&apos; and boolean(normalize-space(string($assignment/stgf:Assignment/stgf:Assignment_Details/stgf:Department)))">'
+                                    - '                  <xsl:value-of select="$assignment/stgf:Assignment/stgf:Assignment_Details/stgf:Department"/>'
+                                    - '                <xsl:when test="stgf:Person_Details/stgf:EmpType = &apos;CWK&apos;">Contractors</xsl:when>'
+                                    - '            <ctar:FF__First_Name__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(stgf:Person_Details/stgf:KnownAs)))">'
+                                    - '                  <xsl:value-of select="stgf:Person_Details/stgf:KnownAs"/>'
+                                    - '                <xsl:otherwise>'
+                                    - '                  <xsl:value-of select="stgf:Person_Details/stgf:FirstName"/>'
+                                    - '            <ctar:FF__Last_Name__c>'
+                                    - '              <xsl:value-of select="stgf:Person_Details/stgf:LastName"/>'
+                                    - '            <ctar:FF__Mobile_Phone__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(stgf:Person_Details/stgf:MPhoneAreaCode))) and boolean(normalize-space(string(stgf:Person_Details/stgf:MPhone)))">'
+                                    - '                  <xsl:value-of select="concat(stgf:Person_Details/stgf:MPhoneAreaCode,&apos;-&apos;,stgf:Person_Details/stgf:MPhone)"/>'
+                                    - '                <xsl:otherwise>'
+                                    - '                  <xsl:if test="boolean(normalize-space(string(stgf:Person_Details/stgf:MPhone)))">'
+                                    - '                    <xsl:value-of select="stgf:Person_Details/stgf:MPhone"/>'
+                                    - '            <ctar:FF__Phone__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(stgf:Person_Details/stgf:WPhoneAreaCode))) and boolean(normalize-space(string(stgf:Person_Details/stgf:WPhone)))">'
+                                    - '                  <xsl:value-of select="concat(stgf:Person_Details/stgf:WPhoneAreaCode,&apos;-&apos;,stgf:Person_Details/stgf:WPhone)"/>'
+                                    - '                <xsl:otherwise>'
+                                    - '                  <xsl:if test="boolean(normalize-space(string(stgf:Person_Details/stgf:WPhone)))">'
+                                    - '                    <xsl:value-of select="stgf:Person_Details/stgf:WPhone"/>'
+                                    - '            <ctar:FF__Title__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string($assignment/stgf:Assignment/stgf:Assignment_Details/stgf:Job_Name)))">'
+                                    - '                  <xsl:value-of select="$assignment/stgf:Assignment/stgf:Assignment_Details/stgf:Job_Name"/>'
+                                    - '            <ctar:Home_Phone__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(stgf:Person_Details/stgf:HPhoneAreaCode))) and boolean(normalize-space(string(stgf:Person_Details/stgf:HPhone)))">'
+                                    - '                  <xsl:value-of select="concat(stgf:Person_Details/stgf:HPhoneAreaCode,&apos;-&apos;,stgf:Person_Details/stgf:HPhone)"/>'
+                                    - '                <xsl:otherwise>'
+                                    - '                  <xsl:if test="boolean(normalize-space(string(stgf:Person_Details/stgf:HPhone)))">'
+                                    - '                    <xsl:value-of select="stgf:Person_Details/stgf:HPhone"/>'
+                                    - '            <ctar:State__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(stgf:Person_Details/stgf:State)))">'
+                                    - '                  <xsl:value-of select="stgf:Person_Details/stgf:State"/>'
+                                    - '            <ctar:Personal_Mobile_Phone__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(stgf:Person_Details/stgf:HMPhoneAreaCode))) and boolean(normalize-space(string(stgf:Person_Details/stgf:HMPhone)))">'
+                                    - '                  <xsl:value-of select="concat(stgf:Person_Details/stgf:HMPhoneAreaCode,&apos;-&apos;,stgf:Person_Details/stgf:HMPhone)"/>'
+                                    - '                <xsl:otherwise>'
+                                    - '                  <xsl:if test="boolean(normalize-space(string(stgf:Person_Details/stgf:HMPhone)))">'
+                                    - '                    <xsl:value-of select="stgf:Person_Details/stgf:HMPhone"/>'
+                                    - '            <ctar:Work_Location__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string($assignment/stgf:Assignment/stgf:Assignment_Details/stgf:Location)))">'
+                                    - '                  <xsl:value-of select="$assignment/stgf:Assignment/stgf:Assignment_Details/stgf:Location"/>'
+                                    - '            <ctar:User_Status__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="$assignment/stgf:Assignment/stgf:Assignment_Details/stgf:Status=&apos;SUSPENDED&apos;">Terminated Assignment</xsl:when>'
+                                    - '                <xsl:otherwise>Active Assignment</xsl:otherwise>'
+                                    - '            <ctar:Zip_Code__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(stgf:Person_Details/stgf:PostalCode)))">'
+                                    - '                  <xsl:value-of select="stgf:Person_Details/stgf:PostalCode"/>'
+                                    - ""
+                                - Invoke: UpdateContacts(i2)
+                                  application:
+                                    Application: UpdateContacts(TSGTSALESFORCESA_CONN)
+                                    name: UpdateContacts
+                                    adapter:
+                                        code: TSGTSALESFORCESA_CONN
+                                    properties:
+                                        - name: operationPath
+                                          value: ""
+                                - Stitch: Stitch(sh0)
+                                  stitchNamespaceResolver:
+                                    prefixnamespacemap:
+                                        ns18: http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateContacts_REQUEST
+                                  stitchVariables:
+                                    - name: IsEmpty
+                                      datatype:
+                                        type: XMLSimple
+                                        xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                                      access: SOURCE_AND_TARGET
+                                    - name: UpdateContacts
+                                      datatype:
+                                        type: XMLComplex
+                                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateContacts_REQUEST}upsertResponse'
+                                        uriToSchema: ../../application_318/inbound_319/resourcegroup_367/UpdateContacts_REQUEST.wsdl
+                                      access: SOURCE_AND_TARGET
+                                    - name: ContactsJob
+                                      datatype:
+                                        type: XMLComplex
+                                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateContacts_REQUEST}bulkResponse'
+                                        uriToSchema: ../../processor_445/resourcegroup_448/generated.wsdl
+                                      access: SOURCE_AND_TARGET
+                                  stitchSentences:
+                                    - operation: Assign
+                                      from:
+                                        type: XPathExpression
+                                        expression: $UpdateContacts/ns18:upsertResponse/ns18:bulkResponse
+                                        returnType: XML_TYPE_NODE_NODESET
+                                      to:
+                                        type: XPathPath
+                                        path: $ContactsJob/ns18:bulkResponse
+                                        isLastStepXsdAnyType: false
+                                    - operation: Assign
+                                      from:
+                                        type: XPathExpression
+                                        expression: '''false'''
+                                        returnType: XML_TYPE_ATOMIC
+                                      to:
+                                        type: XPathPath
+                                        path: $IsEmpty
+                                        isLastStepXsdAnyType: false
+                            - Route: Otherwise(sc11)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements: []
+                - Route: Termination(sc2)
+                  exprProperties:
+                    xpathExpression: starts-with(/nsmpr15:execute/nsmpr19:request-wrapper/nsmpr19:EmployeesBatch/nsmpr19:Extract/nsmpr19:FileName,'Employee_Termination')
+                    namespaceList: nsmpr15=http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types nsmpr19=http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types
+                    expressionName: Termination
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: /
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types}execute'
+                  statements:
+                    - Try: Try(t3)
+                      username: Scope_Termination
+                      statements:
+                        - StageFile: ReadTerminationFile(sf1)
+                          operation: Read
+                          expressionProperties:
+                            xpathExpression: $WriteFile/nsmpr12:WriteResponse/nsmpr0:WriteResponse/nsmpr2:ICSFile/nsmpr2:FileReference
+                            namespaceList: nsmpr12=http://xmlns.oracle.com/cloud/adapter/stagefile/WriteFile_REQUEST/types nsmpr2=http://xmlns.oracle.com/cloud/ics/file/v1/types nsmpr0=http://xmlns.oracle.com/cloud/staging/write
+                          statements: []
+                        - Switch: Switch(s1)
+                          routes:
+                            - Route: not empty(sc3)
+                              exprProperties:
+                                xpathExpression: count($ReadTerminationFile/nsmpr6:ReadResponse/nsmpr1:DATA_DS/nsmpr1:G_1/nsmpr1:G_2/nsmpr1:FILE_FRAGMENT/nsmpr1:Employee_Feed_V2/nsmpr1:Assigment) > 0
+                                namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadTerminationFile_REQUEST/types nsmpr1=http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadTerminationFile
+                                expressionName: not empty
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: ReadTerminationFile
+                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/ReadTerminationFile_REQUEST/types}ReadResponse'
+                              statements:
+                                - Map: Map(m7)
+                                  xsltfilepath: ../resources/processor_1216/resourcegroup_1219/req_9cf17c5f5a7f477e859b4ee68cf73600.xsl
+                                  mapsentences:
+                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                    - <xsl:stylesheet xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:tns="urn:enterprise.soap.sforce.com" xmlns:ctar="http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateTermination_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:stgfr="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadTerminationFile_REQUEST/types" xmlns:stgf="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadTerminationFile" version="2.0" exclude-result-prefixes=" oraext plnk xsd xp20 ns9 ora oracle-xsl-mapper nssrcmpr nssrcdfl xsi fn xsl ignore01" ignore01:ignorexmlids="true">
+                                    - '  <xsl:param name="CompleteResponse"/>'
+                                    - '  <xsl:param name="Configs"/>'
+                                    - '  <xsl:param name="ContactsJob"/>'
+                                    - '  <xsl:param name="InProgress"/>'
+                                    - '  <xsl:param name="IsEmpty"/>'
+                                    - '  <xsl:param name="JobStatus"/>'
+                                    - '  <xsl:param name="ReadExtract"/>'
+                                    - '  <xsl:param name="ReadExtract_REQUEST"/>'
+                                    - '  <xsl:param name="ReadTerminationFile"/>'
+                                    - '  <xsl:param name="TerminationJob"/>'
+                                    - '  <xsl:param name="WriteFile"/>'
+                                    - '  <xsl:param name="WriteFile_REQUEST"/>'
+                                    - '  <xsl:param name="self"/>'
+                                    - '  <xsl:param name="tracking_var_1"/>'
+                                    - '  <xsl:param name="tracking_var_2"/>'
+                                    - '  <xsl:param name="tracking_var_3"/>'
+                                    - '  <xsl:template match="/">'
+                                    - '    <ctar:upsert>'
+                                    - '      <ctar:FF__Key_Contact__cs>'
+                                    - '        <xsl:for-each select="$ReadTerminationFile/stgfr:ReadResponse/stgf:DATA_DS/stgf:G_1/stgf:G_2/stgf:FILE_FRAGMENT/stgf:Employee_Feed_V2/stgf:Assigment">'
+                                    - '          <ctar:FF__Key_Contact__c>'
+                                    - '            <ctar:externalIDFieldName>Employee_ID__c</ctar:externalIDFieldName>'
+                                    - '            <ctar:City__c>'
+                                    - '              <xsl:value-of select="./stgf:Person/stgf:Person/stgf:Person/stgf:City"/>'
+                                    - '            <ctar:Employee_ID__c>'
+                                    - '              <xsl:value-of select="./stgf:Person/stgf:Person/stgf:Person/stgf:PersonNumber"/>'
+                                    - '            <ctar:FF__Company_Organization__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="./stgf:Assignment/stgf:AssignmentType = &apos;E&apos;">'
+                                    - '                  <xsl:value-of select="./stgf:Assignment/stgf:Department"/>'
+                                    - '                <xsl:when test="./stgf:Assignment/stgf:AssignmentType = &apos;C&apos;">Contractors</xsl:when>'
+                                    - '            <ctar:FF__First_Name__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(./stgf:Person/stgf:Person/stgf:Person/stgf:KnownAs)))">'
+                                    - '                  <xsl:value-of select="./stgf:Person/stgf:Person/stgf:Person/stgf:KnownAs"/>'
+                                    - '                <xsl:otherwise>'
+                                    - '                  <xsl:value-of select="./stgf:Person/stgf:Person/stgf:Person/stgf:FirstName"/>'
+                                    - '            <ctar:FF__Last_Name__c>'
+                                    - '              <xsl:value-of select="./stgf:Person/stgf:Person/stgf:Person/stgf:LastName"/>'
+                                    - '            <ctar:FF__Mobile_Phone__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(./stgf:Person/stgf:Person/stgf:Person/stgf:MPhoneAreaCode))) and boolean(normalize-space(string(./stgf:Person/stgf:Person/stgf:Person/stgf:MPhone)))">'
+                                    - '                  <xsl:value-of select="concat(./stgf:Person/stgf:Person/stgf:Person/stgf:MPhoneAreaCode,&apos;-&apos;,./stgf:Person/stgf:Person/stgf:Person/stgf:MPhone)"/>'
+                                    - '            <ctar:FF__Phone__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(./stgf:Person/stgf:Person/stgf:Person/stgf:WPhoneAreaCode))) and boolean(normalize-space(string(./stgf:Person/stgf:Person/stgf:Person/stgf:WPhone)))">'
+                                    - '                  <xsl:value-of select="concat(./stgf:Person/stgf:Person/stgf:Person/stgf:WPhoneAreaCode,&apos;-&apos;,./stgf:Person/stgf:Person/stgf:Person/stgf:WPhone)"/>'
+                                    - '            <ctar:FF__Title__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(./stgf:Assignment/stgf:Job_Name)))">'
+                                    - '                  <xsl:value-of select="./stgf:Assignment/stgf:Job_Name"/>'
+                                    - '            <ctar:Home_Phone__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(./stgf:Person/stgf:Person/stgf:Person/stgf:HPhoneAreaCode))) and boolean(normalize-space(string(./stgf:Person/stgf:Person/stgf:Person/stgf:HPhone)))">'
+                                    - '                  <xsl:value-of select="concat(./stgf:Person/stgf:Person/stgf:Person/stgf:HPhoneAreaCode,&apos;-&apos;,./stgf:Person/stgf:Person/stgf:Person/stgf:HPhone)"/>'
+                                    - '            <ctar:State__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(./stgf:Person/stgf:Person/stgf:Person/stgf:State)))">'
+                                    - '                  <xsl:value-of select="./stgf:Person/stgf:Person/stgf:Person/stgf:State"/>'
+                                    - '            <ctar:Personal_Mobile_Phone__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(./stgf:Person/stgf:Person/stgf:Person/stgf:HMPhoneAreaCode))) and boolean(normalize-space(string(./stgf:Person/stgf:Person/stgf:Person/stgf:HMPhone)))">'
+                                    - '                  <xsl:value-of select="concat(./stgf:Person/stgf:Person/stgf:Person/stgf:HMPhoneAreaCode,&apos;-&apos;,./stgf:Person/stgf:Person/stgf:Person/stgf:HMPhone)"/>'
+                                    - '            <ctar:Work_Location__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(./stgf:Assignment/stgf:Location)))">'
+                                    - '                  <xsl:value-of select="./stgf:Assignment/stgf:Location"/>'
+                                    - '            <ctar:User_Status__c>Terminated Assignment</ctar:User_Status__c>'
+                                    - '            <ctar:Zip_Code__c>'
+                                    - '              <xsl:choose>'
+                                    - '                <xsl:when test="boolean(normalize-space(string(./stgf:Person/stgf:Person/stgf:Person/stgf:PostalCode)))">'
+                                    - '                  <xsl:value-of select="./stgf:Person/stgf:Person/stgf:Person/stgf:PostalCode"/>'
+                                    - ""
+                                - Invoke: UpdateTermination(i6)
+                                  application:
+                                    Application: UpdateTermination(TSGTSALESFORCESA_CONN)
+                                    name: UpdateTermination
+                                    adapter:
+                                        code: TSGTSALESFORCESA_CONN
+                                    properties:
+                                        - name: operationPath
+                                          value: ""
+                                - Stitch: Stitch(sh4)
+                                  stitchNamespaceResolver:
+                                    prefixnamespacemap:
+                                        ns45: http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateTermination_REQUEST
+                                  stitchVariables:
+                                    - name: IsEmpty
+                                      datatype:
+                                        type: XMLSimple
+                                        xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                                      access: SOURCE_AND_TARGET
+                                    - name: UpdateTermination
+                                      datatype:
+                                        type: XMLComplex
+                                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateTermination_REQUEST}upsertResponse'
+                                        uriToSchema: ../../application_1206/inbound_1207/resourcegroup_1208/UpdateTermination_REQUEST.wsdl
+                                      access: SOURCE_AND_TARGET
+                                    - name: TerminationJob
+                                      datatype:
+                                        type: XMLComplex
+                                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateTermination_REQUEST}bulkResponse'
+                                        uriToSchema: ../../processor_1249/resourcegroup_1252/generated.wsdl
+                                      access: SOURCE_AND_TARGET
+                                  stitchSentences:
+                                    - operation: Assign
+                                      from:
+                                        type: XPathExpression
+                                        expression: $UpdateTermination/ns45:upsertResponse/ns45:bulkResponse
+                                        returnType: XML_TYPE_NODE_NODESET
+                                      to:
+                                        type: XPathPath
+                                        path: $TerminationJob/ns45:bulkResponse
+                                        isLastStepXsdAnyType: false
+                                    - operation: Assign
+                                      from:
+                                        type: XPathExpression
+                                        expression: '''false'''
+                                        returnType: XML_TYPE_ATOMIC
+                                      to:
+                                        type: XPathPath
+                                        path: $IsEmpty
+                                        isLastStepXsdAnyType: false
+                            - Route: Otherwise(sc12)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements: []
+                - Route: Otherwise(sc9)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+            - Switch: Switch(s0)
+              routes:
+                - Route: NonEmpty(sc0)
+                  exprProperties:
+                    xpathExpression: normalize-space(string($IsEmpty)) = "false"
+                    expressionName: NonEmpty
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: IsEmpty
+                          rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                  statements:
+                    - Map: Map(m4)
+                      xsltfilepath: ../resources/processor_412/resourcegroup_415/req_14f6166a9796467682adbb6272e96558.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:cjr="http://xmlns.oracle.com/cloud/adapter/salesforce/CompleteJob_REQUEST" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:rqr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:rq="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" xmlns:tns="urn:enterprise.soap.sforce.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:uc="http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateContacts_REQUEST" xmlns:ut="http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateTermination_REQUEST" version="2.0" exclude-result-prefixes=" oraext plnk xsd xp20 ns9 ora oracle-xsl-mapper nssrcmpr nssrcdfl xsi fn xsl ignore01" ignore01:ignorexmlids="true">
+                        - '  <xsl:param name="CompleteResponse"/>'
+                        - '  <xsl:param name="Configs"/>'
+                        - '  <xsl:param name="ContactsJob"/>'
+                        - '  <xsl:param name="InProgress"/>'
+                        - '  <xsl:param name="IsEmpty"/>'
+                        - '  <xsl:param name="JobStatus"/>'
+                        - '  <xsl:param name="ReadExtract"/>'
+                        - '  <xsl:param name="ReadExtract_REQUEST"/>'
+                        - '  <xsl:param name="TerminationJob"/>'
+                        - '  <xsl:param name="WriteFile"/>'
+                        - '  <xsl:param name="WriteFile_REQUEST"/>'
+                        - '  <xsl:param name="self"/>'
+                        - '  <xsl:param name="tracking_var_1"/>'
+                        - '  <xsl:param name="tracking_var_2"/>'
+                        - '  <xsl:param name="tracking_var_3"/>'
+                        - '  <xsl:template match="/">'
+                        - '    <cjr:finalBatch>'
+                        - '      <cjr:bulkResponse>'
+                        - '        <xsl:choose>'
+                        - '          <xsl:when test="starts-with(/rqr:execute/rq:request-wrapper/rq:EmployeesBatch/rq:Extract/rq:FileName,&apos;Employee_Extract&apos;)">'
+                        - '            <cjr:jobInfo>'
+                        - '              <cjr:id>'
+                        - '                <xsl:value-of select="$ContactsJob/uc:bulkResponse/uc:jobInfo/uc:id"/>'
+                        - '              <cjr:operation>'
+                        - '                <xsl:value-of select="$ContactsJob/uc:bulkResponse/uc:jobInfo/uc:operation"/>'
+                        - '              <cjr:object>'
+                        - '                <xsl:value-of select="$ContactsJob/uc:bulkResponse/uc:jobInfo/uc:object"/>'
+                        - '              <cjr:state>'
+                        - '                <xsl:value-of select="$ContactsJob/uc:bulkResponse/uc:jobInfo/uc:state"/>'
+                        - '            <cjr:batchInfo>'
+                        - '              <cjr:id>'
+                        - '                <xsl:value-of select="$ContactsJob/uc:bulkResponse/uc:batchInfo/uc:id"/>'
+                        - '              <cjr:jobId>'
+                        - '                <xsl:value-of select="$ContactsJob/uc:bulkResponse/uc:batchInfo/uc:jobId"/>'
+                        - '              <cjr:state>'
+                        - '                <xsl:value-of select="$ContactsJob/uc:bulkResponse/uc:batchInfo/uc:state"/>'
+                        - '          <xsl:otherwise>'
+                        - '            <cjr:jobInfo>'
+                        - '              <cjr:id>'
+                        - '                <xsl:value-of select="$TerminationJob/ut:bulkResponse/ut:jobInfo/ut:id"/>'
+                        - '              <cjr:operation>'
+                        - '                <xsl:value-of select="$TerminationJob/ut:bulkResponse/ut:jobInfo/ut:operation"/>'
+                        - '              <cjr:object>'
+                        - '                <xsl:value-of select="$TerminationJob/ut:bulkResponse/ut:jobInfo/ut:object"/>'
+                        - '              <cjr:state>'
+                        - '                <xsl:value-of select="$TerminationJob/ut:bulkResponse/ut:jobInfo/ut:state"/>'
+                        - '            <cjr:batchInfo>'
+                        - '              <cjr:id>'
+                        - '                <xsl:value-of select="$TerminationJob/ut:bulkResponse/ut:batchInfo/ut:id"/>'
+                        - '              <cjr:jobId>'
+                        - '                <xsl:value-of select="$TerminationJob/ut:bulkResponse/ut:batchInfo/ut:jobId"/>'
+                        - '              <cjr:state>'
+                        - '                <xsl:value-of select="$TerminationJob/ut:bulkResponse/ut:batchInfo/ut:state"/>'
+                        - ""
+                    - Invoke: CompleteJob(i3)
+                      application:
+                        Application: CompleteJob(TSGTSALESFORCESA_CONN)
+                        name: CompleteJob
+                        adapter:
+                            code: TSGTSALESFORCESA_CONN
+                        properties:
+                            - name: operationPath
+                              value: http://xmlns.oracle.com/cloud/adapter/salesforce/CompleteJob_REQUEST/finalBatch
+                    - Stitch: Stitch(sh3)
+                      stitchNamespaceResolver:
+                        prefixnamespacemap:
+                            ns47: http://xmlns.oracle.com/cloud/adapter/salesforce/CompleteJob_REQUEST
+                      stitchVariables:
+                        - name: CompleteJob
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/salesforce/CompleteJob_REQUEST}finalBatchResponse'
+                            uriToSchema: ../../application_402/inbound_403/resourcegroup_404/CompleteJob_REQUEST.wsdl
+                          access: SOURCE_AND_TARGET
+                        - name: CompleteResponse
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/salesforce/CompleteJob_REQUEST}bulkResponse'
+                            uriToSchema: ../../processor_869/resourcegroup_872/generated.wsdl
+                          access: SOURCE_AND_TARGET
+                      stitchSentences:
+                        - operation: Assign
+                          from:
+                            type: XPathExpression
+                            expression: $CompleteJob/ns47:finalBatchResponse/ns47:bulkResponse
+                            returnType: XML_TYPE_NODE_NODESET
+                          to:
+                            type: XPathPath
+                            path: $CompleteResponse/ns47:bulkResponse
+                            isLastStepXsdAnyType: false
+                - Route: Otherwise(sc1)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+            - Assignments: AssignLoopVariables(l0)
+              name: AssignLoopVariables
+              assignments:
+                - Assignment: Assignment(a0)
+                  variableName: LoopIndex
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''0'''
+                    variableName: LoopIndex
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - While: whileLoop(wh0)
+              expressionProperties:
+                xpathExpression: normalize-space(string($InProgress)) = 'true' and normalize-space(string($IsEmpty)) = 'false' and number($LoopIndex) < number($Configs/nsmpr19:response-wrapper/nsmpr19:Configs[nsmpr19:Key='MaxQuery']/nsmpr19:Value)
+                namespaceList: nsmpr19=http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types
+                variableName: While_InProgress
+              statements:
+                - Map: Map(m6)
+                  xsltfilepath: ../resources/processor_685/resourcegroup_688/req_c3dc2844cf15423e90a26a7c1ea2b739.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST" xmlns:ens="urn:sobject.enterprise.soap.sforce.com" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns9="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:tns="urn:enterprise.soap.sforce.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:fns="urn:fault.enterprise.soap.sforce.com" exclude-result-prefixes=" oraext plnk xsd xp20 ns9 ora oracle-xsl-mapper nssrcmpr nssrcdfl xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST/types" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateContacts_REQUEST" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/ftp/ReadExtract_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteFile_REQUEST/types" xmlns:nsmpr4="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns5="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/GetConfigs_REQUEST/SKIPOUTREQ" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns36="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.response-wrapper/Configs/collocatedics/GetConfigs_REQUEST" xmlns:ns42="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns43="http://xmlns.oracle.com/cloud/staging/write" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/GetConfigs" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/EmployeeTrigger_REQUEST/RESTINREQ" xmlns:ns41="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteFile_REQUEST" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:ns37="http://xmlns.oracle.com/cloud/adapter/ftp/ReadExtract_REQUEST" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns39="http://xmlns.oracle.com/cloud/adapter/ftp/ReadExtract_REQUEST/types/dynamicftp" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns34="http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns38="http://xmlns.oracle.com/ics/cloud/ftp/read/file/pull" xmlns:ns4="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/GetConfigs_REQUEST" xmlns:ns30="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns40="http://xmlns.oracle.com/pcbpel/adapter/opaque/" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/salesforce/CompleteJob_REQUEST" xmlns:casdk="http://xml.oracle.com/wsdl/extensions" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateTermination_REQUEST">
+                    - '  <xsl:param name="CompleteResponse" xml:id="id_88"/>'
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:getStatusForAllBatches xml:id="id_12">'
+                    - '      <nstrgmpr:getStatusForAllBatchesReq xml:id="id_53">'
+                    - '        <nstrgmpr:jobId xml:id="id_54">'
+                    - '          <xsl:value-of xml:id="id_55" select="$CompleteResponse/nsmpr5:bulkResponse/nsmpr5:jobInfo/nsmpr5:id"/>'
+                    - ""
+                - Invoke: GetStatus(i5)
+                  application:
+                    Application: GetStatus(TSGTSALESFORCESA_CONN)
+                    name: GetStatus
+                    adapter:
+                        code: TSGTSALESFORCESA_CONN
+                    properties:
+                        - name: operationPath
+                          value: http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST/getStatusForAllBatches
+                - Switch: Switch(s2)
+                  routes:
+                    - Route: InProgress(sc4)
+                      exprProperties:
+                        xpathExpression: $GetStatus/nsmpr11:getStatusForAllBatchesResponse/nsmpr11:batchInfoList/nsmpr11:batchInfo/nsmpr11:state = "InProgress"
+                        namespaceList: nsmpr11=http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST
+                        expressionName: InProgress
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: GetStatus
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST}getStatusForAllBatchesResponse'
+                      statements:
+                        - Stitch: Stitch(sh5)
+                          stitchNamespaceResolver:
+                            prefixnamespacemap:
+                                ns27: http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST
+                          stitchVariables:
+                            - name: LoopIndex
+                              datatype:
+                                type: XMLSimple
+                                xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                              access: SOURCE_AND_TARGET
+                            - name: JobStatus
+                              datatype:
+                                type: XMLComplex
+                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST}batchInfoList'
+                                uriToSchema: ../../processor_812/resourcegroup_815/generated.wsdl
+                              access: SOURCE_AND_TARGET
+                            - name: GetStatus
+                              datatype:
+                                type: XMLComplex
+                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST}getStatusForAllBatchesResponse'
+                                uriToSchema: ../../application_675/inbound_676/resourcegroup_677/GetStatus_REQUEST.wsdl
+                              access: SOURCE_AND_TARGET
+                          stitchSentences:
+                            - operation: Assign
+                              from:
+                                type: XPathExpression
+                                expression: string(number($LoopIndex) + 1 )
+                                returnType: XML_TYPE_ATOMIC
+                              to:
+                                type: XPathPath
+                                path: $LoopIndex
+                                isLastStepXsdAnyType: false
+                            - operation: Assign
+                              from:
+                                type: XPathExpression
+                                expression: $GetStatus/ns27:getStatusForAllBatchesResponse/ns27:batchInfoList
+                                returnType: XML_TYPE_NODE_NODESET
+                              to:
+                                type: XPathPath
+                                path: $JobStatus/ns27:batchInfoList
+                                isLastStepXsdAnyType: false
+                        - xmlname:
+                            space: http://www.oracle.com/2014/03/ics/flow/definition
+                            local: wait
+                          attrs:
+                            - name:
+                                space: ""
+                                local: id
+                              value: w0
+                            - name:
+                                space: ""
+                                local: refUri
+                              value: processor_811
+                          content: ""
+                          statements: []
+                    - Route: Otherwise(sc5)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements:
+                        - Stitch: Stitch(sh2)
+                          stitchNamespaceResolver:
+                            prefixnamespacemap:
+                                ns29: http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST
+                          stitchVariables:
+                            - name: InProgress
+                              datatype:
+                                type: XMLSimple
+                                xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                              access: SOURCE_AND_TARGET
+                            - name: JobStatus
+                              datatype:
+                                type: XMLComplex
+                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST}batchInfoList'
+                                uriToSchema: ../../processor_812/resourcegroup_815/generated.wsdl
+                              access: SOURCE_AND_TARGET
+                            - name: GetStatus
+                              datatype:
+                                type: XMLComplex
+                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST}getStatusForAllBatchesResponse'
+                                uriToSchema: ../../application_675/inbound_676/resourcegroup_677/GetStatus_REQUEST.wsdl
+                              access: SOURCE_AND_TARGET
+                          stitchSentences:
+                            - operation: Assign
+                              from:
+                                type: XPathExpression
+                                expression: '''false'''
+                                returnType: XML_TYPE_ATOMIC
+                              to:
+                                type: XPathPath
+                                path: $InProgress
+                                isLastStepXsdAnyType: false
+                            - operation: Assign
+                              from:
+                                type: XPathExpression
+                                expression: $GetStatus/ns29:getStatusForAllBatchesResponse/ns29:batchInfoList
+                                returnType: XML_TYPE_NODE_NODESET
+                              to:
+                                type: XPathPath
+                                path: $JobStatus/ns29:batchInfoList
+                                isLastStepXsdAnyType: false
+            - Switch: Switch(s7)
+              routes:
+                - Route: InvalidStatus(sc15)
+                  exprProperties:
+                    xpathExpression: number($LoopIndex) >= number($Configs/nsmpr19:response-wrapper/nsmpr19:Configs[(nsmpr19:Key = 'MaxQuery')]/nsmpr19:Value) and $JobStatus/nsmpr11:batchInfoList/nsmpr11:batchInfo/nsmpr11:state = 'InProgress'
+                    namespaceList: nsmpr11=http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST nsmpr19=http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types
+                    expressionName: InvalidStatus
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: LoopIndex
+                          rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                        - VariableName: Configs
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types}response-wrapper'
+                        - VariableName: JobStatus
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST}batchInfoList'
+                  statements:
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: throw
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: th1
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_1723
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc16)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: {}
+                  statements: []
+            - Switch: Switch(s3)
+              routes:
+                - Route: (sc6)
+                  exprProperties:
+                    xpathExpression: $JobStatus/nsmpr11:batchInfoList/nsmpr11:batchInfo/nsmpr11:numberRecordsFailed > 0 and normalize-space(string($IsEmpty)) = 'false'
+                    namespaceList: nsmpr11=http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: JobStatus
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST}batchInfoList'
+                        - VariableName: IsEmpty
+                          rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                  statements:
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: throw
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: th0
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_847
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc7)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Logger: Logger(lg0)
+              name: LoggerFault
+              description: ""
+              propertyfile: ../resources/processor_1787/resourcegroup_1794/expr.properties
+              expressionProperties:
+                xpathExpression: $GlobalFaultObject/ics:fault
+                namespaceList: ics=http://www.oracle.com/2014/03/ics/fault
+                variableName: LoggerFault
+            - Logger: Logger(lg1)
+              name: LogPayload
+              description: ""
+              propertyfile: ../resources/processor_1796/resourcegroup_1803/expr.properties
+              expressionProperties:
+                xpathExpression: /ns41:execute/ns37:request-wrapper
+                namespaceList: ns41=http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types ns37=http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types
+                variableName: LogPayload
+            - Map: Map(m8)
+              xsltfilepath: ../resources/processor_1842/resourcegroup_1845/req_2892c15f9b834c72aeb6233b02001159.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/NotifyFault_REQUEST/types" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/salesforce/CompleteJob_REQUEST" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateContacts_REQUEST" xmlns:nsmpr3="http://www.oracle.com/2014/03/ics/fault" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/salesforce/GetStatus_REQUEST" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/REST/PublishAuditing_REQUEST/types" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/salesforce/UpdateTermination_REQUEST" xmlns:nsmpr7="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns47="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/NotifyFault_REQUEST" xmlns:ns49="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Auditing/collocatedics/NotifyFault_REQUEST" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" version="2.0" xml:id="id_1" exclude-result-prefixes=" ora oracle-xsl-mapper dvm nssrcmpr oraext xsi xsd fn xp20 xsl ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6 nsmpr7" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                - '  <xsl:param name="GlobalFaultObject" xml:id="id_52"/>'
+                - '  <xsl:param name="self" xml:id="id_59"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:POST xml:id="id_12">'
+                - '      <nstrgmpr:components.schemas.request-wrapper>'
+                - '        <ns47:Auditing>'
+                - '          <ns49:AuditingID>'
+                - '            <xsl:value-of select="ns4:getFlowId ()"/>'
+                - '          <ns49:AuditingType>Error</ns49:AuditingType>'
+                - '          <ns49:InterfaceName>'
+                - '            <xsl:value-of select="$self/nsmpr7:metadata/nsmpr7:integration/nsmpr7:name"/>'
+                - '          <ns49:TrackingID>'
+                - '            <xsl:value-of select="/nssrcmpr:execute/ns23:request-wrapper/ns23:EmployeesBatch/ns23:BatchID"/>'
+                - '          <ns49:ReferenceID>'
+                - '            <xsl:value-of select="concat ($self/nsmpr7:metadata/nsmpr7:integration/nsmpr7:name, &quot;-&quot;, /nssrcmpr:execute/ns23:request-wrapper/ns23:EmployeesBatch/ns23:DateTime )"/>'
+                - '          <ns49:FlowInstanceID>'
+                - '            <xsl:value-of xml:id="id_91" select="$self/nsmpr7:metadata/nsmpr7:runtime/nsmpr7:instanceId"/>'
+                - '          <ns49:Title>'
+                - '            <xsl:value-of select="concat($self/nsmpr7:metadata/nsmpr7:integration/nsmpr7:name, &apos; Error - &apos;, ns4:getFlowId())"/>'
+                - '          <ns49:Details>'
+                - '            <xsl:value-of select="concat (&quot;ErrorCode:&quot;, $GlobalFaultObject/nsmpr3:fault/nsmpr3:errorCode, &quot;; reason:&quot;, $GlobalFaultObject/nsmpr3:fault/nsmpr3:reason, &quot;; details:&quot;, $GlobalFaultObject/nsmpr3:fault/nsmpr3:details )"/>'
+                - '          <ns49:Payload>'
+                - '            <xsl:value-of select="oraext:get-content-as-string (/nssrcmpr:execute/ns23:request-wrapper )"/>'
+                - '        <!--                          '
+                - '                          '
+                - '                    <aud:Details>'
+                - '                          <xsl:value-of select="concat (''ErrorCode:'', $GlobalFaultObject/fault:fault/fault:errorCode, ''; reason:'', $GlobalFaultObject/fault:fault/fault:reason, ''; details:'', $GlobalFaultObject/fault:fault/fault:details )"/>'
+                - '                    <aud:Payload>'
+                - '                          <xsl:value-of select="oraext:get-content-as-string(/empt:execute/req:request-wrapper/req:EmployeesBatch)"/>'
+                - '                    <aud:AuditingID>'
+                - '                          <xsl:value-of select="oraext:generate-guid ()"/>'
+                - ""
+            - Invoke: NotifyFault(i7)
+              application:
+                Application: NotifyFault(PRESEEDED_COLLOCATED_CONN_1741)
+                name: NotifyFault
+                adapter:
+                    code: PRESEEDED_COLLOCATED_CONN_1741
+                properties:
+                    - name: operationPath
+                      value: /auditing
+                    - name: HttpVerb
+                      value: POST
+                    - name: QueryParameters
+                      value: ""
+                    - name: ResourceURI
+                      value: /auditing
+                    - name: integration_id
+                      value: TSGTAUDITINGPROC_SERVICE|01.03.0000
+                    - name: integration_operation
+                      value: POST
+                    - name: serviceType
+                      value: rest
+            - xmlname:
+                space: http://www.oracle.com/2014/03/ics/flow/definition
+                local: throw
+              attrs:
+                - name:
+                    space: ""
+                    local: id
+                  value: th2
+                - name:
+                    space: ""
+                    local: refUri
+                  value: processor_1805
+              content: ""
+              statements: []
+            - Stop: Stop(st1)
+          icsfaultfilepath: ../resources/processor_497/resourcegroup_498/ICSFault.xsd

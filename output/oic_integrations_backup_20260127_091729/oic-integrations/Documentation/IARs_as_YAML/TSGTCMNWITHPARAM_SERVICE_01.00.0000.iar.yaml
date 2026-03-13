@@ -1,0 +1,497 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_226
+      xsdfilepath: ../resources/processor_226/resourcegroup_227/ICSIntegrationMetadata.xsd
+    - GlobalVariable: (gtv1)
+      variableName: XMLData
+      variableType: $WriteXMLData_REQUEST/ns11:Write/ns10:Output/ns10:Data
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - xmlname:
+            space: http://www.oracle.com/2014/03/ics/flow/definition
+            local: scheduleReceive
+          attrs:
+            - name:
+                space: ""
+                local: trackingRefUri
+              value: processor_1
+            - name:
+                space: ""
+                local: id
+              value: sr0
+            - name:
+                space: ""
+                local: refUri
+              value: processor_8
+          content: ""
+          statements: []
+        - Assignments: Initialize(l0)
+          name: Initialize
+          assignments:
+            - Assignment: Assignment(a33)
+              variableName: AdminMailId
+              variableType: string
+              expressionProperties:
+                xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName','Integration_Admin_emailIDs','ConfigValue',' ')
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                variableName: AdminMailId
+                variableDescription: Mail Distribution List
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a27)
+              variableName: Blank
+              variableType: string
+              expressionProperties:
+                xpathExpression: ''''''
+                variableName: Blank
+                variableDescription: Blank Variable
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a31)
+              variableName: CurrentDateTime
+              variableType: string
+              expressionProperties:
+                xpathExpression: substring-before (string (fn:current-dateTime() ), "." )
+                namespaceList: fn=http://www.w3.org/2005/xpath-functions
+                variableName: CurrentDateTime
+                variableDescription: Current Date Time to map the INT Start Date
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a11)
+              variableName: Delimiter
+              variableType: string
+              expressionProperties:
+                xpathExpression: ''','''
+                variableName: Delimiter
+                variableDescription: Integration Code Delimiter
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a1)
+              variableName: ErrorFlag
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: ErrorFlag
+                variableDescription: Flag to identify the Error or success
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a32)
+              variableName: FlowId
+              variableType: string
+              expressionProperties:
+                xpathExpression: $self/nsmpr2:metadata/nsmpr2:runtime/nsmpr2:instanceId
+                namespaceList: nsmpr2=http://www.oracle.com/2014/03/ic/integration/metadata
+                variableName: FlowId
+                variableDescription: Instance Id
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a2)
+              variableName: MsgCode
+              variableType: string
+              expressionProperties:
+                xpathExpression: ''''''
+                variableName: MsgCode
+                variableDescription: Message Code for the flow status
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a3)
+              variableName: MsgDescr
+              variableType: string
+              expressionProperties:
+                xpathExpression: ''''''
+                variableName: MsgDescr
+                variableDescription: Message Description for details of flow status
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a4)
+              variableName: MsgDetail
+              variableType: string
+              expressionProperties:
+                xpathExpression: ''''''
+                variableName: MsgDetail
+                variableDescription: Message Detail for the flow status
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a0)
+              variableName: Status
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: Status
+                variableDescription: Status of the Flow
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a9)
+              variableName: StageFileName
+              variableType: string
+              expressionProperties:
+                xpathExpression: concat('File_',$self/nsmpr0:metadata/nsmpr0:runtime/nsmpr0:instanceId,'.xml')
+                namespaceList: nsmpr0=http://www.oracle.com/2014/03/ic/integration/metadata
+                variableName: StageFileName
+                variableDescription: Stage File Name to store Stagging data
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a10)
+              variableName: StageFilePath
+              variableType: string
+              expressionProperties:
+                xpathExpression: concat('/stg/',$self/nsmpr0:metadata/nsmpr0:runtime/nsmpr0:instanceId)
+                namespaceList: nsmpr0=http://www.oracle.com/2014/03/ic/integration/metadata
+                variableName: StageFilePath
+                variableDescription: Stage File Path to store Stagging data
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a13)
+              variableName: TSGT_INTG_SERVICE_WITHPARAM_OB_ERROR
+              variableType: string
+              expressionProperties:
+                xpathExpression: '''Exception While Invoking INTG_SERVICE_WITHPARAM_OB'''
+                variableName: TSGT_INTG_SERVICE_WITHPARAM_OB_ERROR
+                variableDescription: Exception Code
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Switch: Switch(s0)
+          routes:
+            - Route: (sc0)
+              exprProperties:
+                xpathExpression: $IntegrationCode != ""
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: IntegrationCode
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - Try: Try(t0)
+                  username: ProcessIntegrations
+                  statements:
+                    - Map: Map(m2)
+                      xsltfilepath: ../resources/processor_1127/resourcegroup_1130/req_eb8491b252c941d9813fb385cfe53b9e.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteXMLData_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteXMLData_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://www.oracle.com/2014/03/ics/callout" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath163080424" xmlns:ns19="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath276029234" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/WriteXMLData" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:ns20="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns21="http://xmlns.oracle.com/cloud/staging/write" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath839213652" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath178323551" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1121297315" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath242206471" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940">
+                        - '  <xsl:param name="Delimiter" xml:id="id_26"/>'
+                        - '  <xsl:param name="IntegrationCode" xml:id="id_38"/>'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:Write xml:id="id_12">'
+                        - '      <ns18:Output>'
+                        - '        <xsl:copy-of select="oraext:create-nodeset-from-delimited-string (&quot;{http://www.w3.org/2001/XMLSchema}Data&quot;, $IntegrationCode, $Delimiter )"/>'
+                        - ""
+                    - StageFile: WriteXMLData(sf2)
+                      operation: Write
+                      expressionProperties:
+                        xpathExpression: $StageFileName
+                      statements: []
+                    - StageFile: ReadData(sf0)
+                      operation: Read
+                      expressionProperties:
+                        xpathExpression: $WriteXMLData/nsmpr7:WriteResponse/nsmpr0:WriteResponse/nsmpr3:ICSFile/nsmpr3:FileReference
+                        namespaceList: nsmpr7=http://xmlns.oracle.com/cloud/adapter/stagefile/WriteXMLData_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/ics/file/v1/types nsmpr0=http://xmlns.oracle.com/cloud/staging/write
+                      statements: []
+                    - ForLoop: ForLoop(f0)
+                      expressionProperties:
+                        xpathExpression: $ReadData/nsmpr7:ReadResponse/nsmpr1:Output/nsmpr1:Data
+                        namespaceList: nsmpr7=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadData_REQUEST/types nsmpr1=http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadData
+                        variableName: CurrentINT
+                      currentRecordVarName: CurrentINT
+                      statements:
+                        - Try: Try(t1)
+                          username: InvokeTrigger
+                          statements:
+                            - Map: Map(m0)
+                              xsltfilepath: ../resources/processor_2604/resourcegroup_2607/req_eefe6d54f9a44321a03b29e27dbc5b34.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/InvokeCommonLauncherService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/InvokeCommonLauncherService_REQUEST" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/InvokeCommonLauncherService_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadData_REQUEST/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteXMLData_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/WriteXMLData" xmlns:nsmpr4="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:ns22="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns23="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns25="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/InvokeCommonLauncherService_REQUEST" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadData" xmlns:ns26="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/SecondaryFileList/collocatedics/InvokeCommonLauncherService_REQUEST" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:ns24="http://xmlns.oracle.com/cloud/staging/write" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns27="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Parameter/collocatedics/InvokeCommonLauncherService_REQUEST" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/InvokeCommonLauncherService_REQUEST/SKIPOUTREQ" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns52="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteXMLData_REQUEST">
+                                - '  <xsl:param name="Blank" xml:id="id_34"/>'
+                                - '  <xsl:param name="IntegrationType" xml:id="id_41"/>'
+                                - '  <xsl:param name="self" xml:id="id_60"/>'
+                                - '  <xsl:param name="CurrentINT" xml:id="id_100"/>'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:POST xml:id="id_12">'
+                                - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_64">'
+                                - '        <ns25:InterfaceIdentifier xml:id="id_65">'
+                                - '          <xsl:value-of xml:id="id_66" select="$CurrentINT/ns21:Data"/>'
+                                - '        <ns25:IntegrationType xml:id="id_67">'
+                                - '          <xsl:value-of xml:id="id_68" select="$IntegrationType"/>'
+                                - '        <ns25:FileName xml:id="id_69">'
+                                - '          <xsl:value-of xml:id="id_70" select="$Blank"/>'
+                                - '        <ns25:SubmittedBy xml:id="id_71">'
+                                - '          <xsl:value-of xml:id="id_72" select="$self/nsmpr4:metadata/nsmpr4:runtime/nsmpr4:invokedBy"/>'
+                                - '        <ns25:Parameter xml:id="id_73">'
+                                - '          <ns27:ParameterValue xml:id="id_74">'
+                                - '            <xsl:value-of xml:id="id_75" select="$Blank"/>'
+                                - '          <ns27:ParameterName xml:id="id_76">'
+                                - '            <xsl:value-of xml:id="id_77" select="$Blank"/>'
+                                - ""
+                            - Invoke: InvokeCommonLauncherService(i0)
+                              application:
+                                Application: InvokeCommonLauncherService(PRESEEDED_COLLOCATED_CONN_1741)
+                                name: InvokeCommonLauncherService
+                                adapter:
+                                    code: PRESEEDED_COLLOCATED_CONN_1741
+                                properties:
+                                    - name: operationPath
+                                      value: /invokeLauncher
+                                    - name: HttpVerb
+                                      value: POST
+                                    - name: QueryParameters
+                                      value: ""
+                                    - name: ResourceURI
+                                      value: /invokeLauncher
+                                    - name: integration_id
+                                      value: TSGTCMNLAUNCHERF_SERVICE|01.00.0000
+                                    - name: integration_operation
+                                      value: POST
+                                    - name: serviceType
+                                      value: REST
+                    - CatchAll: CatchAll(ta0)
+                      statements:
+                        - Assignments: AssignProcessFault(l2)
+                          name: AssignProcessFault
+                          assignments:
+                            - Assignment: Assignment(a21)
+                              variableName: ErrorFlag
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''Y'''
+                                variableName: ErrorFlag
+                                variableDescription: Error Flag to Y
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a22)
+                              variableName: MsgCode
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''TSGT_INTG_SERVICE_WITHPARAM_OB_ERROR'''
+                                variableName: MsgCode
+                                variableDescription: Message Code for exception
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a23)
+                              variableName: MsgDescr
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: concat( $TSGT_INTG_SERVICE_WITHPARAM_OB_ERROR,' Error Details - ',ora:getFaultAsString())
+                                namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                                variableName: MsgDescr
+                                variableDescription: Message Description
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a24)
+                              variableName: MsgDetail
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: ora:getFaultAsString()
+                                namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                                variableName: MsgDetail
+                                variableDescription: Error Message Details
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a26)
+                              variableName: Status
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''ERROR'''
+                                variableName: Status
+                                variableDescription: Status To Error
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                      icsfaultfilepath: ../resources/processor_1975/resourcegroup_1976/ICSFault.xsd
+            - Route: Otherwise(sc1)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements:
+                - Assignments: NoIntegrationCode(l1)
+                  name: NoIntegrationCode
+                  assignments:
+                    - Assignment: Assignment(a5)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''ERROR'''
+                        variableName: Status
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a6)
+                      variableName: MsgCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''NO_INTEGRATION_CODE_IN_INPUT'''
+                        variableName: MsgCode
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a7)
+                      variableName: MsgDescr
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''Integraiton Code Cannot be Empty'''
+                        variableName: MsgDescr
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a8)
+                      variableName: ErrorFlag
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''Y'''
+                        variableName: ErrorFlag
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Switch: Switch(s2)
+          routes:
+            - Route: (sc4)
+              exprProperties:
+                xpathExpression: $ErrorFlag = "Y"
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: ErrorFlag
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - Try: Try(t2)
+                  username: Notification
+                  statements:
+                    - Map: Map(m3)
+                      xsltfilepath: ../resources/processor_2497/resourcegroup_2500/req_f5b3b80fc15c4916a87a4a3451e94fb5.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/SendNotification_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/SendNotification_REQUEST" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/SendNotification" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/collocatedics/InvokeSystemErrorNotification_REQUEST/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/WriteXMLData" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns25="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Notification/collocatedics/InvokeSystemErrorNotification_REQUEST" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns28="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/SendNotification_REQUEST" xmlns:ns26="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/InvokeSystemErrorNotification_REQUEST" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns20="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/InvokeSystemErrorNotification" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/SendNotification_REQUEST/SKIPOUTREQ" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/InvokeSystemErrorNotification_REQUEST/SKIPOUTREQ" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteXMLData_REQUEST/types" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns29="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Notification/collocatedics/SendNotification_REQUEST" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/collocatedics/InvokeSystemErrorNotification_REQUEST" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111">
+                        - '  <xsl:param name="Blank" xml:id="id_29"/>'
+                        - '  <xsl:param name="self" xml:id="id_156"/>'
+                        - '  <xsl:param name="CurrentDateTime" xml:id="id_194"/>'
+                        - '  <xsl:param name="MsgCode" xml:id="id_203"/>'
+                        - '  <xsl:param name="MsgDescr" xml:id="id_204"/>'
+                        - '  <xsl:param name="MsgDetail" xml:id="id_205"/>'
+                        - '  <xsl:param name="FlowId" xml:id="id_260"/>'
+                        - '  <xsl:param name="AdminMailId" xml:id="id_295"/>'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:POST xml:id="id_12">'
+                        - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_56">'
+                        - '        <ns28:Notification xml:id="id_57">'
+                        - '          <ns29:Entity xml:id="id_58">'
+                        - '            <xsl:value-of xml:id="id_59" select="$Blank"/>'
+                        - '          <ns29:IntegrationStartDate xml:id="id_60">'
+                        - '            <xsl:value-of xml:id="id_61" select="$CurrentDateTime"/>'
+                        - '          <ns29:ESSJobDescription xml:id="id_104">'
+                        - '            <xsl:value-of xml:id="id_105" select="$Blank"/>'
+                        - '          <ns29:DocumentId xml:id="id_106">'
+                        - '            <xsl:value-of xml:id="id_107" select="$Blank"/>'
+                        - '          <ns29:AttachmentFilePath xml:id="id_108">'
+                        - '            <xsl:value-of xml:id="id_109" select="$Blank"/>'
+                        - '          <ns29:ErrorDetails xml:id="id_110">'
+                        - '            <xsl:value-of xml:id="id_111" select="$Blank"/>'
+                        - '          <ns29:AttachFromSFTP xml:id="id_112">'
+                        - '            <xsl:value-of xml:id="id_113" select="$Blank"/>'
+                        - '          <ns29:Source xml:id="id_114">'
+                        - '            <xsl:value-of xml:id="id_115" select="$Blank"/>'
+                        - '          <ns29:NotificationCategory xml:id="id_116">'
+                        - '            <xsl:value-of xml:id="id_117" select="&quot;N02&quot;"/>'
+                        - '          <ns29:FileContents2 xml:id="id_160">'
+                        - '            <xsl:value-of xml:id="id_161" select="$Blank"/>'
+                        - '          <ns29:IntegrationName xml:id="id_162">'
+                        - '            <xsl:value-of xml:id="id_163" select="$self/nsmpr3:metadata/nsmpr3:integration/nsmpr3:name"/>'
+                        - '          <ns29:AttachmentFileExist xml:id="id_164">'
+                        - '            <xsl:value-of xml:id="id_165" select="$Blank"/>'
+                        - '          <ns29:EmailSubject xml:id="id_166">'
+                        - '            <xsl:value-of xml:id="id_167" select="$self/nsmpr3:metadata/nsmpr3:integration/nsmpr3:name"/>'
+                        - '          <ns29:AdditionalMessage1 xml:id="id_168">'
+                        - '            <xsl:value-of xml:id="id_169" select="$Blank"/>'
+                        - '          <ns29:AdditionalMessage3 xml:id="id_170">'
+                        - '            <xsl:value-of xml:id="id_171" select="$Blank"/>'
+                        - '          <ns29:AdditionalMessage2 xml:id="id_172">'
+                        - '            <xsl:value-of xml:id="id_173" select="$Blank"/>'
+                        - '          <ns29:AdditionalMessage4 xml:id="id_174">'
+                        - '            <xsl:value-of xml:id="id_175" select="$Blank"/>'
+                        - '          <ns29:SecondAttachmentExists xml:id="id_176">'
+                        - '            <xsl:value-of xml:id="id_177" select="$Blank"/>'
+                        - '          <ns29:Status xml:id="id_178">'
+                        - '            <xsl:value-of xml:id="id_179" select="&quot;ERROR&quot;"/>'
+                        - '          <ns29:IntegrationEndDate xml:id="id_180">'
+                        - '            <xsl:value-of xml:id="id_181" select="substring-before (string (fn:current-dateTime() ), &quot;.&quot; )"/>'
+                        - '          <ns29:MessageCode xml:id="id_220">'
+                        - '            <xsl:value-of xml:id="id_221" select="$MsgCode"/>'
+                        - '          <ns29:AttachmentFileName xml:id="id_222">'
+                        - '            <xsl:value-of xml:id="id_223" select="$Blank"/>'
+                        - '          <ns29:AttachmentFileName2 xml:id="id_224">'
+                        - '            <xsl:value-of xml:id="id_225" select="$Blank"/>'
+                        - '          <ns29:ErrorReason xml:id="id_226">'
+                        - '            <xsl:value-of xml:id="id_227" select="$Blank"/>'
+                        - '          <ns29:ESSJobId xml:id="id_228">'
+                        - '            <xsl:value-of xml:id="id_229" select="$Blank"/>'
+                        - '          <ns29:Integrationidentifier xml:id="id_230">'
+                        - '            <xsl:value-of xml:id="id_231" select="$Blank"/>'
+                        - '          <ns29:ICSFlowId xml:id="id_232">'
+                        - '            <xsl:value-of xml:id="id_233" select="$Blank"/>'
+                        - '          <ns29:FileContents xml:id="id_234">'
+                        - '            <xsl:value-of xml:id="id_235" select="$Blank"/>'
+                        - '          <ns29:MessageDescr xml:id="id_236">'
+                        - '            <xsl:value-of xml:id="id_237" select="$MsgDescr"/>'
+                        - '          <ns29:ErrorCode xml:id="id_238">'
+                        - '            <xsl:value-of xml:id="id_239" select="$Blank"/>'
+                        - '          <ns29:MessageHeader xml:id="id_240">'
+                        - '            <xsl:value-of xml:id="id_241" select="&quot;COMMON_WITH_PARAM_INTG_SERVICE ERROR&quot;"/>'
+                        - '          <ns29:MessageDetail xml:id="id_242">'
+                        - '            <xsl:value-of xml:id="id_243" select="$MsgDetail"/>'
+                        - '          <ns29:ESSJobName xml:id="id_244">'
+                        - '            <xsl:value-of xml:id="id_245" select="$Blank"/>'
+                        - '          <ns29:ParentFlowid xml:id="id_281">'
+                        - '            <xsl:value-of xml:id="id_282" select="$FlowId"/>'
+                        - '          <ns29:ToEmailAddress xml:id="id_318">'
+                        - '            <xsl:value-of xml:id="id_319" select="$AdminMailId"/>'
+                        - '          <ns29:MessageBody xml:id="id_320">'
+                        - '            <xsl:value-of xml:id="id_321" select="$Blank"/>'
+                        - ""
+                    - Invoke: SendNotification(i2)
+                      application:
+                        Application: SendNotification(PRESEEDED_COLLOCATED_CONN_1741)
+                        name: SendNotification
+                        adapter:
+                            code: PRESEEDED_COLLOCATED_CONN_1741
+                        properties:
+                            - name: operationPath
+                              value: /Notify
+                            - name: HttpVerb
+                              value: POST
+                            - name: QueryParameters
+                              value: ""
+                            - name: ResourceURI
+                              value: /Notify
+                            - name: integration_id
+                              value: TSGTCMNNOTIFICAT_SERVICE|01.00.0000
+                            - name: integration_operation
+                              value: POST
+                            - name: serviceType
+                              value: REST
+            - Route: Otherwise(sc5)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - Assignments: ResetScheduledParams(l4)
+          name: ResetScheduledParams
+          assignments:
+            - Assignment: Assignment(a28)
+              variableName: IntegrationCode
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: IntegrationCode
+                variableDescription: Set IntegrationCode as null
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a12)
+              variableName: IntegrationType
+              variableType: string
+              expressionProperties:
+                xpathExpression: '""'
+                variableName: IntegrationType
+                variableDescription: Set Integration Type as null
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta1)
+          statements:
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_2804/resourcegroup_2805/ICSFault.xsd

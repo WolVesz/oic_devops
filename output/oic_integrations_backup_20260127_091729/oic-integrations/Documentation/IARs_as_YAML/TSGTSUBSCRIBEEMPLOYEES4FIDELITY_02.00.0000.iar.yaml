@@ -1,0 +1,71 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_184
+      xsdfilepath: ../resources/processor_184/resourcegroup_185/ICSIntegrationMetadata.xsd
+    - xmlname:
+        space: http://www.oracle.com/2014/03/ics/flow/definition
+        local: subscribe
+      attrs:
+        - name:
+            space: ""
+            local: trackingRefUri
+          value: processor_153
+        - name:
+            space: ""
+            local: id
+          value: sub0
+        - name:
+            space: ""
+            local: refUri
+          value: application_160/outbound_161/output_166
+        - name:
+            space: ""
+            local: name
+          value: EVENT_TSGTPUBLISHEXTRA_SER_2254
+        - name:
+            space: ""
+            local: displayName
+          value: EVENT_TSGTPUBLISHEXTRA_SER_2254
+      content: ""
+      statements: []
+    - Map: Map(m0)
+      xsltfilepath: ../resources/processor_179/resourcegroup_182/req_d58a9d8e6bc248f0a78b4716b2ec7d42.xsl
+      mapsentences:
+        - <?xml version = '1.0' encoding = 'UTF-8'?>
+        - <xsl:stylesheet version="2.0" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:tgrr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeesTrigger_REQUEST/types" xmlns:tgr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeesTrigger/types" xmlns:empr="http://xmlns.oracle.com/cloud/adapter/REST/PublishEmployees_REQUEST/types" xmlns:emp="http://xmlns.oracle.com/cloud/adapter/REST/PublishEmployees/types" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" exclude-result-prefixes=" nssrcdfl ns1 oraext xsd xp20 ora nssrcmpr oracle-xsl-mapper xsi fn xsl ignore01" ignore01:ignorexmlids="true" xml:id="id_1" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+        - '  <xsl:param name="tracking_var_1" xml:id="id_29"/>'
+        - '  <xsl:param name="tracking_var_2" xml:id="id_30"/>'
+        - '  <xsl:param name="tracking_var_3" xml:id="id_31"/>'
+        - '  <xsl:template name="changeNamespace" xml:id="id_11">'
+        - '    <xsl:param name="nodes" xml:id="id_12"/>'
+        - '    <xsl:for-each select="$nodes" xml:id="id_13">'
+        - '      <xsl:choose xml:id="id_14">'
+        - '        <xsl:when test="(count(*)) &gt; (0.0)" xml:id="id_15">'
+        - '          <xsl:element name="emp:{local-name()}" xml:id="id_16">'
+        - '            <xsl:call-template name="changeNamespace" xml:id="id_17">'
+        - '              <xsl:with-param name="nodes" select="./*" xml:id="id_18"/>'
+        - '        <xsl:otherwise xml:id="id_19">'
+        - '          <xsl:element name="emp:{local-name()}" xml:id="id_20">'
+        - '            <xsl:if test="(@xsi:nil) = (&quot;true&quot;)" xml:id="id_21">'
+        - '              <xsl:attribute name="xsi:nil" xml:id="id_22">true</xsl:attribute>'
+        - '            <xsl:value-of select="." xml:id="id_23"/>'
+        - '  <xsl:template match="/" xml:id="id_24">'
+        - '    <empr:execute xml:id="id_25">'
+        - '      <emp:request-wrapper xml:id="id_26">'
+        - '        <xsl:call-template name="changeNamespace" xml:id="id_27">'
+        - '          <xsl:with-param name="nodes" select="/tgrr:execute/tgr:request-wrapper/tgr:EmployeesBatch" xml:id="id_28"/>'
+        - ""
+    - Invoke: PublishEmployees(i0)
+      application:
+        Application: PublishEmployees(TSGTRESTOICINVOK_CONN)
+        name: PublishEmployees
+        adapter:
+            code: TSGTRESTOICINVOK_CONN
+        properties:
+            - name: HttpVerb
+              value: PUT
+            - name: ResourceURI
+              value: /api/integration/v1/flows/rest/TSGTEMPLOYEESFIDELITYPROCESS/2.0/employeeOutbound
+    - Stop: Stop(st0)

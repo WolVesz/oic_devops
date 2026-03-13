@@ -1,0 +1,551 @@
+{
+    "hasMore": false,
+    "items": [
+        {
+            "adapterType": {
+                "displayName": "SOAP",
+                "links": [],
+                "name": "soap",
+                "type": "PREINSTALLED"
+            },
+            "agentRequired": false,
+            "agentSupported": false,
+            "connectionProperties": [
+                {
+                    "displayName": "WSDL URL",
+                    "hasAttachment": false,
+                    "hiddenFlag": false,
+                    "propertyGroup": "CONNECTION_PROPS",
+                    "propertyName": "targetWSDLURL",
+                    "propertyType": "URL_OR_FILE",
+                    "propertyValue": "https://fa-exbd-saasfaprod1.fa.ocs.oraclecloud.com/fscmService/ErpIntegrationService?WSDL",
+                    "requiredFlag": true
+                },
+                {
+                    "acceptableKeys": [
+                        {
+                            "displayName": "service.wsdl",
+                            "keyName": "service.wsdl",
+                            "scope": "SOURCE_AND_TARGET"
+                        }
+                    ],
+                    "displayName": "Service WSDL",
+                    "hasAttachment": false,
+                    "hiddenFlag": false,
+                    "propertyGroup": "CONNECTION_PROPS",
+                    "propertyName": "ServiceWSDL",
+                    "propertyType": "CHOICE",
+                    "requiredFlag": false
+                },
+                {
+                    "acceptableKeys": [
+                        {
+                            "displayName": "TLSv1.1",
+                            "keyName": "TLSv1.1",
+                            "scope": "SOURCE_AND_TARGET"
+                        },
+                        {
+                            "displayName": "TLSv1.2",
+                            "keyName": "TLSv1.2",
+                            "scope": "SOURCE_AND_TARGET"
+                        }
+                    ],
+                    "displayName": "Target Server's TLS version (Optional)",
+                    "hasAttachment": false,
+                    "hiddenFlag": false,
+                    "propertyDescription": "Target server's TLS protocol version. Default is TLSv1.1. Possible values TLSv1.1, TLSv1.2",
+                    "propertyGroup": "CONNECTION_PROPS",
+                    "propertyName": "tlsVersion",
+                    "propertyShortDesc": "Target server's Transport Layer Security (TLS) protocol version. Default is TLSv1.1",
+                    "propertyType": "CHOICE",
+                    "propertyValue": "TLSv1.2",
+                    "requiredFlag": false
+                },
+                {
+                    "acceptableKeys": [
+                        {
+                            "displayName": "Yes",
+                            "keyName": "true",
+                            "scope": "SOURCE_AND_TARGET"
+                        },
+                        {
+                            "displayName": "No",
+                            "keyName": "false",
+                            "scope": "SOURCE_AND_TARGET"
+                        }
+                    ],
+                    "displayName": "Suppress insertion of timestamp into the request (Optional)",
+                    "hasAttachment": false,
+                    "hiddenFlag": false,
+                    "propertyDescription": "In secure Web Services transactions, a WS-Utility (WSU) Timestamp can be inserted into a WS-Security Header \nto define the lifetime of the message in which it is placed. \n\n  If \"Yes\" is selected, no timestamp will be added to WS-Security \n header sent as part of the outbound request. For inbound requests with Basic Auth security policy, no timestamp is required to be sent by the client.",
+                    "propertyGroup": "CONNECTION_PROPS",
+                    "propertyName": "suppressTimestampForRequest",
+                    "propertyShortDesc": "If \"Yes\" is selected, no timestamp will be added to WS-Security header sent as part of the outbound request. For inbound requests with Basic Auth security policy, no timestamp is required.",
+                    "propertyType": "CHOICE",
+                    "requiredFlag": false
+                },
+                {
+                    "acceptableKeys": [
+                        {
+                            "displayName": "Yes",
+                            "keyName": "true",
+                            "scope": "SOURCE_AND_TARGET"
+                        },
+                        {
+                            "displayName": "No",
+                            "keyName": "false",
+                            "scope": "SOURCE_AND_TARGET"
+                        }
+                    ],
+                    "displayName": "Ignore timestamp in the response message (Optional)",
+                    "hasAttachment": false,
+                    "hiddenFlag": false,
+                    "propertyDescription": "Property used by the client to ignore the timestamp \n in the SOAP security header when it receives the response from the service. \n If \"Yes\", then the timestamp is not required in the response \n message; if the timestamp is present, it is ignored.",
+                    "propertyGroup": "CONNECTION_PROPS",
+                    "propertyName": "ignoreTimestampInResponse",
+                    "propertyShortDesc": "If \"Yes\", then the timestamp is not required in the response message",
+                    "propertyType": "CHOICE",
+                    "requiredFlag": false
+                },
+                {
+                    "acceptableKeys": [
+                        {
+                            "displayName": "Yes",
+                            "keyName": "true",
+                            "scope": "SOURCE_AND_TARGET"
+                        },
+                        {
+                            "displayName": "No",
+                            "keyName": "false",
+                            "scope": "SOURCE_AND_TARGET"
+                        }
+                    ],
+                    "displayName": "Enable two way SSL for outbound connections (Optional)",
+                    "hasAttachment": false,
+                    "hiddenFlag": false,
+                    "propertyDescription": "Both the client and the server pass certificates to each other to establish an SSL link, when two-way SSL is enabled.Both sides now know the identity of the other from their respective certificates.",
+                    "propertyGroup": "CONNECTION_PROPS",
+                    "propertyName": "enableTwoWaySSL",
+                    "propertyShortDesc": "Select \"Yes\" if both the client and server should authenticate each other.",
+                    "propertyType": "CHOICE",
+                    "requiredFlag": false
+                },
+                {
+                    "displayName": "Identity keystore alias name (Optional)",
+                    "hasAttachment": false,
+                    "hiddenFlag": false,
+                    "propertyDescription": "Both the client and the server pass certificates to each other to establish an SSL link, when two-way SSL is enabled. Name of the identity certificate alias to use for that communication. This value should match the alias that was provided to import identity to ICS.",
+                    "propertyGroup": "CONNECTION_PROPS",
+                    "propertyName": "sslCertificateAlias",
+                    "propertyShortDesc": "Name of alias to use for establishing identity during two way SSL communication",
+                    "propertyType": "STRING",
+                    "requiredFlag": false
+                }
+            ],
+            "created": "2024-07-10T21:49:50.281+0000",
+            "createdBy": "kaliki.aritakula@oracle.com",
+            "description": "This connection is used to invoke ERP Integration Service for Post Mass Additions",
+            "hasOverride": false,
+            "id": "OUTL-BRT-SOAP-ERPFA_WACSERPFA",
+            "keywords": "wacs-erpfa",
+            "lastUpdated": "2025-03-25T20:21:20.872+0000",
+            "lastUpdatedBy": "anthony.trombley@tristategt.org",
+            "lockedFlag": false,
+            "metadataDownloadSupportedFlag": false,
+            "name": "OU SOAP ERP FA for WACS-ERPFA",
+            "percentageComplete": 100,
+            "privateEndpoint": false,
+            "privateEndpointSupported": false,
+            "role": "SOURCE_AND_TARGET",
+            "securityPolicy": "BASIC_AUTH",
+            "securityPolicyInfo": [
+                {
+                    "scope": "SOURCE_AND_TARGET",
+                    "securityPolicy": "USERNAME_PASSWORD_TOKEN",
+                    "securityProperties": [
+                        {
+                            "displayName": "Username",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "A username credential",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "username",
+                            "propertyShortDesc": "Use UserName",
+                            "propertyType": "STRING",
+                            "requiredFlag": true
+                        },
+                        {
+                            "displayName": "Password",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "A password credential",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "password",
+                            "propertyShortDesc": "Enter Password",
+                            "propertyType": "PASSWORD",
+                            "requiredFlag": true
+                        }
+                    ]
+                },
+                {
+                    "scope": "SOURCE",
+                    "securityPolicy": "OAUTH_INBOUND",
+                    "securityProperties": []
+                },
+                {
+                    "scope": "TARGET",
+                    "securityPolicy": "GENERIC_OAUTH_AUTHORIZATION_CODE",
+                    "securityProperties": [
+                        {
+                            "displayName": "Client Id",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "Used to identify the client(the software requesting an access token) that is making the request. The value passed in this parameter must exactly match the value shown in your API console project.",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "oauth.client.id",
+                            "propertyShortDesc": "for example: 123-xxx.apps.googleusercontent.com",
+                            "propertyType": "STRING",
+                            "requiredFlag": true
+                        },
+                        {
+                            "displayName": "Client Secret",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "Used to authorize the client(the software requesting an access token) that is making the request.  The value passed in this parameter must exactly match the value shown in your API console project.",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "oauth.client.secret",
+                            "propertyShortDesc": "<unique random string matches your API console project>",
+                            "propertyType": "PASSWORD",
+                            "requiredFlag": true
+                        },
+                        {
+                            "displayName": "Authorization Code URI",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "This endpoint is the target of the initial request. It handles active session lookup, authenticating the user, and user consent.",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "oauth.auth.code.uri",
+                            "propertyShortDesc": "for example: https://accounts.google.com/o/oauth2/auth",
+                            "propertyType": "STRING",
+                            "requiredFlag": true
+                        },
+                        {
+                            "displayName": "Access Token URI",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "A request should be sent to this URI for obtaining an access token.",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "oauth.access.token.uri",
+                            "propertyShortDesc": "for example: https://accounts.google.com/o/oauth2/token",
+                            "propertyType": "STRING",
+                            "requiredFlag": true
+                        },
+                        {
+                            "displayName": "Scope",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "Permissions your application is requesting on behalf of the user.",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "oauth.scope",
+                            "propertyShortDesc": "for example: read,write.",
+                            "propertyType": "STRING",
+                            "requiredFlag": false
+                        },
+                        {
+                            "acceptableKeys": [
+                                {
+                                    "displayName": "Send client credentials in body",
+                                    "keyName": "client_credentials_in_body",
+                                    "scope": "SOURCE_AND_TARGET"
+                                },
+                                {
+                                    "displayName": "Send client credentials as basic auth header",
+                                    "keyName": "client_credentials_as_header",
+                                    "scope": "SOURCE_AND_TARGET"
+                                }
+                            ],
+                            "displayName": "Client Authentication",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "Client Authentication",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "clientAuthentication",
+                            "propertyShortDesc": "Client Authentication",
+                            "propertyType": "CHOICE",
+                            "requiredFlag": false
+                        },
+                        {
+                            "acceptableKeys": [
+                                {
+                                    "displayName": "Yes",
+                                    "keyName": "true",
+                                    "scope": "SOURCE_AND_TARGET"
+                                },
+                                {
+                                    "displayName": "No",
+                                    "keyName": "false",
+                                    "scope": "SOURCE_AND_TARGET"
+                                }
+                            ],
+                            "displayName": "Use PKCE (Proof Key for Code Exchange)",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "Use PKCE (Proof Key for Code Exchange)",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "oauth.pkce.enabled",
+                            "propertyShortDesc": "Use PKCE (Proof Key for Code Exchange)",
+                            "propertyType": "CHOICE",
+                            "requiredFlag": false
+                        }
+                    ]
+                },
+                {
+                    "scope": "TARGET",
+                    "securityPolicy": "OAUTH_CLIENT_CREDENTIALS",
+                    "securityProperties": [
+                        {
+                            "displayName": "Access Token URI",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "A request should be sent to this URI for obtaining an access token.",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "oauth.access.token.uri",
+                            "propertyShortDesc": "for example: https://accounts.google.com/o/oauth2/token",
+                            "propertyType": "STRING",
+                            "requiredFlag": true
+                        },
+                        {
+                            "displayName": "Client Id",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "Used to identify the client(the software requesting an access token) that is making the request. The value passed in this parameter must exactly match the value shown in your API console project.",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "oauth.client.id",
+                            "propertyShortDesc": "for example: 123-xxx.apps.googleusercontent.com",
+                            "propertyType": "STRING",
+                            "requiredFlag": true
+                        },
+                        {
+                            "displayName": "Client Secret",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "Used to authorize the client(the software requesting an access token) that is making the request.  The value passed in this parameter must exactly match the value shown in your API console project.",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "oauth.client.secret",
+                            "propertyShortDesc": "<unique random string matches your API console project>",
+                            "propertyType": "PASSWORD",
+                            "requiredFlag": true
+                        },
+                        {
+                            "displayName": "Scope",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "Permissions your application is requesting on behalf of the user.",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "oauth.scope",
+                            "propertyShortDesc": "for example: read,write.",
+                            "propertyType": "STRING",
+                            "requiredFlag": false
+                        },
+                        {
+                            "displayName": "Auth Request Media Type",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "application/json or application/x-www-form-urlencoded",
+                            "propertyGroup": "OTHER",
+                            "propertyName": "oauth.request.content.type",
+                            "propertyType": "STRING",
+                            "requiredFlag": false
+                        },
+                        {
+                            "acceptableKeys": [
+                                {
+                                    "displayName": "Send client credentials as basic auth header",
+                                    "keyName": "client_credentials_as_header",
+                                    "scope": "SOURCE_AND_TARGET"
+                                },
+                                {
+                                    "displayName": "Send client credentials in body",
+                                    "keyName": "client_credentials_in_body",
+                                    "scope": "SOURCE_AND_TARGET"
+                                }
+                            ],
+                            "displayName": "Client Authentication",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "Client Authentication",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "clientAuthentication",
+                            "propertyShortDesc": "Client Authentication",
+                            "propertyType": "CHOICE",
+                            "requiredFlag": false
+                        }
+                    ]
+                },
+                {
+                    "scope": "TARGET",
+                    "securityPolicy": "OAUTH_AUTHORIZATION_CODE_CREDENTIALS",
+                    "securityProperties": [
+                        {
+                            "displayName": "Client Id",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "Used to identify the client(the software requesting an access token) that is making the request. The value passed in this parameter must exactly match the value shown in your API console project.",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "oauth.client.id",
+                            "propertyShortDesc": "for example: 123-xxx.apps.googleusercontent.com",
+                            "propertyType": "STRING",
+                            "requiredFlag": true
+                        },
+                        {
+                            "displayName": "Client Secret",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "Used to authorize the client(the software requesting an access token) that is making the request.  The value passed in this parameter must exactly match the value shown in your API console project.",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "oauth.client.secret",
+                            "propertyShortDesc": "<unique random string matches your API console project>",
+                            "propertyType": "PASSWORD",
+                            "requiredFlag": true
+                        },
+                        {
+                            "displayName": "Authorization Code URI",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "This endpoint is the target of the initial request. It handles active session lookup, authenticating the user, and user consent.",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "oauth.auth.code.uri",
+                            "propertyShortDesc": "for example: https://accounts.google.com/o/oauth2/auth",
+                            "propertyType": "STRING",
+                            "requiredFlag": true
+                        },
+                        {
+                            "displayName": "Access Token URI",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "A request should be sent to this URI for obtaining an access token.",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "oauth.access.token.uri",
+                            "propertyShortDesc": "for example: https://accounts.google.com/o/oauth2/token",
+                            "propertyType": "STRING",
+                            "requiredFlag": true
+                        },
+                        {
+                            "displayName": "Scope",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "Permissions your application is requesting on behalf of the user.",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "oauth.scope",
+                            "propertyShortDesc": "for example: read,write.",
+                            "propertyType": "STRING",
+                            "requiredFlag": false
+                        },
+                        {
+                            "acceptableKeys": [
+                                {
+                                    "displayName": "Send client credentials in body",
+                                    "keyName": "client_credentials_in_body",
+                                    "scope": "SOURCE_AND_TARGET"
+                                },
+                                {
+                                    "displayName": "Send client credentials as basic auth header",
+                                    "keyName": "client_credentials_as_header",
+                                    "scope": "SOURCE_AND_TARGET"
+                                }
+                            ],
+                            "displayName": "Client Authentication",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "Client Authentication",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "clientAuthentication",
+                            "propertyShortDesc": "Client Authentication",
+                            "propertyType": "CHOICE",
+                            "requiredFlag": false
+                        }
+                    ]
+                },
+                {
+                    "scope": "SOURCE",
+                    "securityPolicy": "SAML",
+                    "securityProperties": [
+                        {
+                            "displayName": "Username",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "A username credential",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "username",
+                            "propertyType": "STRING",
+                            "requiredFlag": false
+                        }
+                    ]
+                },
+                {
+                    "scope": "SOURCE_AND_TARGET",
+                    "securityPolicy": "NONE",
+                    "securityProperties": []
+                },
+                {
+                    "scope": "SOURCE_AND_TARGET",
+                    "securityPolicy": "BASIC_AUTH",
+                    "securityProperties": [
+                        {
+                            "displayName": "Username",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "A username credential",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "username",
+                            "propertyShortDesc": "Use UserName",
+                            "propertyType": "STRING",
+                            "requiredFlag": true
+                        },
+                        {
+                            "displayName": "Password",
+                            "hasAttachment": false,
+                            "hiddenFlag": false,
+                            "propertyDescription": "A password credential",
+                            "propertyGroup": "CREDENTIALS",
+                            "propertyName": "password",
+                            "propertyShortDesc": "Enter Password",
+                            "propertyType": "PASSWORD",
+                            "requiredFlag": true
+                        }
+                    ]
+                }
+            ],
+            "securityProperties": [
+                {
+                    "displayName": "Username",
+                    "hasAttachment": false,
+                    "hiddenFlag": false,
+                    "propertyDescription": "A username credential",
+                    "propertyGroup": "CREDENTIALS",
+                    "propertyName": "username",
+                    "propertyShortDesc": "Use UserName",
+                    "propertyType": "STRING",
+                    "requiredFlag": true
+                },
+                {
+                    "displayName": "Password",
+                    "hasAttachment": false,
+                    "hiddenFlag": false,
+                    "propertyDescription": "A password credential",
+                    "propertyGroup": "CREDENTIALS",
+                    "propertyName": "password",
+                    "propertyShortDesc": "Enter Password",
+                    "propertyType": "PASSWORD",
+                    "requiredFlag": true
+                }
+            ],
+            "status": "CONFIGURED",
+            "testStatus": false,
+            "usage": 1,
+            "usageActive": 0
+        }
+    ],
+    "limit": 100,
+    "totalResults": 1
+}

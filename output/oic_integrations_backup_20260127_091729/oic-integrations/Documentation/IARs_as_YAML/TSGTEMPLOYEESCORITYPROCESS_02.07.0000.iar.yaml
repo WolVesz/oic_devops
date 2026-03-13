@@ -1,0 +1,1272 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_58
+      xsdfilepath: ../resources/processor_58/resourcegroup_59/ICSIntegrationMetadata.xsd
+    - GlobalVariable: (gtv0)
+      variableName: CorityRequest
+      variableType: $PublishEmployees2Cority_REQUEST/shrq0:OutboundSOAPRequestDocument/shrq0:Body/tns:ImportCSV
+    - GlobalVariable: (gtv2)
+      variableName: PersonTypes
+      variableType: $GetPersonTypes/ns73:executeResponse/ns75:response-wrapper
+    - GlobalVariable: (gtv3)
+      variableName: count
+      variableType: simpleType
+    - GlobalVariable: (gtv4)
+      variableName: Organizations
+      variableType: $ReadOrgInformation/ns125:ReadResponse/ns124:Organizations
+    - GlobalVariable: (gtv8)
+      variableName: Configs
+      variableType: $GetConfigs/ns16:executeResponse/ns19:response-wrapper
+    - GlobalVariable: (gtv1)
+      variableName: HireDates
+      variableType: $ReadHireDates/ns119:ReadResponse/ns118:DATA_DS
+    - GlobalVariable: (gtv5)
+      variableName: RetryMax
+      variableType: simpleType
+    - GlobalVariable: (gtv7)
+      variableName: RetryCount
+      variableType: simpleType
+    - GlobalVariable: (gtv6)
+      variableName: cority_pswrd
+      variableType: simpleType
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: Batch ID
+              xpath: /execute/request-wrapper/EmployeesBatch/BatchID
+            - role: tracking_var_2
+              name: tracking_var_2
+            - role: tracking_var_3
+              name: tracking_var_3
+        - xmlname:
+            space: http://www.oracle.com/2014/03/ics/flow/definition
+            local: note
+          attrs:
+            - name:
+                space: ""
+                local: id
+              value: nt0
+            - name:
+                space: ""
+                local: name
+              value: ConfigurationNote
+            - name:
+                space: ""
+                local: description
+              value: 'The password for the Cority username must be stored in OCI Vault Secret.  The SecretName used to store the password must be setup in InterfaceConfig. '
+          content: ""
+          statements: []
+        - Switch: Switch(s2)
+          routes:
+            - Route: (sc4)
+              exprProperties:
+                xpathExpression: (/nsmpr3:execute/nsmpr6:request-wrapper/nsmpr6:EmployeesBatch/nsmpr6:Interface != 'Cority' and /nsmpr3:execute/nsmpr6:request-wrapper/nsmpr6:EmployeesBatch/nsmpr6:Interface != 'All' and boolean(string(normalize-space(/nsmpr3:execute/nsmpr6:request-wrapper/nsmpr6:EmployeesBatch/nsmpr6:Interface)))) or  count(/nsmpr3:execute/nsmpr6:request-wrapper/nsmpr6:EmployeesBatch/nsmpr6:Employees) = 0
+                namespaceList: nsmpr6=http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types}execute'
+              statements:
+                - Stop: Stop(st2)
+            - Route: Otherwise(sc5)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - Try: Try(t2)
+          username: Scope_GetConfigs
+          statements:
+            - Map: Map(m2)
+              xsltfilepath: ../resources/processor_1092/resourcegroup_1095/req_a4fce84522674f8a9f9e353b4b41f037.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetConfigs" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns11="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" exclude-result-prefixes=" oraext plnk xsd xp20 ns11 ora oracle-xsl-mapper nssrcmpr nssrcdfl xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://medgate.com" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/GetLadder/types" xmlns:nsmpr2="http://TargetNamespace.com/fileReference/ReadOrgInformation" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes/types" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/REST/GetWorkerRelationship/types" xmlns:nsmpr5="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:ns62="http://xmlns.oracle.com/cloud/adapter/REST/GetWorkerRelationship_REQUEST/types" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:ns55="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadOrgInformation_REQUEST/types" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:ns65="http://xml.oracle.com/types/REST/GetWorkerRelationship_REQUEST" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns61="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetPersonTypes_REQUEST/RESTOUTRES" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:ns57="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetPersonTypes_REQUEST/RESTOUTREQ" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/GetLadder_REQUEST" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns50="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetLadder" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns58="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes_REQUEST/types" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/REST/GetLadder_REQUEST/types" xmlns:ns33="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigs_REQUEST/RESTOUTRES" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns52="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetLadder_REQUEST/RESTOUTREQ" xmlns:ns53="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetLadder_REQUEST/RESTOUTRES" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns30="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:ns54="http://xml.oracle.com/types/REST/GetLadder_REQUEST" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigs_REQUEST/RESTOUTREQ" xmlns:ns59="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetPersonTypes" xmlns:ns66="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetWorkerRelationship_REQUEST/RESTOUTREQ" xmlns:ns67="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetWorkerRelationship_REQUEST/RESTOUTRES" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/EmployeeTrigger_REQUEST/RESTINREQ" xmlns:ns28="http://xml.oracle.com/adapters/extension" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns64="http://xmlns.oracle.com/cloud/adapter/REST/GetWorkerRelationship_REQUEST" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns63="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetWorkerRelationship" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns56="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadOrgInformation_REQUEST" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:ns48="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:ns47="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:shrq0="http://xmlns.oracle.com/types/PublishEmployees2Cority/1613076496955/OutboundSOAPRequestDocument" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs29="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns60="http://xml.oracle.com/types/REST/GetPersonTypes_REQUEST" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111">
+                - '  <xsl:param name="self" xml:id="id_50"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:execute xml:id="id_12">'
+                - '      <nstrgdfl:request-wrapper xml:id="id_54">'
+                - '        <nstrgdfl:Config xml:id="id_55">'
+                - '          <nstrgdfl:Interface xml:id="id_56">'
+                - '            <xsl:value-of xml:id="id_57" select="$self/nsmpr5:metadata/nsmpr5:integration/nsmpr5:name"/>'
+                - ""
+            - Invoke: GetConfigs(i2)
+              application:
+                Application: GetConfigs(TSGTRESTOICINVOK_CONN)
+                name: GetConfigs
+                adapter:
+                    code: TSGTRESTOICINVOK_CONN
+                properties:
+                    - name: operationPath
+                      value: http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/execute
+                    - name: HttpVerb
+                      value: POST
+                    - name: ResourceURI
+                      value: /api/integration/v1/flows/rest/TSGTGETCONFIGS_SERVICE/1.0/configs
+            - Stitch: Stitch(sh3)
+              stitchNamespaceResolver:
+                prefixnamespacemap:
+                    fn: http://www.w3.org/2005/xpath-functions
+                    ns219: http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types
+                    ns221: http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types
+              stitchVariables:
+                - name: RetryMax
+                  datatype:
+                    type: XMLSimple
+                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                  access: SOURCE_AND_TARGET
+                - name: GetConfigs
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types}executeResponse'
+                    uriToSchema: ../../application_1080/inbound_1081/resourcegroup_1082/GetConfigs_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+                - name: Configs
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types}response-wrapper'
+                    uriToSchema: ../../application_1080/inbound_1081/resourcegroup_1082/GetConfigs_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+              stitchSentences:
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: $GetConfigs/ns219:executeResponse/ns221:response-wrapper
+                    returnType: XML_TYPE_NODE_NODESET
+                  to:
+                    type: XPathPath
+                    path: $Configs/ns221:response-wrapper
+                    isLastStepXsdAnyType: false
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: fn:number($Configs/ns221:response-wrapper/ns221:Configs[ns221:Key='RetryMax']/ns221:Value)
+                    returnType: XML_TYPE_ATOMIC
+                  to:
+                    type: XPathPath
+                    path: $RetryMax
+                    isLastStepXsdAnyType: false
+        - Try: Try(t6)
+          username: Scope_CorityPassword
+          statements:
+            - Map: Map(m9)
+              xsltfilepath: ../resources/processor_1543/resourcegroup_1546/req_4f17aa44bee14a25a9f41bde832c9af9.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/Cority_Password_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" ora oracle-xsl-mapper dvm nssrcmpr oraext xsi xsd fn xp20 xsl ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" xmlns:nsmpr1="http://medgate.com" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadHireDates" xmlns:nsmpr4="http://TargetNamespace.com/fileReference/ReadOrgInformation" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes/types" xmlns:nsmpr6="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns61="http://xmlns.oracle.com/cloud/openapi/cloudobject/collocatedics/Cority_Password_REQUEST">
+                - '  <xsl:param name="Configs" xml:id="id_45"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:POST xml:id="id_12">'
+                - '      <nstrgmpr:QueryParameters xml:id="id_60">'
+                - '        <ns61:secretName xml:id="id_61">'
+                - '          <xsl:value-of xml:id="id_62" select="$Configs/nsmpr0:response-wrapper/nsmpr0:Configs[nsmpr0:Key=&apos;SecretName&apos;]/nsmpr0:Value"/>'
+                - ""
+            - Invoke: Cority_Password(i4)
+              application:
+                Application: Cority_Password(PRESEEDED_COLLOCATED_CONN_1741)
+                name: Cority_Password
+                adapter:
+                    code: PRESEEDED_COLLOCATED_CONN_1741
+                properties:
+                    - name: operationPath
+                      value: /getByName
+                    - name: HttpVerb
+                      value: POST
+                    - name: QueryParameters
+                      value: ""
+                    - name: ResourceURI
+                      value: /getByName
+                    - name: integration_id
+                      value: GET_SECRET_BY_NAME|01.00.0000
+                    - name: integration_operation
+                      value: POST
+                    - name: serviceType
+                      value: rest
+            - Stitch: Stitch(sh9)
+              stitchNamespaceResolver:
+                prefixnamespacemap:
+                    ns310: http://xmlns.oracle.com/cloud/adapter/collocatedics/Cority_Password_REQUEST/types
+                    ns313: http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/Cority_Password_REQUEST
+              stitchVariables:
+                - name: cority_pswrd
+                  datatype:
+                    type: XMLSimple
+                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                  access: SOURCE_AND_TARGET
+                - name: Cority_Password
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/collocatedics/Cority_Password_REQUEST/types}POSTResponse'
+                    uriToSchema: ../../application_1531/inbound_1532/resourcegroup_1533/Cority_Password_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+              stitchSentences:
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: $Cority_Password/ns310:POSTResponse/ns310:components.schemas.response-wrapper/ns313:secretContent
+                    returnType: XML_TYPE_NODE_NODESET
+                  to:
+                    type: XPathPath
+                    path: $cority_pswrd
+                    isLastStepXsdAnyType: false
+            - Catch: Catch(tc0)
+              faultname: APIInvocationError
+              statements:
+                - xmlname:
+                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                    local: throw
+                  attrs:
+                    - name:
+                        space: ""
+                        local: id
+                      value: th2
+                    - name:
+                        space: ""
+                        local: refUri
+                      value: processor_1611
+                  content: ""
+                  statements: []
+        - Try: Try(t3)
+          username: Scope_GetPersonTypes
+          statements:
+            - Map: Map(m12)
+              xsltfilepath: ../resources/processor_581/resourcegroup_584/req_d235e9c68b6e4c8598bc199dc69c2c6f.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns11="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes_REQUEST" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetPersonTypes" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST/types" xmlns:nsmpr1="http://medgate.com" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext plnk xsd xp20 ns11 ora oracle-xsl-mapper nssrcmpr nssrcdfl xsi fn xsl ignore01" ignore01:ignorexmlids="true" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns5="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/GetConfigs_REQUEST/SKIPOUTREQ" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/EmployeeTrigger_REQUEST/RESTINREQ" xmlns:ns25="http://xml.oracle.com/adapters/extension" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns51="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetPersonTypes_REQUEST/RESTOUTRES" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:ns49="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetPersonTypes_REQUEST/RESTOUTREQ" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns33="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.response-wrapper/Configs/collocatedics/GetConfigs_REQUEST" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:ns32="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/GetConfigs" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:ns48="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:ns47="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:shrq0="http://xmlns.oracle.com/types/PublishEmployees2Cority/1613076496955/OutboundSOAPRequestDocument" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns4="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/GetConfigs_REQUEST" xmlns:ns50="http://xml.oracle.com/types/REST/GetPersonTypes_REQUEST" xmlns:ns27="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:execute xml:id="id_12">'
+                - '      <nstrgmpr:QueryParameters>'
+                - '        <ns50:q>UserPersonType=&apos;Contingent Worker&apos; or &apos;Employee&apos; or &apos;Pending Worker&apos;</ns50:q>'
+                - ""
+            - Invoke: GetPersonTypes(i10)
+              application:
+                Application: GetPersonTypes(TSGTRESTHCMCLOUD_CONN)
+                name: GetPersonTypes
+                adapter:
+                    code: TSGTRESTHCMCLOUD_CONN
+                properties:
+                    - name: operationPath
+                      value: http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes_REQUEST/execute
+                    - name: HttpVerb
+                      value: GET
+                    - name: QueryParameters
+                      value: q
+                    - name: ResourceURI
+                      value: /personTypesLOV
+            - Stitch: Stitch(sh2)
+              stitchNamespaceResolver:
+                prefixnamespacemap:
+                    ns90: http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes_REQUEST/types
+                    ns92: http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes/types
+              stitchVariables:
+                - name: GetPersonTypes
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes_REQUEST/types}executeResponse'
+                    uriToSchema: ../../application_569/inbound_570/resourcegroup_571/GetPersonTypes_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+                - name: PersonTypes
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes/types}response-wrapper'
+                    uriToSchema: ../../application_569/inbound_570/resourcegroup_571/GetPersonTypes_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+              stitchSentences:
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: $GetPersonTypes/ns90:executeResponse/ns92:response-wrapper
+                    returnType: XML_TYPE_NODE_NODESET
+                  to:
+                    type: XPathPath
+                    path: $PersonTypes/ns92:response-wrapper
+                    isLastStepXsdAnyType: false
+        - Try: Try(t5)
+          username: ScopeHireDates
+          statements:
+            - Map: Map(m6)
+              xsltfilepath: ../resources/processor_1171/resourcegroup_1174/req_839deb30721449108f64e1eb8f2bcc37.xsl
+              mapsentences:
+                - <xsl:stylesheet xmlns:rptw="http://xmlns.oracle.com/types/RunDepartmentReport/1621887598409/OutboundSOAPRequestDocument" xmlns:report="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:tgrr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:tgr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" xmlns:cfg="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext nssrcdfl xsd xp20 ora nssrcmpr oracle-xsl-mapper xsi fn xsl ns1 ignore01" ignore01:ignorexmlids="true">
+                - '  <xsl:param name="Configs"/>'
+                - '  <xsl:param name="CorityRequest"/>'
+                - '  <xsl:param name="HireDates"/>'
+                - '  <xsl:param name="Organizations"/>'
+                - '  <xsl:param name="PersonTypes"/>'
+                - '  <xsl:param name="count"/>'
+                - '  <xsl:param name="self"/>'
+                - '  <xsl:param name="tracking_var_1"/>'
+                - '  <xsl:param name="tracking_var_2"/>'
+                - '  <xsl:param name="tracking_var_3"/>'
+                - '  <xsl:template name="printPersonNumber">'
+                - '    <xsl:param name="nodes"/>'
+                - '    <xsl:for-each select="$nodes">'
+                - '      <xsl:choose>'
+                - '        <xsl:when test="position() != last()">'
+                - '          <xsl:value-of select="concat(./tgr:PersonNumber,&apos;,&apos;)"/>'
+                - '        <xsl:otherwise>'
+                - '          <xsl:value-of select="./tgr:PersonNumber"/>'
+                - '  <xsl:variable name="numbers">'
+                - '    <xsl:call-template name="printPersonNumber">'
+                - '      <xsl:with-param name="nodes" select="/tgrr:execute/tgr:request-wrapper/tgr:EmployeesBatch/tgr:Employees"/>'
+                - '  <xsl:template match="/">'
+                - '    <rptw:OutboundSOAPRequestDocument>'
+                - '      <rptw:Body>'
+                - '        <report:runReport>'
+                - '          <report:reportRequest>'
+                - '            <report:parameterNameValues>'
+                - '              <report:item>'
+                - '                <report:name>p_in_person_numbers</report:name>'
+                - '                <report:values>'
+                - '                  <report:item>'
+                - '                    <xsl:value-of select="string($numbers)"/>'
+                - '            <report:reportAbsolutePath>'
+                - '              <xsl:value-of select="$Configs/cfg:response-wrapper/cfg:Configs[cfg:Key=&apos;HireDateReport&apos;]/cfg:Value"/>'
+                - '            <report:sizeOfDataChunkDownload>-1</report:sizeOfDataChunkDownload>'
+                - ""
+            - Invoke: GetHireDates(i5)
+              application:
+                Application: GetHireDates(TSGTSOAPREPORTIN_CONN)
+                name: GetHireDates
+                adapter:
+                    code: TSGTSOAPREPORTIN_CONN
+                properties:
+                    - name: operationPath
+                      value: ""
+            - Map: Map(m7)
+              xsltfilepath: ../resources/processor_1192/resourcegroup_1195/req_114ff0de11d149fc8389e1d7e7fa1a76.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteFile_REQUEST/types" exclude-result-prefixes=" ora oracle-xsl-mapper dvm nssrcmpr oraext xsi fn xp20 xsl ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6 nsmpr7" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" xmlns:nsmpr1="http://medgate.com" xmlns:nsmpr2="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr3="http://xmlns.oracle.com/types/GetHireDates/1735615463487/OutboundSOAPRequestDocument" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadHireDates" xmlns:nsmpr5="http://TargetNamespace.com/fileReference/ReadOrgInformation" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes/types" xmlns:nsmpr7="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns63="http://xmlns.oracle.com/pcbpel/adapter/opaque/">
+                - '  <xsl:param name="GetHireDates" xml:id="id_47"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:Write xml:id="id_12">'
+                - '      <ns63:opaqueElement xml:id="id_57">'
+                - '        <xsl:value-of xml:id="id_58" select="$GetHireDates/nsmpr2:runReportResponse/nsmpr2:runReportReturn/nsmpr2:reportBytes"/>'
+                - ""
+            - StageFile: WriteFile(sf1)
+              operation: Write
+              expressionProperties:
+                xpathExpression: concat('CorityFile',string(ns9:format-dateTime(string(fn:current-dateTime()), '[Y0001][M01][D01][H01][m01][s01][f001]')),'.xml')
+                namespaceList: ns9=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20 fn=http://www.w3.org/2005/xpath-functions
+              statements: []
+            - StageFile: ReadHireDates(sf2)
+              operation: Read
+              expressionProperties:
+                xpathExpression: $WriteFile/ns48:WriteResponse/ns50:WriteResponse/ns49:ICSFile/ns49:FileReference
+                namespaceList: ns50=http://xmlns.oracle.com/cloud/staging/write ns49=http://xmlns.oracle.com/cloud/ics/file/v1/types ns48=http://xmlns.oracle.com/cloud/adapter/stagefile/WriteFile_REQUEST/types
+              statements: []
+            - Stitch: Stitch(sh5)
+              stitchNamespaceResolver:
+                prefixnamespacemap:
+                    ns249: http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadHireDates
+                    ns250: http://xmlns.oracle.com/cloud/adapter/stagefile/ReadHireDates_REQUEST/types
+              stitchVariables:
+                - name: ReadHireDates
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/ReadHireDates_REQUEST/types}ReadResponse'
+                    uriToSchema: ../../processor_1197/resourcegroup_1198/ReadHireDates_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+                - name: HireDates
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadHireDates}DATA_DS'
+                    uriToSchema: ../../processor_1197/resourcegroup_1198/ReadHireDates_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+              stitchSentences:
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: $ReadHireDates/ns250:ReadResponse/ns249:DATA_DS
+                    returnType: XML_TYPE_NODE_NODESET
+                  to:
+                    type: XPathPath
+                    path: $HireDates/ns249:DATA_DS
+                    isLastStepXsdAnyType: false
+        - Try: Try(t4)
+          username: Scope_GetOrganizationInformation
+          statements:
+            - Map: Map(m18)
+              xsltfilepath: ../resources/processor_793/resourcegroup_796/req_b4761a29b26c4409b39484a0a55eb9b1.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns11="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST" xmlns:nstrgmpr="http://xmlns.oracle.com/types/SearchDepartmentList/1638827046486/OutboundSOAPRequestDocument" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:tns="urn:GenericSoap" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://www.oracle.com/UCM" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST/types" xmlns:nsmpr1="http://medgate.com" xmlns:nsmpr2="http://TargetNamespace.com/fileReference/ReadOrgInformation" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes/types" xmlns:nsmpr4="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns5="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/GetConfigs_REQUEST/SKIPOUTREQ" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ns55="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetPersonTypes" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/EmployeeTrigger_REQUEST/RESTINREQ" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:ns51="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadOrgInformation_REQUEST/types" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns57="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetPersonTypes_REQUEST/RESTOUTRES" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:ns52="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadOrgInformation_REQUEST" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:ns53="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetPersonTypes_REQUEST/RESTOUTREQ" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns37="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.response-wrapper/Configs/collocatedics/GetConfigs_REQUEST" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/GetConfigs" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:ns50="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:ns49="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:shrq0="http://xmlns.oracle.com/types/PublishEmployees2Cority/1613076496955/OutboundSOAPRequestDocument" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns54="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes_REQUEST/types" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns35="http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns4="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/GetConfigs_REQUEST" xmlns:ns56="http://xml.oracle.com/types/REST/GetPersonTypes_REQUEST" xmlns:ns31="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext plnk xsd xp20 ns11 ora oracle-xsl-mapper nssrcmpr nssrcdfl xsi fn xsl ignore01 orajs7 orajs28 orajs4 orajs9 orajs22 orajs5 orajs15 orajs24 orajs6 orajs27 ns63 ns7 orajs23 orajs21 orajs20 orajs19 orajs2 orajs14 ns65 orajs16 orajs26 orajs12 orajs11 ns64 orajs18 orajs13 orajs17 orajs1 ns66 orajs29 orajs3 orajs25 orajs10" ignore01:ignorexmlids="true" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns63="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigs_REQUEST/RESTOUTREQ" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:ns65="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetConfigs" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:ns64="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns66="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigs_REQUEST/RESTOUTRES" xmlns:orajs29="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                - '  <xsl:param name="Configs" xml:id="id_33"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                - '      <nstrgmpr:Body>'
+                - '        <ns0:GenericRequest webKey="cs">'
+                - '          <ns0:Service IdcService="GET_SEARCH_RESULTS">'
+                - '            <ns0:Document>'
+                - '              <ns0:Field name="QueryText">'
+                - '                <xsl:value-of select="concat (&quot;&lt;qsch&gt;&quot;, $Configs/nsmpr5:response-wrapper/nsmpr5:Configs[(nsmpr5:Key = &quot;RCNReportName&quot;)]/nsmpr5:Value, &quot;&lt;/qsch&gt;&quot; )"/>'
+                - ""
+            - Invoke: SearchDepartmentList(i16)
+              application:
+                Application: SearchDepartmentList(TSGTSOAPGENERICI_CONN)
+                name: SearchDepartmentList
+                adapter:
+                    code: TSGTSOAPGENERICI_CONN
+                properties:
+                    - name: operationPath
+                      value: urn:GenericSoap/GenericSoapOperation
+            - Switch: Switch(s0)
+              routes:
+                - Route: NoReport(sc0)
+                  exprProperties:
+                    xpathExpression: count($SearchDepartmentList/nsmpr23:GenericResponse/nsmpr23:Service/nsmpr23:Document/nsmpr23:ResultSet[./@name='SearchResults']) = 0 or count($SearchDepartmentList/nsmpr23:GenericResponse/nsmpr23:Service/nsmpr23:Document/nsmpr23:ResultSet[./@name='SearchResults'][1]/nsmpr23:Row) = 0
+                    namespaceList: nsmpr23=http://www.oracle.com/UCM
+                    expressionName: NoReport
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: SearchDepartmentList
+                          rootElement: '{http://www.oracle.com/UCM}GenericResponse'
+                        - VariableName: /
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types}execute'
+                  statements:
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: throw
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: th1
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_820
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc1)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+            - Map: Map(m17)
+              xsltfilepath: ../resources/processor_855/resourcegroup_858/req_c641ec80f8f04a74b5c46cdbbb563e23.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns11="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST" xmlns:nstrgmpr="http://xmlns.oracle.com/types/GetDocument/1638845736197/OutboundSOAPRequestDocument" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:tns="urn:GenericSoap" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://www.oracle.com/UCM" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST/types" xmlns:nsmpr1="http://medgate.com" xmlns:nsmpr2="http://TargetNamespace.com/fileReference/ReadOrgInformation" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes/types" xmlns:nsmpr4="http://xmlns.oracle.com/types/SearchDepartmentList/1638827046486/OutboundSOAPRequestDocument" xmlns:nsmpr5="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns5="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/GetConfigs_REQUEST/SKIPOUTREQ" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ns56="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetPersonTypes" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/EmployeeTrigger_REQUEST/RESTINREQ" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:ns52="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadOrgInformation_REQUEST/types" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns58="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetPersonTypes_REQUEST/RESTOUTRES" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:ns53="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadOrgInformation_REQUEST" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:ns54="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetPersonTypes_REQUEST/RESTOUTREQ" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns38="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.response-wrapper/Configs/collocatedics/GetConfigs_REQUEST" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/GetConfigs" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:ns51="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:ns50="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:shrq0="http://xmlns.oracle.com/types/PublishEmployees2Cority/1613076496955/OutboundSOAPRequestDocument" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns55="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes_REQUEST/types" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns36="http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns4="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/GetConfigs_REQUEST" xmlns:ns57="http://xml.oracle.com/types/REST/GetPersonTypes_REQUEST" xmlns:ns32="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext plnk xsd xp20 ns11 ora oracle-xsl-mapper nssrcmpr nssrcdfl xsi fn xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                - '  <xsl:param name="SearchDepartmentList" xml:id="id_45"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                - '      <nstrgmpr:Body>'
+                - '        <ns0:GenericRequest webKey="cs">'
+                - '          <ns0:Service IdcService="GET_FILE">'
+                - '            <ns0:Document>'
+                - '              <ns0:Field name="dID">'
+                - '                <xsl:value-of select="$SearchDepartmentList/ns0:GenericResponse/ns0:Service[./@IdcService=&apos;GET_SEARCH_RESULTS&apos;][1]/ns0:Document/ns0:ResultSet[./@name=&apos;SearchResults&apos;]/ns0:Row[1]/ns0:Field[./@name=&apos;dID&apos;]"/>'
+                - ""
+            - Invoke: GetDocument(i15)
+              application:
+                Application: GetDocument(TSGTSOAPGENERICI_CONN)
+                name: GetDocument
+                adapter:
+                    code: TSGTSOAPGENERICI_CONN
+                properties:
+                    - name: operationPath
+                      value: urn:GenericSoap/GenericSoapOperation
+            - StageFile: ReadOrgInformation(sf0)
+              operation: Read
+              expressionProperties:
+                xpathExpression: $GetDocument/nsmpr24:GenericResponse/nsmpr24:Service/nsmpr24:Document/nsmpr24:File/nsmpr24:Contents
+                namespaceList: nsmpr24=http://www.oracle.com/UCM
+              statements: []
+            - Stitch: Stitch(sh4)
+              stitchNamespaceResolver:
+                prefixnamespacemap:
+                    ns105: http://TargetNamespace.com/fileReference/ReadOrgInformation
+                    ns106: http://xmlns.oracle.com/cloud/adapter/stagefile/ReadOrgInformation_REQUEST/types
+              stitchVariables:
+                - name: ReadOrgInformation
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/ReadOrgInformation_REQUEST/types}ReadResponse'
+                    uriToSchema: ../../processor_742/resourcegroup_743/ReadOrgInformation_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+                - name: Organizations
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://TargetNamespace.com/fileReference/ReadOrgInformation}Organizations'
+                    uriToSchema: ../../processor_742/resourcegroup_743/ReadOrgInformation_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+              stitchSentences:
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: $ReadOrgInformation/ns106:ReadResponse/ns105:Organizations
+                    returnType: XML_TYPE_NODE_NODESET
+                  to:
+                    type: XPathPath
+                    path: $Organizations/ns105:Organizations
+                    isLastStepXsdAnyType: false
+        - Try: Try(t0)
+          username: Scope_Employee
+          statements:
+            - Map: Map(m0)
+              xsltfilepath: ../resources/processor_53/resourcegroup_56/req_1f4e92361d3b471fba438fb584824989.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:tns="http://medgate.com" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nstrgmpr="http://xmlns.oracle.com/types/PublishEmployees2Cority/1613076496955/OutboundSOAPRequestDocument" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:arr="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:impw="http://xmlns.oracle.com/types/PublishEmployees2Cority/1613076496955/OutboundSOAPRequestDocument" xmlns:cfg="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadHireDates" xmlns:nsmpr2="http://TargetNamespace.com/fileReference/ReadOrgInformation" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" version="2.0" exclude-result-prefixes=" oraext xsd ns7 ora oracle-xsl-mapper fn xsl xp20 nssrcmpr xsi nssrcdfl ignore01 nsmpr1 nsmpr2 nsmpr3" ignore01:ignorexmlids="true">
+                - '  <xsl:param name="Configs"/>'
+                - '  <xsl:param name="cority_pswrd"/>'
+                - '  <xsl:template match="/nssrcmpr:execute">'
+                - '    <nstrgmpr:OutboundSOAPRequestDocument>'
+                - '      <nstrgmpr:Body>'
+                - '        <xsl:apply-templates select="nssrcdfl:request-wrapper/nssrcdfl:EmployeesBatch"/>'
+                - '  <xsl:template match="nssrcdfl:EmployeesBatch">'
+                - '    <tns:ImportCSV>'
+                - '      <tns:data/>'
+                - "      <tns:importFormat>EmployeeNumber,FirstName,LastName,LoginId,MiddleName,NickName,HomeStreet1,HomeStreet2,HomeCity,HomeState.Code,HomeZip,HomePhone,WorkPhone,Email,DateOfBirth,DateOfHire,DateOfTermination,Union.Code,Organization.Code,Location.Code,Location.Description,Supervisor.EmployeeNumber,JobPosition.Code,JobPosition.Description,Gender\t\t\t</tns:importFormat>"
+                - '      <tns:dateFormat>mm/dd/yyyy</tns:dateFormat>'
+                - '      <tns:ignoreIncorrectNumFields>false</tns:ignoreIncorrectNumFields>'
+                - '      <tns:disableHEGUpdate>false</tns:disableHEGUpdate>'
+                - '      <tns:updateBaseTableDescriptions>true</tns:updateBaseTableDescriptions>'
+                - '      <tns:username>'
+                - '        <xsl:value-of select="$Configs/cfg:response-wrapper/cfg:Configs[cfg:Key=&apos;Username&apos;]/cfg:Value"/>'
+                - '      <tns:password>'
+                - '        <xsl:value-of select="oraext:decodeBase64($cority_pswrd)"/>'
+                - '      <tns:updateExistingRecords>true</tns:updateExistingRecords>'
+                - '      <tns:insertNonExistingBaseTableValues>true</tns:insertNonExistingBaseTableValues>'
+                - '      <tns:mergeRecordsMatchingSSN>false</tns:mergeRecordsMatchingSSN>'
+                - '      <tns:containsHeaderRow>false</tns:containsHeaderRow>'
+                - '      <tns:autoCreatePortalUser>true</tns:autoCreatePortalUser>'
+                - ""
+            - Stitch: Stitch(sh0)
+              stitchNamespaceResolver:
+                prefixnamespacemap:
+                    shrq0: http://xmlns.oracle.com/types/PublishEmployees2Cority/1613076496955/OutboundSOAPRequestDocument
+                    tns: http://medgate.com
+              stitchVariables:
+                - name: count
+                  datatype:
+                    type: XMLSimple
+                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                  access: SOURCE_AND_TARGET
+                - name: PublishEmployees2Cority_REQUEST
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://xmlns.oracle.com/types/PublishEmployees2Cority/1613076496955/OutboundSOAPRequestDocument}OutboundSOAPRequestDocument'
+                    uriToSchema: ../../application_43/inbound_44/resourcegroup_45/PublishEmployees2Cority_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+                - name: CorityRequest
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://medgate.com}ImportCSV'
+                    uriToSchema: ../../application_43/inbound_44/resourcegroup_45/PublishEmployees2Cority_REQUEST.wsdl
+                  access: SOURCE_AND_TARGET
+              stitchSentences:
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: $PublishEmployees2Cority_REQUEST/shrq0:OutboundSOAPRequestDocument/shrq0:Body/tns:ImportCSV
+                    returnType: XML_TYPE_NODE_NODESET
+                  to:
+                    type: XPathPath
+                    path: $CorityRequest/tns:ImportCSV
+                    isLastStepXsdAnyType: false
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: "1"
+                    returnType: XML_TYPE_ATOMIC
+                  to:
+                    type: XPathPath
+                    path: $count
+                    isLastStepXsdAnyType: false
+            - ForLoop: ForLoop(f0)
+              expressionProperties:
+                xpathExpression: /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:EmployeesBatch/nsmpr3:Employees
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types
+                variableName: Employee
+              currentRecordVarName: Employee
+              statements:
+                - Switch: Switch(s1)
+                  routes:
+                    - Route: (sc2)
+                      exprProperties:
+                        xpathExpression: $Employee/nsmpr18:Employees/nsmpr18:WorkerType='EMP' or $Employee/nsmpr18:Employees/nsmpr18:WorkerType='CWK'
+                        namespaceList: nsmpr18=http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: Employee
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types}Employees'
+                      statements:
+                        - Try: Try(t1)
+                          username: Scope_GetDetails
+                          statements:
+                            - Map: Map(m8)
+                              xsltfilepath: ../resources/processor_258/resourcegroup_261/req_39922e8414f24b7fa120163256a07800.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/GetWorker_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns7="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetWorker_REQUEST/types" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetWorker" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/GetWorker/types" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://medgate.com" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/REST/GetAssignments_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/REST/GetEmployee_REQUEST/types" xmlns:nsmpr4="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ns44="http://xmlns.oracle.com/cloud/adapter/REST/GetAssignments/types" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:ns49="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetEmployee" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/EmployeeTrigger_REQUEST/RESTINREQ" xmlns:ns26="http://xml.oracle.com/adapters/extension" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns48="http://xml.oracle.com/types/REST/GetEmployee_REQUEST" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:ns45="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetAssignments" xmlns:ns51="http://xmlns.oracle.com/cloud/adapter/REST/GetEmployee/types" xmlns:ns56="http://xml.oracle.com/types/REST/GetWorker_REQUEST" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns52="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetEmployee_REQUEST/RESTOUTREQ" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns53="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetEmployee_REQUEST/RESTOUTRES" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:ns54="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetWorker_REQUEST/RESTOUTREQ" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:ns55="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetWorker_REQUEST/RESTOUTRES" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:ns43="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:ns42="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:shrq0="http://xmlns.oracle.com/types/PublishEmployees2Cority/1613076496955/OutboundSOAPRequestDocument" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/REST/GetEmployee_REQUEST" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns28="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns46="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetAssignments_REQUEST/RESTOUTRES" xmlns:ns47="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetAssignments_REQUEST/RESTOUTREQ" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/REST/GetAssignmentDFF_REQUEST/types" xmlns:ns63="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetAssignmentDFF" xmlns:ns64="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetAssignmentDFF_REQUEST/RESTOUTRES" xmlns:ns65="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetAssignmentDFF_REQUEST/RESTOUTREQ" xmlns:ns62="http://xmlns.oracle.com/cloud/adapter/REST/GetAssignmentDFF/types" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST/types" xmlns:nsmpr7="http://xmlns.oracle.com/cloud/adapter/REST/GetLadder/types" xmlns:nsmpr8="http://TargetNamespace.com/fileReference/ReadOrgInformation" xmlns:nsmpr9="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes/types" xmlns:nsmpr10="http://xmlns.oracle.com/cloud/adapter/REST/GetWorkerRelationship/types" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext plnk xsd xp20 ns7 ora oracle-xsl-mapper nssrcmpr nssrcdfl xsi fn xsl ignore01 ns63 ns64 ns65 ns62" ignore01:ignorexmlids="true" xmlns:ns90="http://xmlns.oracle.com/cloud/adapter/REST/GetWorkerRelationship_REQUEST/types" xmlns:ns5="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/GetConfigs_REQUEST/SKIPOUTREQ" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns83="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadOrgInformation_REQUEST/types" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:ns93="http://xml.oracle.com/types/REST/GetWorkerRelationship_REQUEST" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:ns89="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetPersonTypes_REQUEST/RESTOUTRES" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:ns85="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetPersonTypes_REQUEST/RESTOUTREQ" xmlns:ns76="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.response-wrapper/Configs/collocatedics/GetConfigs_REQUEST" xmlns:ns79="http://xmlns.oracle.com/cloud/adapter/REST/GetLadder_REQUEST" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns78="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetLadder" xmlns:ns86="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes_REQUEST/types" xmlns:ns74="http://xmlns.oracle.com/cloud/adapter/collocatedics/GetConfigs_REQUEST" xmlns:ns77="http://xmlns.oracle.com/cloud/adapter/REST/GetLadder_REQUEST/types" xmlns:ns80="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetLadder_REQUEST/RESTOUTREQ" xmlns:ns81="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetLadder_REQUEST/RESTOUTRES" xmlns:ns71="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/GetConfigs_REQUEST" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns82="http://xml.oracle.com/types/REST/GetLadder_REQUEST" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:ns87="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetPersonTypes" xmlns:ns94="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetWorkerRelationship_REQUEST/RESTOUTREQ" xmlns:ns95="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetWorkerRelationship_REQUEST/RESTOUTRES" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns92="http://xmlns.oracle.com/cloud/adapter/REST/GetWorkerRelationship_REQUEST" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns91="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetWorkerRelationship" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns84="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadOrgInformation_REQUEST" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns75="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/GetConfigs" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns88="http://xml.oracle.com/types/REST/GetPersonTypes_REQUEST" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr11="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns117="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetConfigs" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:ns15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:ns116="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs_REQUEST/types" xmlns:ns118="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigs_REQUEST/RESTOUTRES" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:ns115="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfigs_REQUEST/RESTOUTREQ" xmlns:ns13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:ns12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758">
+                                - '  <xsl:param name="Employee" xml:id="id_42"/>'
+                                - '  <xsl:param name="Configs" xml:id="id_82"/>'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:execute xml:id="id_12">'
+                                - '      <nstrgmpr:QueryParameters xml:id="id_51">'
+                                - '        <ns56:q xml:id="id_52">'
+                                - '          <xsl:value-of xml:id="id_53" select="concat (&quot;PersonNumber=&quot;, $Employee/nsmpr1:Employees/nsmpr1:PersonNumber )"/>'
+                                - '        <ns56:expand>'
+                                - '          <xsl:value-of xml:id="id_95" select="$Configs/nsmpr11:response-wrapper/nsmpr11:Configs[nsmpr11:Key=&apos;WorkerExpand&apos;]/nsmpr11:Value"/>'
+                                - ""
+                            - Invoke: GetWorker(i6)
+                              application:
+                                Application: GetWorker(TSGTRESTHCMCLOUD_CONN)
+                                name: GetWorker
+                                adapter:
+                                    code: TSGTRESTHCMCLOUD_CONN
+                                properties:
+                                    - name: operationPath
+                                      value: http://xmlns.oracle.com/cloud/adapter/REST/GetWorker_REQUEST/execute
+                                    - name: HttpVerb
+                                      value: GET
+                                    - name: QueryParameters
+                                      value: q, expand
+                                    - name: ResourceURI
+                                      value: /workers
+                            - Map: Map(m10)
+                              xsltfilepath: ../resources/processor_297/resourcegroup_300/req_b940a43ce43d49718f9d4ad932fcf71c.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet xmlns:locr="http://xmlns.oracle.com/cloud/adapter/REST/GetLocation_REQUEST/types" xmlns:loc="http://xml.oracle.com/types/REST/GetLocation_REQUEST" xmlns:empt="http://xmlns.oracle.com/cloud/adapter/REST/EmployeesTrigger/types" xmlns:workerr="http://xmlns.oracle.com/cloud/adapter/REST/GetWorker_REQUEST/types" xmlns:worker="http://xmlns.oracle.com/cloud/adapter/REST/GetWorker/types" xmlns:pt="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" version="2.0" xml:id="id_1" exclude-result-prefixes=" ns3 oraext plnk xsd xp20 ora nssrcmpr oracle-xsl-mapper nssrcdfl xsi fn xsl ignore01" ignore01:ignorexmlids="true">
+                                - '  <xsl:param name="Configs"/>'
+                                - '  <xsl:param name="CorityRequest"/>'
+                                - '  <xsl:param name="Employee"/>'
+                                - '  <xsl:param name="GetWorker"/>'
+                                - '  <xsl:param name="GetWorker_REQUEST"/>'
+                                - '  <xsl:param name="Organizations"/>'
+                                - '  <xsl:param name="PersonTypes"/>'
+                                - '  <xsl:param name="count"/>'
+                                - '  <xsl:param name="self"/>'
+                                - '  <xsl:param name="tracking_var_1"/>'
+                                - '  <xsl:param name="tracking_var_2"/>'
+                                - '  <xsl:param name="tracking_var_3"/>'
+                                - '  <xsl:template match="/">'
+                                - '    <locr:execute>'
+                                - '      <locr:QueryParameters>'
+                                - '        <xsl:variable name="employeetype" select="$PersonTypes/pt:response-wrapper/pt:items[pt:UserPersonType=&apos;Employee&apos;]/pt:PersonTypeId"/>'
+                                - '        <xsl:variable name="contractortype" select="$PersonTypes/pt:response-wrapper/pt:items[pt:UserPersonType=&apos;Contingent Worker&apos;]/pt:PersonTypeId"/>'
+                                - '        <xsl:variable name="pendingtype" select="$PersonTypes/pt:response-wrapper/pt:items[pt:UserPersonType=&apos;Pending Worker&apos;]/pt:PersonTypeId"/>'
+                                - '        <xsl:variable name="assignment">'
+                                - '          <xsl:choose>'
+                                - '            <xsl:when test="count($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[count(worker:assignments[worker:AssignmentStatusType = &apos;ACTIVE&apos;])&gt;0][1]/worker:assignments[worker:AssignmentStatusType = &apos;ACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))][1]) &gt; 0">'
+                                - '              <xsl:copy-of select="$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[count(worker:assignments[worker:AssignmentStatusType = &apos;ACTIVE&apos;])&gt;0][1]/worker:assignments[worker:AssignmentStatusType = &apos;ACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))][1]"/>'
+                                - '            <xsl:when test="count($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[count(worker:assignments[worker:AssignmentStatusType = &apos;INACTIVE&apos;])&gt;0][1]/worker:assignments[worker:AssignmentStatusType = &apos;INACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))][1]) &gt; 0">'
+                                - '              <xsl:copy-of select="$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[count(worker:assignments[worker:AssignmentStatusType = &apos;INACTIVE&apos;])&gt;0][1]/worker:assignments[worker:AssignmentStatusType = &apos;INACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))][1]"/>'
+                                - '        <xsl:variable name="location">'
+                                - '          <xsl:choose>'
+                                - '            <xsl:when test="boolean(normalize-space(string($assignment/worker:assignments/worker:LocationId)))">'
+                                - '              <xsl:value-of select="$assignment/worker:assignments/worker:LocationId"/>'
+                                - '            <xsl:otherwise>0</xsl:otherwise>'
+                                - '        <loc:q>'
+                                - '          <xsl:value-of select="concat (&apos;LocationId=&apos;, string($location))"/>'
+                                - ""
+                            - Invoke: GetLocation(i8)
+                              application:
+                                Application: GetLocation(TSGTRESTHCMCLOUD_CONN)
+                                name: GetLocation
+                                adapter:
+                                    code: TSGTRESTHCMCLOUD_CONN
+                                properties:
+                                    - name: operationPath
+                                      value: http://xmlns.oracle.com/cloud/adapter/REST/GetLocation_REQUEST/execute
+                                    - name: HttpVerb
+                                      value: GET
+                                    - name: QueryParameters
+                                      value: q
+                                    - name: ResourceURI
+                                      value: /locations
+                            - Map: Map(m11)
+                              xsltfilepath: ../resources/processor_314/resourcegroup_317/req_a08287b4865c4d3ba4895af5ca3db982.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet xmlns:jobr="http://xmlns.oracle.com/cloud/adapter/REST/GetJob_REQUEST/types" xmlns:job="http://xml.oracle.com/types/REST/GetJob_REQUEST" xmlns:workerr="http://xmlns.oracle.com/cloud/adapter/REST/GetWorker_REQUEST/types" xmlns:worker="http://xmlns.oracle.com/cloud/adapter/REST/GetWorker/types" xmlns:empt="http://xmlns.oracle.com/cloud/adapter/REST/EmployeesTrigger/types" xmlns:pt="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/GetJob_REQUEST" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" version="2.0" xml:id="id_1" exclude-result-prefixes=" ns3 oraext plnk xsd xp20 ora nssrcmpr oracle-xsl-mapper nssrcdfl xsi fn xsl ignore01" ignore01:ignorexmlids="true">
+                                - '  <xsl:param name="Configs"/>'
+                                - '  <xsl:param name="CorityRequest"/>'
+                                - '  <xsl:param name="Employee"/>'
+                                - '  <xsl:param name="GetLocation"/>'
+                                - '  <xsl:param name="GetLocation_REQUEST"/>'
+                                - '  <xsl:param name="GetWorker"/>'
+                                - '  <xsl:param name="GetWorker_REQUEST"/>'
+                                - '  <xsl:param name="Organizations"/>'
+                                - '  <xsl:param name="PersonTypes"/>'
+                                - '  <xsl:param name="count"/>'
+                                - '  <xsl:param name="self"/>'
+                                - '  <xsl:param name="tracking_var_1"/>'
+                                - '  <xsl:param name="tracking_var_2"/>'
+                                - '  <xsl:param name="tracking_var_3"/>'
+                                - '  <xsl:template match="/">'
+                                - '    <jobr:execute>'
+                                - '      <jobr:QueryParameters>'
+                                - '        <xsl:variable name="employeetype" select="$PersonTypes/pt:response-wrapper/pt:items[pt:UserPersonType=&apos;Employee&apos;]/pt:PersonTypeId"/>'
+                                - '        <xsl:variable name="contractortype" select="$PersonTypes/pt:response-wrapper/pt:items[pt:UserPersonType=&apos;Contingent Worker&apos;]/pt:PersonTypeId"/>'
+                                - '        <xsl:variable name="pendingtype" select="$PersonTypes/pt:response-wrapper/pt:items[pt:UserPersonType=&apos;Pending Worker&apos;]/pt:PersonTypeId"/>'
+                                - '        <xsl:variable name="assignment">'
+                                - '          <xsl:choose>'
+                                - '            <xsl:when test="count($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[count(worker:assignments[worker:AssignmentStatusType = &apos;ACTIVE&apos;])&gt;0][1]/worker:assignments[worker:AssignmentStatusType = &apos;ACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))][1]) &gt; 0">'
+                                - '              <xsl:copy-of select="$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[count(worker:assignments[worker:AssignmentStatusType = &apos;ACTIVE&apos;])&gt;0][1]/worker:assignments[worker:AssignmentStatusType = &apos;ACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))][1]"/>'
+                                - '            <xsl:when test="count($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[count(worker:assignments[worker:AssignmentStatusType = &apos;INACTIVE&apos;])&gt;0][1]/worker:assignments[worker:AssignmentStatusType = &apos;INACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))][1]) &gt; 0">'
+                                - '              <xsl:copy-of select="$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[count(worker:assignments[worker:AssignmentStatusType = &apos;INACTIVE&apos;])&gt;0][1]/worker:assignments[worker:AssignmentStatusType = &apos;INACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))][1]"/>'
+                                - '        <xsl:variable name="job">'
+                                - '          <xsl:choose>'
+                                - '            <xsl:when test="boolean(normalize-space(string($assignment/worker:assignments/worker:JobId)))">'
+                                - '              <xsl:value-of select="$assignment/worker:assignments/worker:JobId"/>'
+                                - '            <xsl:otherwise>0</xsl:otherwise>'
+                                - '        <job:q>'
+                                - '          <xsl:value-of select="concat (&apos;JobId=&apos;, string($job))"/>'
+                                - ""
+                            - Invoke: GetJob(i9)
+                              application:
+                                Application: GetJob(TSGTRESTHCMCLOUD_CONN)
+                                name: GetJob
+                                adapter:
+                                    code: TSGTRESTHCMCLOUD_CONN
+                                properties:
+                                    - name: operationPath
+                                      value: http://xmlns.oracle.com/cloud/adapter/REST/GetJob_REQUEST/execute
+                                    - name: HttpVerb
+                                      value: GET
+                                    - name: QueryParameters
+                                      value: q
+                                    - name: ResourceURI
+                                      value: /jobs
+                            - Map: Map(m13)
+                              xsltfilepath: ../resources/processor_433/resourcegroup_436/req_db9bfbdca86445489dcce50a5852537b.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet xmlns:mgrr="http://xmlns.oracle.com/cloud/adapter/REST/GetManager_REQUEST/types" xmlns:mgr="http://xml.oracle.com/types/REST/GetManager_REQUEST" xmlns:empt="http://xmlns.oracle.com/cloud/adapter/REST/EmployeesTrigger/types" xmlns:workerr="http://xmlns.oracle.com/cloud/adapter/REST/GetWorker_REQUEST/types" xmlns:worker="http://xmlns.oracle.com/cloud/adapter/REST/GetWorker/types" xmlns:pt="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:cfg="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" version="2.0" exclude-result-prefixes=" ns3 oraext plnk xsd xp20 ora nssrcmpr oracle-xsl-mapper nssrcdfl xsi fn xsl ignore01" ignore01:ignorexmlids="true">
+                                - '  <xsl:param name="Configs"/>'
+                                - '  <xsl:param name="CorityRequest"/>'
+                                - '  <xsl:param name="Employee"/>'
+                                - '  <xsl:param name="GetJob"/>'
+                                - '  <xsl:param name="GetJob_REQUEST"/>'
+                                - '  <xsl:param name="GetLocation"/>'
+                                - '  <xsl:param name="GetLocation_REQUEST"/>'
+                                - '  <xsl:param name="GetWorker"/>'
+                                - '  <xsl:param name="GetWorker_REQUEST"/>'
+                                - '  <xsl:param name="Organizations"/>'
+                                - '  <xsl:param name="PersonTypes"/>'
+                                - '  <xsl:param name="count"/>'
+                                - '  <xsl:param name="self"/>'
+                                - '  <xsl:param name="tracking_var_1"/>'
+                                - '  <xsl:param name="tracking_var_2"/>'
+                                - '  <xsl:param name="tracking_var_3"/>'
+                                - '  <xsl:template match="/">'
+                                - '    <mgrr:execute>'
+                                - '      <mgrr:HTTPHeaders>'
+                                - '        <mgr:CustomHTTPHeaders>'
+                                - '          <mgr:REST-Framework-Version>2</mgr:REST-Framework-Version>'
+                                - '      <mgrr:QueryParameters>'
+                                - '        <xsl:variable name="employeetype" select="$PersonTypes/pt:response-wrapper/pt:items[pt:UserPersonType=&apos;Employee&apos;]/pt:PersonTypeId"/>'
+                                - '        <xsl:variable name="contractortype" select="$PersonTypes/pt:response-wrapper/pt:items[pt:UserPersonType=&apos;Contingent Worker&apos;]/pt:PersonTypeId"/>'
+                                - '        <xsl:variable name="pendingtype" select="$PersonTypes/pt:response-wrapper/pt:items[pt:UserPersonType=&apos;Pending Worker&apos;]/pt:PersonTypeId"/>'
+                                - '        <xsl:variable name="assignmentid">'
+                                - '          <xsl:choose>'
+                                - '            <xsl:when test="count($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[1]/worker:assignments[worker:AssignmentStatusType = &apos;ACTIVE&apos; and worker:UserPersonTypeId = string($employeetype)][1]/worker:managers) &gt; 0">'
+                                - '              <xsl:value-of select="$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[1]/worker:assignments[worker:AssignmentStatusType = &apos;ACTIVE&apos; and worker:UserPersonTypeId = string($employeetype)][1]/worker:managers[1]/worker:ManagerAssignmentId"/>'
+                                - '            <xsl:when test="count($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[1]/worker:assignments[worker:AssignmentStatusType = &apos;INACTIVE&apos; and worker:UserPersonTypeId = string($employeetype)][1]/worker:managers) &gt; 0">'
+                                - '              <xsl:value-of select="$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[1]/worker:assignments[worker:AssignmentStatusType = &apos;INACTIVE&apos; and worker:UserPersonTypeId = string($employeetype)][1]/worker:managers[1]/worker:ManagerAssignmentId"/>'
+                                - '            <xsl:otherwise>0</xsl:otherwise>'
+                                - '        <mgr:expand>'
+                                - '          <xsl:value-of select="$Configs/cfg:response-wrapper/cfg:Configs[cfg:Key=&apos;WorkerManagerExpand&apos;]/cfg:Value"/>'
+                                - '        <mgr:q>'
+                                - '          <xsl:value-of select="concat (&apos;workRelationships.assignments.AssignmentId=&apos;, string($assignmentid))"/>'
+                                - ""
+                            - Invoke: GetManager(i12)
+                              application:
+                                Application: GetManager(TSGTRESTHCMCLOUD_CONN)
+                                name: GetManager
+                                adapter:
+                                    code: TSGTRESTHCMCLOUD_CONN
+                                properties:
+                                    - name: operationPath
+                                      value: http://xmlns.oracle.com/cloud/adapter/REST/GetManager_REQUEST/execute
+                                    - name: HttpVerb
+                                      value: GET
+                                    - name: QueryParameters
+                                      value: q, expand
+                                    - name: ResourceURI
+                                      value: /workers
+                            - Map: Map(m3)
+                              xsltfilepath: ../resources/processor_157/resourcegroup_160/req_841506125a5b4c8589983efebca587c0.xsl
+                              mapsentences:
+                                - <xsl:stylesheet xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:arr="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:tns="http://medgate.com" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgmpr="http://xmlns.oracle.com/types/PublishEmployees2Cority/1613076496955/OutboundSOAPRequestDocument" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:empt="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:dpt="http://xmlns.oracle.com/cloud/adapter/REST/GetDepartment/types" xmlns:deptr="http://xmlns.oracle.com/cloud/adapter/REST/GetDepartment_REQUEST/types" xmlns:locf="http://xmlns.oracle.com/cloud/adapter/REST/GetLocationDFF/types" xmlns:locfr="http://xmlns.oracle.com/cloud/adapter/REST/GetLocationDFF_REQUEST/types" xmlns:loc="http://xmlns.oracle.com/cloud/adapter/REST/GetLocation/types" xmlns:locr="http://xmlns.oracle.com/cloud/adapter/REST/GetLocation_REQUEST/types" xmlns:job="http://xmlns.oracle.com/cloud/adapter/REST/GetJob/types" xmlns:jobr="http://xmlns.oracle.com/cloud/adapter/REST/GetJob_REQUEST/types" xmlns:gmr="http://xmlns.oracle.com/cloud/adapter/REST/GetManager_REQUEST/types" xmlns:gm="http://xmlns.oracle.com/cloud/adapter/REST/GetManager/types" xmlns:pt="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes/types" xmlns:workerr="http://xmlns.oracle.com/cloud/adapter/REST/GetWorker_REQUEST/types" xmlns:worker="http://xmlns.oracle.com/cloud/adapter/REST/GetWorker/types" xmlns:org="http://TargetNamespace.com/fileReference/ReadOrgInformation" xmlns:hr="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadHireDates" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" version="2.0" exclude-result-prefixes=" oraext xsd ora oracle-xsl-mapper fn xsl xp20 nssrcmpr xsi nssrcdfl ignore01" ignore01:ignorexmlids="true">
+                                - '  <xsl:param name="Configs"/>'
+                                - '  <xsl:param name="CorityRequest"/>'
+                                - '  <xsl:param name="Employee"/>'
+                                - '  <xsl:param name="GetJob"/>'
+                                - '  <xsl:param name="GetJob_REQUEST"/>'
+                                - '  <xsl:param name="GetLocation"/>'
+                                - '  <xsl:param name="GetLocation_REQUEST"/>'
+                                - '  <xsl:param name="GetManager"/>'
+                                - '  <xsl:param name="GetManager_REQUEST"/>'
+                                - '  <xsl:param name="GetWorker"/>'
+                                - '  <xsl:param name="GetWorker_REQUEST"/>'
+                                - '  <xsl:param name="HireDates"/>'
+                                - '  <xsl:param name="Organizations"/>'
+                                - '  <xsl:param name="PersonTypes"/>'
+                                - '  <xsl:param name="count"/>'
+                                - '  <xsl:param name="self"/>'
+                                - '  <xsl:param name="tracking_var_1"/>'
+                                - '  <xsl:param name="tracking_var_2"/>'
+                                - '  <xsl:param name="tracking_var_3"/>'
+                                - '  <xsl:template match="/">'
+                                - '    <nstrgmpr:OutboundSOAPRequestDocument>'
+                                - '      <xsl:variable name="employeetype" select="$PersonTypes/pt:response-wrapper/pt:items[pt:UserPersonType=&apos;Employee&apos;]/pt:PersonTypeId"/>'
+                                - '      <xsl:variable name="contractortype" select="$PersonTypes/pt:response-wrapper/pt:items[pt:UserPersonType=&apos;Contingent Worker&apos;]/pt:PersonTypeId"/>'
+                                - '      <xsl:variable name="pendingtype" select="$PersonTypes/pt:response-wrapper/pt:items[pt:UserPersonType=&apos;Pending Worker&apos;]/pt:PersonTypeId"/>'
+                                - '      <xsl:variable name="workRelationships">'
+                                - '        <xsl:choose>'
+                                - '          <xsl:when test="count($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[count(worker:assignments[worker:AssignmentStatusType = &apos;ACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))])&gt;0]) &gt; 0">'
+                                - '            <xsl:copy-of select="$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[count(worker:assignments[worker:AssignmentStatusType = &apos;ACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))])&gt;0][1]"/>'
+                                - '          <xsl:when test="count($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[count(worker:assignments[worker:AssignmentStatusType = &apos;INACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))])&gt;0]) &gt; 0">'
+                                - '            <xsl:copy-of select="$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:workRelationships[count(worker:assignments[worker:AssignmentStatusType = &apos;INACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))])&gt;0][1]"/>'
+                                - '      <xsl:variable name="assignment">'
+                                - '        <xsl:choose>'
+                                - '          <xsl:when test="($workRelationships/worker:workRelationships/worker:WorkerType = &apos;E&apos; or $workRelationships/worker:workRelationships/worker:WorkerType = &apos;C&apos;) and count($workRelationships/worker:workRelationships/worker:assignments[worker:AssignmentStatusType = &apos;ACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))]) &gt; 0">'
+                                - '            <xsl:copy-of select="$workRelationships/worker:workRelationships/worker:assignments[worker:AssignmentStatusType = &apos;ACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))][1]"/>'
+                                - '          <xsl:when test="$workRelationships/worker:workRelationships/worker:WorkerType = &apos;E&apos; and count($workRelationships/worker:workRelationships/worker:assignments[worker:AssignmentStatusType = &apos;INACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))]) &gt; 0">'
+                                - '            <xsl:copy-of select="$workRelationships/worker:workRelationships/worker:assignments[worker:AssignmentStatusType = &apos;INACTIVE&apos; and (worker:UserPersonTypeId = string($employeetype) or worker:UserPersonTypeId = string($contractortype))][1]"/>'
+                                - '      <xsl:variable name="unionCode">'
+                                - '        <xsl:choose>'
+                                - '          <xsl:when test="((not(boolean(string(normalize-space($assignment/worker:assignments/worker:LabourUnionMemberFlag)))) or $assignment/worker:assignments/worker:LabourUnionMemberFlag=&apos;No&apos;) and not(boolean(string($assignment/worker:assignments/worker:GradeLadderName))) ) or starts-with($assignment/worker:assignments/worker:GradeLadderName,&apos;CCC&apos;)">Non-Bargaining</xsl:when>'
+                                - '          <xsl:when test="$assignment/worker:assignments/worker:LabourUnionMemberFlag=&apos;Yes&apos;">Bargaining</xsl:when>'
+                                - '          <xsl:when test="((not(boolean(string(normalize-space($assignment/worker:assignments/worker:LabourUnionMemberFlag)))) or $assignment/worker:assignments/worker:LabourUnionMemberFlag=&apos;No&apos;) and boolean(string($assignment/worker:assignments/worker:GradeLadderName))) or not(starts-with($assignment/worker:assignments/worker:GradeLadderName,&apos;CCC&apos;))">Non-Barg T&amp;C</xsl:when>'
+                                - '      <nstrgmpr:Body>'
+                                - '        <tns:ImportCSV>'
+                                - '          <xsl:for-each select="$CorityRequest/tns:ImportCSV">'
+                                - '            <tns:data>'
+                                - '              <xsl:for-each select="tns:data/arr:string">'
+                                - '                <xsl:copy-of select="."/>'
+                                - '              <xsl:variable name="homePhone">'
+                                - '                <xsl:choose>'
+                                - '                  <xsl:when test="boolean(normalize-space(string($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:phones[worker:PhoneType=&apos;H1&apos;]/worker:AreaCode))) and boolean(normalize-space(string($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:phones[worker:PhoneType=&apos;H1&apos;]/worker:PhoneNumber)))">'
+                                - '                    <xsl:value-of select="concat(normalize-space(string($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:phones[worker:PhoneType=&apos;H1&apos;]/worker:AreaCode)), &apos;-&apos;, normalize-space(string($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:phones[worker:PhoneType=&apos;H1&apos;]/worker:PhoneNumber)))"/>'
+                                - '                  <xsl:when test="not(boolean(normalize-space(string($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:phones[worker:PhoneType=&apos;H1&apos;]/worker:AreaCode)))) and boolean(normalize-space(string($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:phones[worker:PhoneType=&apos;H1&apos;]/worker:PhoneNumber)))">'
+                                - '                    <xsl:value-of select="normalize-space(string($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:phones[worker:PhoneType=&apos;H1&apos;]/worker:PhoneNumber))"/>'
+                                - '              <xsl:variable name="workPhone">'
+                                - '                <xsl:choose>'
+                                - '                  <xsl:when test="boolean(normalize-space(string($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:phones[worker:PhoneType=&apos;W1&apos;]/worker:AreaCode))) and boolean(normalize-space(string($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:phones[worker:PhoneType=&apos;W1&apos;]/worker:PhoneNumber)))">'
+                                - '                    <xsl:value-of select="concat(normalize-space(string($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:phones[worker:PhoneType=&apos;W1&apos;]/worker:AreaCode)), &apos;-&apos;, normalize-space(string($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:phones[worker:PhoneType=&apos;W1&apos;]/worker:PhoneNumber)))"/>'
+                                - '                  <xsl:when test="not(boolean(normalize-space(string($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:phones[worker:PhoneType=&apos;W1&apos;]/worker:AreaCode)))) and boolean(normalize-space(string($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:phones[worker:PhoneType=&apos;W1&apos;]/worker:PhoneNumber)))">'
+                                - '                    <xsl:value-of select="normalize-space(string($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:phones[worker:PhoneType=&apos;W1&apos;]/worker:PhoneNumber))"/>'
+                                - '              <xsl:variable name="personNumber" select="$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:PersonNumber"/>'
+                                - '              <xsl:variable name="birthday">'
+                                - '                <xsl:choose>'
+                                - '                  <xsl:when test="boolean(normalize-space(string($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:DateOfBirth)))">'
+                                - '                    <xsl:value-of select="xp20:format-dateTime($GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:DateOfBirth,&apos;[M01]/[D01]/[Y0001]&apos;)"/>'
+                                - '              <xsl:variable name="hireDate">'
+                                - '                <xsl:choose>'
+                                - '                  <xsl:when test="boolean(normalize-space(string($HireDates/hr:DATA_DS/hr:G_1[hr:PERSON_NUMBER=string($personNumber)][1]/hr:ORIGINAL_DATE)))">'
+                                - '                    <xsl:value-of select="xp20:format-dateTime($HireDates/hr:DATA_DS/hr:G_1[hr:PERSON_NUMBER=string($personNumber)][1]/hr:ORIGINAL_DATE,&apos;[M01]/[D01]/[Y0001]&apos;)"/>'
+                                - '                  <xsl:when test="boolean(normalize-space(string($HireDates/hr:DATA_DS/hr:G_1[hr:PERSON_NUMBER=string($personNumber)][1]/hr:LATEST_HIRE_DATE))) and $assignment/worker:assignments/worker:ActionCode = &apos;REHIRE&apos;">'
+                                - '                    <xsl:value-of select="xp20:format-dateTime($HireDates/hr:DATA_DS/hr:G_1[hr:PERSON_NUMBER=string($personNumber)][1]/hr:LATEST_HIRE_DATE,&apos;[M01]/[D01]/[Y0001]&apos;)"/>'
+                                - '                  <xsl:when test="boolean(normalize-space(string($HireDates/hr:DATA_DS/hr:G_1[hr:PERSON_NUMBER=string($personNumber)][1]/hr:ENTERPRISE_DATE)))">'
+                                - '                    <xsl:value-of select="xp20:format-dateTime($HireDates/hr:DATA_DS/hr:G_1[hr:PERSON_NUMBER=string($personNumber)][1]/hr:ENTERPRISE_DATE,&apos;[M01]/[D01]/[Y0001]&apos;)"/>'
+                                - '              <xsl:variable name="terminationDate">'
+                                - '                <xsl:choose>'
+                                - '                  <xsl:when test="boolean(normalize-space(string($workRelationships/worker:workRelationships/worker:TerminationDate)))">'
+                                - '                    <xsl:value-of select="xp20:format-dateTime($workRelationships/worker:workRelationships/worker:TerminationDate,&apos;[M01]/[D01]/[Y0001]&apos;)"/>'
+                                - '              <xsl:variable name="jobCode">'
+                                - '                <xsl:choose>'
+                                - '                  <xsl:when test="contains($GetJob/jobr:executeResponse/job:response-wrapper/job:items[1]/job:JobCode,&apos;,&apos;)">'
+                                - '                    <xsl:value-of select="concat(&apos;&quot;&apos;,$GetJob/jobr:executeResponse/job:response-wrapper/job:items[1]/job:JobCode,&apos;&quot;&apos;)"/>'
+                                - '                  <xsl:otherwise>'
+                                - '                    <xsl:value-of select="$GetJob/jobr:executeResponse/job:response-wrapper/job:items[1]/job:JobCode"/>'
+                                - '              <xsl:variable name="jobName">'
+                                - '                <xsl:choose>'
+                                - '                  <xsl:when test="contains($GetJob/jobr:executeResponse/job:response-wrapper/job:items[1]/job:Name,&apos;,&apos;)">'
+                                - '                    <xsl:value-of select="concat(&apos;&quot;&apos;,$GetJob/jobr:executeResponse/job:response-wrapper/job:items[1]/job:Name,&apos;&quot;&apos;)"/>'
+                                - '                  <xsl:otherwise>'
+                                - '                    <xsl:value-of select="$GetJob/jobr:executeResponse/job:response-wrapper/job:items[1]/job:Name"/>'
+                                - '              <xsl:variable name="locationName">'
+                                - '                <xsl:choose>'
+                                - '                  <xsl:when test="contains($GetLocation/locr:executeResponse/loc:response-wrapper/loc:items[1]/loc:LocationName,&apos;,&apos;)">'
+                                - '                    <xsl:value-of select="concat(&apos;&quot;&apos;,$GetLocation/locr:executeResponse/loc:response-wrapper/loc:items[1]/loc:LocationName,&apos;&quot;&apos;)"/>'
+                                - '                  <xsl:otherwise>'
+                                - '                    <xsl:value-of select="$GetLocation/locr:executeResponse/loc:response-wrapper/loc:items[1]/loc:LocationName"/>'
+                                - '              <xsl:variable name="rcn">'
+                                - '                <xsl:choose>'
+                                - '                  <xsl:when test="count($Organizations/org:Organizations/org:Organization[org:ORGANIZATION_ID=$assignment/worker:assignments/worker:DepartmentId]) &gt; 0">'
+                                - '                    <xsl:value-of select="$Organizations/org:Organizations/org:Organization[org:ORGANIZATION_ID=$assignment/worker:assignments/worker:DepartmentId][1]/org:ORG_INFORMATION1"/>'
+                                - '              <xsl:variable name="gender">'
+                                - '                <xsl:choose>'
+                                - '                  <xsl:when test="$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:legislativeInfo[worker:LegislationCode=&apos;US&apos;]/worker:Gender = &apos;ORA_HRX_X&apos;">'
+                                - '                    <xsl:value-of select="&apos; &apos;"/>'
+                                - '                  <xsl:otherwise>'
+                                - '                    <xsl:value-of select="$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:legislativeInfo[worker:LegislationCode=&apos;US&apos;]/worker:Gender"/>'
+                                - '              <arr:string>'
+                                - '                <xsl:value-of select="concat(string($personNumber),&apos;,&apos;,$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:names[1]/worker:FirstName,&apos;,&apos;,$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:names[1]/worker:LastName,&apos;,&apos;,$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:externalIdentifiers[worker:ExternalIdentifierType=&apos;NETWORK_ID&apos;]/worker:ExternalIdentifierNumber,&apos;,&apos;,$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:names[1]/worker:MiddleName,&apos;,&apos;,$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:names[1]/worker:KnownAs,&apos;,&quot;&apos;,$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:addresses[1]/worker:AddressLine1,&apos;&quot;,&quot;&apos;,$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:addresses[1]/worker:AddressLine2,&apos;&quot;,&apos;,$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:addresses[1]/worker:TownOrCity,&apos;,&apos;,$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:addresses[1]/worker:Region2,&apos;,&apos;,$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:addresses[1]/worker:PostalCode,&apos;,&apos;,string($homePhone),&apos;,&apos;,string($workPhone),&apos;,&apos;,$GetWorker/workerr:executeResponse/worker:response-wrapper/worker:items[1]/worker:emails[worker:EmailType=&apos;W1&apos;]/worker:EmailAddress,&apos;,&apos;,normalize-space(string($birthday)),&apos;,&apos;,normalize-space(string($hireDate)),&apos;,&apos;,normalize-space(string($terminationDate)),&apos;,&apos;,string($unionCode),&apos;,&apos;,string($rcn),&apos;,&apos;,$GetLocation/locr:executeResponse/loc:response-wrapper/loc:items[1]/loc:LocationCode,&apos;,&apos;,string($locationName),&apos;,&apos;,$GetManager/gmr:executeResponse/gm:response-wrapper/gm:items[1]/gm:PersonNumber,&apos;,&apos;,string($jobCode),&apos;,&apos;,string($jobName),&apos;,&apos;,string($gender))"/>'
+                                - '            <xsl:copy-of select="./tns:importFormat"/>'
+                                - '            <xsl:copy-of select="./tns:ignoreIncorrectNumFields"/>'
+                                - '            <xsl:copy-of select="./tns:disableHEGUpdate"/>'
+                                - '            <xsl:copy-of select="./tns:updateBaseTableDescriptions"/>'
+                                - '            <xsl:copy-of select="./tns:username"/>'
+                                - '            <xsl:copy-of select="./tns:password"/>'
+                                - '            <xsl:copy-of select="./tns:updateExistingRecords"/>'
+                                - '            <xsl:copy-of select="./tns:insertNonExistingBaseTableValues"/>'
+                                - '            <xsl:copy-of select="./tns:mergeRecordsMatchingSSN"/>'
+                                - '            <xsl:copy-of select="./tns:containsHeaderRow"/>'
+                                - '            <xsl:copy-of select="./tns:autoCreatePortalUser"/>'
+                                - ""
+                            - Stitch: Stitch(sh1)
+                              stitchNamespaceResolver:
+                                prefixnamespacemap:
+                                    shrq0: http://xmlns.oracle.com/types/PublishEmployees2Cority/1613076496955/OutboundSOAPRequestDocument
+                                    tns: http://medgate.com
+                              stitchVariables:
+                                - name: count
+                                  datatype:
+                                    type: XMLSimple
+                                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                                  access: SOURCE_AND_TARGET
+                                - name: PublishEmployees2Cority_REQUEST
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://xmlns.oracle.com/types/PublishEmployees2Cority/1613076496955/OutboundSOAPRequestDocument}OutboundSOAPRequestDocument'
+                                    uriToSchema: ../../application_43/inbound_44/resourcegroup_45/PublishEmployees2Cority_REQUEST.wsdl
+                                  access: SOURCE_AND_TARGET
+                                - name: CorityRequest
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://medgate.com}ImportCSV'
+                                    uriToSchema: ../../application_43/inbound_44/resourcegroup_45/PublishEmployees2Cority_REQUEST.wsdl
+                                  access: SOURCE_AND_TARGET
+                              stitchSentences:
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: $PublishEmployees2Cority_REQUEST/shrq0:OutboundSOAPRequestDocument/shrq0:Body/tns:ImportCSV
+                                    returnType: XML_TYPE_NODE_NODESET
+                                  to:
+                                    type: XPathPath
+                                    path: $CorityRequest/tns:ImportCSV
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: $count + 1
+                                    returnType: XML_TYPE_ATOMIC
+                                  to:
+                                    type: XPathPath
+                                    path: $count
+                                    isLastStepXsdAnyType: false
+                            - CatchAll: CatchAll(ta1)
+                              statements:
+                                - Map: Map(m4)
+                                  xsltfilepath: ../resources/processor_1148/resourcegroup_1151/req_bf6e41bc17184266b7a15e9cc2ea4469.xsl
+                                  mapsentences:
+                                    - <xsl:stylesheet version="2.0" xmlns:audr="http://xmlns.oracle.com/cloud/adapter/REST/PublishAuditing4Employee_REQUEST/types" xmlns:aud="http://xmlns.oracle.com/cloud/adapter/REST/PublishAuditing4Employee/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:fault="http://www.oracle.com/2014/03/ics/fault" xmlns:med="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:emp="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" xmlns:oic="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ic="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:empt="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" exclude-result-prefixes=" oraext xp20 ora oracle-xsl-mapper nssrcdfl xsi fn xsl nsmpr0 ignore01" ignore01:ignorexmlids="true">
+                                    - '  <xsl:param name="Configs"/>'
+                                    - '  <xsl:param name="CorityRequest"/>'
+                                    - '  <xsl:param name="Employee"/>'
+                                    - '  <xsl:param name="Organizations"/>'
+                                    - '  <xsl:param name="PersonTypes"/>'
+                                    - '  <xsl:param name="Scope_GetDetailsFaultObject"/>'
+                                    - '  <xsl:param name="count"/>'
+                                    - '  <xsl:param name="self"/>'
+                                    - '  <xsl:param name="tracking_var_1"/>'
+                                    - '  <xsl:param name="tracking_var_2"/>'
+                                    - '  <xsl:param name="tracking_var_3"/>'
+                                    - '  <xsl:template match="/">'
+                                    - '    <audr:execute>'
+                                    - '      <aud:request-wrapper>'
+                                    - '        <aud:Auditing>'
+                                    - '          <aud:AuditingType>'
+                                    - '            <xsl:value-of select="&apos;Error&apos;"/>'
+                                    - '          <aud:FlowInstanceID>'
+                                    - '            <xsl:value-of select="ic:getFlowId()"/>'
+                                    - '          <aud:TrackingID>'
+                                    - '            <xsl:value-of select="/nssrcmpr:execute/empt:request-wrapper/empt:EmployeesBatch/empt:BatchID"/>'
+                                    - '          <aud:ReferenceID>'
+                                    - '            <xsl:value-of select="concat ($self/med:metadata/med:integration/med:name, &apos;-&apos;, /nssrcmpr:execute/empt:request-wrapper/empt:EmployeesBatch/empt:DateTime )"/>'
+                                    - '          <aud:InterfaceName>'
+                                    - '            <xsl:value-of select="$self/med:metadata/med:integration/med:name"/>'
+                                    - '          <aud:Title>'
+                                    - '            <xsl:value-of select="concat($self/med:metadata/med:integration/med:name, &apos; - Employee record - Error - &apos;, ic:getFlowId())"/>'
+                                    - '          <aud:Details>'
+                                    - '            <xsl:value-of select="concat (&apos;ErrorCode:&apos;, $Scope_GetDetailsFaultObject/fault:fault/fault:errorCode, &apos;; reason:&apos;, $Scope_GetDetailsFaultObject/fault:fault/fault:reason, &apos;; details:&apos;, $Scope_GetDetailsFaultObject/fault:fault/fault:details )"/>'
+                                    - '          <aud:Payload>'
+                                    - '            <xsl:value-of select="oraext:get-content-as-string($Employee/emp:Employees)"/>'
+                                    - '          <aud:AuditingID>'
+                                    - '            <xsl:value-of select="oraext:generate-guid ()"/>'
+                                    - ""
+                                - Invoke: PublishAuditing4Employee(i3)
+                                  application:
+                                    Application: PublishAuditing4Employee(TSGTRESTOICINVOK_CONN)
+                                    name: PublishAuditing4Employee
+                                    adapter:
+                                        code: TSGTRESTOICINVOK_CONN
+                                    properties:
+                                        - name: HttpVerb
+                                          value: PUT
+                                        - name: ResourceURI
+                                          value: /api/integration/v1/flows/rest/TSGTPUBLISHAUDIT_SERVICE/1.0/auditing
+                              icsfaultfilepath: ../resources/processor_443/resourcegroup_444/ICSFault.xsd
+                    - Route: Otherwise(sc3)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements: []
+            - Switch: Switch(s3)
+              routes:
+                - Route: NotEmpty(sc6)
+                  exprProperties:
+                    xpathExpression: $count > 0
+                    expressionName: NotEmpty
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: count
+                          rootElement: '{http://www.w3.org/2001/XMLSchema}double'
+                  statements:
+                    - Stitch: Stitch(sh6)
+                      stitchNamespaceResolver:
+                        prefixnamespacemap: {}
+                      stitchVariables:
+                        - name: RetryCount
+                          datatype:
+                            type: XMLSimple
+                            xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                          access: SOURCE_AND_TARGET
+                      stitchSentences:
+                        - operation: Assign
+                          from:
+                            type: XPathExpression
+                            expression: "0"
+                            returnType: XML_TYPE_ATOMIC
+                          to:
+                            type: XPathPath
+                            path: $RetryCount
+                            isLastStepXsdAnyType: false
+                    - Map: Map(m5)
+                      xsltfilepath: ../resources/processor_564/resourcegroup_567/req_9b30c9f1143442e589593ed04b1d2ce4.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet xmlns:impw="http://xmlns.oracle.com/types/PublishEmployees2Cority/1613076496955/OutboundSOAPRequestDocument" xmlns:cfg="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:tns="http://medgate.com" xmlns:wsac="http://www.w3.org/2005/08/addressing" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext xsd ns11 ora oracle-xsl-mapper fn xsl xp20 nssrcmpr nssrcdfl xsi ignore01" ignore01:ignorexmlids="true">
+                        - '  <xsl:param name="Configs"/>'
+                        - '  <xsl:param name="CorityRequest"/>'
+                        - '  <xsl:param name="Organizations"/>'
+                        - '  <xsl:param name="PersonTypes"/>'
+                        - '  <xsl:param name="count"/>'
+                        - '  <xsl:param name="self"/>'
+                        - '  <xsl:param name="tracking_var_1"/>'
+                        - '  <xsl:param name="tracking_var_2"/>'
+                        - '  <xsl:param name="tracking_var_3"/>'
+                        - '  <xsl:template match="/">'
+                        - '    <impw:OutboundSOAPRequestDocument>'
+                        - '      <impw:Headers>'
+                        - '        <impw:CustomSOAPHeaders>'
+                        - '          <wsac:Action>'
+                        - '            <xsl:value-of select="$Configs/cfg:response-wrapper/cfg:Configs[cfg:Key=&apos;SOAPAction&apos;]/cfg:Value"/>'
+                        - '      <impw:ConnectivityProperties>'
+                        - '        <impw:EndpointProperties>'
+                        - '          <impw:EndpointURI>'
+                        - '            <xsl:value-of select="$Configs/cfg:response-wrapper/cfg:Configs[cfg:Key=&apos;Endpoint&apos;]/cfg:Value"/>'
+                        - '      <impw:Body>'
+                        - '        <xsl:copy-of select="$CorityRequest/tns:ImportCSV"/>'
+                        - ""
+                    - While: whileLoop(wh0)
+                      expressionProperties:
+                        xpathExpression: $RetryCount <= $RetryMax
+                        namespaceList: ns0=http://www.w3.org/2001/XMLSchema
+                        variableName: WhileRetrysAvailable
+                      statements:
+                        - Invoke: PublishEmployees2Cority(i0)
+                          application:
+                            Application: PublishEmployees2Cority(TSGTSOAPCORITYEM_CONN)
+                            name: PublishEmployees2Cority
+                            adapter:
+                                code: TSGTSOAPCORITYEM_CONN
+                            properties:
+                                - name: operationPath
+                                  value: http://medgate.com/IMEIPService/ImportCSV
+                        - Switch: Switch(s4)
+                          routes:
+                            - Route: (sc8)
+                              exprProperties:
+                                xpathExpression: contains($PublishEmployees2Cority/nsmpr9:ImportCSVResponse/nsmpr9:ImportCSVResult, "IMPORT COMPLETED WITH ERRORS") = "true"
+                                namespaceList: nsmpr9=http://medgate.com
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: PublishEmployees2Cority
+                                      rootElement: '{http://medgate.com}ImportCSVResponse'
+                              statements:
+                                - Stitch: Stitch(sh8)
+                                  stitchNamespaceResolver:
+                                    prefixnamespacemap: {}
+                                  stitchVariables:
+                                    - name: RetryCount
+                                      datatype:
+                                        type: XMLSimple
+                                        xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                                      access: SOURCE_AND_TARGET
+                                  stitchSentences:
+                                    - operation: Assign
+                                      from:
+                                        type: XPathExpression
+                                        expression: $RetryCount + 1
+                                        returnType: XML_TYPE_ATOMIC
+                                      to:
+                                        type: XPathPath
+                                        path: $RetryCount
+                                        isLastStepXsdAnyType: false
+                                - Switch: Switch(s5)
+                                  routes:
+                                    - Route: (sc10)
+                                      exprProperties:
+                                        xpathExpression: $RetryCount < $RetryMax
+                                        namespaceList: ns0=http://www.w3.org/2001/XMLSchema
+                                      stateInfo:
+                                        variablesReferenced:
+                                            - VariableName: RetryCount
+                                              rootElement: '{http://www.w3.org/2001/XMLSchema}double'
+                                            - VariableName: RetryMax
+                                              rootElement: '{http://www.w3.org/2001/XMLSchema}double'
+                                      statements:
+                                        - xmlname:
+                                            space: http://www.oracle.com/2014/03/ics/flow/definition
+                                            local: wait
+                                          attrs:
+                                            - name:
+                                                space: ""
+                                                local: id
+                                              value: w0
+                                            - name:
+                                                space: ""
+                                                local: refUri
+                                              value: processor_1486
+                                          content: ""
+                                          statements: []
+                                    - Route: Otherwise(sc11)
+                                      exprProperties:
+                                        xpathExpression: "true"
+                                        expressionName: Otherwise
+                                      stateInfo: {}
+                                      statements:
+                                        - xmlname:
+                                            space: http://www.oracle.com/2014/03/ics/flow/definition
+                                            local: throw
+                                          attrs:
+                                            - name:
+                                                space: ""
+                                                local: id
+                                              value: th0
+                                            - name:
+                                                space: ""
+                                                local: refUri
+                                              value: processor_381
+                                          content: ""
+                                          statements: []
+                            - Route: Otherwise(sc9)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: {}
+                              statements:
+                                - Stitch: Stitch(sh7)
+                                  stitchNamespaceResolver:
+                                    prefixnamespacemap: {}
+                                  stitchVariables:
+                                    - name: RetryCount
+                                      datatype:
+                                        type: XMLSimple
+                                        xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                                      access: SOURCE_AND_TARGET
+                                    - name: RetryMax
+                                      datatype:
+                                        type: XMLSimple
+                                        xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                                      access: SOURCE_AND_TARGET
+                                  stitchSentences:
+                                    - operation: Assign
+                                      from:
+                                        type: XPathExpression
+                                        expression: $RetryMax + 1
+                                        returnType: XML_TYPE_ATOMIC
+                                      to:
+                                        type: XPathPath
+                                        path: $RetryCount
+                                        isLastStepXsdAnyType: false
+                - Route: Otherwise(sc7)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Logger: Logger(lg1)
+              name: LogGFault
+              description: ""
+              propertyfile: ../resources/processor_1565/resourcegroup_1572/expr.properties
+              expressionProperties:
+                xpathExpression: $GlobalFaultObject/ics:fault
+                namespaceList: ics=http://www.oracle.com/2014/03/ics/fault
+                variableName: LogGFault
+            - Map: Map(m1)
+              xsltfilepath: ../resources/processor_1294/resourcegroup_1297/req_5daa4f5f47084a949f3a3c67f4424194.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/PublishAuditing_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/GetConfigs/types" xmlns:nsmpr1="http://medgate.com" xmlns:nsmpr2="http://www.oracle.com/2014/03/ics/fault" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadHireDates" xmlns:nsmpr4="http://TargetNamespace.com/fileReference/ReadOrgInformation" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/REST/GetPersonTypes/types" xmlns:nsmpr6="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns59="http://xmlns.oracle.com/cloud/adapter/REST/PublishAuditing/types" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" version="2.0" xml:id="id_1" exclude-result-prefixes=" ora oracle-xsl-mapper dvm nssrcmpr oraext xsi xsd fn xp20 xsl ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6 ora nsmpr2 orajs13 nssrcmpr oraext ns21" ignore01:ignorexmlids="true" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                - '  <xsl:param name="GlobalFaultObject" xml:id="id_43"/>'
+                - '  <xsl:param name="self" xml:id="id_48"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:execute xml:id="id_12">'
+                - '      <ns59:request-wrapper xml:id="id_52">'
+                - '        <ns59:Auditing xml:id="id_53">'
+                - '          <ns59:AuditingID xml:id="id_54">'
+                - '            <xsl:value-of xml:id="id_55" select="oraext:generate-guid ()"/>'
+                - '          <ns59:AuditingType xml:id="id_56">Error</ns59:AuditingType>'
+                - '          <ns59:InterfaceName xml:id="id_64">'
+                - '            <xsl:value-of xml:id="id_65" select="$self/nsmpr6:metadata/nsmpr6:integration/nsmpr6:name"/>'
+                - '          <ns59:TrackingID xml:id="id_57">'
+                - '            <xsl:value-of xml:id="id_61" select="/nssrcmpr:execute/ns21:request-wrapper/ns21:EmployeesBatch/ns21:BatchID"/>'
+                - '          <ns59:ReferenceID xml:id="id_62">'
+                - '            <xsl:value-of xml:id="id_63" select="concat ($self/nsmpr6:metadata/nsmpr6:integration/nsmpr6:name, &quot; - &quot;, /nssrcmpr:execute/ns21:request-wrapper/ns21:EmployeesBatch/ns21:DateTime )"/>'
+                - '          <ns59:FlowInstanceID xml:id="id_59">'
+                - '            <xsl:value-of xml:id="id_60" select="ns4:getFlowId ()"/>'
+                - '          <ns59:Title xml:id="id_66">'
+                - '            <xsl:value-of xml:id="id_67" select="concat ($self/nsmpr6:metadata/nsmpr6:integration/nsmpr6:name, &quot; - Error &quot;, ns4:getFlowId() )"/>'
+                - '          <ns59:Details xml:id="id_68">'
+                - '            <xsl:value-of xml:id="id_69" select="concat (&quot;ErrorCode: &quot;, $GlobalFaultObject/nsmpr2:fault/nsmpr2:errorCode, &quot;  Reason: &quot;, $GlobalFaultObject/nsmpr2:fault/nsmpr2:reason, &quot;  Details: &quot;, $GlobalFaultObject/nsmpr2:fault/nsmpr2:details )"/>'
+                - '          <ns59:Payload>'
+                - '            <xsl:value-of select="oraext:get-content-as-string (/nssrcmpr:execute/ns21:request-wrapper/ns21:EmployeesBatch )"/>'
+                - ""
+            - Invoke: PublishAuditing(i1)
+              application:
+                Application: PublishAuditing(TSGTRESTOICINVOK_CONN)
+                name: PublishAuditing
+                adapter:
+                    code: TSGTRESTOICINVOK_CONN
+                properties:
+                    - name: operationPath
+                      value: http://xmlns.oracle.com/cloud/adapter/REST/PublishAuditing_REQUEST/execute
+                    - name: HttpVerb
+                      value: PUT
+                    - name: ResourceURI
+                      value: /api/integration/v1/flows/rest/TSGTPUBLISHAUDIT_SERVICE/1.0/auditing
+            - Assignments: TrkingV2_Error(l0)
+              name: TrkingV2_Error
+              assignments:
+                - Assignment: Assignment(a0)
+                  variableName: tracking_var_2
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Error'''
+                    variableName: tracking_var_2
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Stop: Stop(st1)
+          icsfaultfilepath: ../resources/processor_63/resourcegroup_64/ICSFault.xsd

@@ -1,0 +1,148 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_6
+      xsdfilepath: ../resources/processor_6/resourcegroup_7/ICSIntegrationMetadata.xsd
+    - Receive: Receive(r0)
+      trackingvariables:
+        - role: tracking_var_1
+          primary: true
+          name: Batch ID
+          xpath: /execute/request-wrapper/EmployeesBatch/BatchID
+        - role: tracking_var_2
+          name: tracking_var_2
+        - role: tracking_var_3
+          name: tracking_var_3
+    - Try: Try(t0)
+      username: Scope_ProcessFile
+      statements:
+        - Map: Map(m0)
+          xsltfilepath: ../resources/processor_35/resourcegroup_38/req_654f5ff533514ad09a1569d7bc1188e2.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/ftp/ReadFile_REQUEST/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/ftp/ReadFile_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger_REQUEST/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger_REQUEST" exclude-result-prefixes=" oraext nssrcdfl xsd xp20 ora nssrcmpr oracle-xsl-mapper xsi fn xsl nsmpr0 ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns20="http://xml.oracle.com/adapters/extension" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/OutboundTrigger_REQUEST/RESTINREQ" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns21="http://xmlns.oracle.com/ics/cloud/ftp/read/file/pull" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/ftp/ReadFile_REQUEST/types/dynamicftp" xmlns:ns23="http://xmlns.oracle.com/pcbpel/adapter/opaque/">
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:SyncReadFile xml:id="id_12">'
+            - '      <ns21:FileReadRequest xml:id="id_21">'
+            - '        <ns21:filename xml:id="id_22">'
+            - '          <xsl:value-of xml:id="id_23" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:EmployeesBatch/nssrcdfl:Extract/nssrcdfl:FileName"/>'
+            - '        <ns21:directory xml:id="id_24">'
+            - '          <xsl:value-of xml:id="id_25" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:EmployeesBatch/nssrcdfl:Extract/nssrcdfl:FileFolder"/>'
+            - ""
+        - Invoke: ReadFile(i0)
+          application:
+            Application: ReadFile(TSGTFTP_CONN)
+            name: ReadFile
+            adapter:
+                code: TSGTFTP_CONN
+            properties:
+                - name: Operation
+                  value: SyncReadFile
+                - name: FtpConnectionType
+                  value: SFTP
+                - name: Host
+                  value: '%%TSGTFTP_CONN_Host'
+                - name: Port
+                  value: '%%TSGTFTP_CONN_Port'
+                - name: SecurePort
+                  value: "990"
+        - Map: Map(m1)
+          xsltfilepath: ../resources/processor_54/resourcegroup_57/req_ad4d7697571d4c41b9a688ff2f152ef2.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger_REQUEST/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteFile_REQUEST" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger_REQUEST" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteFile_REQUEST/types" exclude-result-prefixes=" oraext nssrcdfl xp20 ora nssrcmpr oracle-xsl-mapper xsi fn xsl nsmpr0 ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/ftp/ReadFile_REQUEST/types" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns26="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns27="http://xmlns.oracle.com/cloud/staging/write" xmlns:ns21="http://xml.oracle.com/adapters/extension" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns19="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/OutboundTrigger_REQUEST/RESTINREQ" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/ftp/ReadFile_REQUEST" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns23="http://xmlns.oracle.com/ics/cloud/ftp/read/file/pull" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/ftp/ReadFile_REQUEST/types/dynamicftp" xmlns:ns25="http://xmlns.oracle.com/pcbpel/adapter/opaque/">
+            - '  <xsl:param name="ReadFile" xml:id="id_25"/>'
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:Write xml:id="id_12">'
+            - '      <ns25:opaqueElement xml:id="id_31">'
+            - '        <xsl:value-of xml:id="id_32" select="$ReadFile/nsmpr1:SyncReadFileResponse/ns24:FileReadResponse/ns25:opaqueElement"/>'
+            - ""
+        - StageFile: WriteFile(sf0)
+          operation: Write
+          expressionProperties:
+            xpathExpression: /nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:EmployeesBatch/nssrcdfl:Extract/nssrcdfl:FileName
+            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger_REQUEST/types nssrcdfl=http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger/types
+          statements: []
+        - StageFile: ReadSTaginFile(sf1)
+          operation: Read
+          expressionProperties:
+            xpathExpression: $WriteFile/nsmpr11:WriteResponse/nsmpr0:WriteResponse/nsmpr7:ICSFile/nsmpr7:FileReference
+            namespaceList: nsmpr7=http://xmlns.oracle.com/cloud/ics/file/v1/types nsmpr11=http://xmlns.oracle.com/cloud/adapter/stagefile/WriteFile_REQUEST/types nsmpr0=http://xmlns.oracle.com/cloud/staging/write
+          statements:
+            - Map: Map(m2)
+              xsltfilepath: ../resources/processor_106/resourcegroup_109/req_acc54c82aa834b10b30485da59cfa452.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:per="http://xmlns.oracle.com/cloud/adapter/collocatedics/PublishEmployees_REQUEST/types" xmlns:pe0="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/PublishEmployees_REQUEST" xmlns:pe1="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/EmployeesBatch/collocatedics/PublishEmployees_REQUEST" xmlns:pe2="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/EmployeesBatch/Employees/collocatedics/PublishEmployees_REQUEST" xmlns:pe3="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/EmployeesBatch/Employees/ChangedAttributes/collocatedics/PublishEmployees_REQUEST" xmlns:srcr="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger_REQUEST/types" xmlns:src="http://xmlns.oracle.com/cloud/adapter/REST/OutboundTrigger/types" xmlns:stgfr="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadSTaginFile_REQUEST/types" xmlns:stgf="http://xmlns.oracle.com/cloud/adapter/nxsd/surrogate/ReadSTaginFile" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" version="2.0" xml:id="id_1" exclude-result-prefixes=" oraext nssrcdfl xsd xp20 ora nssrcmpr oracle-xsl-mapper xsi fn xsl nsmpr0 ignore01" ignore01:ignorexmlids="true">
+                - '  <xsl:param name="ReadFile"/>'
+                - '  <xsl:param name="ReadFile_REQUEST"/>'
+                - '  <xsl:param name="ReadSTaginFile"/>'
+                - '  <xsl:param name="WriteFile"/>'
+                - '  <xsl:param name="WriteFile_REQUEST"/>'
+                - '  <xsl:param name="self"/>'
+                - '  <xsl:param name="tracking_var_1"/>'
+                - '  <xsl:param name="tracking_var_2"/>'
+                - '  <xsl:param name="tracking_var_3"/>'
+                - '  <xsl:template match="/">'
+                - '    <per:PUT>'
+                - '      <per:components.schemas.request-wrapper>'
+                - '        <pe0:EmployeesBatch>'
+                - '          <pe1:BatchID>'
+                - '            <xsl:value-of select="/srcr:execute/src:request-wrapper/src:EmployeesBatch/src:BatchID"/>'
+                - '          <xsl:for-each select="$ReadSTaginFile/stgfr:ReadResponse/stgf:DATA_DS/stgf:G_1/stgf:G_2/stgf:FILE_FRAGMENT/stgf:Employee_Feed_V2/stgf:Person">'
+                - '            <pe1:Employees>'
+                - '              <pe2:PersonNumber>'
+                - '                <xsl:value-of select="stgf:Person_Details/stgf:PersonNumber"/>'
+                - '              <pe2:PeriodType>'
+                - '                <xsl:value-of select="stgf:Assignments/stgf:Assignment/stgf:Assignment_Details/stgf:Type"/>'
+                - '              <pe2:ChangedAttributes>'
+                - '                <pe3:AttributeName>FirstName</pe3:AttributeName>'
+                - '                <pe3:NewValue>'
+                - '                  <xsl:value-of select="stgf:Person_Details/stgf:FirstName"/>'
+                - '              <pe2:WorkerType>'
+                - '                <xsl:value-of select="stgf:Person_Details/stgf:EmpType"/>'
+                - '              <pe2:Operation>'
+                - '                <xsl:choose>'
+                - '                  <xsl:when test="boolean(normalize-space(string(/srcr:execute/src:request-wrapper/src:EmployeesBatch/src:Attribute1)))">'
+                - '                    <xsl:value-of select="/srcr:execute/src:request-wrapper/src:EmployeesBatch/src:Attribute1"/>'
+                - '                  <xsl:otherwise>UPDATE</xsl:otherwise>'
+                - '              <pe2:EffectiveDate>'
+                - '                <xsl:value-of select="xp20:format-dateTime(/srcr:execute/src:request-wrapper/src:EmployeesBatch/src:DateTime,&apos;[Y0001]-[M01]-[D01]&apos;)"/>'
+                - '              <pe2:Attribute1>'
+                - '                <xsl:choose>'
+                - '                  <xsl:when test="boolean(normalize-space(string(/srcr:execute/src:request-wrapper/src:EmployeesBatch/src:Attribute2)))">'
+                - '                    <xsl:value-of select="/srcr:execute/src:request-wrapper/src:EmployeesBatch/src:Attribute2"/>'
+                - '                  <xsl:otherwise>'
+                - '                    <xsl:value-of select="stgf:Assignments/stgf:Assignment/stgf:Assignment_Details/stgf:StartDate"/>'
+                - '          <pe1:DateTime>'
+                - '            <xsl:value-of select="/srcr:execute/src:request-wrapper/src:EmployeesBatch/src:DateTime"/>'
+                - '          <pe1:Interface>'
+                - '            <xsl:value-of select="/srcr:execute/src:request-wrapper/src:EmployeesBatch/src:Interface"/>'
+                - '          <pe1:Attribute4>'
+                - '            <xsl:value-of select="/srcr:execute/src:request-wrapper/src:EmployeesBatch/src:Attribute4"/>'
+                - '          <pe1:Attribute5>'
+                - '            <xsl:value-of select="/srcr:execute/src:request-wrapper/src:EmployeesBatch/src:Attribute5"/>'
+                - ""
+            - Invoke: PublishEmployees(i1)
+              application:
+                Application: PublishEmployees(PRESEEDED_COLLOCATED_CONN_1741)
+                name: PublishEmployees
+                adapter:
+                    code: PRESEEDED_COLLOCATED_CONN_1741
+                properties:
+                    - name: operationPath
+                      value: /employee
+                    - name: HttpVerb
+                      value: PUT
+                    - name: QueryParameters
+                      value: ""
+                    - name: ResourceURI
+                      value: /employee
+                    - name: integration_id
+                      value: TSGTPUBLISHEMPLO_SERVICE|01.00.0000
+                    - name: integration_operation
+                      value: PUT
+                    - name: serviceType
+                      value: REST
+    - Stop: Stop(st0)

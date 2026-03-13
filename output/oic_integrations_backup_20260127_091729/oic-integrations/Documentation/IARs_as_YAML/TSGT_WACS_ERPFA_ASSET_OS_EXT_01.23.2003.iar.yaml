@@ -1,0 +1,1715 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_1508
+      xsdfilepath: ../resources/processor_1508/resourcegroup_1509/ICSIntegrationMetadata.xsd
+    - GlobalVariable: (gtv0)
+      variableName: addition_records
+      variableType: $readFile/ns28:ReadResponse/ns26:Assets
+    - GlobalVariable: (gtv1)
+      variableName: adjustment_records
+      variableType: $readFile/ns28:ReadResponse/ns26:Assets
+    - GlobalVariable: (gtv2)
+      variableName: retirement_records
+      variableType: $readFile/ns28:ReadResponse/ns26:Assets
+    - GlobalVariable: (gtv3)
+      variableName: errorFlag
+      variableType: simpleType
+    - GlobalVariable: (gtv4)
+      variableName: errorRecordCount
+      variableType: simpleType
+    - GlobalVariable: (gtv5)
+      variableName: error_records
+      variableType: $invokeCommonErrorHandler_REQUEST/ns52:POST/ns52:components.schemas.request-wrapper/ns57:ErrorCollection
+    - GlobalVariable: (gtv6)
+      variableName: finalErrorCollection
+      variableType: $invokeCommonErrorHandler_REQUEST/ns52:POST/ns52:components.schemas.request-wrapper/ns57:ErrorCollection
+    - GlobalVariable: (gtv7)
+      variableName: temp_collection
+      variableType: $readFile/ns52:ReadResponse/ns51:Assets
+    - GlobalVariable: (gtv8)
+      variableName: fileLvlRecs_collection
+      variableType: $readFile/ns52:ReadResponse/ns51:Assets
+    - xmlname:
+        space: http://www.oracle.com/2014/03/ics/flow/definition
+        local: scheduleReceive
+      attrs:
+        - name:
+            space: ""
+            local: trackingRefUri
+          value: processor_1
+        - name:
+            space: ""
+            local: id
+          value: sr0
+        - name:
+            space: ""
+            local: refUri
+          value: processor_8
+      content: ""
+      statements: []
+    - Assignments: declareVariables(l0)
+      name: declareVariables
+      assignments:
+        - Assignment: Assignment(a0)
+          variableName: os_namespace
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('OUTL-BRT-WACS_ERPFA_CONFIGPROPS','PropertyName','os.namespace','Value','')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: os_namespace
+            variableDescription: Object storage namespace
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a1)
+          variableName: os_bucketname
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('OUTL-BRT-WACS_ERPFA_CONFIGPROPS','PropertyName','os.bucketname','Value','')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: os_bucketname
+            variableDescription: Object storage bucket name
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a2)
+          variableName: file_name_prefix
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('OUTL-BRT-WACS_ERPFA_CONFIGPROPS','PropertyName','extract.filename.prefix','Value','')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: file_name_prefix
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a3)
+          variableName: addition_records_count
+          variableType: string
+          expressionProperties:
+            xpathExpression: "0"
+            variableName: addition_records_count
+            variableDescription: count_of_addition_records
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a4)
+          variableName: adjustment_records_count
+          variableType: string
+          expressionProperties:
+            xpathExpression: "0.0"
+            variableName: adjustment_records_count
+            variableDescription: count_of_adjustment_records
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a5)
+          variableName: retirement_records_count
+          variableType: string
+          expressionProperties:
+            xpathExpression: "0"
+            variableName: retirement_records_count
+            variableDescription: count_of_retirement_records
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a6)
+          variableName: curr_file_reference
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: curr_file_reference
+            variableDescription: reference_to_curr_file
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a7)
+          variableName: failed_files_list
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: failed_files_list
+            variableDescription: to store names of the files failed
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a8)
+          variableName: final_file_name
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: final_file_name
+            variableDescription: stores name of file
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a9)
+          variableName: failed_files_count
+          variableType: string
+          expressionProperties:
+            xpathExpression: "0"
+            variableName: failed_files_count
+            variableDescription: stores count of failed files
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+    - Stitch: Stitch(sh0)
+      stitchNamespaceResolver:
+        prefixnamespacemap:
+            ns26: http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST
+      stitchVariables:
+        - name: finalErrorCollection
+          datatype:
+            type: XMLComplex
+            basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+            uriToSchema: ../../processor_1951/resourcegroup_1954/generated.wsdl
+          access: SOURCE_AND_TARGET
+      stitchSentences:
+        - operation: Assign
+          from:
+            type: XPathExpression
+            expression: '""'
+            returnType: XML_TYPE_ATOMIC
+          to:
+            type: XPathPath
+            path: $finalErrorCollection/ns26:ErrorCollection
+            isLastStepXsdAnyType: false
+    - Try: Try(t0)
+      username: TotalScope
+      statements:
+        - Stitch: Stitch(sh11)
+          stitchNamespaceResolver:
+            prefixnamespacemap: {}
+          stitchVariables:
+            - name: errorRecordCount
+              datatype:
+                type: XMLSimple
+                xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+              access: SOURCE_AND_TARGET
+          stitchSentences:
+            - operation: Assign
+              from:
+                type: XPathExpression
+                expression: "0"
+                returnType: XML_TYPE_ATOMIC
+              to:
+                type: XPathPath
+                path: $errorRecordCount
+                isLastStepXsdAnyType: false
+        - Map: Map(m0)
+          xsltfilepath: ../resources/processor_30/resourcegroup_33/req_583310eb367d43678cf26d09c7f49188.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/ListAssetsExtractOS" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS_REQUEST" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:ns20="http://xml.oracle.com/types/REST/ListAssetsExtractOS_REQUEST" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath569416338" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2095151203" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS/types" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2068686068" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2047256691" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTREQ" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath832567826" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTRES">
+            - '  <xsl:param name="file_name_prefix" xml:id="id_17"/>'
+            - '  <xsl:param name="os_bucketname" xml:id="id_18"/>'
+            - '  <xsl:param name="os_namespace" xml:id="id_19"/>'
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:execute xml:id="id_12">'
+            - '      <nstrgmpr:TemplateParameters xml:id="id_27">'
+            - '        <ns20:namespaceName xml:id="id_28">'
+            - '          <xsl:value-of xml:id="id_29" select="$os_namespace"/>'
+            - '        <ns20:bucketName xml:id="id_30">'
+            - '          <xsl:value-of xml:id="id_31" select="$os_bucketname"/>'
+            - '      <nstrgmpr:QueryParameters xml:id="id_24">'
+            - '        <ns20:prefix xml:id="id_25">'
+            - '          <xsl:value-of xml:id="id_26" select="$file_name_prefix"/>'
+            - ""
+        - Invoke: ListAssetsExtractOS(i0)
+          application:
+            Application: ListAssetsExtractOS(TSGTOBJECTSTORAG_CONN)
+            name: ListAssetsExtractOS
+            adapter:
+                code: TSGTOBJECTSTORAG_CONN
+            properties:
+                - name: operationPath
+                  value: http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS_REQUEST/execute
+                - name: HttpVerb
+                  value: GET
+                - name: QueryParameters
+                  value: prefix
+                - name: ResourceURI
+                  value: /n/{namespaceName}/b/{bucketName}/o
+        - Assignments: updateTrackingVars1(l5)
+          name: updateTrackingVars1
+          assignments:
+            - Assignment: Assignment(a15)
+              variableName: tracking_var_2
+              variableType: string
+              expressionProperties:
+                xpathExpression: 'concat("Files: ", count($ListAssetsExtractOS/nsmpr5:executeResponse/nsmpr0:response-wrapper/nsmpr0:objects))'
+                namespaceList: nsmpr5=http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS_REQUEST/types nsmpr0=http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS/types
+                variableName: tracking_var_2
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - xmlname:
+            space: http://www.oracle.com/2014/03/ics/flow/definition
+            local: throw
+          attrs:
+            - name:
+                space: ""
+                local: id
+              value: th0
+            - name:
+                space: ""
+                local: refUri
+              value: processor_1772
+          content: ""
+          statements: []
+        - ForLoop: ForLoop(f0)
+          expressionProperties:
+            xpathExpression: $ListAssetsExtractOS/nsmpr5:executeResponse/nsmpr0:response-wrapper/nsmpr0:objects
+            namespaceList: nsmpr5=http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS_REQUEST/types nsmpr0=http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS/types
+            variableName: currFile
+          currentRecordVarName: currFile
+          statements:
+            - Try: Try(t1)
+              username: scope_file_level
+              statements:
+                - Map: Map(m1)
+                  xsltfilepath: ../resources/processor_147/resourcegroup_150/req_d340386f8c3b48bc8943e636d642d664.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/get_WACS_Assets_Extract_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/get_WACS_Assets_Extract" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/get_WACS_Assets_Extract_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS_REQUEST/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS/types" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns28="http://xml.oracle.com/types/REST/get_WACS_Assets_Extract_REQUEST" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2095151203" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/get_WACS_Assets_Extract_REQUEST/RESTOUTRES" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/get_WACS_Assets_Extract_REQUEST/RESTOUTREQ" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2047256691" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:ns24="http://xml.oracle.com/types/REST/ListAssetsExtractOS_REQUEST" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath569416338" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:ns22="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/ListAssetsExtractOS" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2068686068" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns30="http://xmlns.oracle.com/cloud/ics/binary/v1/types" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTREQ" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath832567826" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTRES" xmlns:nsmpr4="http://TargetNamespace.com/fileReference/readFile">
+                    - '  <xsl:param name="os_bucketname" xml:id="id_33"/>'
+                    - '  <xsl:param name="os_namespace" xml:id="id_34"/>'
+                    - '  <xsl:param name="currFile" xml:id="id_70"/>'
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:execute xml:id="id_12">'
+                    - '      <nstrgmpr:TemplateParameters xml:id="id_39">'
+                    - '        <ns28:namespaceName xml:id="id_40">'
+                    - '          <xsl:value-of xml:id="id_41" select="$os_namespace"/>'
+                    - '        <ns28:bucketName xml:id="id_42">'
+                    - '          <xsl:value-of xml:id="id_43" select="$os_bucketname"/>'
+                    - '        <ns28:objectName xml:id="id_44">'
+                    - '          <xsl:value-of xml:id="id_45" select="$currFile/nsmpr2:objects/nsmpr2:name"/>'
+                    - ""
+                - Invoke: get_WACS_Assets_Extract(i1)
+                  application:
+                    Application: get_WACS_Assets_Extract(TSGTOBJECTSTORAG_CONN)
+                    name: get_WACS_Assets_Extract
+                    adapter:
+                        code: TSGTOBJECTSTORAG_CONN
+                    properties:
+                        - name: operationPath
+                          value: http://xmlns.oracle.com/cloud/adapter/REST/get_WACS_Assets_Extract_REQUEST/execute
+                        - name: HttpVerb
+                          value: GET
+                        - name: ResourceURI
+                          value: /n/{namespaceName}/b/{bucketName}/o/{objectName}
+                - Switch: Switch(s4)
+                  routes:
+                    - Route: check if file is zipped(sc10)
+                      exprProperties:
+                        xpathExpression: fn:ends-with($currFile/nsmpr5:objects/nsmpr5:name, ".zip") = true()
+                        namespaceList: nsmpr5=http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS/types fn=http://www.w3.org/2005/xpath-functions
+                        expressionName: check if file is zipped
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: currFile
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS/types}objects'
+                      statements:
+                        - StageFile: UnzipFIle(sf1)
+                          operation: Unzip
+                          expressionProperties:
+                            xpathExpression: $get_WACS_Assets_Extract/nsmpr7:executeResponse/nsmpr0:streamReference
+                            namespaceList: nsmpr7=http://xmlns.oracle.com/cloud/adapter/REST/get_WACS_Assets_Extract_REQUEST/types nsmpr0=http://xmlns.oracle.com/cloud/ics/binary/v1/types
+                          statements: []
+                        - Stitch: Stitch(sh4)
+                          stitchNamespaceResolver:
+                            prefixnamespacemap:
+                                ns16: http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFIle_REQUEST/types
+                                ns18: http://xmlns.oracle.com/cloud/staging/list
+                                ns36: http://xmlns.oracle.com/cloud/ics/file/v1/types
+                          stitchVariables:
+                            - name: curr_file_reference
+                              datatype:
+                                type: XMLSimple
+                                xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                              access: SOURCE_AND_TARGET
+                            - name: final_file_name
+                              datatype:
+                                type: XMLSimple
+                                xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                              access: SOURCE_AND_TARGET
+                            - name: UnzipFIle
+                              datatype:
+                                type: XMLComplex
+                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFIle_REQUEST/types}UnzipResponse'
+                                uriToSchema: ../../processor_1201/resourcegroup_1202/UnzipFIle_REQUEST.wsdl
+                              access: SOURCE_AND_TARGET
+                          stitchSentences:
+                            - operation: Assign
+                              from:
+                                type: XPathExpression
+                                expression: $UnzipFIle/ns16:UnzipResponse/ns18:ListFilesResponse/ns18:FileList/ns36:ICSFile[1]/ns36:FileReference
+                                returnType: XML_TYPE_NODE_NODESET
+                              to:
+                                type: XPathPath
+                                path: $curr_file_reference
+                                isLastStepXsdAnyType: false
+                            - operation: Assign
+                              from:
+                                type: XPathExpression
+                                expression: $UnzipFIle/ns16:UnzipResponse/ns18:ListFilesResponse/ns18:FileList/ns36:ICSFile[1]/ns36:Properties/ns36:filename
+                                returnType: XML_TYPE_NODE_NODESET
+                              to:
+                                type: XPathPath
+                                path: $final_file_name
+                                isLastStepXsdAnyType: false
+                    - Route: Otherwise(sc11)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements:
+                        - Stitch: Stitch(sh3)
+                          stitchNamespaceResolver:
+                            prefixnamespacemap:
+                                ns24: http://xmlns.oracle.com/cloud/adapter/REST/get_WACS_Assets_Extract_REQUEST/types
+                                ns28: http://xmlns.oracle.com/cloud/ics/binary/v1/types
+                                ns30: http://xml.oracle.com/types/REST/get_WACS_Assets_Extract_REQUEST
+                          stitchVariables:
+                            - name: curr_file_reference
+                              datatype:
+                                type: XMLSimple
+                                xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                              access: SOURCE_AND_TARGET
+                            - name: final_file_name
+                              datatype:
+                                type: XMLSimple
+                                xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                              access: SOURCE_AND_TARGET
+                            - name: get_WACS_Assets_Extract
+                              datatype:
+                                type: XMLComplex
+                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/get_WACS_Assets_Extract_REQUEST/types}executeResponse'
+                                uriToSchema: ../../application_135/inbound_136/resourcegroup_137/get_WACS_Assets_Extract_REQUEST.wsdl
+                              access: SOURCE_AND_TARGET
+                            - name: get_WACS_Assets_Extract_REQUEST
+                              datatype:
+                                type: XMLComplex
+                                basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/REST/get_WACS_Assets_Extract_REQUEST/types}execute'
+                                uriToSchema: ../../application_135/inbound_136/resourcegroup_137/get_WACS_Assets_Extract_REQUEST.wsdl
+                              access: SOURCE_AND_TARGET
+                          stitchSentences:
+                            - operation: Assign
+                              from:
+                                type: XPathExpression
+                                expression: $get_WACS_Assets_Extract/ns24:executeResponse/ns28:streamReference
+                                returnType: XML_TYPE_NODE_NODESET
+                              to:
+                                type: XPathPath
+                                path: $curr_file_reference
+                                isLastStepXsdAnyType: false
+                            - operation: Assign
+                              from:
+                                type: XPathExpression
+                                expression: $get_WACS_Assets_Extract_REQUEST/ns24:execute/ns24:TemplateParameters/ns30:objectName
+                                returnType: XML_TYPE_NODE_NODESET
+                              to:
+                                type: XPathPath
+                                path: $final_file_name
+                                isLastStepXsdAnyType: false
+                - xmlname:
+                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                    local: throw
+                  attrs:
+                    - name:
+                        space: ""
+                        local: id
+                      value: th1
+                    - name:
+                        space: ""
+                        local: refUri
+                      value: processor_2833
+                  content: ""
+                  statements: []
+                - StageFile: readFile(sf0)
+                  operation: Read
+                  expressionProperties:
+                    xpathExpression: $curr_file_reference
+                  statements: []
+                - Stitch: Stitch(sh21)
+                  stitchNamespaceResolver:
+                    prefixnamespacemap:
+                        ns19: http://TargetNamespace.com/fileReference/readFile
+                        ns21: http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST/types
+                  stitchVariables:
+                    - name: temp_collection
+                      datatype:
+                        type: XMLComplex
+                        basedOnElement: '{http://TargetNamespace.com/fileReference/readFile}Assets'
+                        uriToSchema: ../../processor_152/resourcegroup_153/readFile_REQUEST.wsdl
+                      access: SOURCE_AND_TARGET
+                    - name: readFile
+                      datatype:
+                        type: XMLComplex
+                        basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST/types}ReadResponse'
+                        uriToSchema: ../../processor_152/resourcegroup_153/readFile_REQUEST.wsdl
+                      access: SOURCE_AND_TARGET
+                  stitchSentences:
+                    - operation: Assign
+                      from:
+                        type: XPathExpression
+                        expression: $readFile/ns21:ReadResponse/ns19:Assets
+                        returnType: XML_TYPE_NODE_NODESET
+                      to:
+                        type: XPathPath
+                        path: $temp_collection/ns19:Assets
+                        isLastStepXsdAnyType: false
+                - Stitch: Stitch(sh22)
+                  stitchNamespaceResolver:
+                    prefixnamespacemap:
+                        ns19: http://TargetNamespace.com/fileReference/readFile
+                  stitchVariables:
+                    - name: fileLvlRecs_collection
+                      datatype:
+                        type: XMLComplex
+                        basedOnElement: '{http://TargetNamespace.com/fileReference/readFile}Assets'
+                        uriToSchema: ../../processor_152/resourcegroup_153/readFile_REQUEST.wsdl
+                      access: SOURCE_AND_TARGET
+                    - name: temp_collection
+                      datatype:
+                        type: XMLComplex
+                        basedOnElement: '{http://TargetNamespace.com/fileReference/readFile}Assets'
+                        uriToSchema: ../../processor_152/resourcegroup_153/readFile_REQUEST.wsdl
+                      access: SOURCE_AND_TARGET
+                  stitchSentences:
+                    - operation: Append
+                      from:
+                        type: XPathExpression
+                        expression: $temp_collection/ns19:Assets/ns19:Asset
+                        returnType: XML_TYPE_NODE_NODESET
+                      to:
+                        type: XPathPath
+                        path: $fileLvlRecs_collection/ns19:Assets/ns19:Asset
+                        isLastStepXsdAnyType: false
+                - Map: Map(m8)
+                  xsltfilepath: ../resources/processor_2095/resourcegroup_2098/req_df91f727b36a40f48344409e38d0c873.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/renameOnSuccess" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/renameOnSuccess_REQUEST/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/renameOnSuccess_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS_REQUEST/types" xmlns:nsmpr2="http://TargetNamespace.com/fileReference/readFile" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS/types" xmlns:nsmpr4="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/REST/get_WACS_Assets_Extract_REQUEST/types" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST/types" xmlns:nsmpr7="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns38="http://xml.oracle.com/types/REST/get_WACS_Assets_Extract_REQUEST" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2095151203" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:ns39="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/get_WACS_Assets_Extract_REQUEST/RESTOUTRES" xmlns:ns36="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/get_WACS_Assets_Extract_REQUEST/RESTOUTREQ" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2047256691" xmlns:ns42="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/renameOnSuccess_REQUEST/RESTOUTRES" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:ns41="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/renameOnSuccess_REQUEST/RESTOUTREQ" xmlns:ns43="http://xml.oracle.com/types/REST/renameOnSuccess_REQUEST" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:ns28="http://xml.oracle.com/types/REST/ListAssetsExtractOS_REQUEST" xmlns:ns4="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns37="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/get_WACS_Assets_Extract" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeCommonErrorHandler_REQUEST/types" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath569416338" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/ListAssetsExtractOS" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath44117833" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2068686068" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns44="http://xmlns.oracle.com/cloud/adapter/REST/renameOnSuccess/types" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns40="http://xmlns.oracle.com/cloud/ics/binary/v1/types" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:ns35="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/faultMessage/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTREQ" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath832567826" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTRES" xmlns:ns34="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/invokeCommonErrorHandler">
+                    - '  <xsl:param name="currFile" xml:id="id_67"/>'
+                    - '  <xsl:param name="os_bucketname" xml:id="id_77"/>'
+                    - '  <xsl:param name="os_namespace" xml:id="id_78"/>'
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:execute xml:id="id_12">'
+                    - '      <nstrgmpr:TemplateParameters xml:id="id_86">'
+                    - '        <ns43:namespaceName xml:id="id_87">'
+                    - '          <xsl:value-of xml:id="id_88" select="$os_namespace"/>'
+                    - '        <ns43:bucketName xml:id="id_89">'
+                    - '          <xsl:value-of xml:id="id_90" select="$os_bucketname"/>'
+                    - '      <ns44:request-wrapper xml:id="id_91">'
+                    - '        <ns44:sourceName xml:id="id_92">'
+                    - '          <xsl:value-of xml:id="id_93" select="$currFile/nsmpr3:objects/nsmpr3:name"/>'
+                    - '        <ns44:newName xml:id="id_94">'
+                    - '          <xsl:value-of xml:id="id_95" select="concat (dvm:lookupValue (&quot;OUTL-BRT-WACS_ERPFA_CONFIGPROPS&quot;, &quot;PropertyName&quot;, &quot;extract.prefixtag.fileuploaded&quot;, &quot;Value&quot;, &quot;Sent-&quot; ), $currFile/nsmpr3:objects/nsmpr3:name )"/>'
+                    - ""
+                - Invoke: renameOnSuccess(i8)
+                  application:
+                    Application: renameOnSuccess(TSGTOBJECTSTORAG_CONN)
+                    name: renameOnSuccess
+                    adapter:
+                        code: TSGTOBJECTSTORAG_CONN
+                    properties:
+                        - name: operationPath
+                          value: http://xmlns.oracle.com/cloud/adapter/REST/renameOnSuccess_REQUEST/execute
+                        - name: HttpVerb
+                          value: POST
+                        - name: ResourceURI
+                          value: /n/{namespaceName}/b/{bucketName}/actions/renameObject
+                - CatchAll: CatchAll(ta0)
+                  statements:
+                    - Stitch: Stitch(sh5)
+                      stitchNamespaceResolver:
+                        prefixnamespacemap:
+                            fn: http://www.w3.org/2005/xpath-functions
+                            ns4: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST
+                            ns23: http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST
+                            ns27: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/faultMessage/collocatedics/invokeCommonErrorHandler_REQUEST
+                            ns65: http://www.oracle.com/2014/03/ics/fault
+                            ora: http://schemas.oracle.com/xpath/extension
+                      stitchVariables:
+                        - name: errorRecordCount
+                          datatype:
+                            type: XMLSimple
+                            xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                          access: SOURCE_AND_TARGET
+                        - name: errorFlag
+                          datatype:
+                            type: XMLSimple
+                            xsdDataType: '{http://www.w3.org/2001/XMLSchema}boolean'
+                          access: SOURCE_AND_TARGET
+                        - name: failed_files_count
+                          datatype:
+                            type: XMLSimple
+                            xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                          access: SOURCE_AND_TARGET
+                        - name: error_records
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+                            uriToSchema: ../../processor_1942/resourcegroup_1945/generated.wsdl
+                          access: SOURCE_AND_TARGET
+                        - name: scope_file_levelFaultObject
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://www.oracle.com/2014/03/ics/fault}fault'
+                            uriToSchema: ../../processor_1427/resourcegroup_1428/ICSFault.xsd
+                          access: SOURCE_AND_TARGET
+                      stitchSentences:
+                        - operation: Assign
+                          from:
+                            type: XPathExpression
+                            expression: '''true'''
+                            returnType: XML_TYPE_ATOMIC
+                          to:
+                            type: XPathPath
+                            path: $errorFlag
+                            isLastStepXsdAnyType: false
+                        - operation: Assign
+                          from:
+                            type: XPathExpression
+                            expression: fn:number($errorRecordCount)+1
+                            returnType: XML_TYPE_ATOMIC
+                          to:
+                            type: XPathPath
+                            path: $errorRecordCount
+                            isLastStepXsdAnyType: false
+                        - operation: Assign
+                          from:
+                            type: XPathExpression
+                            expression: $scope_file_levelFaultObject/ns65:fault/ns65:reason
+                            returnType: XML_TYPE_NODE_NODESET
+                          to:
+                            type: XPathPath
+                            path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:reason
+                            isLastStepXsdAnyType: false
+                        - operation: Assign
+                          from:
+                            type: XPathExpression
+                            expression: $scope_file_levelFaultObject/ns65:fault/ns65:errorCode
+                            returnType: XML_TYPE_NODE_NODESET
+                          to:
+                            type: XPathPath
+                            path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:code
+                            isLastStepXsdAnyType: false
+                        - operation: Assign
+                          from:
+                            type: XPathExpression
+                            expression: ora:getContentAsString($scope_file_levelFaultObject/ns65:fault/ns65:details)
+                            returnType: XML_TYPE_ATOMIC
+                          to:
+                            type: XPathPath
+                            path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:details
+                            isLastStepXsdAnyType: false
+                        - operation: Assign
+                          from:
+                            type: XPathExpression
+                            expression: fn:number($failed_files_count)+1
+                            returnType: XML_TYPE_ATOMIC
+                          to:
+                            type: XPathPath
+                            path: $failed_files_count
+                            isLastStepXsdAnyType: false
+                        - operation: Assign
+                          from:
+                            type: XPathExpression
+                            expression: '"NA"'
+                            returnType: XML_TYPE_ATOMIC
+                          to:
+                            type: XPathPath
+                            path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:resourceId
+                            isLastStepXsdAnyType: false
+                    - Stitch: Stitch(sh10)
+                      stitchNamespaceResolver:
+                        prefixnamespacemap:
+                            ns4: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST
+                            ns23: http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST
+                      stitchVariables:
+                        - name: error_records
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+                            uriToSchema: ../../processor_1942/resourcegroup_1945/generated.wsdl
+                          access: SOURCE_AND_TARGET
+                        - name: finalErrorCollection
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+                            uriToSchema: ../../processor_1951/resourcegroup_1954/generated.wsdl
+                          access: SOURCE_AND_TARGET
+                      stitchSentences:
+                        - operation: Append
+                          from:
+                            type: XPathExpression
+                            expression: $error_records/ns23:ErrorCollection/ns4:faultMessage
+                            returnType: XML_TYPE_NODE_NODESET
+                          to:
+                            type: XPathPath
+                            path: $finalErrorCollection/ns23:ErrorCollection/ns4:faultMessage
+                            isLastStepXsdAnyType: false
+                    - Map: Map(m3)
+                      xsltfilepath: ../resources/processor_2364/resourcegroup_2367/req_1e5d9cf177eb4003b1e355b5da264e43.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/renameOnError1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/renameOnError1_REQUEST/types" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/renameOnError1_REQUEST" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS_REQUEST/types" xmlns:nsmpr2="http://TargetNamespace.com/fileReference/readFile" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS/types" xmlns:nsmpr4="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:nsmpr5="http://www.oracle.com/2014/03/ics/fault" xmlns:nsmpr6="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns37="http://xmlns.oracle.com/cloud/adapter/REST/renameOnError1/types" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns38="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/renameOnError1_REQUEST/RESTOUTREQ" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2095151203" xmlns:ns36="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/renameOnError1_REQUEST/RESTOUTRES" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2047256691" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST/types" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:ns27="http://xml.oracle.com/types/REST/ListAssetsExtractOS_REQUEST" xmlns:ns4="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns33="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeCommonErrorHandler_REQUEST/types" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath569416338" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:ns25="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/ListAssetsExtractOS" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath44117833" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2068686068" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:ns35="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/faultMessage/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:ns39="http://xml.oracle.com/types/REST/renameOnError1_REQUEST" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTREQ" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath832567826" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTRES" xmlns:ns34="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/invokeCommonErrorHandler">
+                        - '  <xsl:param name="currFile" xml:id="id_59"/>'
+                        - '  <xsl:param name="os_bucketname" xml:id="id_67"/>'
+                        - '  <xsl:param name="os_namespace" xml:id="id_68"/>'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:execute xml:id="id_12">'
+                        - '      <nstrgmpr:TemplateParameters xml:id="id_76">'
+                        - '        <ns39:namespaceName xml:id="id_79">'
+                        - '          <xsl:value-of xml:id="id_80" select="$os_namespace"/>'
+                        - '        <ns39:bucketName xml:id="id_77">'
+                        - '          <xsl:value-of xml:id="id_78" select="$os_bucketname"/>'
+                        - '      <ns37:request-wrapper xml:id="id_81">'
+                        - '        <ns37:sourceName xml:id="id_82">'
+                        - '          <xsl:value-of xml:id="id_83" select="$currFile/nsmpr3:objects/nsmpr3:name"/>'
+                        - '        <ns37:newName xml:id="id_84">'
+                        - "          <xsl:value-of xml:id=\"id_85\" select=\"concat (dvm:lookupValue (&quot;OUTL-BRT-WACS_ERPFA_CONFIGPROPS&quot;, &quot;PropertyName&quot;, &quot;extract.prefixtag.filenotuploaded\t&quot;, &quot;Value&quot;, &quot;Error-&quot; ), $currFile/nsmpr3:objects/nsmpr3:name )\"/>"
+                        - ""
+                    - Invoke: renameOnError1(i3)
+                      application:
+                        Application: renameOnError1(TSGTOBJECTSTORAG_CONN)
+                        name: renameOnError1
+                        adapter:
+                            code: TSGTOBJECTSTORAG_CONN
+                        properties:
+                            - name: operationPath
+                              value: http://xmlns.oracle.com/cloud/adapter/REST/renameOnError1_REQUEST/execute
+                            - name: HttpVerb
+                              value: POST
+                            - name: ResourceURI
+                              value: /n/{namespaceName}/b/{bucketName}/actions/renameObject
+                  icsfaultfilepath: ../resources/processor_1427/resourcegroup_1428/ICSFault.xsd
+        - Map: Map(m9)
+          xsltfilepath: ../resources/processor_3272/resourcegroup_3275/req_675416b532d147f7964cef47d55ccde9.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/stagefile/groupByAction/types" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/groupByAction_REQUEST/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/stagefile/groupByAction_REQUEST" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS_REQUEST/types" xmlns:nsmpr2="http://TargetNamespace.com/fileReference/readFile" xmlns:nsmpr3="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:nsmpr4="http://www.oracle.com/2014/03/ic/integration/metadata" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" ignore01:ignorexmlids="true" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1532397582" xmlns:ns35="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath213322253" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2095151203" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS/types" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1312609706" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2002597434" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2047256691" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1311592227" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST/types" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath141279720" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:ns25="http://xml.oracle.com/types/REST/ListAssetsExtractOS_REQUEST" xmlns:ns4="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns32="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeCommonErrorHandler_REQUEST/types" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1498880652" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs29="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath569416338" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST" xmlns:ns36="http://xmlns.oracle.com/cloud/staging/write" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/ListAssetsExtractOS" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath44117833" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2068686068" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:ns34="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/faultMessage/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath742467419" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTREQ" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath832567826" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTRES" xmlns:ns33="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/invokeCommonErrorHandler" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+            - '  <xsl:param name="fileLvlRecs_collection" xml:id="id_65"/>'
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:Write xml:id="id_12">'
+            - '      <nstrgdfl:request-wrapper>'
+            - '        <xsl:for-each-group select="$fileLvlRecs_collection/nsmpr2:Assets/nsmpr2:Asset" group-by="nsmpr2:action">'
+            - '          <nstrgdfl:AssetAction>'
+            - '            <xsl:attribute name="value">'
+            - '              <xsl:value-of select="nsmpr2:action"/>'
+            - '            <xsl:apply-templates select="fn:current-group()"/>'
+            - '  <xsl:template match="nsmpr2:Asset">'
+            - '    <xsl:copy-of select="."/>'
+            - ""
+        - StageFile: groupByAction(sf2)
+          operation: Write
+          expressionProperties:
+            xpathExpression: '''AssetsByAction'''
+          statements: []
+        - StageFile: ReadAssetsByAction(sf3)
+          operation: Read
+          expressionProperties:
+            xpathExpression: '''/tmp/out/os/action/'''
+          statements: []
+        - ForLoop: ForLoop(f2)
+          expressionProperties:
+            xpathExpression: $ReadAssetsByAction/nsmpr12:ReadResponse/nssrcdfl:request-wrapper/nssrcdfl:AssetAction
+            namespaceList: nsmpr12=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction_REQUEST/types nssrcdfl=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction/types
+            variableName: currAssetGrp
+          currentRecordVarName: currAssetGrp
+          statements:
+            - Switch: Switch(s6)
+              routes:
+                - Route: action A(sc0)
+                  exprProperties:
+                    xpathExpression: $currAssetGrp/nssrcmpr:AssetAction/@value = "A"
+                    namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction/types
+                    expressionName: action A
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: currAssetGrp
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction/types}AssetAction'
+                  statements:
+                    - Try: Try(t2)
+                      username: scope_invoke_addition
+                      statements:
+                        - Assignments: storeAddCount(l2)
+                          name: storeAddCount
+                          assignments:
+                            - Assignment: Assignment(a12)
+                              variableName: addition_records_count
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: count($currAssetGrp/nssrcmpr:AssetAction/nssrcmpr:Asset)
+                                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction/types
+                                variableName: addition_records_count
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Map: Map(m4)
+                          xsltfilepath: ../resources/processor_4376/resourcegroup_4379/req_5fbc343db2fc470b81d07d05a26ad481.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/invokeAssetAddition" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeAssetAddition_REQUEST" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeAssetAddition_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS_REQUEST/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction_REQUEST/types" xmlns:nsmpr3="http://TargetNamespace.com/fileReference/readFile" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction/types" xmlns:nsmpr5="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/groupByAction_REQUEST/types" xmlns:nsmpr7="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns41="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS/types" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns39="http://xmlns.oracle.com/cloud/adapter/stagefile/groupByAction/types" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST/types" xmlns:ns43="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/invokeAssetAddition_REQUEST/SKIPOUTREQ" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:ns28="http://xml.oracle.com/types/REST/ListAssetsExtractOS_REQUEST" xmlns:ns4="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns36="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeCommonErrorHandler_REQUEST/types" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns34="http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST" xmlns:ns42="http://xmlns.oracle.com/cloud/staging/write" xmlns:ns32="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction_REQUEST" xmlns:ns40="http://xmlns.oracle.com/cloud/adapter/stagefile/groupByAction_REQUEST" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/ListAssetsExtractOS" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns38="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/faultMessage/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns44="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeAssetAddition_REQUEST" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTREQ" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTRES" xmlns:ns37="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/invokeCommonErrorHandler" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                            - '  <xsl:param name="currAssetGrp" xml:id="id_160"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:POST xml:id="id_12">'
+                            - '      <nstrgmpr:post.request.application.json>'
+                            - '        <xsl:for-each select="$currAssetGrp/nsmpr4:AssetAction/nsmpr4:Asset">'
+                            - '          <ns44:topLevelArray>'
+                            - '            <ns44:propertyUnit>'
+                            - '              <xsl:value-of select="nsmpr4:propertyUnit"/>'
+                            - '            <ns44:AccountSegment3>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment3"/>'
+                            - '            <ns44:AccountSegment2>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment2"/>'
+                            - '            <ns44:AccountSegment5>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment5"/>'
+                            - '            <ns44:parentErpReferenceNumber>'
+                            - '              <xsl:value-of select="nsmpr4:parentErpReferenceNumber"/>'
+                            - '            <ns44:erpProjectSubTaskNum>'
+                            - '              <xsl:value-of select="nsmpr4:erpProjectSubTaskNum"/>'
+                            - '            <ns44:AccountSegment4>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment4"/>'
+                            - '            <ns44:AccountSegment1>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment2"/>'
+                            - '            <ns44:customerContribution>'
+                            - '              <xsl:value-of select="nsmpr4:customerContribution"/>'
+                            - '            <ns44:usage>'
+                            - '              <xsl:value-of select="nsmpr4:usage"/>'
+                            - '            <ns44:description>'
+                            - '              <xsl:value-of select="nsmpr4:description"/>'
+                            - '            <ns44:badgeNumber>'
+                            - '              <xsl:value-of select="nsmpr4:badgeNumber"/>'
+                            - '            <ns44:genProcId>'
+                            - '              <xsl:value-of select="nsmpr4:genProcId"/>'
+                            - '            <ns44:manufacturer>'
+                            - '              <xsl:value-of select="nsmpr4:manufacturer"/>'
+                            - '            <ns44:activityId>'
+                            - '              <xsl:value-of select="nsmpr4:activityId"/>'
+                            - '            <ns44:taxJuridiction>'
+                            - '              <xsl:value-of select="nsmpr4:taxJuridiction"/>'
+                            - '            <ns44:parentProjectId>'
+                            - '              <xsl:value-of select="nsmpr4:parentProjectId"/>'
+                            - '            <ns44:assetId>'
+                            - '              <xsl:value-of select="nsmpr4:assetId"/>'
+                            - '            <ns44:retirementDateTime>'
+                            - '              <xsl:value-of select="nsmpr4:retirementDateTime"/>'
+                            - '            <ns44:action>'
+                            - '              <xsl:value-of select="nsmpr4:action"/>'
+                            - '            <ns44:model>'
+                            - '              <xsl:value-of select="nsmpr4:model"/>'
+                            - '            <ns44:inServiceDate>'
+                            - '              <xsl:value-of select="nsmpr4:inServiceDate"/>'
+                            - '            <ns44:fixedAssetNumber>'
+                            - '              <xsl:value-of select="nsmpr4:fixedAssetNumber"/>'
+                            - '            <ns44:AccountSegment7>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment7"/>'
+                            - '            <ns44:AccountSegment6>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment6"/>'
+                            - '            <ns44:AccountSegment9>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment9"/>'
+                            - '            <ns44:AccountSegment8>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment8"/>'
+                            - '            <ns44:serialNumber>'
+                            - '              <xsl:value-of select="nsmpr4:serialNumber"/>'
+                            - '            <ns44:quantity>'
+                            - '              <xsl:value-of select="nsmpr4:quantity"/>'
+                            - '            <ns44:cost>'
+                            - '              <xsl:value-of select="nsmpr4:cost"/>'
+                            - '            <ns44:AccountSegment10>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment10"/>'
+                            - '            <ns44:erpReferenceNumber>'
+                            - '              <xsl:value-of select="nsmpr4:erpReferenceNumber"/>'
+                            - '            <ns44:transactionDate>'
+                            - '              <xsl:value-of select="nsmpr4:transactionDate"/>'
+                            - '            <ns44:pkValue1>'
+                            - '              <xsl:value-of select="nsmpr4:pkValue1"/>'
+                            - '            <ns44:owningAccessGroup>'
+                            - '              <xsl:value-of select="nsmpr4:owningAccessGroup"/>'
+                            - '            <ns44:workOrderNumber>'
+                            - '              <xsl:value-of select="nsmpr4:workOrderNumber"/>'
+                            - '            <ns44:workOrderId>'
+                            - '              <xsl:value-of select="nsmpr4:workOrderId"/>'
+                            - '            <ns44:projectId>'
+                            - '              <xsl:value-of select="nsmpr4:projectId"/>'
+                            - '            <ns44:maintObjCode>'
+                            - '              <xsl:value-of select="nsmpr4:maintObjCode"/>'
+                            - ""
+                        - Invoke: invokeAssetAddition(i4)
+                          application:
+                            Application: invokeAssetAddition(PRESEEDED_COLLOCATED_CONN_1741)
+                            name: invokeAssetAddition
+                            adapter:
+                                code: PRESEEDED_COLLOCATED_CONN_1741
+                            properties:
+                                - name: operationPath
+                                  value: /
+                                - name: HttpVerb
+                                  value: POST
+                                - name: QueryParameters
+                                  value: ""
+                                - name: ResourceURI
+                                  value: /
+                                - name: integration_id
+                                  value: TSGT_OU_WACS_ERPFA_PRJ_ASSET_ADD|01.23.2002
+                                - name: integration_operation
+                                  value: POST
+                                - name: serviceType
+                                  value: REST
+                        - CatchAll: CatchAll(ta2)
+                          statements:
+                            - Stitch: Stitch(sh12)
+                              stitchNamespaceResolver:
+                                prefixnamespacemap:
+                                    fn: http://www.w3.org/2005/xpath-functions
+                                    ns4: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST
+                                    ns19: http://TargetNamespace.com/fileReference/readFile
+                                    ns23: http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST
+                                    ns27: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/faultMessage/collocatedics/invokeCommonErrorHandler_REQUEST
+                                    ns71: http://www.oracle.com/2014/03/ics/fault
+                                    ora: http://schemas.oracle.com/xpath/extension
+                              stitchVariables:
+                                - name: errorRecordCount
+                                  datatype:
+                                    type: XMLSimple
+                                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                                  access: SOURCE_AND_TARGET
+                                - name: errorFlag
+                                  datatype:
+                                    type: XMLSimple
+                                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}boolean'
+                                  access: SOURCE_AND_TARGET
+                                - name: addition_records
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://TargetNamespace.com/fileReference/readFile}Assets'
+                                    uriToSchema: ../../processor_152/resourcegroup_153/readFile_REQUEST.wsdl
+                                  access: SOURCE_AND_TARGET
+                                - name: error_records
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+                                    uriToSchema: ../../processor_1942/resourcegroup_1945/generated.wsdl
+                                  access: SOURCE_AND_TARGET
+                                - name: scope_invoke_additionFaultObject
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://www.oracle.com/2014/03/ics/fault}fault'
+                                    uriToSchema: ../../processor_2424/resourcegroup_2425/ICSFault.xsd
+                                  access: SOURCE_AND_TARGET
+                              stitchSentences:
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: $scope_invoke_additionFaultObject/ns71:fault/ns71:reason
+                                    returnType: XML_TYPE_NODE_NODESET
+                                  to:
+                                    type: XPathPath
+                                    path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:reason
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: $addition_records/ns19:Assets/ns19:Asset[1]/ns19:action
+                                    returnType: XML_TYPE_NODE_NODESET
+                                  to:
+                                    type: XPathPath
+                                    path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:resourceId
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: $scope_invoke_additionFaultObject/ns71:fault/ns71:errorCode
+                                    returnType: XML_TYPE_NODE_NODESET
+                                  to:
+                                    type: XPathPath
+                                    path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:code
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: ora:getContentAsString($scope_invoke_additionFaultObject/ns71:fault/ns71:details)
+                                    returnType: XML_TYPE_ATOMIC
+                                  to:
+                                    type: XPathPath
+                                    path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:details
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: '''true'''
+                                    returnType: XML_TYPE_ATOMIC
+                                  to:
+                                    type: XPathPath
+                                    path: $errorFlag
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: fn:number($errorRecordCount)+1
+                                    returnType: XML_TYPE_ATOMIC
+                                  to:
+                                    type: XPathPath
+                                    path: $errorRecordCount
+                                    isLastStepXsdAnyType: false
+                            - Stitch: Stitch(sh13)
+                              stitchNamespaceResolver:
+                                prefixnamespacemap:
+                                    ns4: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST
+                                    ns23: http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST
+                              stitchVariables:
+                                - name: error_records
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+                                    uriToSchema: ../../processor_1942/resourcegroup_1945/generated.wsdl
+                                  access: SOURCE_AND_TARGET
+                                - name: finalErrorCollection
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+                                    uriToSchema: ../../processor_1951/resourcegroup_1954/generated.wsdl
+                                  access: SOURCE_AND_TARGET
+                              stitchSentences:
+                                - operation: Append
+                                  from:
+                                    type: XPathExpression
+                                    expression: $error_records/ns23:ErrorCollection/ns4:faultMessage
+                                    returnType: XML_TYPE_NODE_NODESET
+                                  to:
+                                    type: XPathPath
+                                    path: $finalErrorCollection/ns23:ErrorCollection/ns4:faultMessage
+                                    isLastStepXsdAnyType: false
+                          icsfaultfilepath: ../resources/processor_2424/resourcegroup_2425/ICSFault.xsd
+                - Route: action C(sc16)
+                  exprProperties:
+                    xpathExpression: $currAssetGrp/nssrcmpr:AssetAction/@value = "C"
+                    namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction/types
+                    expressionName: action C
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: currAssetGrp
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction/types}AssetAction'
+                  statements:
+                    - Try: Try(t3)
+                      username: scope_invoke_adjustment
+                      statements:
+                        - Assignments: storeAdjCount(l3)
+                          name: storeAdjCount
+                          assignments:
+                            - Assignment: Assignment(a13)
+                              variableName: adjustment_records_count
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: count($currAssetGrp/nssrcmpr:AssetAction/nssrcmpr:Asset)
+                                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction/types
+                                variableName: adjustment_records_count
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Map: Map(m5)
+                          xsltfilepath: ../resources/processor_4391/resourcegroup_4394/req_3ac4e684ed694d14af48707f650d9f65.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/invokeAssetAdjustment" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeAssetAdjustment_REQUEST/types" xmlns:ns4="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeAssetAdjustment_REQUEST" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS_REQUEST/types" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction_REQUEST/types" xmlns:nsmpr2="http://TargetNamespace.com/fileReference/readFile" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction/types" xmlns:nsmpr4="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/groupByAction_REQUEST/types" xmlns:nsmpr6="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns41="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS/types" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns39="http://xmlns.oracle.com/cloud/adapter/stagefile/groupByAction/types" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST/types" xmlns:ns43="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/invokeAssetAdjustment_REQUEST/SKIPOUTREQ" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:ns28="http://xml.oracle.com/types/REST/ListAssetsExtractOS_REQUEST" xmlns:ns35="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns36="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeCommonErrorHandler_REQUEST/types" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns34="http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST" xmlns:ns42="http://xmlns.oracle.com/cloud/staging/write" xmlns:ns32="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction_REQUEST" xmlns:ns40="http://xmlns.oracle.com/cloud/adapter/stagefile/groupByAction_REQUEST" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:ns26="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/ListAssetsExtractOS" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns44="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeAssetAdjustment_REQUEST" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns38="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/faultMessage/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTREQ" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTRES" xmlns:ns37="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/invokeCommonErrorHandler" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn ns1 xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                            - '  <xsl:param name="currAssetGrp" xml:id="id_76"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:POST xml:id="id_12">'
+                            - '      <nstrgmpr:post.request.application.json>'
+                            - '        <xsl:for-each select="$currAssetGrp/nsmpr3:AssetAction/nsmpr3:Asset">'
+                            - '          <ns44:topLevelArray>'
+                            - '            <ns44:propertyUnit>'
+                            - '              <xsl:value-of select="nsmpr3:propertyUnit"/>'
+                            - '            <ns44:AccountSegment3>'
+                            - '              <xsl:value-of select="nsmpr3:AccountSegment3"/>'
+                            - '            <ns44:AccountSegment2>'
+                            - '              <xsl:value-of select="nsmpr3:AccountSegment2"/>'
+                            - '            <ns44:AccountSegment5>'
+                            - '              <xsl:value-of select="nsmpr3:AccountSegment5"/>'
+                            - '            <ns44:parentErpReferenceNumber>'
+                            - '              <xsl:value-of select="nsmpr3:parentErpReferenceNumber"/>'
+                            - '            <ns44:erpProjectSubTaskNum>'
+                            - '              <xsl:value-of select="nsmpr3:erpProjectSubTaskNum"/>'
+                            - '            <ns44:AccountSegment4>'
+                            - '              <xsl:value-of select="nsmpr3:AccountSegment4"/>'
+                            - '            <ns44:AccountSegment1>'
+                            - '              <xsl:value-of select="nsmpr3:AccountSegment1"/>'
+                            - '            <ns44:customerContribution>'
+                            - '              <xsl:value-of select="nsmpr3:customerContribution"/>'
+                            - '            <ns44:usage>'
+                            - '              <xsl:value-of select="nsmpr3:usage"/>'
+                            - '            <ns44:description>'
+                            - '              <xsl:value-of select="nsmpr3:description"/>'
+                            - '            <ns44:badgeNumber>'
+                            - '              <xsl:value-of select="nsmpr3:badgeNumber"/>'
+                            - '            <ns44:genProcId>'
+                            - '              <xsl:value-of select="nsmpr3:genProcId"/>'
+                            - '            <ns44:manufacturer>'
+                            - '              <xsl:value-of select="nsmpr3:manufacturer"/>'
+                            - '            <ns44:activityId>'
+                            - '              <xsl:value-of select="nsmpr3:activityId"/>'
+                            - '            <ns44:taxJuridiction>'
+                            - '              <xsl:value-of select="nsmpr3:taxJuridiction"/>'
+                            - '            <ns44:parentProjectId>'
+                            - '              <xsl:value-of select="nsmpr3:parentProjectId"/>'
+                            - '            <ns44:assetId>'
+                            - '              <xsl:value-of select="nsmpr3:assetId"/>'
+                            - '            <ns44:retirementDateTime>'
+                            - '              <xsl:value-of select="nsmpr3:retirementDateTime"/>'
+                            - '            <ns44:action>'
+                            - '              <xsl:value-of select="nsmpr3:action"/>'
+                            - '            <ns44:model>'
+                            - '              <xsl:value-of select="nsmpr3:model"/>'
+                            - '            <ns44:inServiceDate>'
+                            - '              <xsl:value-of select="nsmpr3:inServiceDate"/>'
+                            - '            <ns44:fixedAssetNumber>'
+                            - '              <xsl:value-of select="nsmpr3:fixedAssetNumber"/>'
+                            - '            <ns44:AccountSegment7>'
+                            - '              <xsl:value-of select="nsmpr3:AccountSegment7"/>'
+                            - '            <ns44:AccountSegment6>'
+                            - '              <xsl:value-of select="nsmpr3:AccountSegment6"/>'
+                            - '            <ns44:AccountSegment9>'
+                            - '              <xsl:value-of select="nsmpr3:AccountSegment9"/>'
+                            - '            <ns44:AccountSegment8>'
+                            - '              <xsl:value-of select="nsmpr3:AccountSegment8"/>'
+                            - '            <ns44:serialNumber>'
+                            - '              <xsl:value-of select="nsmpr3:serialNumber"/>'
+                            - '            <ns44:quantity>'
+                            - '              <xsl:value-of select="nsmpr3:quantity"/>'
+                            - '            <ns44:cost>'
+                            - '              <xsl:value-of select="nsmpr3:cost"/>'
+                            - '            <ns44:AccountSegment10>'
+                            - '              <xsl:value-of select="nsmpr3:AccountSegment10"/>'
+                            - '            <ns44:erpReferenceNumber>'
+                            - '              <xsl:value-of select="nsmpr3:erpReferenceNumber"/>'
+                            - '            <ns44:transactionDate>'
+                            - '              <xsl:value-of select="nsmpr3:transactionDate"/>'
+                            - '            <ns44:pkValue1>'
+                            - '              <xsl:value-of select="nsmpr3:pkValue1"/>'
+                            - '            <ns44:owningAccessGroup>'
+                            - '              <xsl:value-of select="nsmpr3:owningAccessGroup"/>'
+                            - '            <ns44:workOrderNumber>'
+                            - '              <xsl:value-of select="nsmpr3:workOrderNumber"/>'
+                            - '            <ns44:workOrderId>'
+                            - '              <xsl:value-of select="nsmpr3:workOrderId"/>'
+                            - '            <ns44:projectId>'
+                            - '              <xsl:value-of select="nsmpr3:projectId"/>'
+                            - '            <ns44:maintObjCode>'
+                            - '              <xsl:value-of select="nsmpr3:maintObjCode"/>'
+                            - ""
+                        - Invoke: invokeAssetAdjustment(i5)
+                          application:
+                            Application: invokeAssetAdjustment(PRESEEDED_COLLOCATED_CONN_1741)
+                            name: invokeAssetAdjustment
+                            adapter:
+                                code: PRESEEDED_COLLOCATED_CONN_1741
+                            properties:
+                                - name: operationPath
+                                  value: /
+                                - name: HttpVerb
+                                  value: POST
+                                - name: QueryParameters
+                                  value: ""
+                                - name: ResourceURI
+                                  value: /
+                                - name: integration_id
+                                  value: TSGT_OU_WACS_ERPFA_PRJ_ASSET_ADD|01.23.2002
+                                - name: integration_operation
+                                  value: POST
+                                - name: serviceType
+                                  value: REST
+                        - CatchAll: CatchAll(ta3)
+                          statements:
+                            - Stitch: Stitch(sh15)
+                              stitchNamespaceResolver:
+                                prefixnamespacemap:
+                                    fn: http://www.w3.org/2005/xpath-functions
+                                    ns4: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST
+                                    ns19: http://TargetNamespace.com/fileReference/readFile
+                                    ns23: http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST
+                                    ns27: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/faultMessage/collocatedics/invokeCommonErrorHandler_REQUEST
+                                    ns71: http://www.oracle.com/2014/03/ics/fault
+                                    ora: http://schemas.oracle.com/xpath/extension
+                              stitchVariables:
+                                - name: errorRecordCount
+                                  datatype:
+                                    type: XMLSimple
+                                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                                  access: SOURCE_AND_TARGET
+                                - name: errorFlag
+                                  datatype:
+                                    type: XMLSimple
+                                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}boolean'
+                                  access: SOURCE_AND_TARGET
+                                - name: error_records
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+                                    uriToSchema: ../../processor_1942/resourcegroup_1945/generated.wsdl
+                                  access: SOURCE_AND_TARGET
+                                - name: adjustment_records
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://TargetNamespace.com/fileReference/readFile}Assets'
+                                    uriToSchema: ../../processor_152/resourcegroup_153/readFile_REQUEST.wsdl
+                                  access: SOURCE_AND_TARGET
+                                - name: scope_invoke_adjustmentFaultObject
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://www.oracle.com/2014/03/ics/fault}fault'
+                                    uriToSchema: ../../processor_2498/resourcegroup_2499/ICSFault.xsd
+                                  access: SOURCE_AND_TARGET
+                              stitchSentences:
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: $scope_invoke_adjustmentFaultObject/ns71:fault/ns71:reason
+                                    returnType: XML_TYPE_NODE_NODESET
+                                  to:
+                                    type: XPathPath
+                                    path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:reason
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: $adjustment_records/ns19:Assets/ns19:Asset[1]/ns19:action
+                                    returnType: XML_TYPE_NODE_NODESET
+                                  to:
+                                    type: XPathPath
+                                    path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:resourceId
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: $scope_invoke_adjustmentFaultObject/ns71:fault/ns71:errorCode
+                                    returnType: XML_TYPE_NODE_NODESET
+                                  to:
+                                    type: XPathPath
+                                    path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:code
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: ora:getContentAsString($scope_invoke_adjustmentFaultObject/ns71:fault/ns71:details)
+                                    returnType: XML_TYPE_ATOMIC
+                                  to:
+                                    type: XPathPath
+                                    path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:details
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: '''true'''
+                                    returnType: XML_TYPE_ATOMIC
+                                  to:
+                                    type: XPathPath
+                                    path: $errorFlag
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: fn:number($errorRecordCount)+1
+                                    returnType: XML_TYPE_ATOMIC
+                                  to:
+                                    type: XPathPath
+                                    path: $errorRecordCount
+                                    isLastStepXsdAnyType: false
+                            - Stitch: Stitch(sh14)
+                              stitchNamespaceResolver:
+                                prefixnamespacemap:
+                                    ns4: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST
+                                    ns23: http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST
+                              stitchVariables:
+                                - name: error_records
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+                                    uriToSchema: ../../processor_1942/resourcegroup_1945/generated.wsdl
+                                  access: SOURCE_AND_TARGET
+                                - name: finalErrorCollection
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+                                    uriToSchema: ../../processor_1951/resourcegroup_1954/generated.wsdl
+                                  access: SOURCE_AND_TARGET
+                              stitchSentences:
+                                - operation: Append
+                                  from:
+                                    type: XPathExpression
+                                    expression: $error_records/ns23:ErrorCollection/ns4:faultMessage
+                                    returnType: XML_TYPE_NODE_NODESET
+                                  to:
+                                    type: XPathPath
+                                    path: $finalErrorCollection/ns23:ErrorCollection/ns4:faultMessage
+                                    isLastStepXsdAnyType: false
+                          icsfaultfilepath: ../resources/processor_2498/resourcegroup_2499/ICSFault.xsd
+                - Route: action R(sc17)
+                  exprProperties:
+                    xpathExpression: $currAssetGrp/nssrcmpr:AssetAction/@value = "R"
+                    namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction/types
+                    expressionName: action R
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: currAssetGrp
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction/types}AssetAction'
+                  statements:
+                    - Try: Try(t4)
+                      username: scope_invoke_retirement
+                      statements:
+                        - Assignments: storeRetCount(l4)
+                          name: storeRetCount
+                          assignments:
+                            - Assignment: Assignment(a14)
+                              variableName: retirement_records_count
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: count($currAssetGrp/nssrcmpr:AssetAction/nssrcmpr:Asset)
+                                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction/types
+                                variableName: retirement_records_count
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Map: Map(m2)
+                          xsltfilepath: ../resources/processor_4363/resourcegroup_4366/req_dad2539a1ceb441aa8e734204e3c83ad.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/invokeAssetRetirement" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeAssetRetirement_REQUEST/types" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeAssetRetirement_REQUEST" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS_REQUEST/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction_REQUEST/types" xmlns:nsmpr3="http://TargetNamespace.com/fileReference/readFile" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction/types" xmlns:nsmpr5="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/groupByAction_REQUEST/types" xmlns:nsmpr7="http://www.oracle.com/2014/03/ic/integration/metadata" version="2.0" xml:id="id_1" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" ignore01:ignorexmlids="true" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns41="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/REST/ListAssetsExtractOS/types" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns39="http://xmlns.oracle.com/cloud/adapter/stagefile/groupByAction/types" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST/types" xmlns:ns43="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeAssetRetirement_REQUEST" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:ns28="http://xml.oracle.com/types/REST/ListAssetsExtractOS_REQUEST" xmlns:ns4="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns36="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeCommonErrorHandler_REQUEST/types" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns34="http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST" xmlns:ns42="http://xmlns.oracle.com/cloud/staging/write" xmlns:ns32="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadAssetsByAction_REQUEST" xmlns:ns40="http://xmlns.oracle.com/cloud/adapter/stagefile/groupByAction_REQUEST" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:ns26="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/ListAssetsExtractOS" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns38="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/faultMessage/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns44="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/invokeAssetRetirement_REQUEST/SKIPOUTREQ" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTREQ" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/ListAssetsExtractOS_REQUEST/RESTOUTRES" xmlns:ns37="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/invokeCommonErrorHandler" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                            - '  <xsl:param name="currAssetGrp" xml:id="id_76"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:POST xml:id="id_12">'
+                            - '      <nstrgmpr:post.request.application.json>'
+                            - '        <xsl:for-each select="$currAssetGrp/nsmpr4:AssetAction/nsmpr4:Asset">'
+                            - '          <ns43:topLevelArray>'
+                            - '            <ns43:propertyUnit>'
+                            - '              <xsl:value-of select="nsmpr4:propertyUnit"/>'
+                            - '            <ns43:AccountSegment3>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment3"/>'
+                            - '            <ns43:AccountSegment2>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment2"/>'
+                            - '            <ns43:AccountSegment5>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment5"/>'
+                            - '            <ns43:parentErpReferenceNumber>'
+                            - '              <xsl:value-of select="nsmpr4:parentErpReferenceNumber"/>'
+                            - '            <ns43:erpProjectSubTaskNum>'
+                            - '              <xsl:value-of select="nsmpr4:erpProjectSubTaskNum"/>'
+                            - '            <ns43:AccountSegment4>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment4"/>'
+                            - '            <ns43:AccountSegment1>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment1"/>'
+                            - '            <ns43:serialNumber>'
+                            - '              <xsl:value-of select="nsmpr4:serialNumber"/>'
+                            - '            <ns43:usage>'
+                            - '              <xsl:value-of select="nsmpr4:usage"/>'
+                            - '            <ns43:quantity>'
+                            - '              <xsl:value-of select="nsmpr4:quantity"/>'
+                            - '            <ns43:cost>'
+                            - '              <xsl:value-of select="nsmpr4:cost"/>'
+                            - '            <ns43:genProcId>'
+                            - '              <xsl:value-of select="nsmpr4:genProcId"/>'
+                            - '            <ns43:customerContribution>'
+                            - '              <xsl:value-of select="nsmpr4:customerContribution"/>'
+                            - '            <ns43:description>'
+                            - '              <xsl:value-of select="nsmpr4:description"/>'
+                            - '            <ns43:badgeNumber>'
+                            - '              <xsl:value-of select="nsmpr4:badgeNumber"/>'
+                            - '            <ns43:transactionDate>'
+                            - '              <xsl:value-of select="nsmpr4:transactionDate"/>'
+                            - '            <ns43:manufacturer>'
+                            - '              <xsl:value-of select="nsmpr4:manufacturer"/>'
+                            - '            <ns43:activityId>'
+                            - '              <xsl:value-of select="nsmpr4:activityId"/>'
+                            - '            <ns43:taxJuridiction>'
+                            - '              <xsl:value-of select="nsmpr4:taxJuridiction"/>'
+                            - '            <ns43:parentProjectId>'
+                            - '              <xsl:value-of select="nsmpr4:parentProjectId"/>'
+                            - '            <ns43:assetId>'
+                            - '              <xsl:value-of select="nsmpr4:assetId"/>'
+                            - '            <ns43:AccountSegment7>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment7"/>'
+                            - '            <ns43:AccountSegment6>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment6"/>'
+                            - '            <ns43:AccountSegment9>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment9"/>'
+                            - '            <ns43:AccountSegment8>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment8"/>'
+                            - '            <ns43:owningAccessGroup>'
+                            - '              <xsl:value-of select="nsmpr4:owningAccessGroup"/>'
+                            - '            <ns43:retirementDateTime>'
+                            - '              <xsl:value-of select="nsmpr4:retirementDateTime"/>'
+                            - '            <ns43:action>'
+                            - '              <xsl:value-of select="nsmpr4:action"/>'
+                            - '            <ns43:AccountSegment10>'
+                            - '              <xsl:value-of select="nsmpr4:AccountSegment10"/>'
+                            - '            <ns43:erpReferenceNumber>'
+                            - '              <xsl:value-of select="nsmpr4:erpReferenceNumber"/>'
+                            - '            <ns43:workOrderNumber>'
+                            - '              <xsl:value-of select="nsmpr4:workOrderNumber"/>'
+                            - '            <ns43:pkValue1>'
+                            - '              <xsl:value-of select="nsmpr4:pkValue1"/>'
+                            - '            <ns43:model>'
+                            - '              <xsl:value-of select="nsmpr4:model"/>'
+                            - '            <ns43:inServiceDate>'
+                            - '              <xsl:value-of select="nsmpr4:inServiceDate"/>'
+                            - '            <ns43:fixedAssetNumber>'
+                            - '              <xsl:value-of select="nsmpr4:fixedAssetNumber"/>'
+                            - '            <ns43:workOrderId>'
+                            - '              <xsl:value-of select="nsmpr4:workOrderId"/>'
+                            - '            <ns43:projectId>'
+                            - '              <xsl:value-of select="nsmpr4:projectId"/>'
+                            - '            <ns43:maintObjCode>'
+                            - '              <xsl:value-of select="nsmpr4:maintObjCode"/>'
+                            - ""
+                        - Invoke: invokeAssetRetirement(i2)
+                          application:
+                            Application: invokeAssetRetirement(PRESEEDED_COLLOCATED_CONN_1741)
+                            name: invokeAssetRetirement
+                            adapter:
+                                code: PRESEEDED_COLLOCATED_CONN_1741
+                            properties:
+                                - name: operationPath
+                                  value: /
+                                - name: HttpVerb
+                                  value: POST
+                                - name: QueryParameters
+                                  value: ""
+                                - name: ResourceURI
+                                  value: /
+                                - name: integration_id
+                                  value: TSGT_OU_WACS_ERPFA_ASSET_RETIRE|01.23.2001
+                                - name: integration_operation
+                                  value: POST
+                                - name: serviceType
+                                  value: REST
+                        - CatchAll: CatchAll(ta4)
+                          statements:
+                            - Stitch: Stitch(sh16)
+                              stitchNamespaceResolver:
+                                prefixnamespacemap:
+                                    fn: http://www.w3.org/2005/xpath-functions
+                                    ns4: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST
+                                    ns19: http://TargetNamespace.com/fileReference/readFile
+                                    ns23: http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST
+                                    ns27: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/faultMessage/collocatedics/invokeCommonErrorHandler_REQUEST
+                                    ns71: http://www.oracle.com/2014/03/ics/fault
+                                    ora: http://schemas.oracle.com/xpath/extension
+                              stitchVariables:
+                                - name: errorRecordCount
+                                  datatype:
+                                    type: XMLSimple
+                                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                                  access: SOURCE_AND_TARGET
+                                - name: errorFlag
+                                  datatype:
+                                    type: XMLSimple
+                                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}boolean'
+                                  access: SOURCE_AND_TARGET
+                                - name: scope_invoke_retirementFaultObject
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://www.oracle.com/2014/03/ics/fault}fault'
+                                    uriToSchema: ../../processor_2545/resourcegroup_2546/ICSFault.xsd
+                                  access: SOURCE_AND_TARGET
+                                - name: error_records
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+                                    uriToSchema: ../../processor_1942/resourcegroup_1945/generated.wsdl
+                                  access: SOURCE_AND_TARGET
+                                - name: retirement_records
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://TargetNamespace.com/fileReference/readFile}Assets'
+                                    uriToSchema: ../../processor_152/resourcegroup_153/readFile_REQUEST.wsdl
+                                  access: SOURCE_AND_TARGET
+                              stitchSentences:
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: $scope_invoke_retirementFaultObject/ns71:fault/ns71:reason
+                                    returnType: XML_TYPE_NODE_NODESET
+                                  to:
+                                    type: XPathPath
+                                    path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:reason
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: $retirement_records/ns19:Assets/ns19:Asset[1]/ns19:action
+                                    returnType: XML_TYPE_NODE_NODESET
+                                  to:
+                                    type: XPathPath
+                                    path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:resourceId
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: $scope_invoke_retirementFaultObject/ns71:fault/ns71:errorCode
+                                    returnType: XML_TYPE_NODE_NODESET
+                                  to:
+                                    type: XPathPath
+                                    path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:code
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: ora:getContentAsString($scope_invoke_retirementFaultObject/ns71:fault/ns71:details)
+                                    returnType: XML_TYPE_ATOMIC
+                                  to:
+                                    type: XPathPath
+                                    path: $error_records/ns23:ErrorCollection/ns4:faultMessage[1]/ns27:details
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: '''true'''
+                                    returnType: XML_TYPE_ATOMIC
+                                  to:
+                                    type: XPathPath
+                                    path: $errorFlag
+                                    isLastStepXsdAnyType: false
+                                - operation: Assign
+                                  from:
+                                    type: XPathExpression
+                                    expression: fn:number($errorRecordCount)+1
+                                    returnType: XML_TYPE_ATOMIC
+                                  to:
+                                    type: XPathPath
+                                    path: $errorRecordCount
+                                    isLastStepXsdAnyType: false
+                            - Stitch: Stitch(sh17)
+                              stitchNamespaceResolver:
+                                prefixnamespacemap:
+                                    ns4: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST
+                                    ns23: http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST
+                              stitchVariables:
+                                - name: error_records
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+                                    uriToSchema: ../../processor_1942/resourcegroup_1945/generated.wsdl
+                                  access: SOURCE_AND_TARGET
+                                - name: finalErrorCollection
+                                  datatype:
+                                    type: XMLComplex
+                                    basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+                                    uriToSchema: ../../processor_1951/resourcegroup_1954/generated.wsdl
+                                  access: SOURCE_AND_TARGET
+                              stitchSentences:
+                                - operation: Append
+                                  from:
+                                    type: XPathExpression
+                                    expression: $error_records/ns23:ErrorCollection/ns4:faultMessage
+                                    returnType: XML_TYPE_NODE_NODESET
+                                  to:
+                                    type: XPathPath
+                                    path: $finalErrorCollection/ns23:ErrorCollection/ns4:faultMessage
+                                    isLastStepXsdAnyType: false
+                          icsfaultfilepath: ../resources/processor_2545/resourcegroup_2546/ICSFault.xsd
+                - Route: Otherwise(sc15)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements: []
+        - Assignments: updateTrackingVars(l1)
+          name: updateTrackingVars
+          assignments:
+            - Assignment: Assignment(a10)
+              variableName: tracking_var_2
+              variableType: string
+              expressionProperties:
+                xpathExpression: 'concat($tracking_var_2,", Records: ",count($fileLvlRecs_collection/nsmpr16:Assets/nsmpr16:Asset))'
+                namespaceList: nsmpr16=http://TargetNamespace.com/fileReference/readFile
+                variableName: tracking_var_2
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a11)
+              variableName: tracking_var_3
+              variableType: string
+              expressionProperties:
+                xpathExpression: 'concat( "Add: ", $addition_records_count,", Adj: ", $adjustment_records_count, ", Ret: ", $retirement_records_count)'
+                variableName: tracking_var_3
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Catch: Catch(tc0)
+          faultname: APIInvocationError
+          statements: []
+        - CatchAll: CatchAll(ta1)
+          statements:
+            - Stitch: Stitch(sh8)
+              stitchNamespaceResolver:
+                prefixnamespacemap:
+                    fn: http://www.w3.org/2005/xpath-functions
+                    ns4: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST
+                    ns31: http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST
+                    ns35: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/faultMessage/collocatedics/invokeCommonErrorHandler_REQUEST
+                    ns76: http://www.oracle.com/2014/03/ics/fault
+                    ora: http://schemas.oracle.com/xpath/extension
+              stitchVariables:
+                - name: errorRecordCount
+                  datatype:
+                    type: XMLSimple
+                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}double'
+                  access: SOURCE_AND_TARGET
+                - name: errorFlag
+                  datatype:
+                    type: XMLSimple
+                    xsdDataType: '{http://www.w3.org/2001/XMLSchema}boolean'
+                  access: SOURCE_AND_TARGET
+                - name: TotalScopeFaultObject
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://www.oracle.com/2014/03/ics/fault}fault'
+                    uriToSchema: ../../processor_1530/resourcegroup_1531/ICSFault.xsd
+                  access: SOURCE_AND_TARGET
+                - name: error_records
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+                    uriToSchema: ../../processor_1942/resourcegroup_1945/generated.wsdl
+                  access: SOURCE_AND_TARGET
+              stitchSentences:
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: '''true'''
+                    returnType: XML_TYPE_ATOMIC
+                  to:
+                    type: XPathPath
+                    path: $errorFlag
+                    isLastStepXsdAnyType: false
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: fn:number($errorRecordCount)+1
+                    returnType: XML_TYPE_ATOMIC
+                  to:
+                    type: XPathPath
+                    path: $errorRecordCount
+                    isLastStepXsdAnyType: false
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: $TotalScopeFaultObject/ns76:fault/ns76:reason
+                    returnType: XML_TYPE_NODE_NODESET
+                  to:
+                    type: XPathPath
+                    path: $error_records/ns31:ErrorCollection/ns4:faultMessage[1]/ns35:reason
+                    isLastStepXsdAnyType: false
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: ora:getContentAsString($TotalScopeFaultObject/ns76:fault/ns76:details)
+                    returnType: XML_TYPE_ATOMIC
+                  to:
+                    type: XPathPath
+                    path: $error_records/ns31:ErrorCollection/ns4:faultMessage[1]/ns35:details
+                    isLastStepXsdAnyType: false
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: $TotalScopeFaultObject/ns76:fault/ns76:errorCode
+                    returnType: XML_TYPE_NODE_NODESET
+                  to:
+                    type: XPathPath
+                    path: $error_records/ns31:ErrorCollection/ns4:faultMessage[1]/ns35:code
+                    isLastStepXsdAnyType: false
+                - operation: Assign
+                  from:
+                    type: XPathExpression
+                    expression: '"NA"'
+                    returnType: XML_TYPE_ATOMIC
+                  to:
+                    type: XPathPath
+                    path: $error_records/ns31:ErrorCollection/ns4:faultMessage/ns35:resourceId
+                    isLastStepXsdAnyType: false
+            - Stitch: Stitch(sh9)
+              stitchNamespaceResolver:
+                prefixnamespacemap:
+                    ns4: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST
+                    ns32: http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST
+              stitchVariables:
+                - name: error_records
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+                    uriToSchema: ../../processor_1942/resourcegroup_1945/generated.wsdl
+                  access: SOURCE_AND_TARGET
+                - name: finalErrorCollection
+                  datatype:
+                    type: XMLComplex
+                    basedOnElement: '{http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST}ErrorCollection'
+                    uriToSchema: ../../processor_1951/resourcegroup_1954/generated.wsdl
+                  access: SOURCE_AND_TARGET
+              stitchSentences:
+                - operation: Append
+                  from:
+                    type: XPathExpression
+                    expression: $error_records/ns32:ErrorCollection/ns4:faultMessage[1]
+                    returnType: XML_TYPE_NODE_NODESET
+                  to:
+                    type: XPathPath
+                    path: $finalErrorCollection/ns32:ErrorCollection/ns4:faultMessage
+                    isLastStepXsdAnyType: false
+          icsfaultfilepath: ../resources/processor_1530/resourcegroup_1531/ICSFault.xsd
+    - Switch: Switch(s5)
+      routes:
+        - Route: anyErrors(sc12)
+          exprProperties:
+            xpathExpression: $errorRecordCount > 0.0
+            expressionName: anyErrors
+          stateInfo:
+            variablesReferenced:
+                - VariableName: errorRecordCount
+                  rootElement: '{http://www.w3.org/2001/XMLSchema}double'
+          statements:
+            - Map: Map(m6)
+              xsltfilepath: ../resources/processor_1937/resourcegroup_1940/req_c1bac3809b3e427d8453852a819de0b4.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://www.oracle.com/2014/03/ics/schedule" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/invokeCommonErrorHandler_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nsmpr0="http://xml.oracle.com/adapters/extension" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/invokeCommonErrorHandler" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ora oracle-xsl-mapper xsi fn nsmpr0 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://TargetNamespace.com/fileReference/readFile" xmlns:nsmpr2="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/invokeCommonErrorHandler_REQUEST/SKIPOUTREQ" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2095151203" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1485347291" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2047256691" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST/types" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:ns4="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath569416338" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/stagefile/readFile_REQUEST" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1486200524" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath44117833" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2068686068" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971" xmlns:ns24="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/ErrorCollection/faultMessage/collocatedics/invokeCommonErrorHandler_REQUEST" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath832567826">
+                - '  <xsl:param name="finalErrorCollection" xml:id="id_42"/>'
+                - '  <xsl:param name="self" xml:id="id_44"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:POST xml:id="id_12">'
+                - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_48">'
+                - '        <nsmpr2:ErrorCollection xml:id="id_49">'
+                - '          <xsl:for-each xml:id="id_51" select="$finalErrorCollection/nsmpr2:ErrorCollection/ns4:faultMessage">'
+                - '            <ns4:faultMessage xml:id="id_52">'
+                - '              <ns24:reason xml:id="id_53">'
+                - '                <xsl:value-of xml:id="id_54" select="ns24:reason"/>'
+                - '              <ns24:resourceId xml:id="id_55">'
+                - '                <xsl:value-of xml:id="id_56" select="ns24:resourceId"/>'
+                - '              <ns24:code xml:id="id_57">'
+                - '                <xsl:value-of xml:id="id_58" select="ns24:code"/>'
+                - '              <ns24:instanceId xml:id="id_59">'
+                - '                <xsl:value-of xml:id="id_60" select="$self/nsmpr3:metadata/nsmpr3:runtime/nsmpr3:instanceId"/>'
+                - '              <ns24:appName xml:id="id_61">'
+                - '                <xsl:value-of xml:id="id_62" select="&quot;WACS&quot;"/>'
+                - '              <ns24:details xml:id="id_63">'
+                - '                <xsl:value-of xml:id="id_64" select="ns24:details"/>'
+                - '              <ns24:notificationTypes xml:id="id_65">'
+                - '                <xsl:value-of xml:id="id_66" select="&quot;email&quot;"/>'
+                - '              <ns24:flowName xml:id="id_67">'
+                - '                <xsl:value-of xml:id="id_68" select="$self/nsmpr3:metadata/nsmpr3:integration/nsmpr3:name"/>'
+                - '              <ns24:messageDetail xml:id="id_69">'
+                - '                <xsl:value-of xml:id="id_70" select="ns24:messageDetail"/>'
+                - ""
+            - Invoke: invokeCommonErrorHandler(i6)
+              application:
+                Application: invokeCommonErrorHandler(PRESEEDED_COLLOCATED_CONN_1741)
+                name: invokeCommonErrorHandler
+                adapter:
+                    code: PRESEEDED_COLLOCATED_CONN_1741
+                properties:
+                    - name: operationPath
+                      value: /ErrorCollection
+                    - name: HttpVerb
+                      value: POST
+                    - name: QueryParameters
+                      value: ""
+                    - name: ResourceURI
+                      value: /ErrorCollection
+                    - name: integration_id
+                      value: OUTL-BA-WACS_ERPFA_ERROR|01.23.2000
+                    - name: integration_operation
+                      value: POST
+                    - name: serviceType
+                      value: REST
+        - Route: Otherwise(sc14)
+          exprProperties:
+            xpathExpression: "true"
+            expressionName: Otherwise
+          stateInfo: null
+          statements: []
+    - Stop: Stop(st0)

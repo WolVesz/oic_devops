@@ -1,0 +1,629 @@
+Orchestration: ""
+statements:
+    - Receive: Receive(r0)
+      trackingvariables:
+        - role: tracking_var_1
+          primary: true
+          name: Transaction Id
+          xpath: /execute/request-wrapper/CMN_MEDIATOR_DATAINSERT/TransactionId
+        - role: tracking_var_2
+          name: Source
+          xpath: /execute/request-wrapper/CMN_MEDIATOR_DATAINSERT/Source
+        - role: tracking_var_3
+          name: File Name
+          xpath: /execute/request-wrapper/CMN_MEDIATOR_DATAINSERT/FileName
+    - Assignments: AssignGlobalVariables(l0)
+      name: AssignGlobalVariables
+      assignments:
+        - Assignment: Assignment(a0)
+          variableName: FlowId
+          variableType: string
+          expressionProperties:
+            xpathExpression: ora:getFlowId( )
+            namespaceList: ora=http://schemas.oracle.com/xpath/extension
+            variableName: FlowId
+            variableDescription: Set the OIC unique Id for Flow Trace
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a1)
+          variableName: BaseFolderpath
+          variableType: string
+          expressionProperties:
+            xpathExpression: concat( "/temp/", $FlowId, "/")
+            variableName: BaseFolderpath
+            variableDescription: Set Base Folder Path for Stagging
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a2)
+          variableName: CurrentDateTime
+          variableType: string
+          expressionProperties:
+            xpathExpression: concat(substring-before(substring-before (string (fn:current-dateTime() ), "." ),':'),substring-before(substring-after(substring-before (string (fn:current-dateTime() ), "." ),':'),':'))
+            namespaceList: fn=http://www.w3.org/2005/xpath-functions
+            variableName: CurrentDateTime
+            variableDescription: Set the Current Date Time
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a3)
+          variableName: OICTempFileName
+          variableType: string
+          expressionProperties:
+            xpathExpression: concat( $CurrentDateTime, ".csv")
+            variableName: OICTempFileName
+            variableDescription: Set the Stage File Name
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a4)
+          variableName: StageFilePath
+          variableType: string
+          expressionProperties:
+            xpathExpression: concat( $BaseFolderpath, "mediator")
+            variableName: StageFilePath
+            variableDescription: Set the Stage File Path
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a5)
+          variableName: ErrorFlag
+          variableType: string
+          expressionProperties:
+            xpathExpression: '"N"'
+            variableName: ErrorFlag
+            variableDescription: Set Error flag used in the interface orchestration
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a9)
+          variableName: Status
+          variableType: string
+          expressionProperties:
+            xpathExpression: '"SUCCESS"'
+            variableName: Status
+            variableDescription: Set Intg Flow Tracker Prc Status
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a10)
+          variableName: TotColEnrichedinDataSync
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName','TotColEnrichedinDataSync','ConfigValue','')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TotColEnrichedinDataSync
+            variableDescription: Set the Enriched Column for Data Sync
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a11)
+          variableName: TotalRowsInFile
+          variableType: string
+          expressionProperties:
+            xpathExpression: number(0)
+            variableName: TotalRowsInFile
+            variableDescription: Set this to 0 initially
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a41)
+          variableName: OICTempFileName
+          variableType: string
+          expressionProperties:
+            xpathExpression: '"TempFile"'
+            variableName: OICTempFileName
+            variableDescription: Set the Temp file name for Stage Read Write
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a14)
+          variableName: OICFileEnriched
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''SFTPFileEnrichedData.csv'''
+            variableName: OICFileEnriched
+            variableDescription: Set the Enriched Filename
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a15)
+          variableName: OICFileDownloadpath
+          variableType: string
+          expressionProperties:
+            xpathExpression: concat( $BaseFolderpath, "OICVF")
+            variableName: OICFileDownloadpath
+            variableDescription: Set the Download file path to Stage
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a16)
+          variableName: OICFile
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''SFTPFileData.csv'''
+            variableName: OICFile
+            variableDescription: Set the OIC Stage File Name
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a17)
+          variableName: FileDelimitter
+          variableType: string
+          expressionProperties:
+            xpathExpression: /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:CMN_MEDIATOR_DATAINSERT/nsmpr3:Attribute1
+            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types
+            variableName: FileDelimitter
+            variableDescription: Set the delimiter from metadata config table
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a6)
+          variableName: MsgCode
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: MsgCode
+            variableDescription: Set Error or success Message Code
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a7)
+          variableName: MsgDesc
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: MsgDesc
+            variableDescription: Set Error or success Message Description from Lookup Table
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a8)
+          variableName: MsgDetail
+          variableType: string
+          expressionProperties:
+            xpathExpression: '""'
+            variableName: MsgDetail
+            variableDescription: Set Error or success Message Description from Lookup Table
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a33)
+          variableName: FileLineNumber
+          variableType: string
+          expressionProperties:
+            xpathExpression: number(0)
+            variableName: FileLineNumber
+            variableDescription: 'File Line number : this value will be stored in the ibfile stage table.'
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a34)
+          variableName: Counter
+          variableType: string
+          expressionProperties:
+            xpathExpression: number(0)
+            variableName: Counter
+            variableDescription: Initialize Counter for no of rows in the source file
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a35)
+          variableName: SegmentValue
+          variableType: string
+          expressionProperties:
+            xpathExpression: number(200)
+            variableName: SegmentValue
+            variableDescription: Set the Segment value while doing the increment of Counter
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a40)
+          variableName: TSGT_SYSTEM_ERROR
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_SYSTEM_ERROR','MessageDescr','System Error :')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_SYSTEM_ERROR
+            variableDescription: 'Set the Error Message - System Error :'
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a39)
+          variableName: FileRef
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: FileRef
+            variableDescription: Set the File Ref from Object Storage
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a42)
+          variableName: SkipFlag
+          variableType: string
+          expressionProperties:
+            xpathExpression: '"N"'
+            variableName: SkipFlag
+            variableDescription: Used to Skip any part of the logic
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+    - Try: Try(t0)
+      username: DownloadSFTPtoStagging
+      statements:
+        - Switch: Switch(s0)
+          routes:
+            - Route: (sc0)
+              exprProperties:
+                xpathExpression: $ErrorFlag = "N"
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: ErrorFlag
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - Map: Map(m1)
+                  xsltfilepath: ../resources/processor_4377/resourcegroup_4380/req_cdd9d3fbb8bc4ae58c28f6b9a8857eb9.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/DownloadFileFromBucket" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InsertStageDataService" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/DownloadFileFromBucket_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/DownloadFileFromBucket_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types" exclude-result-prefixes=" oraext plnk xsd xp20 nssrcmpr nsmpr0 ora oracle-xsl-mapper xsi fn ns18 xsl nssrcdfl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/DownloadFileFromBucket_REQUEST/RESTOUTRES" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/DownloadFileFromBucket_REQUEST/RESTOUTREQ" xmlns:ns22="http://xml.oracle.com/adapters/extension" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns27="http://xml.oracle.com/types/REST/DownloadFileFromBucket_REQUEST" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns24="http://xmlns.oracle.com/cloud/ics/binary/v1/types" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InsertStageDataService_REQUEST/RESTINREQ" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940">
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:execute xml:id="id_12">'
+                    - '      <nstrgmpr:TemplateParameters xml:id="id_41">'
+                    - '        <ns27:nameSpaceName xml:id="id_42">'
+                    - '          <xsl:value-of xml:id="id_43" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:Namespace"/>'
+                    - '        <ns27:bucketName xml:id="id_44">'
+                    - '          <xsl:value-of xml:id="id_45" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:BucketName"/>'
+                    - '        <ns27:objectName xml:id="id_46">'
+                    - '          <xsl:value-of xml:id="id_47" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:CMN_MEDIATOR_DATAINSERT/nssrcdfl:FileName"/>'
+                    - ""
+                - Invoke: DownloadFileFromBucket(i0)
+                  application:
+                    Application: DownloadFileFromBucket(TSGTOBJECTSTORAG_CONN)
+                    name: DownloadFileFromBucket
+                    adapter:
+                        code: TSGTOBJECTSTORAG_CONN
+                    properties:
+                        - name: operationPath
+                          value: http://xmlns.oracle.com/cloud/adapter/REST/DownloadFileFromBucket_REQUEST/execute
+                        - name: HttpVerb
+                          value: GET
+                        - name: ResourceURI
+                          value: /n/{nameSpaceName}/b/{bucketName}/o/{objectName}
+                - Assignments: SetFileRef(l8)
+                  name: SetFileRef
+                  assignments:
+                    - Assignment: Assignment(a38)
+                      variableName: FileRef
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $DownloadFileFromBucket/nsmpr9:executeResponse/nsmpr1:streamReference
+                        namespaceList: nsmpr9=http://xmlns.oracle.com/cloud/adapter/REST/DownloadFileFromBucket_REQUEST/types nsmpr1=http://xmlns.oracle.com/cloud/ics/binary/v1/types
+                        variableName: FileRef
+                        variableDescription: Set File Ref
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: Otherwise(sc1)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Assignments: AssignSFTPFileFetchException(l3)
+              name: AssignSFTPFileFetchException
+              assignments:
+                - Assignment: Assignment(a18)
+                  variableName: ErrorFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErrorFlag
+                    variableDescription: Set the Flag to Y
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a19)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableDescription: Set the Status to ERROR
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a20)
+                  variableName: MsgCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''TSGT_CMN_MEDIATOR_DATAINSERT_SFTP_RETRIEVE_ERROR'''
+                    variableName: MsgCode
+                    variableDescription: Set the Message Code for the Error
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a21)
+                  variableName: MsgDesc
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: concat($TSGT_SYSTEM_ERROR, ora:getFaultAsString())
+                    namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDesc
+                    variableDescription: Set the system Error concatenated with the loop up value
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a22)
+                  variableName: MsgDetail
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: 'concat($DownloadSFTPtoStaggingFaultObject/nsmpr7:fault/nsmpr7:errorCode,'' : '',ora:getContentAsString($DownloadSFTPtoStaggingFaultObject/nsmpr7:fault/nsmpr7:details))'
+                    namespaceList: nsmpr7=http://www.oracle.com/2014/03/ics/fault ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDetail
+                    variableDescription: Set the system Error code concatenated with the loop up value
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_351/resourcegroup_352/ICSFault.xsd
+    - Try: Try(t1)
+      username: DataInsertToStagging
+      statements:
+        - Switch: Switch(s1)
+          routes:
+            - Route: (sc15)
+              exprProperties:
+                xpathExpression: $ErrorFlag = "N"
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: ErrorFlag
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - StageFile: StageReadFile(sf0)
+                  operation: Read
+                  expressionProperties:
+                    xpathExpression: $FileRef
+                  statements: []
+                - Assignments: AssignTotalRows(l1)
+                  name: AssignTotalRows
+                  assignments:
+                    - Assignment: Assignment(a12)
+                      variableName: TotalRowsInFile
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: count($StageReadFile/nsmpr5:ReadResponse/nsmpr1:RecordSet/nsmpr1:Record)
+                        namespaceList: nsmpr5=http://xmlns.oracle.com/cloud/adapter/stagefile/StageReadFile_REQUEST/types nsmpr1=http://TargetNamespace.com/fileReference/StageReadFile
+                        variableName: TotalRowsInFile
+                        variableDescription: Set the Total Rows in the File
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Switch: Switch(s2)
+                  routes:
+                    - Route: (sc2)
+                      exprProperties:
+                        xpathExpression: $TotalRowsInFile > 0.0
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: TotalRowsInFile
+                              rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+                      statements:
+                        - Try: Try(t2)
+                          username: InsertWACSOnHandDetailsToIBStageTbl
+                          statements:
+                            - StageFile: ReadExtractedFileInSegments(sf5)
+                              operation: Read
+                              expressionProperties:
+                                xpathExpression: $FileRef
+                              statements:
+                                - Map: Map(m2)
+                                  xsltfilepath: ../resources/processor_6853/resourcegroup_6856/req_ec1f543e986f4d7fa7ee6a2b0f65ef20.xsl
+                                  mapsentences:
+                                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InsertStageDataService" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/atpdatabase/InsertIntoIbStageTbl_REQUEST/types" xmlns:tns="http://xmlns.oracle.com/cloud/adapter/atpdatabase/InsertIntoIbStageTbl_REQUEST" exclude-result-prefixes=" oraext xsd xp20 nssrcmpr ns2 ora oracle-xsl-mapper nssrcdfl xsi fn ns18 xsl ignore01 ns65 ns64 ns4" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/atpdatabase/InertIntoIbStageTbl_REQUEST/types" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadExtractedFileInSegments_REQUEST/types" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns29="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadExtractedFileInSegments_REQUEST" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InsertStageDataService_REQUEST/RESTINREQ" xmlns:ns28="http://TargetNamespace.com/fileReference/ReadExtractedFileInSegments" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs28="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/atpdatabase/InertIntoIbStageTbl_REQUEST" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs27="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs26="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs29="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns26="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs25="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/stagefile/StageReadFile_REQUEST/types" xmlns:ns65="http://xmlns.oracle.com/cloud/adapter/stagefile/StageReadFile_REQUEST" xmlns:ns64="http://TargetNamespace.com/fileReference/StageReadFile" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779">
+                                    - '  <xsl:param name="ReadExtractedFileInSegments" xml:id="id_41"/>'
+                                    - '  <xsl:template match="/" xml:id="id_11">'
+                                    - '    <nstrgmpr:TsgtCmnIbfileStageTblCollection xml:id="id_12">'
+                                    - '      <xsl:for-each xml:id="id_54" select="$ReadExtractedFileInSegments/nsmpr1:ReadResponse/ns28:RecordSet/ns28:Record">'
+                                    - '        <nstrgmpr:TsgtCmnIbfileStageTbl xml:id="id_55">'
+                                    - '          <nstrgmpr:recordId xml:id="id_56">'
+                                    - '            <xsl:value-of xml:id="id_57" select="concat (substring-before (substring-before (substring-before (string (fn:current-dateTime() ), &quot;Z&quot; ), &quot;T&quot; ), &quot;-&quot; ), substring-before (substring-after (substring-before (substring-before (string (fn:current-dateTime() ), &quot;Z&quot; ), &quot;T&quot; ), &quot;-&quot; ), &quot;-&quot; ), substring-after (substring-after (substring-before (substring-before (string (fn:current-dateTime() ), &quot;Z&quot; ), &quot;T&quot; ), &quot;-&quot; ), &quot;-&quot; ), substring-before (substring-before (substring-after (substring-before (string (fn:current-dateTime() ), &quot;Z&quot; ), &quot;T&quot; ), &quot;.&quot; ), &quot;:&quot; ), substring-before (substring-after (substring-before (substring-after (substring-before (string (fn:current-dateTime() ), &quot;Z&quot; ), &quot;T&quot; ), &quot;.&quot; ), &quot;:&quot; ), &quot;:&quot; ), substring-after (substring-after (substring-before (substring-after (substring-before (string (fn:current-dateTime() ), &quot;Z&quot; ), &quot;T&quot; ), &quot;.&quot; ), &quot;:&quot; ), &quot;:&quot; ), substring-after (substring-after (substring-before (string (fn:current-dateTime() ), &quot;Z&quot; ), &quot;T&quot; ), &quot;.&quot; ), string (position() ) )"/>'
+                                    - '          <nstrgmpr:transactionId xml:id="id_58">'
+                                    - '            <xsl:value-of xml:id="id_59" select="/nssrcmpr:execute/ns22:request-wrapper/ns22:CMN_MEDIATOR_DATAINSERT/ns22:TransactionId"/>'
+                                    - '          <nstrgmpr:intgIdentifier xml:id="id_60">'
+                                    - '            <xsl:value-of xml:id="id_61" select="/nssrcmpr:execute/ns22:request-wrapper/ns22:CMN_MEDIATOR_DATAINSERT/ns22:IntegrationIdentifier"/>'
+                                    - '          <nstrgmpr:intgDescr xml:id="id_62">'
+                                    - '            <xsl:value-of xml:id="id_63" select="/nssrcmpr:execute/ns22:request-wrapper/ns22:CMN_MEDIATOR_DATAINSERT/ns22:IntegrationName"/>'
+                                    - '          <nstrgmpr:entity xml:id="id_64">'
+                                    - '            <xsl:value-of xml:id="id_65" select="/nssrcmpr:execute/ns22:request-wrapper/ns22:CMN_MEDIATOR_DATAINSERT/ns22:Entity"/>'
+                                    - '          <nstrgmpr:source xml:id="id_66">'
+                                    - '            <xsl:value-of xml:id="id_67" select="/nssrcmpr:execute/ns22:request-wrapper/ns22:CMN_MEDIATOR_DATAINSERT/ns22:Source"/>'
+                                    - '          <nstrgmpr:column1 xml:id="id_229">'
+                                    - '            <xsl:value-of xml:id="id_230" select="ns28:ITEM_NUMBER"/>'
+                                    - '          <nstrgmpr:column2 xml:id="id_231">'
+                                    - '            <xsl:value-of xml:id="id_232" select="ns28:ITEM_DESCRIPTION"/>'
+                                    - '          <nstrgmpr:column3 xml:id="id_233">'
+                                    - '            <xsl:value-of xml:id="id_234" select="ns28:UNIT_OF_MEASURE"/>'
+                                    - '          <nstrgmpr:column4 xml:id="id_235">'
+                                    - '            <xsl:value-of xml:id="id_236" select="ns28:ORGANIZATION_NAME"/>'
+                                    - '          <nstrgmpr:column5 xml:id="id_237">'
+                                    - '            <xsl:value-of xml:id="id_238" select="ns28:ORG_CODE"/>'
+                                    - '          <nstrgmpr:column6 xml:id="id_239">'
+                                    - '            <xsl:value-of xml:id="id_240" select="ns28:STOREROOM"/>'
+                                    - '          <nstrgmpr:column7 xml:id="id_241">'
+                                    - '            <xsl:value-of xml:id="id_242" select="ns28:ON_HAND_QTY"/>'
+                                    - '          <nstrgmpr:column8 xml:id="id_243">'
+                                    - '            <xsl:value-of xml:id="id_244" select="ns28:IDENTIFIER"/>'
+                                    - '          <nstrgmpr:column9 xml:id="id_227">'
+                                    - '            <xsl:value-of xml:id="id_228" select="/nssrcmpr:execute/ns22:request-wrapper/ns22:CMN_MEDIATOR_DATAINSERT/ns22:Attribute2"/>'
+                                    - ""
+                                - Invoke: InsertIntoIbStageTbl(i1)
+                                  application:
+                                    Application: InsertIntoIbStageTbl(TSGTATPCLOUDDB_CONN)
+                                    name: InsertIntoIbStageTbl
+                                    adapter:
+                                        code: TSGTATPCLOUDDB_CONN
+                                    properties: []
+                    - Route: Otherwise(sc3)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements:
+                        - Assignments: AssignNoDataFound(l2)
+                          name: AssignNoDataFound
+                          assignments:
+                            - Assignment: Assignment(a13)
+                              variableName: ErrorFlag
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '"Y"'
+                                variableName: ErrorFlag
+                                variableDescription: Error flag as Y
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a28)
+                              variableName: Status
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '"ERROR"'
+                                variableName: Status
+                                variableDescription: Set the Status as ERROR
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a29)
+                              variableName: MsgCode
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''TSGT_MEDIATOR_DS_NO_DATA_FOUND_ERROR'''
+                                variableName: MsgCode
+                                variableDescription: Set the Error Message Code
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a30)
+                              variableName: MsgDesc
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_MEDIATOR_DS_NO_DATA_FOUND_ERROR','MessageDescr','Error Occurred as their are no valid records found in File')
+                                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                                variableName: MsgDesc
+                                variableDescription: Set Error Message Description from lookup table
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a31)
+                              variableName: MsgDetail
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: $MsgDesc
+                                variableName: MsgDetail
+                                variableDescription: Set Error Message Description from lookup table
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: Otherwise(sc4)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - CatchAll: CatchAll(ta1)
+          statements:
+            - Assignments: AssignFileProcessingException(l4)
+              name: AssignFileProcessingException
+              assignments:
+                - Assignment: Assignment(a23)
+                  variableName: ErrorFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErrorFlag
+                    variableDescription: Set the Flag to Y
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a24)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableDescription: Set the Status to ERROR
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a25)
+                  variableName: MsgCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''TSGT_CMN_MEDIATOR_DATAINSERT_SFTP_RETRIEVE_ERROR'''
+                    variableName: MsgCode
+                    variableDescription: Set the Message Code for the Error
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a26)
+                  variableName: MsgDesc
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: concat($TSGT_SYSTEM_ERROR, ora:getFaultAsString())
+                    namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDesc
+                    variableDescription: Set the system Error concatenated with the loop up value
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a27)
+                  variableName: MsgDetail
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: 'concat($DataInsertToStaggingFaultObject/nsmpr7:fault/nsmpr7:errorCode,'' : '',ora:getContentAsString($DataInsertToStaggingFaultObject/nsmpr7:fault/nsmpr7:details))'
+                    namespaceList: nsmpr7=http://www.oracle.com/2014/03/ics/fault ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDetail
+                    variableDescription: Set the system Error code concatenated with the loop up value
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_1521/resourcegroup_1522/ICSFault.xsd
+    - Switch: Switch(s5)
+      routes:
+        - Route: (sc11)
+          exprProperties:
+            xpathExpression: $ErrorFlag = "N"
+          stateInfo:
+            variablesReferenced:
+                - VariableName: ErrorFlag
+                  rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+          statements:
+            - Map: Map(m0)
+              xsltfilepath: ../resources/processor_5040/resourcegroup_5043/req_d4253840a7c3404d9078b011b20409cb.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/UpdateDataInsertStatusToInstance_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/UpdateDataInsertStatusToInstance_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InsertStageDataService" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/UpdateDataInsertStatusToInstance" exclude-result-prefixes=" oraext plnk xsd xp20 nssrcmpr ns2 ora oracle-xsl-mapper nssrcdfl xsi fn ns18 xsl ignore01 orajs13" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns23="http://xml.oracle.com/adapters/extension" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/UpdateDataInsertStatusToInstance_REQUEST/SKIPOUTREQ" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InsertStageDataService_REQUEST/RESTINREQ" xmlns:ns26="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/UpdateDataInsertStatusToInstance_REQUEST" xmlns:ns25="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894">
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:POST xml:id="id_12">'
+                - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_42">'
+                - '        <ns26:Transaction_id xml:id="id_43">'
+                - '          <xsl:value-of xml:id="id_44" select="/nssrcmpr:execute/ns21:request-wrapper/ns21:CMN_MEDIATOR_DATAINSERT/ns21:TransactionId"/>'
+                - '        <ns26:Operation xml:id="id_78">'
+                - '          <xsl:value-of xml:id="id_79" select="&apos;Update&apos;"/>'
+                - '        <ns26:InstanceUpsert xml:id="id_45">'
+                - '          <xsl:value-of xml:id="id_46" select="&apos;Y&apos;"/>'
+                - '        <ns26:TransactionUpsert xml:id="id_47">'
+                - '          <xsl:value-of xml:id="id_48" select="&apos;N&apos;"/>'
+                - '        <ns26:Inst_loadStatus xml:id="id_111">'
+                - '          <xsl:value-of xml:id="id_112" select="&quot;Insert-Success&quot;"/>'
+                - ""
+        - Route: Otherwise(sc12)
+          exprProperties:
+            xpathExpression: "true"
+            expressionName: Otherwise
+          stateInfo: null
+          statements:
+            - Map: Map(m5)
+              xsltfilepath: ../resources/processor_5066/resourcegroup_5069/req_b070665875a1496bb054f56f7a1913b6.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/collocatedics/UpdateDataInsertStatusToInstance_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/collocatedics/UpdateDataInsertStatusToInstance_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/InsertStageDataService" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns18="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/UpdateDataInsertStatusToInstance" exclude-result-prefixes=" oraext plnk xsd xp20 nssrcmpr ns2 ora oracle-xsl-mapper nssrcdfl xsi fn ns18 xsl ignore01 orajs13" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns23="http://xml.oracle.com/adapters/extension" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/REST/InsertStageDataService/types" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/UpdateDataInsertStatusToInstance_REQUEST/SKIPOUTREQ" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/InsertStageDataService_REQUEST/RESTINREQ" xmlns:ns26="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/UpdateDataInsertStatusToInstance_REQUEST" xmlns:ns25="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894">
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:POST xml:id="id_12">'
+                - '      <nstrgmpr:components.schemas.request-wrapper xml:id="id_42">'
+                - '        <ns26:Transaction_id xml:id="id_43">'
+                - '          <xsl:value-of xml:id="id_44" select="/nssrcmpr:execute/ns21:request-wrapper/ns21:CMN_MEDIATOR_DATAINSERT/ns21:TransactionId"/>'
+                - '        <ns26:Operation xml:id="id_45">'
+                - '          <xsl:value-of xml:id="id_46" select="&apos;Update&apos;"/>'
+                - '        <ns26:InstanceUpsert xml:id="id_47">'
+                - '          <xsl:value-of xml:id="id_48" select="&apos;Y&apos;"/>'
+                - '        <ns26:TransactionUpsert xml:id="id_49">'
+                - '          <xsl:value-of xml:id="id_50" select="&apos;N&apos;"/>'
+                - '        <ns26:Inst_loadStatus xml:id="id_82">'
+                - '          <xsl:value-of xml:id="id_83" select="&quot;Insert-Error&quot;"/>'
+                - ""
+    - Invoke: UpdateDataInsertStatusToInstance(i3)
+      application:
+        Application: UpdateDataInsertStatusToInstance(PRESEEDED_COLLOCATED_CONN_1741)
+        name: UpdateDataInsertStatusToInstance
+        adapter:
+            code: PRESEEDED_COLLOCATED_CONN_1741
+        properties:
+            - name: operationPath
+              value: /UpsertInstanceTransaction
+            - name: HttpVerb
+              value: POST
+            - name: QueryParameters
+              value: ""
+            - name: ResourceURI
+              value: /UpsertInstanceTransaction
+            - name: integration_id
+              value: TSGTCMNUPSERTINS_SERVICE|01.00.0000
+            - name: integration_operation
+              value: POST
+            - name: serviceType
+              value: REST
+    - Stop: Stop(st0)

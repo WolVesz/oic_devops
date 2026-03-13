@@ -1,0 +1,513 @@
+Orchestration: ""
+statements:
+    - Receive: Receive(r0)
+      trackingvariables:
+        - role: tracking_var_1
+          primary: true
+          name: Job Request Id
+          xpath: /execute/request-wrapper/JobRequestId
+        - role: tracking_var_2
+          name: Integration Name
+          xpath: /execute/request-wrapper/IntegrationName
+        - role: tracking_var_3
+          name: ESS Job Name
+          xpath: /execute/request-wrapper/ESSJobName
+    - Assignments: AssignInitials(l0)
+      name: AssignInitials
+      assignments:
+        - Assignment: Assignment(a0)
+          variableName: ErrorFlag
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''N'''
+            variableName: ErrorFlag
+            variableDescription: Set Flag as N initially. it used to override with Y in case of Error
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a1)
+          variableName: Status
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: Status
+            variableDescription: Set the SUCCESS or ERROR as per results
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a2)
+          variableName: MsgCode
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: MsgCode
+            variableDescription: Set the Message Code
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a3)
+          variableName: MsgDesc
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: MsgDesc
+            variableDescription: Set the Message Description on the basis of Message Code in the Lookup Code
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a4)
+          variableName: MsgDetail
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: MsgDetail
+            variableDescription: Set the Message Description on the basis of Message Code in the Lookup Code
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a5)
+          variableName: TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_ERROR
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_ERROR','MessageDescr','TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_ERROR')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_ERROR
+            variableDescription: Set the Processing Error Message from Lookup table
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a19)
+          variableName: TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_SUCCESS
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_SUCCESS','MessageDescr','ESS Job Status Check Oompleted')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_SUCCESS
+            variableDescription: Set the Processing Success Message from Lookup table
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a26)
+          variableName: TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_TIMEOUT
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSCT_CMN_CHECK_JOB_STATUS_PROCESSING_TIMEOUT','MessageDescr','Timeout Occurred')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_TIMEOUT
+            variableDescription: Set the Processing Timeout Message from Lookup table
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+    - Try: Try(t0)
+      username: Scope_GetJobStatus
+      statements:
+        - Assignments: AssignVariablesForCheckJobStatus(l1)
+          name: AssignVariablesForCheckJobStatus
+          assignments:
+            - Assignment: Assignment(a7)
+              variableName: waitcount
+              variableType: string
+              expressionProperties:
+                xpathExpression: number(dvm:lookupValue('TSGTCmnConfig_LKP','ConfigName','TSGT_CMN_JOB_STATUS_WAIT_COUNT','ConfigValue','40'))
+                namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                variableName: waitcount
+                variableDescription: Set the no of Iteration from the Lookup table to wait
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a15)
+              variableName: CheckJobStatus
+              variableType: string
+              expressionProperties:
+                xpathExpression: '''Continue'''
+                variableName: CheckJobStatus
+                variableDescription: Set the Interim Status as Continue
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - While: whileLoop(wh0)
+          expressionProperties:
+            xpathExpression: ($CheckJobStatus = 'Continue' )and $waitcount != 0
+            variableName: WhileJobStatusLoop
+          statements:
+            - Assignments: Delay(l2)
+              name: Delay
+              assignments:
+                - Assignment: Assignment(a8)
+                  variableName: DelaySec
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: orajs6:sleep(5000)
+                    namespaceList: orajs6=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111
+                    variableName: DelaySec
+                    variableDescription: Set the wait time in millisecond from JS library
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Map: Map(m1)
+              xsltfilepath: ../resources/processor_1511/resourcegroup_1514/req_a078d5071305452eaed62865ed73d6b3.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns8="http://xmlns.oracle.com/cloud/adapter/REST/GetRequestId_REQUEST" xmlns:orafault="http://xmlns.oracle.com/oracleas/schema/oracle-fault-11_0" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/erp/GetJobStatus_REQUEST/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:types="http://xmlns.oracle.com/apps/financials/commonModules/shared/model/erpIntegrationService/types/" xmlns:errors="http://xmlns.oracle.com/adf/svc/errors/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:tns="http://xmlns.oracle.com/apps/financials/commonModules/shared/model/erpIntegrationService/" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetRequestId" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetRequestId_REQUEST/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/erp/GetJobStatus_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" ns8 oraext xsd xp20 ora oracle-xsl-mapper ns2 nssrcdfl xsi fn nssrcmpr xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:sdoJava="commonj.sdo/java" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetRequestId_REQUEST/RESTINRES" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetRequestId_REQUEST/RESTINREQ" xmlns:ns27="http://xml.oracle.com/adapters/extension" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/REST/GetRequestId/types" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1227963693" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath559523921" xmlns:ns29="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940">
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:getESSJobStatus xml:id="id_12">'
+                - '      <nstrgmpr:requestId xml:id="id_32">'
+                - '        <xsl:value-of xml:id="id_33" select="/nssrcmpr:execute/ns25:request-wrapper/ns25:JobRequestId"/>'
+                - ""
+            - Invoke: GetJobStatus(i0)
+              application:
+                Application: GetJobStatus(TSGTERPCLOUD_CONN)
+                name: GetJobStatus
+                adapter:
+                    code: TSGTERPCLOUD_CONN
+                properties:
+                    - name: operationPath
+                      value: http://xmlns.oracle.com/apps/financials/commonModules/shared/model/erpIntegrationService/getESSJobStatus
+            - Switch: Switch(s0)
+              routes:
+                - Route: (sc0)
+                  exprProperties:
+                    xpathExpression: fn:upper-case($GetJobStatus/nssrcmpr:getESSJobStatusResponse/nssrcmpr:result) = 'WAIT' or fn:upper-case($GetJobStatus/nssrcmpr:getESSJobStatusResponse/nssrcmpr:result) = 'PAUSED' or fn:upper-case($GetJobStatus/nssrcmpr:getESSJobStatusResponse/nssrcmpr:result) = 'RUNNING' or fn:upper-case($GetJobStatus/nssrcmpr:getESSJobStatusResponse/nssrcmpr:result) = 'COMPLETED' or fn:upper-case($GetJobStatus/nssrcmpr:getESSJobStatusResponse/nssrcmpr:result) = 'READY'
+                    namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/erp/GetJobStatus_REQUEST/types fn=http://www.w3.org/2005/xpath-functions
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: GetJobStatus
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/erp/GetJobStatus_REQUEST/types}getESSJobStatusResponse'
+                  statements:
+                    - Assignments: AssignContinuedFlag(l3)
+                      name: AssignContinuedFlag
+                      assignments:
+                        - Assignment: Assignment(a10)
+                          variableName: waitcount
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: number($waitcount) - 1
+                            variableName: waitcount
+                            variableDescription: Set the decrement of wait count by 1
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a16)
+                          variableName: CheckJobStatus
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: '''Continue'''
+                            variableName: CheckJobStatus
+                            variableDescription: Continue to check for the Job status in ERP
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a9)
+                          variableName: Status
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: '''Timeout'''
+                            variableName: Status
+                            variableDescription: Set the Time Out Status
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Route: (sc2)
+                  exprProperties:
+                    xpathExpression: fn:upper-case($GetJobStatus/nssrcmpr:getESSJobStatusResponse/nssrcmpr:result) = 'ERROR' or fn:upper-case($GetJobStatus/nssrcmpr:getESSJobStatusResponse/nssrcmpr:result) = 'WARNING'
+                    namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/erp/GetJobStatus_REQUEST/types fn=http://www.w3.org/2005/xpath-functions
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: GetJobStatus
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/erp/GetJobStatus_REQUEST/types}getESSJobStatusResponse'
+                  statements:
+                    - Assignments: AssignErrorFlag(l4)
+                      name: AssignErrorFlag
+                      assignments:
+                        - Assignment: Assignment(a17)
+                          variableName: CheckJobStatus
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: '''Exit'''
+                            variableName: CheckJobStatus
+                            variableDescription: 'Since Error : Exit the ESS job check status'
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a32)
+                          variableName: Status
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: '''ERROR'''
+                            variableName: Status
+                            variableDescription: Set Status to ERROR
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Route: (sc3)
+                  exprProperties:
+                    xpathExpression: fn:upper-case($GetJobStatus/nssrcmpr:getESSJobStatusResponse/nssrcmpr:result) = 'SUCCEEDED'
+                    namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/erp/GetJobStatus_REQUEST/types fn=http://www.w3.org/2005/xpath-functions
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: GetJobStatus
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/erp/GetJobStatus_REQUEST/types}getESSJobStatusResponse'
+                  statements:
+                    - Assignments: AssignSuccessFlag(l5)
+                      name: AssignSuccessFlag
+                      assignments:
+                        - Assignment: Assignment(a11)
+                          variableName: CheckJobStatus
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: '''Exit'''
+                            variableName: CheckJobStatus
+                            variableDescription: Set this as Exit
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a33)
+                          variableName: Status
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: '''SUCCESS'''
+                            variableName: Status
+                            variableDescription: Set the Status as SUCCESS
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Route: Otherwise(sc1)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements:
+                    - Assignments: AssignOtherwiseFlag(l6)
+                      name: AssignOtherwiseFlag
+                      assignments:
+                        - Assignment: Assignment(a14)
+                          variableName: waitcount
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: number($waitcount) - 1
+                            variableName: waitcount
+                            variableDescription: Set the decrement of wait count by 1
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a12)
+                          variableName: CheckJobStatus
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: '''Continue'''
+                            variableName: CheckJobStatus
+                            variableDescription: Set the Check Job Status as Continue
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Assignment: Assignment(a34)
+                          variableName: Status
+                          variableType: string
+                          expressionProperties:
+                            xpathExpression: '''Timeout'''
+                            variableName: Status
+                            variableDescription: Set the Status as Timeout
+                            variableType: string
+                            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Switch: Switch(s1)
+          routes:
+            - Route: (sc4)
+              exprProperties:
+                xpathExpression: $Status  ='SUCCESS'
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: Status
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - Assignments: AssignSuccessJobStatus(l7)
+                  name: AssignSuccessJobStatus
+                  assignments:
+                    - Assignment: Assignment(a23)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''SUCCESS'''
+                        variableName: Status
+                        variableDescription: Set the Status as SUCCESS
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a24)
+                      variableName: MsgCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_SUCCESS'''
+                        variableName: MsgCode
+                        variableDescription: Set the SUCCESS Message Code
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a25)
+                      variableName: MsgDesc
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_SUCCESS
+                        variableName: MsgDesc
+                        variableDescription: Set the SUCCESS Message Description on the basis of Message Code from lookup table
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a27)
+                      variableName: MsgDetail
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $MsgDesc
+                        variableName: MsgDetail
+                        variableDescription: Set the SUCCESS Message Description on the basis of Message Code from lookup table
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: (sc8)
+              exprProperties:
+                xpathExpression: $Status = "ERROR"
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: Status
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - Assignments: AssignErrorJobStatus(l8)
+                  name: AssignErrorJobStatus
+                  assignments:
+                    - Assignment: Assignment(a28)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''ERROR'''
+                        variableName: Status
+                        variableDescription: Set the Status as ERROR
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a29)
+                      variableName: MsgCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_ERROR'''
+                        variableName: MsgCode
+                        variableDescription: Set the Error Message Code
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a30)
+                      variableName: MsgDesc
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_ERROR
+                        variableName: MsgDesc
+                        variableDescription: Set the ERROR Message Description on the basis of Message Code from lookup table
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a31)
+                      variableName: MsgDetail
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $MsgDesc
+                        variableName: MsgDetail
+                        variableDescription: Set the ERROR Message Description on the basis of Message Code from lookup table
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: (sc9)
+              exprProperties:
+                xpathExpression: $Status = "TimeOut"
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: Status
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - Assignments: setthetimeoutvalues(l11)
+                  name: setthetimeoutvalues
+                  assignments:
+                    - Assignment: Assignment(a35)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''ERROR'''
+                        variableName: Status
+                        variableDescription: Set the Status as ERROR
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a13)
+                      variableName: MsgCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_TIMEOUT'''
+                        variableName: MsgCode
+                        variableDescription: Set the Timeout Message Code
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a36)
+                      variableName: MsgDesc
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_TIMEOUT
+                        variableName: MsgDesc
+                        variableDescription: Set the Timeout Message Description on the basis of Message Code from lookup table
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a37)
+                      variableName: MsgDetail
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $MsgDesc
+                        variableName: MsgDetail
+                        variableDescription: Set the Timeout Message Description on the basis of Message Code from lookup table
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: Otherwise(sc5)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Assignments: AssignFaultJobInvocation(l9)
+              name: AssignFaultJobInvocation
+              assignments:
+                - Assignment: Assignment(a22)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableDescription: Set the Status to ERROR
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a18)
+                  variableName: MsgCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_ERROR'''
+                    variableName: MsgCode
+                    variableDescription: Set the Message Code for the Error
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a20)
+                  variableName: MsgDesc
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: $TSGT_CMN_CHECK_JOB_STATUS_PROCESSING_ERROR
+                    variableName: MsgDesc
+                    variableDescription: Set the Message Description for the Error from lookup
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a21)
+                  variableName: MsgDetail
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: ora:getFaultAsString()
+                    namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDetail
+                    variableDescription: Set the actual Error from the Handler
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a6)
+                  variableName: ErrorFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErrorFlag
+                    variableDescription: Set the error to Flag
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_699/resourcegroup_700/ICSFault.xsd
+    - Map: Map(m0)
+      xsltfilepath: ../resources/processor_388/resourcegroup_391/req_ca45a7cc4b3c4c3d8f4d18002a990df0.xsl
+      mapsentences:
+        - <?xml version = '1.0' encoding = 'UTF-8'?>
+        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns6="http://xmlns.oracle.com/cloud/adapter/REST/GetRequestId_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetRequestId" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetRequestId_REQUEST/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1787102510" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetRequestId_REQUEST/RESTINRES" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetRequestId_REQUEST/RESTINREQ" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:ns17="http://xmlns.oracle.com/cloud/adapter/REST/GetRequestId/types" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1227963693" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1699885918" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1841544677" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath559523921" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111">
+        - '  <xsl:param name="MsgCode" xml:id="id_37"/>'
+        - '  <xsl:param name="MsgDesc" xml:id="id_38"/>'
+        - '  <xsl:param name="Status" xml:id="id_40"/>'
+        - '  <xsl:template match="/" xml:id="id_11">'
+        - '    <nstrgmpr:executeResponse xml:id="id_12">'
+        - '      <ns17:response-wrapper xml:id="id_27">'
+        - '        <ns17:JobStatus xml:id="id_45">'
+        - '          <xsl:value-of xml:id="id_46" select="$Status"/>'
+        - '        <ns17:MessageCode xml:id="id_47">'
+        - '          <xsl:value-of xml:id="id_48" select="$MsgCode"/>'
+        - '        <ns17:MessageDescription xml:id="id_49">'
+        - '          <xsl:value-of xml:id="id_50" select="$MsgDesc"/>'
+        - ""
+    - Reply: Reply(y0)
+      adapterjcareference: null
+      wsdlfilepath: ""

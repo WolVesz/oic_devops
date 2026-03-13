@@ -1,0 +1,630 @@
+Orchestration: ""
+statements:
+    - Receive: Receive(r0)
+      trackingvariables:
+        - role: tracking_var_1
+          primary: true
+          name: Operation
+          xpath: /execute/request-wrapper/Operation
+        - role: tracking_var_2
+          name: Integration Identifier
+          xpath: /execute/request-wrapper/IntegrationIdentifier
+        - role: tracking_var_3
+          name: Source File Path
+          xpath: /execute/request-wrapper/SourceFilePath
+    - Assignments: AssignInitials(l0)
+      name: AssignInitials
+      assignments:
+        - Assignment: Assignment(a0)
+          variableName: ErrorFlag
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''N'''
+            variableName: ErrorFlag
+            variableDescription: Set the Flag as N
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a1)
+          variableName: Status
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: Status
+            variableDescription: Set Status as SUCCESS or ERROR
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a2)
+          variableName: MsgCode
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: MsgCode
+            variableDescription: Set Message Code
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a3)
+          variableName: MsgDesc
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: MsgDesc
+            variableDescription: Set Message Description
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a4)
+          variableName: MsgDetail
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: MsgDetail
+            variableDescription: Set Message Detail
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a44)
+          variableName: TargetFileName
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: TargetFileName
+            variableDescription: Set TargetFileName
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a8)
+          variableName: TSGT_CMN_FILE_ARCHIVE_ERROR
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_CMN_FILE_ARCHIVE_ERROR','MessageDescr','Failed to archive.')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_CMN_FILE_ARCHIVE_ERROR
+            variableDescription: Set Error Message - Failed to archive.
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a5)
+          variableName: TSGT_SYSTEM_ERROR
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_SYSTEM_ERROR','MessageDescr','System Error :')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_SYSTEM_ERROR
+            variableDescription: Set Error Message - System Error
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a9)
+          variableName: TSGT_CMN_FILE_ARCHIVE_SUCCESS
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_CMN_FILE_ARCHIVE_SUCCESS','MessageDescr','File archived successfully')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_CMN_FILE_ARCHIVE_SUCCESS
+            variableDescription: Set Success Message - File archived successfully
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a6)
+          variableName: TSGT_CMN_FILE_DELETE_SUCCESS
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_CMN_FILE_DELETE_SUCCESS','MessageDescr','File deleted successfully')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_CMN_FILE_DELETE_SUCCESS
+            variableDescription: Set Success Message - File deleted successfully
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a10)
+          variableName: TSGT_CMN_FILE_DELETE_ERROR
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_CMN_FILE_DELETE_ERROR','MessageDescr','File failed to delete. Please validate.')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_CMN_FILE_DELETE_ERROR
+            variableDescription: Set Error Message - File failed to delete. Please validate.
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+    - Try: Try(t0)
+      username: Scope_Delete
+      statements:
+        - Switch: Switch(s2)
+          routes:
+            - Route: (sc2)
+              exprProperties:
+                xpathExpression: /nssrcmpr:execute/nsmpr2:request-wrapper/nsmpr2:Operation = 'DE'
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove_REQUEST/types nsmpr2=http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove_REQUEST/types}execute'
+              statements:
+                - Map: Map(m1)
+                  xsltfilepath: ../resources/processor_3442/resourcegroup_3445/req_5106e9c6b47340e6a7d23e6ee45fde6a.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove/types" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/TriggerFilesToMove" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/ftp/DeleteFile_REQUEST" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove_REQUEST" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove_REQUEST/types" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/ftp/DeleteFile_REQUEST/types" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" oraext plnk xsd xp20 nssrcdfl ns2 ora ns30 oracle-xsl-mapper xsi nssrcmpr fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/TriggerFilesToMove_REQUEST/RESTINREQ" xmlns:ns21="http://xml.oracle.com/adapters/extension" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns23="http://xmlns.oracle.com/ics/cloud/ftp/delete/pull" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940">
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:DeleteFile xml:id="id_12">'
+                    - '      <ns23:FileDeleteRequest xml:id="id_29">'
+                    - '        <ns23:directory xml:id="id_30">'
+                    - '          <xsl:value-of xml:id="id_31" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:SourceFilePath"/>'
+                    - '        <ns23:filename xml:id="id_32">'
+                    - '          <xsl:value-of xml:id="id_33" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:SourceFileName"/>'
+                    - ""
+                - Invoke: DeleteFile(i0)
+                  application:
+                    Application: DeleteFile(TSGTFTP_CONN)
+                    name: DeleteFile
+                    adapter:
+                        code: TSGTFTP_CONN
+                    properties:
+                        - name: Operation
+                          value: DeleteFile
+                        - name: FtpConnectionType
+                          value: SFTP
+                        - name: Host
+                          value: '%%TSGTFTP_CONN_Host'
+                        - name: Port
+                          value: '%%TSGTFTP_CONN_Port'
+                        - name: SecurePort
+                          value: "990"
+                - Switch: Switch(s0)
+                  routes:
+                    - Route: (sc0)
+                      exprProperties:
+                        xpathExpression: $DeleteFile/nsmpr3:DeleteFileResponse/nsmpr0:FileDeleteResponse/nsmpr0:success = 'true'
+                        namespaceList: nsmpr3=http://xmlns.oracle.com/cloud/adapter/ftp/DeleteFile_REQUEST/types nsmpr0=http://xmlns.oracle.com/ics/cloud/ftp/delete/pull
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: DeleteFile
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/ftp/DeleteFile_REQUEST/types}DeleteFileResponse'
+                      statements:
+                        - Assignments: DeleteSuccess(l4)
+                          name: DeleteSuccess
+                          assignments:
+                            - Assignment: Assignment(a21)
+                              variableName: ErrorFlag
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''N'''
+                                variableName: ErrorFlag
+                                variableDescription: Set Flag to N
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a22)
+                              variableName: Status
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''SUCCESS'''
+                                variableName: Status
+                                variableDescription: Set Status to SUCCESS
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a23)
+                              variableName: MsgCode
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''TSGT_CMN_FILE_DELETE_SUCCESS'''
+                                variableName: MsgCode
+                                variableDescription: Set Success Message Code
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a24)
+                              variableName: MsgDesc
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: $TSGT_CMN_FILE_DELETE_SUCCESS
+                                variableName: MsgDesc
+                                variableDescription: Set Success Message Description
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a25)
+                              variableName: MsgDetail
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: $MsgDesc
+                                variableName: MsgDetail
+                                variableDescription: Set Success Message Details
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: Otherwise(sc1)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements:
+                        - Assignments: DeleteError(l5)
+                          name: DeleteError
+                          assignments:
+                            - Assignment: Assignment(a26)
+                              variableName: ErrorFlag
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''Y'''
+                                variableName: ErrorFlag
+                                variableDescription: Set Flag to Y
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a27)
+                              variableName: Status
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''ERROR'''
+                                variableName: Status
+                                variableDescription: Set Status to ERROR
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a28)
+                              variableName: MsgCode
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''TSGT_CMN_FILE_DELETE_ERROR'''
+                                variableName: MsgCode
+                                variableDescription: Set Error Message Code
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a29)
+                              variableName: MsgDesc
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: $TSGT_CMN_FILE_DELETE_ERROR
+                                variableName: MsgDesc
+                                variableDescription: Set Error Message Description
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a30)
+                              variableName: MsgDetail
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: $MsgDesc
+                                variableName: MsgDetail
+                                variableDescription: Set Error Message Details
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: Otherwise(sc5)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Assignments: SetDeleteFault(l3)
+              name: SetDeleteFault
+              assignments:
+                - Assignment: Assignment(a11)
+                  variableName: ErrorFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErrorFlag
+                    variableDescription: Set Flag to Y
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a17)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableDescription: Set Status to ERROR
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a18)
+                  variableName: MsgCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''TSGT_CMN_FILE_DELETE_ERROR'''
+                    variableName: MsgCode
+                    variableDescription: Set Error Message Code
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a19)
+                  variableName: MsgDesc
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: concat($TSGT_CMN_FILE_DELETE_ERROR,' ',ora:getFaultAsString())
+                    namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDesc
+                    variableDescription: Set Error Message Description
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a20)
+                  variableName: MsgDetail
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: $MsgDesc
+                    variableName: MsgDetail
+                    variableDescription: Set Error Message Details
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_3674/resourcegroup_3675/ICSFault.xsd
+    - Try: Try(t1)
+      username: Scope_Move
+      statements:
+        - Switch: Switch(s4)
+          routes:
+            - Route: (sc6)
+              exprProperties:
+                xpathExpression: /nssrcmpr:execute/nsmpr2:request-wrapper/nsmpr2:Operation = 'MD'
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove_REQUEST/types nsmpr2=http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove/types
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove_REQUEST/types}execute'
+              statements:
+                - Switch: Switch(s5)
+                  routes:
+                    - Route: (sc10)
+                      exprProperties:
+                        xpathExpression: /nssrcmpr:execute/nsmpr2:request-wrapper/nsmpr2:TargetFileName != ''
+                        namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove_REQUEST/types nsmpr2=http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove/types
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: /
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove_REQUEST/types}execute'
+                      statements:
+                        - Assignments: AssignFileNameFromInputRequest(l9)
+                          name: AssignFileNameFromInputRequest
+                          assignments:
+                            - Assignment: Assignment(a45)
+                              variableName: TargetFileName
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: /nsmpr2:execute/nsmpr3:request-wrapper/nsmpr3:TargetFileName
+                                namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove/types
+                                variableName: TargetFileName
+                                variableDescription: Set Target FileName from Input Request
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: Otherwise(sc11)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements:
+                        - Switch: Switch(s6)
+                          routes:
+                            - Route: (sc12)
+                              exprProperties:
+                                xpathExpression: /nssrcmpr:execute/nsmpr2:request-wrapper/nsmpr2:Status = 'ERROR'
+                                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove_REQUEST/types nsmpr2=http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove/types
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: /
+                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove_REQUEST/types}execute'
+                              statements:
+                                - Assignments: AssignFileNameInGeneral(l10)
+                                  name: AssignFileNameInGeneral
+                                  assignments:
+                                    - Assignment: Assignment(a46)
+                                      variableName: TargetFileName
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: concat (substring-before(/nsmpr2:execute/nsmpr3:request-wrapper/nsmpr3:SourceFileName,'.'),'_',/nsmpr2:execute/nsmpr3:request-wrapper/nsmpr3:Status,'_',/nsmpr2:execute/nsmpr3:request-wrapper/nsmpr3:TransactionId,'_',substring-after(/nsmpr2:execute/nsmpr3:request-wrapper/nsmpr3:SourceFileName,'.') )
+                                        namespaceList: nsmpr2=http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove/types
+                                        variableName: TargetFileName
+                                        variableDescription: Set the Traget FileName In General
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Route: Otherwise(sc13)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements:
+                                - Assignments: AssignFileNameInGeneral-SUCCESS(l1)
+                                  name: AssignFileNameInGeneral-SUCCESS
+                                  assignments:
+                                    - Assignment: Assignment(a7)
+                                      variableName: TargetFileName
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: concat (substring-before(/nssrcmpr:execute/nsmpr2:request-wrapper/nsmpr2:SourceFileName,'.'),'_','SUCCESS','_',/nssrcmpr:execute/nsmpr2:request-wrapper/nsmpr2:TransactionId,'_',substring-after(/nssrcmpr:execute/nsmpr2:request-wrapper/nsmpr2:SourceFileName,'.') )
+                                        namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove_REQUEST/types nsmpr2=http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove/types
+                                        variableName: TargetFileName
+                                        variableDescription: Set the Target File Name in case of Success
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Map: Map(m0)
+                  xsltfilepath: ../resources/processor_3520/resourcegroup_3523/req_30121f4e409a4afe992e0f25e0d045d5.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcdfl="http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove/types" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/TriggerFilesToMove" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns30="http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove_REQUEST" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/ftp/MoveFile_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/TriggerFilesToMove_REQUEST/types" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/ftp/MoveFile_REQUEST" exclude-result-prefixes=" oraext plnk xsd xp20 nssrcdfl ns2 ora ns30 oracle-xsl-mapper xsi nssrcmpr fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/TriggerFilesToMove_REQUEST/RESTINREQ" xmlns:ns21="http://xml.oracle.com/adapters/extension" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:ns23="http://xmlns.oracle.com/ics/cloud/ftp/move/pull" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940">
+                    - '  <xsl:param name="TargetFileName" xml:id="id_24"/>'
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:MoveFile xml:id="id_12">'
+                    - '      <ns23:FileMoveRequest xml:id="id_29">'
+                    - '        <ns23:directory xml:id="id_32">'
+                    - '          <xsl:value-of xml:id="id_33" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:SourceFilePath"/>'
+                    - '        <ns23:filename xml:id="id_36">'
+                    - '          <xsl:value-of xml:id="id_37" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:SourceFileName"/>'
+                    - '        <ns23:targetDirectory xml:id="id_34">'
+                    - '          <xsl:value-of xml:id="id_35" select="/nssrcmpr:execute/nssrcdfl:request-wrapper/nssrcdfl:TargetFilePath"/>'
+                    - '        <ns23:targetFilename xml:id="id_30">'
+                    - '          <xsl:value-of xml:id="id_31" select="$TargetFileName"/>'
+                    - ""
+                - Invoke: MoveFile(i1)
+                  application:
+                    Application: MoveFile(TSGTFTP_CONN)
+                    name: MoveFile
+                    adapter:
+                        code: TSGTFTP_CONN
+                    properties:
+                        - name: Operation
+                          value: MoveFile
+                        - name: FtpConnectionType
+                          value: SFTP
+                        - name: Host
+                          value: '%%TSGTFTP_CONN_Host'
+                        - name: Port
+                          value: '%%TSGTFTP_CONN_Port'
+                        - name: SecurePort
+                          value: "990"
+                - Switch: Switch(s1)
+                  routes:
+                    - Route: (sc3)
+                      exprProperties:
+                        xpathExpression: $MoveFile/nssrcmpr:MoveFileResponse/nsmpr0:FileMoveResponse/nsmpr0:success = 'true'
+                        namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/ftp/MoveFile_REQUEST/types nsmpr0=http://xmlns.oracle.com/ics/cloud/ftp/move/pull
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: MoveFile
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/ftp/MoveFile_REQUEST/types}MoveFileResponse'
+                      statements:
+                        - Assignments: MoveSuccess(l6)
+                          name: MoveSuccess
+                          assignments:
+                            - Assignment: Assignment(a31)
+                              variableName: ErrorFlag
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''N'''
+                                variableName: ErrorFlag
+                                variableDescription: Set Flag to N
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a32)
+                              variableName: Status
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''SUCCESS'''
+                                variableName: Status
+                                variableDescription: Set Status to SUCCESS
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a33)
+                              variableName: MsgCode
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''TSGT_CMN_FILE_ARCHIVE_SUCCESS'''
+                                variableName: MsgCode
+                                variableDescription: Set Success Message Code
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a34)
+                              variableName: MsgDesc
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: $TSGT_CMN_FILE_ARCHIVE_SUCCESS
+                                variableName: MsgDesc
+                                variableDescription: Set Success Message Description
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a35)
+                              variableName: MsgDetail
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: $MsgDesc
+                                variableName: MsgDetail
+                                variableDescription: Set Success Message Details
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: Otherwise(sc4)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements:
+                        - Assignments: MoveError(l7)
+                          name: MoveError
+                          assignments:
+                            - Assignment: Assignment(a36)
+                              variableName: ErrorFlag
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''Y'''
+                                variableName: ErrorFlag
+                                variableDescription: Set Flag to Y
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a37)
+                              variableName: Status
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''ERROR'''
+                                variableName: Status
+                                variableDescription: Set Status to ERROR
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a38)
+                              variableName: MsgCode
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''TSGT_CMN_FILE_ARCHIVE_ERROR'''
+                                variableName: MsgCode
+                                variableDescription: Set Error Message Code
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a39)
+                              variableName: MsgDesc
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: $TSGT_CMN_FILE_ARCHIVE_ERROR
+                                variableName: MsgDesc
+                                variableDescription: Set Error Message Description
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a40)
+                              variableName: MsgDetail
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: $MsgDesc
+                                variableName: MsgDetail
+                                variableDescription: Set Error Message Details
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Route: Otherwise(sc7)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements: []
+        - CatchAll: CatchAll(ta1)
+          statements:
+            - Assignments: AssignMovingFileFault(l2)
+              name: AssignMovingFileFault
+              assignments:
+                - Assignment: Assignment(a12)
+                  variableName: ErrorFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErrorFlag
+                    variableDescription: Set Error flag to 'Y'
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a13)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableDescription: Stores as ERROR
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a14)
+                  variableName: MsgCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''TSGT_CMN_FILE_ARCHIVE_ERROR'''
+                    variableName: MsgCode
+                    variableDescription: Stores moving file processing Error Message
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a15)
+                  variableName: MsgDesc
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: concat($TSGT_CMN_FILE_ARCHIVE_ERROR,' ',ora:getFaultAsString())
+                    namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDesc
+                    variableDescription: Stores moving file processing Error Message from lookup table
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a16)
+                  variableName: MsgDetail
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: $MsgDesc
+                    variableName: MsgDetail
+                    variableDescription: Stores the actual error to Message Detail from OIC level
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_613/resourcegroup_614/ICSFault.xsd
+    - Stop: Stop(st0)

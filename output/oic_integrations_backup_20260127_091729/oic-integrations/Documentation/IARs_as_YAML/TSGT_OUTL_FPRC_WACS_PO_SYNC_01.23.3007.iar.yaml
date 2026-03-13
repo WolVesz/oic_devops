@@ -1,0 +1,474 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_1162
+      xsdfilepath: ../resources/processor_1162/resourcegroup_1163/ICSIntegrationMetadata.xsd
+    - xmlname:
+        space: http://www.oracle.com/2014/03/ics/flow/definition
+        local: integrationProperties
+      attrs:
+        - name:
+            space: ""
+            local: id
+          value: ip0
+        - name:
+            space: ""
+            local: refUri
+          value: processor_1655
+      content: ""
+      statements: []
+    - GlobalVariable: (gtv0)
+      variableName: varPRDetails
+      variableType: $getPRHeaderDetails/ns28:getPRHeaderResponse
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: OrderNumber
+              xpath: /onEvent/getPurchaseOrderResponse/result/Value/OrderNumber
+            - role: tracking_var_2
+              name: POHeaderId
+              xpath: /onEvent/getPurchaseOrderResponse/result/Value/POHeaderId
+            - role: tracking_var_3
+              name: tracking_var_3
+        - Switch: Switch(s0)
+          routes:
+            - Route: (sc0)
+              exprProperties:
+                xpathExpression: /nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/nsmpr0:Value/nsmpr0:DocumentStatusCode = "OPEN" or /nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/nsmpr0:Value/nsmpr0:DocumentStatusCode = "CANCELED" or /nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/nsmpr0:Value/nsmpr0:DocumentStatusCode = "FINALLY CLOSED"
+                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/erp/subscribePOEvent_REQUEST/types inp1=http://xmlns.oracle.com/apps/prc/po/editDocument/purchaseOrderServiceV2/types/ nsmpr0=http://xmlns.oracle.com/apps/prc/po/editDocument/purchaseOrderServiceV2/
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: /
+                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/erp/subscribePOEvent_REQUEST/types}onEvent'
+              statements:
+                - Try: Try(t1)
+                  username: Validation
+                  statements:
+                    - Logger: Logger(lg2)
+                      name: PrintDFF
+                      description: ""
+                      propertyfile: ../resources/processor_1592/resourcegroup_1726/expr.properties
+                      expressionProperties:
+                        xpathExpression: 'concat(''WACS PR:  '', /nsmpr19:onEvent/inp1:getPurchaseOrderResponse/inp1:result/nsmpr23:Value/nsmpr23:PurchaseOrderLine[1]/nsmpr23:LineFlexfield[(fn:resolve-QName(@xsi:type, .) = fn:QName("http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentLine/", "Wacs"))]/nsmpr17:wacsPrNumC )\n'
+                        namespaceList: nsmpr23=http://xmlns.oracle.com/apps/prc/po/editDocument/purchaseOrderServiceV2/ inp1=http://xmlns.oracle.com/apps/prc/po/editDocument/purchaseOrderServiceV2/types/ fn=http://www.w3.org/2005/xpath-functions nsmpr19=http://xmlns.oracle.com/cloud/adapter/erp/subscribePOEvent_REQUEST/types xsi=http://www.w3.org/2001/XMLSchema-instance nsmpr17=http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentLine/
+                        variableName: PrintDFF
+                    - Switch: Switch(s2)
+                      routes:
+                        - Route: (sc4)
+                          exprProperties:
+                            xpathExpression: string-length(/nsmpr21:onEvent/inp1:getPurchaseOrderResponse/inp1:result/nsmpr0:Value/nsmpr0:PurchaseOrderLine[1.0]/nsmpr0:LineFlexfield[(fn:resolve-QName(@xsi:type, .) = fn:QName("http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentLine/", "Wacs"))]/nsmpr5:wacsPrNumC) = 0.0
+                            namespaceList: nsmpr21=http://xmlns.oracle.com/cloud/adapter/erp/subscribePOEvent_REQUEST/types inp1=http://xmlns.oracle.com/apps/prc/po/editDocument/purchaseOrderServiceV2/types/ nsmpr5=http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentLine/ fn=http://www.w3.org/2005/xpath-functions nsmpr0=http://xmlns.oracle.com/apps/prc/po/editDocument/purchaseOrderServiceV2/ xsi=http://www.w3.org/2001/XMLSchema-instance
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: /
+                                  rootElement: '{http://xmlns.oracle.com/cloud/adapter/erp/subscribePOEvent_REQUEST/types}onEvent'
+                          statements:
+                            - Logger: Logger(lg1)
+                              name: Continue
+                              description: ""
+                              propertyfile: ../resources/processor_1573/resourcegroup_1730/expr.properties
+                              expressionProperties:
+                                xpathExpression: '"NOT WACS PO"'
+                                variableName: Continue
+                            - Stop: Stop(st1)
+                        - Route: Otherwise(sc5)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: {}
+                          statements: []
+                    - Map: Map(m0)
+                      xsltfilepath: ../resources/processor_1222/resourcegroup_1225/req_f48a3fa318634056b5bdc01738c0c4a3.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet xmlns:client="http://xmlns.oracle.com/fa/event" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/subscribePOEvent_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/getPRHeaderDetails_REQUEST/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns3="http://xmlns.oracle.com/cloud/adapter/erp/subscribePOEvent_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:inp1="http://xmlns.oracle.com/apps/prc/po/editDocument/purchaseOrderServiceV2/types/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/oracleutilities/getPRHeaderDetails" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" version="2.0" xml:id="id_1" exclude-result-prefixes=" client nssrcmpr oraext plnk xsd xp20 ns3 ora oracle-xsl-mapper nssrcdfl inp1 xsi fn xsl soap ignore01" ignore01:ignorexmlids="true" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:ns36="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/accountingInfo/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns37="http://www.oracle.rest.converters.autogeneratedns.com/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:sdoJava="commonj.sdo/java" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns29="http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentHeader/" xmlns:ns41="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/vendorLocation/location/locationClass/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns25="http://xml.oracle.com/adapters/extension" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:ns26="http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchaseOrderDistribution/" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns27="http://xmlns.oracle.com/apps/prc/po/publicEntity/flex/PJCPoTransDistribution/" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns31="http://xmlns.oracle.com/apps/prc/po/editDocument/purchaseOrderServiceV2/" xmlns:ns42="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/vendorLocation/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns43="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/vendorLocation/autoPay/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns46="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/createdBy/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:ns35="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/accountingInfo/costCenterList/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath685051496" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:tns="http://xmlns.oracle.com/adf/svc/errors/" xmlns:ns28="http://xmlns.oracle.com/adf/svc/types/" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:ns39="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/requisitionInfo/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns30="http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentLine/" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:ns40="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/cmPurchaseRequisitionAction/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns32="http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentSchedule/" xmlns:ns45="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/vendorLocation/location/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:ns34="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/accessControl/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs21="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns38="http://xmlns.oracle.com/cloud/openapi/cloudobject/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs24="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns33="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns44="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/purchaseRequisitionDocumentType/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:getPRHeader xml:id="id_12">'
+                        - '      <nstrgmpr:TemplateParameters>'
+                        - '        <ns38:prid>'
+                        - '          <xsl:value-of select="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns31:Value/ns31:PurchaseOrderLine[1]/ns31:LineFlexfield[(fn:resolve-QName(@xsi:type, .) = fn:QName(&apos;http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentLine/&apos;, &apos;Wacs&apos;))]/ns30:wacsPrHdrIdC"/>'
+                        - ""
+                    - Invoke: getPRHeaderDetails(i0)
+                      application:
+                        Application: getPRHeaderDetails(ORAC_UTIL_REST_WACS_FOR_OFSC_WAC)
+                        name: getPRHeaderDetails
+                        adapter:
+                            code: ORAC_UTIL_REST_WACS_FOR_OFSC_WAC
+                        properties:
+                            - name: operationPath
+                              value: /{prid}
+                            - name: HttpVerb
+                              value: GET
+                            - name: ResourceURI
+                              value: https://us-phoenix-1.utilities-cloud.oracleindustry.com:443/c2g65p/prod/wac/rest/apis/cm/purchasing/PRHeader/{prid}
+                    - Stitch: Stitch(sh0)
+                      stitchNamespaceResolver:
+                        prefixnamespacemap:
+                            fn: http://www.w3.org/2005/xpath-functions
+                            ns13: http://xmlns.oracle.com/cloud/adapter/oracleutilities/getPRHeaderDetails_REQUEST/types
+                            ns15: http://ouaf.oracle.com/webservices/w1/W1-PurchaseOrderIntegInbound
+                            ns16: http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_PO_Sync_REQUEST/types
+                            ns17: http://ouaf.oracle.com/
+                            ns18: http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_PO_Sync_1_REQUEST/types
+                            ns19: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/accountingInfo/costCenterList/oracleutilities/getPRHeaderDetails_REQUEST
+                            ns20: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/accountingInfo/oracleutilities/getPRHeaderDetails_REQUEST
+                            ns21: http://www.oracle.rest.converters.autogeneratedns.com/oracleutilities/getPRHeaderDetails_REQUEST
+                            ns22: http://xmlns.oracle.com/cloud/openapi/cloudobject/oracleutilities/getPRHeaderDetails_REQUEST
+                            ns23: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/requisitionInfo/oracleutilities/getPRHeaderDetails_REQUEST
+                            ns24: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/cmPurchaseRequisitionAction/oracleutilities/getPRHeaderDetails_REQUEST
+                            ns25: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/vendorLocation/location/locationClass/oracleutilities/getPRHeaderDetails_REQUEST
+                            ns26: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/vendorLocation/oracleutilities/getPRHeaderDetails_REQUEST
+                            ns27: http://xmlns.oracle.com/cloud/generic/rest/fault/oracleutilities/getPRHeaderDetails
+                            ns28: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/vendorLocation/autoPay/oracleutilities/getPRHeaderDetails_REQUEST
+                            ns29: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/purchaseRequisitionDocumentType/oracleutilities/getPRHeaderDetails_REQUEST
+                            ns30: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/vendorLocation/location/oracleutilities/getPRHeaderDetails_REQUEST
+                            ns31: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/accessControl/oracleutilities/getPRHeaderDetails_REQUEST
+                            ns32: http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/createdBy/oracleutilities/getPRHeaderDetails_REQUEST
+                            ns33: http://xmlns.oracle.com/cloud/adapter/erp/subscribePOEvent_REQUEST/types
+                            ns34: http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchaseOrderDistribution/
+                            ns35: http://xmlns.oracle.com/apps/prc/po/publicEntity/flex/PJCPoTransDistribution/
+                            ns36: http://xmlns.oracle.com/adf/svc/errors/
+                            ns37: http://xmlns.oracle.com/adf/svc/types/
+                            ns38: http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentHeader/
+                            ns39: http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentLine/
+                            ns40: http://xmlns.oracle.com/apps/prc/po/editDocument/purchaseOrderServiceV2/
+                            ns41: http://xmlns.oracle.com/procmon
+                            ns42: http://xmlns.oracle.com/apps/prc/po/editDocument/purchaseOrderServiceV2/types/
+                            ns43: http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentSchedule/
+                            ns44: http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd
+                            ns45: http://www.oracle.com/2014/03/ic/integration/metadata
+                            ns46: http://www.oracle.com/2014/03/ic/integration/properties
+                            ora: http://schemas.oracle.com/xpath/extension
+                            oraext: http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                            xp20: http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20
+                            xsd: http://www.w3.org/2001/XMLSchema
+                            xsi: http://www.w3.org/2001/XMLSchema-instance
+                            xsl: http://www.w3.org/1999/XSL/Transform
+                      stitchVariables:
+                        - name: WACS_PO_Sync_REQUEST
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_PO_Sync_REQUEST/types}W1-PurchaseOrderIntegInbound'
+                            uriToSchema: ../../application_1102/inbound_1103/resourcegroup_1104/WACS_PO_Sync_REQUEST.wsdl
+                          access: SOURCE_AND_TARGET
+                        - name: varPRDetails
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/oracleutilities/getPRHeaderDetails_REQUEST/types}getPRHeaderResponse'
+                            uriToSchema: ../../application_1209/inbound_1210/resourcegroup_1211/getPRHeaderDetails_REQUEST.wsdl
+                          access: SOURCE_AND_TARGET
+                        - name: WACS_PO_Sync_1_REQUEST
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_PO_Sync_1_REQUEST/types}W1-PurchaseOrderIntegInbound'
+                            uriToSchema: ../../application_1694/inbound_1695/resourcegroup_1696/WACS_PO_Sync_1_REQUEST.wsdl
+                          access: SOURCE_AND_TARGET
+                        - name: getPRHeaderDetails
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/oracleutilities/getPRHeaderDetails_REQUEST/types}getPRHeaderResponse'
+                            uriToSchema: ../../application_1209/inbound_1210/resourcegroup_1211/getPRHeaderDetails_REQUEST.wsdl
+                          access: SOURCE_AND_TARGET
+                        - name: getPRHeaderDetails_REQUEST
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/oracleutilities/getPRHeaderDetails_REQUEST/types}getPRHeader'
+                            uriToSchema: ../../application_1209/inbound_1210/resourcegroup_1211/getPRHeaderDetails_REQUEST.wsdl
+                          access: SOURCE_AND_TARGET
+                        - name: subscribePOEvent
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/erp/subscribePOEvent_REQUEST/types}onEvent'
+                            uriToSchema: ../../application_13/outbound_14/resourcegroup_15/subscribePOEvent_REQUEST.wsdl
+                          access: SOURCE_AND_TARGET
+                        - name: tracking_var_1
+                          datatype:
+                            type: XMLSimple
+                            xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                          access: SOURCE
+                        - name: self
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://www.oracle.com/2014/03/ic/integration/metadata}metadata'
+                            uriToSchema: ../../processor_1162/resourcegroup_1163/ICSIntegrationMetadata.xsd
+                          access: SOURCE
+                        - name: WACS_PO_Sync
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_PO_Sync_REQUEST/types}W1-PurchaseOrderIntegInboundResponse'
+                            uriToSchema: ../../application_1102/inbound_1103/resourcegroup_1104/WACS_PO_Sync_REQUEST.wsdl
+                          access: SOURCE_AND_TARGET
+                        - name: tracking_var_3
+                          datatype:
+                            type: XMLSimple
+                            xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                          access: SOURCE_AND_TARGET
+                        - name: tracking_var_2
+                          datatype:
+                            type: XMLSimple
+                            xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                          access: SOURCE_AND_TARGET
+                        - name: selfProperties
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://www.oracle.com/2014/03/ic/integration/properties}properties'
+                            uriToSchema: ../../processor_1655/resourcegroup_1656/ICSIntegrationProperties.xsd
+                          access: SOURCE
+                        - name: WACS_PO_Sync_1
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_PO_Sync_1_REQUEST/types}W1-PurchaseOrderIntegInboundResponse'
+                            uriToSchema: ../../application_1694/inbound_1695/resourcegroup_1696/WACS_PO_Sync_1_REQUEST.wsdl
+                          access: SOURCE_AND_TARGET
+                      stitchSentences:
+                        - operation: Assign
+                          from:
+                            type: XPathExpression
+                            expression: $getPRHeaderDetails/ns13:getPRHeaderResponse
+                            returnType: XML_TYPE_NODE_NODESET
+                          to:
+                            type: XPathPath
+                            path: $varPRDetails/ns13:getPRHeaderResponse
+                            isLastStepXsdAnyType: false
+                    - Catch: Catch(tc0)
+                      faultname: APIInvocationError
+                      statements:
+                        - Logger: Logger(lg0)
+                          name: printErrorMessage
+                          description: ""
+                          propertyfile: ../resources/processor_1245/resourcegroup_1724/expr.properties
+                          expressionProperties:
+                            xpathExpression: $CurrentFaultObject/nsmpr24:APIInvocationError/nsmpr24:errorDetails/nsmpr24:errorCode
+                            namespaceList: nsmpr24=http://xmlns.oracle.com/cloud/generic/rest/fault/oracleutilities/getPRHeaderDetails
+                            variableName: printErrorMessage
+                    - CatchAll: CatchAll(ta1)
+                      statements:
+                        - Logger: Logger(lg3)
+                          name: DefaultError
+                          description: ""
+                          propertyfile: ../resources/processor_1620/resourcegroup_1734/expr.properties
+                          expressionProperties:
+                            xpathExpression: $ValidationFaultObject/nsmpr18:fault/nsmpr18:reason
+                            namespaceList: nsmpr18=http://www.oracle.com/2014/03/ics/fault
+                            variableName: DefaultError
+                      icsfaultfilepath: ../resources/processor_1615/resourcegroup_1616/ICSFault.xsd
+                - Try: Try(t0)
+                  username: InvokeWACSPOSync
+                  statements:
+                    - Map: Map(m1)
+                      xsltfilepath: ../resources/processor_1114/resourcegroup_1117/req_f65ac5d190e146d491ed85e3061408ee.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet xmlns:client="http://xmlns.oracle.com/fa/event" xmlns:tns="http://ouaf.oracle.com/webservices/w1/W1-PurchaseOrderIntegInbound" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/subscribePOEvent_REQUEST/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_PO_Sync_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ns3="http://xmlns.oracle.com/cloud/adapter/erp/subscribePOEvent_REQUEST" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:inp1="http://xmlns.oracle.com/apps/prc/po/editDocument/purchaseOrderServiceV2/types/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/WACS_PO_Sync_REQUEST/types" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ouaf="http://ouaf.oracle.com/" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:sdoJava="commonj.sdo/java" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns30="http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentHeader/" xmlns:ns26="http://xml.oracle.com/adapters/extension" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1723908526" xmlns:ns27="http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchaseOrderDistribution/" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns28="http://xmlns.oracle.com/apps/prc/po/publicEntity/flex/PJCPoTransDistribution/" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns32="http://xmlns.oracle.com/apps/prc/po/editDocument/purchaseOrderServiceV2/" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns25="http://xmlns.oracle.com/adf/svc/errors/" xmlns:ns29="http://xmlns.oracle.com/adf/svc/types/" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:ns31="http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentLine/" xmlns:ns33="http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentSchedule/" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns34="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs22="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1782704604" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1259533114" xmlns:orajs23="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1821066086" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath607479779" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath685051496" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/oracleutilities/getPRHeaderDetails_REQUEST/types" xmlns:ns76="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/accountingInfo/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns15="http://www.oracle.rest.converters.autogeneratedns.com/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns79="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/vendorLocation/location/locationClass/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns80="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/vendorLocation/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns81="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/vendorLocation/autoPay/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns84="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/createdBy/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns75="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/accountingInfo/costCenterList/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns73="http://xmlns.oracle.com/cloud/adapter/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns77="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/requisitionInfo/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns78="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/cmPurchaseRequisitionAction/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns83="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/vendorLocation/location/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns85="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/accessControl/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns71="http://xmlns.oracle.com/cloud/openapi/cloudobject/oracleutilities/getPRHeaderDetails_REQUEST" xmlns:ns74="http://xmlns.oracle.com/cloud/generic/rest/fault/oracleutilities/getPRHeaderDetails" xmlns:ns82="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.GETPRHEADER_response/purchaseRequisitionDocumentType/oracleutilities/getPRHeaderDetails_REQUEST" version="2.0" xml:id="id_1" exclude-result-prefixes=" client nssrcmpr oraext plnk xsd xp20 ns3 ora oracle-xsl-mapper nssrcdfl inp1 xsi fn xsl ignore01 ns10 ns5 orajs22 ns6 orajs23 ns9 ns8 ns7 ns4 ns11 ns12 nsmpr2" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/properties">
+                        - '  <xsl:param name="varPRDetails" xml:id="id_341"/>'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:W1-PurchaseOrderIntegInbound xml:id="id_12">'
+                        - '      <tns:W1-PurchaseOrderIntegInbound xml:id="id_21">'
+                        - '        <tns:bo xml:id="id_309">'
+                        - '          <xsl:value-of xml:id="id_310" select="&quot;W1-PurchaseOrderIntegInbound&quot;"/>'
+                        - '        <tns:targetMo xml:id="id_311">'
+                        - '          <xsl:value-of xml:id="id_312" select="&quot;W1-POHDR&quot;"/>'
+                        - '        <tns:externalSystem xml:id="id_22">'
+                        - '          <xsl:value-of xml:id="id_23" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.externalsystem&quot;, &quot;Value&quot;, &quot;&quot; )"/>'
+                        - '        <tns:externalReferenceId xml:id="id_24">'
+                        - '          <xsl:value-of xml:id="id_26" select="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:POHeaderId"/>'
+                        - '        <tns:externalPkValue1 xml:id="id_313">'
+                        - '          <xsl:value-of xml:id="id_314" select="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:POHeaderId"/>'
+                        - '        <tns:integrationDetails>'
+                        - '          <tns:headerInformation>'
+                        - '            <tns:poHeaderExternalId>'
+                        - '              <xsl:value-of select="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:POHeaderId"/>'
+                        - '            <tns:boStatus xml:id="id_315">'
+                        - '              <xsl:value-of xml:id="id_318" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_POStatus&quot;, &quot;FPRC_POStatusCode&quot;, /nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1.0]/ns32:DocumentStatusCode, &quot;WACS_POStatusCode&quot;, /nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1.0]/ns32:DocumentStatusCode )"/>'
+                        - '            <tns:purchaseOrderNumber>'
+                        - '              <xsl:value-of select="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:OrderNumber"/>'
+                        - '            <tns:revisionNumber>'
+                        - '              <xsl:value-of select="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:OrderRevision"/>'
+                        - '            <tns:description>'
+                        - '              <xsl:value-of select="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:DocumentDescription"/>'
+                        - '            <tns:creationDateTime>'
+                        - '              <xsl:value-of select="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:CreationDate"/>'
+                        - '            <!-- <tns:buyer>'
+                        - '                                      <xsl:value-of select="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value/ns32:BuyerId"/>'
+                        - '            <tns:buyer xml:id="id_355">'
+                        - '              <xsl:value-of xml:id="id_385" select="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value/ns32:BuyerId"/>'
+                        - '            <tns:issueDate>'
+                        - '              <xsl:value-of select="fn:current-date ()"/>'
+                        - '            <xsl:choose>'
+                        - '              <xsl:when test="string-length ($varPRDetails/nsmpr1:getPRHeaderResponse/nsmpr1:components.schemas.GETPRHEADER_response/ns15:requisitionInfo/ns77:shipToLocation ) &gt; 0">'
+                        - '                <tns:shipToLocation>'
+                        - '                  <xsl:value-of xml:id="id_89" select="$varPRDetails/nsmpr1:getPRHeaderResponse/nsmpr1:components.schemas.GETPRHEADER_response/ns15:requisitionInfo/ns77:shipToLocation"/>'
+                        - '              <xsl:otherwise>'
+                        - '                <xsl:if xml:id="id_319" test="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:PurchaseOrderLine[1]/ns32:PurchaseOrderSchedule[1]/ns32:DestinationTypeCode = &quot;INVENTORY&quot;">'
+                        - '                  <tns:shipToLocation xml:id="id_320">'
+                        - '                    <xsl:value-of xml:id="id_89" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_PO_DeliverToLocation&quot;, &quot;FPRC_DeliverToLocationCode&quot;, /nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1.0]/ns32:PurchaseOrderLine[1.0]/ns32:PurchaseOrderSchedule[1.0]/ns32:PurchaseOrderDistribution[1.0]/ns32:DeliverToLocationCode, &quot;WACS_ShipToLocation&quot;, /nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1.0]/ns32:PurchaseOrderLine[1.0]/ns32:PurchaseOrderSchedule[1.0]/ns32:PurchaseOrderDistribution[1.0]/ns32:DeliverToLocationCode )"/>'
+                        - '            <xsl:choose>'
+                        - '              <xsl:when test="string-length ($varPRDetails/nsmpr1:getPRHeaderResponse/nsmpr1:components.schemas.GETPRHEADER_response/ns15:requisitionInfo/ns77:deliverToLocation ) &gt; 0">'
+                        - '                <tns:deliverToLocation xml:id="id_325">'
+                        - '                  <xsl:value-of xml:id="id_326" select="$varPRDetails/nsmpr1:getPRHeaderResponse/nsmpr1:components.schemas.GETPRHEADER_response/ns15:requisitionInfo/ns77:deliverToLocation"/>'
+                        - '              <xsl:otherwise>'
+                        - '                <xsl:if xml:id="id_324" test="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:PurchaseOrderLine[1]/ns32:PurchaseOrderSchedule[1]/ns32:DestinationTypeCode = &quot;EXPENSE&quot;">'
+                        - '                  <tns:deliverToLocation xml:id="id_325">'
+                        - '                    <xsl:value-of xml:id="id_326" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_PO_DeliverToLocation&quot;, &quot;FPRC_DeliverToLocationCode&quot;, /nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1.0]/ns32:PurchaseOrderLine[1.0]/ns32:PurchaseOrderSchedule[1.0]/ns32:PurchaseOrderDistribution[1.0]/ns32:DeliverToLocationCode, &quot;WACS_ShipToLocation&quot;, /nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1.0]/ns32:PurchaseOrderLine[1.0]/ns32:PurchaseOrderSchedule[1.0]/ns32:PurchaseOrderDistribution[1.0]/ns32:DeliverToLocationCode )"/>'
+                        - '            <tns:deliverTo>'
+                        - '              <xsl:value-of select="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:PurchaseOrderLine[1]/ns32:PurchaseOrderSchedule[1]/ns32:ShipToOrganizationCode"/>'
+                        - '            <tns:vendorLocationExternalId>'
+                        - '              <xsl:value-of select="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:SupplierSiteId"/>'
+                        - '            <tns:currency>'
+                        - '              <xsl:value-of select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_CurrencyCode&quot;, &quot;FPRC_CurrencyCode&quot;, /nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1.0]/ns32:CurrencyCode, &quot;WACS_CurrencyCode&quot;, /nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1.0]/ns32:CurrencyCode )"/>'
+                        - '            <xsl:if xml:id="id_249" test="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:ConversionRate != &quot;&quot;">'
+                        - '              <tns:exchangeRate xml:id="id_102">'
+                        - '                <xsl:value-of xml:id="id_103" select="fn:format-number (number (/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:ConversionRate ), &quot;#.#######&quot; ) "/>'
+                        - '            <xsl:if xml:id="id_228" test="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:FOBCode">'
+                        - '              <tns:freeOnBoard xml:id="id_104">'
+                        - '                <xsl:value-of xml:id="id_105" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_FOB&quot;, &quot;FPRC_FOB&quot;, /nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1.0]/ns32:FOBCode, &quot;WACS_FOB&quot;, /nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1.0]/ns32:FOBCode )"/>'
+                        - '            <xsl:if xml:id="id_231" test="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:PaymentTermsId">'
+                        - '              <tns:paymentTerms xml:id="id_106">'
+                        - '                <xsl:value-of xml:id="id_107" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_PaymentTerm&quot;, &quot;FPRC_PaymentTerm&quot;, /nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1.0]/ns32:PaymentTerms, &quot;WACS_PaymentTerm&quot;, /nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1.0]/ns32:PaymentTerms )"/>'
+                        - '            <tns:blanketContractHeaderId xml:id="id_316">'
+                        - '              <xsl:value-of xml:id="id_317" select="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:PurchaseOrderLine[1]/ns32:SourceAgreementId"/>'
+                        - '          <tns:lineInformation>'
+                        - '            <xsl:for-each select="/nssrcmpr:onEvent/inp1:getPurchaseOrderResponse/inp1:result/ns32:Value[1]/ns32:PurchaseOrderLine">'
+                        - '              <tns:lineInformationList>'
+                        - '                <tns:poLineExternalId>'
+                        - '                  <xsl:value-of select="ns32:POLineId"/>'
+                        - '                <tns:boStatus xml:id="id_327">'
+                        - '                  <xsl:value-of xml:id="id_328" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_POLineStatus&quot;, &quot;FPRC_POLineStatus&quot;, ns32:LineStatusCode, &quot;WACS_POLineStatus&quot;, ns32:LineStatusCode )"/>'
+                        - '                <tns:description>'
+                        - '                  <xsl:value-of select="ns32:ItemDescription"/>'
+                        - '                <tns:itemNumber>'
+                        - '                  <xsl:value-of select="ns32:LineNumber"/>'
+                        - '                <xsl:if xml:id="id_290" test="string-length (ns32:LineFlexfield[(fn:resolve-QName(@xsi:type, .) = fn:QName(&quot;http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentLine/&quot;, &quot;Wacs&quot;))]/ns31:wacsPrLineIdC ) &gt; 0">'
+                        - '                  <tns:purchaseRequisitionLineId xml:id="id_291">'
+                        - '                    <xsl:value-of xml:id="id_268" select="ns32:LineFlexfield[(fn:resolve-QName(@xsi:type, .) = fn:QName(&apos;http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentLine/&apos;, &apos;Wacs&apos;))]/ns31:wacsPrLineIdC"/>'
+                        - '                <tns:blanketContractNumber>'
+                        - '                  <xsl:value-of select="ns32:SourceAgreementNumber"/>'
+                        - '                <tns:blanketContractLineNumber>'
+                        - '                  <xsl:value-of select="ns32:SourceAgreementLine"/>'
+                        - '                <xsl:if test="string-length (ns32:LineFlexfield[(fn:resolve-QName(@xsi:type, .) = fn:QName(&quot;http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentLine/&quot;, &quot;Wacs&quot;))]/ns31:wacsPrLineIdC ) = 0">'
+                        - '                  <tns:resourceTypeId>'
+                        - '                    <xsl:value-of select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.nonInventory.resourceTypeId&quot;, &quot;Value&quot;, &quot;&quot; )"/>'
+                        - '                <xsl:choose>'
+                        - '                  <xsl:when test="ns32:LineType = &apos;Goods&apos;">'
+                        - '                    <tns:itemType>'
+                        - '                      <xsl:value-of select="&quot;W1MT&quot;"/>'
+                        - '                  <xsl:otherwise>'
+                        - '                    <tns:itemType>'
+                        - '                      <xsl:value-of select="&quot;W1SV&quot;"/>'
+                        - '                <xsl:choose>'
+                        - '                  <xsl:when test="ns32:LineType != &apos;Goods&apos;">'
+                        - '                    <tns:quantity>'
+                        - '                      <xsl:value-of select="1"/>'
+                        - '                  <xsl:otherwise>'
+                        - '                    <xsl:if xml:id="id_192" test="ns32:Quantity != 0">'
+                        - '                      <tns:quantity>'
+                        - '                        <xsl:value-of select="ns32:Quantity"/>'
+                        - '                <xsl:choose>'
+                        - '                  <xsl:when test="ns32:LineType != &apos;Goods&apos;">'
+                        - '                    <tns:unitPrice>'
+                        - '                      <xsl:value-of select="ns32:TotalAmount"/>'
+                        - '                  <xsl:otherwise>'
+                        - '                    <tns:unitPrice>'
+                        - '                      <xsl:value-of xml:id="id_143" select="fn:format-number (number (ns32:Price ), &quot;#.#######&quot; )"/>'
+                        - '                <xsl:choose>'
+                        - '                  <xsl:when test="ns32:LineType != &apos;Goods&apos;">'
+                        - '                    <tns:unitOfPurchase>'
+                        - '                      <xsl:value-of xml:id="id_300" select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_ConfigProps&quot;, &quot;PropertyName&quot;, &quot;wacs.nonInventory.uom&quot;, &quot;Value&quot;, &quot;EA&quot; )"/>'
+                        - '                  <xsl:otherwise>'
+                        - '                    <tns:unitOfPurchase>'
+                        - '                      <xsl:value-of select="dvm:lookupValue (&quot;OUTL-BRT-WACS_FPRC_UOM&quot;, &quot;FPRC_UOMName&quot;, ns32:UnitOfMeasure, &quot;WACS_UOMCode&quot;, ns32:UnitOfMeasure )"/>'
+                        - '                <xsl:if test="string-length (ns32:LineFlexfield[(fn:resolve-QName(@xsi:type, .) = fn:QName(&quot;http://xmlns.oracle.com/apps/prc/po/viewDocument/publicFlex/purchasingDocumentLine/&quot;, &quot;Wacs&quot;))]/ns31:wacsPrLineIdC ) = 0">'
+                        - '                  <tns:purchaseToIssueRatio>'
+                        - '                    <xsl:value-of select="1"/>'
+                        - '                <tns:requiredDate>'
+                        - '                  <xsl:value-of select="ns32:PurchaseOrderSchedule[1]/ns32:NeedByDate"/>'
+                        - '                <xsl:if xml:id="id_277" test="ns32:PurchaseOrderSchedule[1.0]/ns32:PromisedDate != &quot;&quot;">'
+                        - '                  <tns:promiseDate xml:id="id_148">'
+                        - '                    <xsl:value-of xml:id="id_281" select="ns32:PurchaseOrderSchedule[1]/ns32:PromisedDate"/>'
+                        - '                <tns:vendorPartNumber xml:id="id_150">'
+                        - '                  <xsl:value-of xml:id="id_151" select="ns32:SupplierItem"/>'
+                        - '                <xsl:if xml:id="id_201" test="ns32:OrderedAmount != 0">'
+                        - '                  <tns:lineAmount xml:id="id_156">'
+                        - '                    <xsl:value-of xml:id="id_182" select="fn:format-number (number (ns32:OrderedAmount ), &quot;#.###&quot; )"/>'
+                        - ""
+                    - Invoke: WACS_PO_Sync(i1)
+                      application:
+                        Application: WACS_PO_Sync(OUTL-BRT-SOAP-WACS_WACSOFSC)
+                        name: WACS_PO_Sync
+                        adapter:
+                            code: OUTL-BRT-SOAP-WACS_WACSOFSC
+                        properties:
+                            - name: operationPath
+                              value: https://us-phoenix-1.stg.utilities-cloud.oracleindustry.com:443/c2g65p/test/wac/soap/api/iws/W1-PurchaseOrderIntegInbound#W1-PurchaseOrderIntegInbound
+            - Route: Otherwise(sc1)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: {}
+              statements: []
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Logger: Logger(lg4)
+              name: LogFault
+              description: ""
+              propertyfile: ../resources/processor_1674/resourcegroup_1732/expr.properties
+              expressionProperties:
+                xpathExpression: oraext:get-content-as-string($GlobalFaultObject/ics:fault)
+                namespaceList: ics=http://www.oracle.com/2014/03/ics/fault oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                variableName: LogFault
+            - Switch: Switch(s1)
+              routes:
+                - Route: (sc2)
+                  exprProperties:
+                    xpathExpression: orajs5:TSGT_DetermineEmailFlag(dvm:lookupValue('OUTL-BRT-WACS_FPRC_ConfigProps', 'PropertyName', 'email.flag', 'Value', '"true"'),$selfProperties/ns29:properties/ns29:email_flag_override_value)
+                    namespaceList: orajs5=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1885914742 dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue ns29=http://www.oracle.com/2014/03/ic/integration/properties
+                  stateInfo:
+                    referencedFunctionsWithTrackFlag:
+                        - '@type': XPathFunctionImpl
+                          functionName: TSGT_DetermineEmailFlag
+                          functionNamespace: http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1885914742
+                          functionTracked: true
+                          lookupFunction: false
+                    variablesReferenced:
+                        - VariableName: selfProperties
+                          rootElement: '{http://www.oracle.com/2014/03/ic/integration/properties}properties'
+                    referencedLookupData:
+                        - lookup-table-name-with-location: '"OUTL-BRT-WACS_FPRC_ConfigProps"'
+                          source: '"PropertyName"'
+                          target: '"Value"'
+                  statements:
+                    - xmlname:
+                        space: http://www.oracle.com/2014/03/ics/flow/definition
+                        local: notification
+                      attrs:
+                        - name:
+                            space: ""
+                            local: id
+                          value: n0
+                        - name:
+                            space: ""
+                            local: refUri
+                          value: processor_197
+                      content: ""
+                      statements: []
+                - Route: Otherwise(sc3)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: {}
+                  statements:
+                    - Logger: Logger(lg5)
+                      name: LogPayload
+                      description: ""
+                      propertyfile: ../resources/processor_1683/resourcegroup_1736/expr.properties
+                      expressionProperties:
+                        xpathExpression: oraext:get-content-as-string(/ns46:onEvent)
+                        namespaceList: ns46=http://xmlns.oracle.com/cloud/adapter/erp/subscribePOEvent_REQUEST/types oraext=http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc
+                        variableName: LogPayload
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_171/resourcegroup_172/ICSFault.xsd

@@ -1,0 +1,894 @@
+Orchestration: ""
+statements:
+    - Receive: Receive(r0)
+      trackingvariables:
+        - role: tracking_var_1
+          primary: true
+          name: Record_ Name
+          xpath: /execute/request-wrapper/Record_Name
+        - role: tracking_var_2
+          name: tracking_var_2
+        - role: tracking_var_3
+          name: tracking_var_3
+    - Assignments: AssignInitials(l0)
+      name: AssignInitials
+      assignments:
+        - Assignment: Assignment(a0)
+          variableName: ErrorFlag
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''N'''
+            variableName: ErrorFlag
+            variableDescription: Set Flag to N
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a1)
+          variableName: Status
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''SUCCESS'''
+            variableName: Status
+            variableDescription: Set Status to SUCCESS
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a2)
+          variableName: MsgCode
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''TSGT_MINGEN_REPORT_GENERATION_SUCCESS'''
+            variableName: MsgCode
+            variableDescription: Set Success Message Code
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a20)
+          variableName: TSGT_MINGEN_REPORT_GENERATION_SUCCESS
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_MINGEN_REPORT_GENERATION_SUCCESS','MessageDescr','Mingen Report generated successfully.')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_MINGEN_REPORT_GENERATION_SUCCESS
+            variableDescription: Set Success Message Report generation
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a3)
+          variableName: MsgDescr
+          variableType: string
+          expressionProperties:
+            xpathExpression: $TSGT_MINGEN_REPORT_GENERATION_SUCCESS
+            variableName: MsgDescr
+            variableDescription: Set Success Message Description
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a19)
+          variableName: MsgDetails
+          variableType: string
+          expressionProperties:
+            xpathExpression: $TSGT_MINGEN_REPORT_GENERATION_SUCCESS
+            variableName: MsgDetails
+            variableDescription: Set Success Message Details
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a23)
+          variableName: TSGT_MINGEN_REPORT_GEN_INPROG
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_MINGEN_REPORT_GEN_INPROG','MessageDescr','')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_MINGEN_REPORT_GEN_INPROG
+            variableDescription: Set Report Generation in progress message
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a24)
+          variableName: Lock_Enabled
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''Y'''
+            variableName: Lock_Enabled
+            variableDescription: Set to 'Y' if process is running
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a38)
+          variableName: Lock_Disabled
+          variableType: string
+          expressionProperties:
+            xpathExpression: '''N'''
+            variableName: Lock_Disabled
+            variableDescription: Set to 'N' if process is completed
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a22)
+          variableName: TSGT_MINGEN_REPORT_GENERATION_ERROR
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_MINGEN_REPORT_GENERATION_ERROR','MessageDescr','Error occurred while generating Mingen Report. Please connect to the technical team for the actual status.')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_MINGEN_REPORT_GENERATION_ERROR
+            variableDescription: Set Error Message - Report Generation Error
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a5)
+          variableName: TSGT_SYSTEM_ERROR
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_SYSTEM_ERROR','MessageDescr','System Error :')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_SYSTEM_ERROR
+            variableDescription: Set the Error Message - System Error
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a6)
+          variableName: TSGT_CMN_GET_METADATA_ERROR
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_CMN_GET_METADATA_ERROR','MessageDescr','Missing metadata from the object.')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_CMN_GET_METADATA_ERROR
+            variableDescription: Set the Error Message - Missing metadata from Business Object
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a34)
+          variableName: ObjectStoragePath
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: ObjectStoragePath
+            variableDescription: Set Report Path of Object Storage
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a35)
+          variableName: SftpPath
+          variableType: string
+          expressionProperties:
+            xpathExpression: ''''''
+            variableName: SftpPath
+            variableDescription: Set Sftp Report Path
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a46)
+          variableName: TSGT_MINGEN_DATA_LOAD_ERROR
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_MINGEN_DATA_LOAD_ERROR','MessageDescr','Error occurred while Loading Yampa file. Please connect to the technical team for the actual status')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_MINGEN_DATA_LOAD_ERROR
+            variableDescription: Set Load Process Error Message
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a47)
+          variableName: TSGT_MINGEN_DATA_LOAD_SUCCESS
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_MINGEN_DATA_LOAD_SUCCESS','MessageDescr','Yampa file has been loaded.')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_MINGEN_DATA_LOAD_SUCCESS
+            variableDescription: Set Load Process Success Message
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a48)
+          variableName: TSGT_MINGEN_DATA_LOAD_INPROG
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_MINGEN_DATA_LOAD_INPROG','MessageDescr','Data Load Process is in Progress. Please try after sometime.')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_MINGEN_DATA_LOAD_INPROG
+            variableDescription: Set Load Process In Progress Message
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Assignment: Assignment(a69)
+          variableName: TSGT_MINGEN_INVALID_REPORT_SEARCH
+          variableType: string
+          expressionProperties:
+            xpathExpression: dvm:lookupValue('TSGTCmnMsgCode_LKP','MessageCode','TSGT_MINGEN_INVALID_REPORT_SEARCH','MessageDescr','Invalid Report Search!! Please Get Status for Valid Report ID.')
+            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+            variableName: TSGT_MINGEN_INVALID_REPORT_SEARCH
+            variableDescription: Invalid Report Search
+            variableType: string
+            variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+    - Try: Try(t0)
+      username: CheckMingenProcessStatus
+      statements:
+        - Switch: Switch(s0)
+          routes:
+            - Route: (sc0)
+              exprProperties:
+                xpathExpression: $ErrorFlag = 'N'
+              stateInfo:
+                variablesReferenced:
+                    - VariableName: ErrorFlag
+                      rootElement: '{http://www.w3.org/2001/XMLSchema}string'
+              statements:
+                - Map: Map(m3)
+                  xsltfilepath: ../resources/processor_713/resourcegroup_716/req_e023c7b8eed54340b1b12d997332bdfe.xsl
+                  mapsentences:
+                    - <?xml version = '1.0' encoding = 'UTF-8'?>
+                    - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:tns="http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckLockFlagStatus_REQUEST" xmlns:flt="http://xmlns.oracle.com/cloud/generic/service/fault" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetFileFromObjectStorage" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckLockFlagStatus_REQUEST/types" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ns2 ora oracle-xsl-mapper nssrcdfl xsi fn ns1 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINREQ" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINRES" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:ns22="http://xml.oracle.com/adapters/extension" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns23="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage/types" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:ns8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258">
+                    - '  <xsl:param name="Lock_Enabled" xml:id="id_18"/>'
+                    - '  <xsl:template match="/" xml:id="id_11">'
+                    - '    <nstrgmpr:CheckLockFlagStatusInput xml:id="id_12">'
+                    - '      <nstrgmpr:LOCKENABLED xml:id="id_53">'
+                    - '        <xsl:value-of xml:id="id_54" select="$Lock_Enabled"/>'
+                    - '      <nstrgmpr:RECORD_NAME xml:id="id_80">'
+                    - '        <xsl:value-of xml:id="id_81" select="/nssrcmpr:execute/ns24:request-wrapper/ns24:Record_Name"/>'
+                    - ""
+                - Invoke: CheckLockFlagStatus(i2)
+                  application:
+                    Application: CheckLockFlagStatus(TSGTATPCLOUDDB_CONN)
+                    name: CheckLockFlagStatus
+                    adapter:
+                        code: TSGTATPCLOUDDB_CONN
+                    properties: []
+                - Switch: Switch(s1)
+                  routes:
+                    - Route: (sc2)
+                      exprProperties:
+                        xpathExpression: $CheckLockFlagStatus/nsmpr9:CheckLockFlagStatusOutputCollection/nsmpr9:CheckLockFlagStatusOutput/nsmpr9:LOCK_FLAG = 'Y' and $CheckLockFlagStatus/nsmpr9:CheckLockFlagStatusOutputCollection/nsmpr9:CheckLockFlagStatusOutput/nsmpr9:ERROR_FLAG = 'N'
+                        namespaceList: nsmpr9=http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckLockFlagStatus_REQUEST/types
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: CheckLockFlagStatus
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckLockFlagStatus_REQUEST/types}CheckLockFlagStatusOutputCollection'
+                      statements:
+                        - Switch: Switch(s3)
+                          routes:
+                            - Route: (sc9)
+                              exprProperties:
+                                xpathExpression: $CheckLockFlagStatus/nsmpr9:CheckLockFlagStatusOutputCollection/nsmpr9:CheckLockFlagStatusOutput/nsmpr9:REPORT_MODE = 'LoadOnly'
+                                namespaceList: nsmpr9=http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckLockFlagStatus_REQUEST/types
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: CheckLockFlagStatus
+                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckLockFlagStatus_REQUEST/types}CheckLockFlagStatusOutputCollection'
+                              statements:
+                                - Assignments: LoadStatusInProgress(l7)
+                                  name: LoadStatusInProgress
+                                  assignments:
+                                    - Assignment: Assignment(a49)
+                                      variableName: Status
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''IN-PROGRESS'''
+                                        variableName: Status
+                                        variableDescription: Set Status IN-PROGRESS
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a50)
+                                      variableName: ErrorFlag
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''N'''
+                                        variableName: ErrorFlag
+                                        variableDescription: Set Flag to N
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a51)
+                                      variableName: MsgCode
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''TSGT_MINGEN_DATA_LOAD_INPROG'''
+                                        variableName: MsgCode
+                                        variableDescription: Set In Progress Message Code
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a52)
+                                      variableName: MsgDescr
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $TSGT_MINGEN_DATA_LOAD_INPROG
+                                        variableName: MsgDescr
+                                        variableDescription: Set In Progress Message Description
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a53)
+                                      variableName: MsgDetails
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $MsgDescr
+                                        variableName: MsgDetails
+                                        variableDescription: Set In Progress Message Details
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Route: Otherwise(sc10)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements:
+                                - Assignments: ReportStatusInProgress(l1)
+                                  name: ReportStatusInProgress
+                                  assignments:
+                                    - Assignment: Assignment(a7)
+                                      variableName: Status
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''IN-PROGRESS'''
+                                        variableName: Status
+                                        variableDescription: Set Status as In Progress
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a8)
+                                      variableName: ErrorFlag
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''N'''
+                                        variableName: ErrorFlag
+                                        variableDescription: Set Flag to N
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a9)
+                                      variableName: MsgCode
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''TSGT_MINGEN_REPORT_GEN_INPROG'''
+                                        variableName: MsgCode
+                                        variableDescription: Set In Progress Message Code
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a10)
+                                      variableName: MsgDescr
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $TSGT_MINGEN_REPORT_GEN_INPROG
+                                        variableName: MsgDescr
+                                        variableDescription: Set In Progress Message Description
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a21)
+                                      variableName: MsgDetails
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $CheckLockFlagStatus/nsmpr9:CheckLockFlagStatusOutputCollection/nsmpr9:CheckLockFlagStatusOutput/nsmpr9:MSG_DETAILS
+                                        namespaceList: nsmpr9=http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckLockFlagStatus_REQUEST/types
+                                        variableName: MsgDetails
+                                        variableDescription: Set In Progress Message Description
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: (sc4)
+                      exprProperties:
+                        xpathExpression: 1=2
+                      stateInfo: {}
+                      statements:
+                        - Assignments: ReportStatusError(l4)
+                          name: ReportStatusError
+                          assignments:
+                            - Assignment: Assignment(a4)
+                              variableName: Status
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''ERROR'''
+                                variableName: Status
+                                variableDescription: Set Status as ERROR
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a25)
+                              variableName: ErrorFlag
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''Y'''
+                                variableName: ErrorFlag
+                                variableDescription: Set Flag to Y
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a26)
+                              variableName: MsgCode
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: '''TSGT_MINGEN_REPORT_GENERATION_ERROR'''
+                                variableName: MsgCode
+                                variableDescription: Set Error Message Code
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a27)
+                              variableName: MsgDescr
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: $TSGT_MINGEN_REPORT_GENERATION_ERROR
+                                variableName: MsgDescr
+                                variableDescription: Set Error Message Description
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Assignment: Assignment(a28)
+                              variableName: MsgDetails
+                              variableType: string
+                              expressionProperties:
+                                xpathExpression: $CheckLockFlagStatus/nsmpr9:CheckLockFlagStatusOutputCollection/nsmpr9:CheckLockFlagStatusOutput/nsmpr9:MSG_DETAILS
+                                namespaceList: nsmpr9=http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckLockFlagStatus_REQUEST/types
+                                variableName: MsgDetails
+                                variableDescription: Set Error Message Details
+                                variableType: string
+                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: (sc5)
+                      exprProperties:
+                        xpathExpression: count($CheckLockFlagStatus/nsmpr9:CheckLockFlagStatusOutputCollection/nsmpr9:CheckLockFlagStatusOutput/nsmpr9:LOCK_FLAG) = 0
+                        namespaceList: nsmpr9=http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckLockFlagStatus_REQUEST/types
+                      stateInfo:
+                        variablesReferenced:
+                            - VariableName: CheckLockFlagStatus
+                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckLockFlagStatus_REQUEST/types}CheckLockFlagStatusOutputCollection'
+                      statements:
+                        - Map: Map(m1)
+                          xsltfilepath: ../resources/processor_1819/resourcegroup_1822/req_8e9ecad57e3444d4868727b570d233ec.xsl
+                          mapsentences:
+                            - <?xml version = '1.0' encoding = 'UTF-8'?>
+                            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckReportStatusLockFlagAsN_REQUEST/types" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:flt="http://xmlns.oracle.com/cloud/generic/service/fault" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetFileFromObjectStorage" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ns8="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tns="http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckReportStatusLockFlagAsN_REQUEST" exclude-result-prefixes=" nssrcmpr oraext xsd xp20 ns2 ora oracle-xsl-mapper nssrcdfl xsi fn ns8 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckLockFlagStatus_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINREQ" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINRES" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckLockFlagStatus_REQUEST" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs16="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs18="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns24="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage/types" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1345854648" xmlns:orajs19="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1641938429" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673459058" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath666212516" xmlns:ns9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1263797788" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath590682758" xmlns:ns10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath140451124" xmlns:ns11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1243995258">
+                            - '  <xsl:param name="Lock_Disabled" xml:id="id_28"/>'
+                            - '  <xsl:template match="/" xml:id="id_11">'
+                            - '    <nstrgmpr:CheckReportStatusLockFlagAsNInput xml:id="id_12">'
+                            - '      <nstrgmpr:LOCK_FLAG xml:id="id_78">'
+                            - '        <xsl:value-of xml:id="id_79" select="$Lock_Disabled"/>'
+                            - '      <nstrgmpr:RECORD_NAME xml:id="id_115">'
+                            - '        <xsl:value-of xml:id="id_116" select="/nssrcmpr:execute/ns25:request-wrapper/ns25:Record_Name"/>'
+                            - ""
+                        - Invoke: CheckReportStatusLockFlagAsN(i0)
+                          application:
+                            Application: CheckReportStatusLockFlagAsN(TSGTATPCLOUDDB_CONN)
+                            name: CheckReportStatusLockFlagAsN
+                            adapter:
+                                code: TSGTATPCLOUDDB_CONN
+                            properties: []
+                        - Switch: Switch(s2)
+                          routes:
+                            - Route: (sc6)
+                              exprProperties:
+                                xpathExpression: $CheckReportStatusLockFlagAsN/nssrcmpr:CheckReportStatusLockFlagAsNOutputCollection/nssrcmpr:CheckReportStatusLockFlagAsNOutput/nssrcmpr:LOCK_FLAG = 'N' and $CheckReportStatusLockFlagAsN/nssrcmpr:CheckReportStatusLockFlagAsNOutputCollection/nssrcmpr:CheckReportStatusLockFlagAsNOutput/nssrcmpr:ERROR_FLAG = 'Y' and 1=2
+                                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckReportStatusLockFlagAsN_REQUEST/types
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: CheckReportStatusLockFlagAsN
+                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckReportStatusLockFlagAsN_REQUEST/types}CheckReportStatusLockFlagAsNOutputCollection'
+                              statements:
+                                - Switch: Switch(s4)
+                                  routes:
+                                    - Route: (sc11)
+                                      exprProperties:
+                                        xpathExpression: $CheckReportStatusLockFlagAsN/nssrcmpr:CheckReportStatusLockFlagAsNOutputCollection/nssrcmpr:CheckReportStatusLockFlagAsNOutput/nssrcmpr:REPORT_MODE = 'LoadOnly'
+                                        namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckReportStatusLockFlagAsN_REQUEST/types
+                                      stateInfo:
+                                        variablesReferenced:
+                                            - VariableName: CheckReportStatusLockFlagAsN
+                                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckReportStatusLockFlagAsN_REQUEST/types}CheckReportStatusLockFlagAsNOutputCollection'
+                                      statements:
+                                        - Assignments: LoadFileError(l8)
+                                          name: LoadFileError
+                                          assignments:
+                                            - Assignment: Assignment(a54)
+                                              variableName: ErrorFlag
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: '''Y'''
+                                                variableName: ErrorFlag
+                                                variableDescription: Set Flag to Y
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a55)
+                                              variableName: Status
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: '''ERROR'''
+                                                variableName: Status
+                                                variableDescription: Set Status to ERROR
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a56)
+                                              variableName: MsgCode
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: '''TSGT_MINGEN_DATA_LOAD_ERROR'''
+                                                variableName: MsgCode
+                                                variableDescription: Set Error Message Code
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a57)
+                                              variableName: MsgDescr
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: $TSGT_MINGEN_DATA_LOAD_ERROR
+                                                variableName: MsgDescr
+                                                variableDescription: Set Error Message Description
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a58)
+                                              variableName: MsgDetails
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: $MsgDescr
+                                                variableName: MsgDetails
+                                                variableDescription: Set Error Message Details
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Route: Otherwise(sc12)
+                                      exprProperties:
+                                        xpathExpression: "true"
+                                        expressionName: Otherwise
+                                      stateInfo: null
+                                      statements:
+                                        - Assignments: ReportGenerationError(l6)
+                                          name: ReportGenerationError
+                                          assignments:
+                                            - Assignment: Assignment(a39)
+                                              variableName: ErrorFlag
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: '''Y'''
+                                                variableName: ErrorFlag
+                                                variableDescription: Set Flag to Y
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a40)
+                                              variableName: Status
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: '''ERROR'''
+                                                variableName: Status
+                                                variableDescription: Set Status to Error
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a41)
+                                              variableName: MsgCode
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: '''TSGT_MINGEN_REPORT_GENERATION_ERROR'''
+                                                variableName: MsgCode
+                                                variableDescription: Set Error Message Code
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a42)
+                                              variableName: MsgDescr
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: $CheckReportStatusLockFlagAsN/nssrcmpr:CheckReportStatusLockFlagAsNOutputCollection/nssrcmpr:CheckReportStatusLockFlagAsNOutput/nssrcmpr:MSG_DETAILS
+                                                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckReportStatusLockFlagAsN_REQUEST/types
+                                                variableName: MsgDescr
+                                                variableDescription: Set Error Message Description
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a43)
+                                              variableName: MsgDetails
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: $CheckReportStatusLockFlagAsN/nssrcmpr:CheckReportStatusLockFlagAsNOutputCollection/nssrcmpr:CheckReportStatusLockFlagAsNOutput/nssrcmpr:MSG_DETAILS
+                                                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckReportStatusLockFlagAsN_REQUEST/types
+                                                variableName: MsgDetails
+                                                variableDescription: Set Error Message Details
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Route: (sc8)
+                              exprProperties:
+                                xpathExpression: $CheckReportStatusLockFlagAsN/nssrcmpr:CheckReportStatusLockFlagAsNOutputCollection/nssrcmpr:CheckReportStatusLockFlagAsNOutput/nssrcmpr:LOCK_FLAG = 'N' and $CheckReportStatusLockFlagAsN/nssrcmpr:CheckReportStatusLockFlagAsNOutputCollection/nssrcmpr:CheckReportStatusLockFlagAsNOutput/nssrcmpr:ERROR_FLAG = 'N' and 1=2
+                                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckReportStatusLockFlagAsN_REQUEST/types
+                              stateInfo:
+                                variablesReferenced:
+                                    - VariableName: CheckReportStatusLockFlagAsN
+                                      rootElement: '{http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckReportStatusLockFlagAsN_REQUEST/types}CheckReportStatusLockFlagAsNOutputCollection'
+                              statements:
+                                - Switch: Switch(s5)
+                                  routes:
+                                    - Route: (sc13)
+                                      exprProperties:
+                                        xpathExpression: $CheckReportStatusLockFlagAsN/nssrcmpr:CheckReportStatusLockFlagAsNOutputCollection/nssrcmpr:CheckReportStatusLockFlagAsNOutput/nssrcmpr:REPORT_MODE = 'LoadOnly'
+                                        namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckReportStatusLockFlagAsN_REQUEST/types
+                                      stateInfo:
+                                        variablesReferenced:
+                                            - VariableName: CheckReportStatusLockFlagAsN
+                                              rootElement: '{http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckReportStatusLockFlagAsN_REQUEST/types}CheckReportStatusLockFlagAsNOutputCollection'
+                                      statements:
+                                        - Assignments: LoadFileSuccess(l9)
+                                          name: LoadFileSuccess
+                                          assignments:
+                                            - Assignment: Assignment(a59)
+                                              variableName: ErrorFlag
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: '''N'''
+                                                variableName: ErrorFlag
+                                                variableDescription: Set Flag to N
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a60)
+                                              variableName: Status
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: '''SUCCESS'''
+                                                variableName: Status
+                                                variableDescription: Set Status to SUCCESS
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a61)
+                                              variableName: MsgCode
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: '''TSGT_MINGEN_DATA_LOAD_SUCCESS'''
+                                                variableName: MsgCode
+                                                variableDescription: Set Success Message Code
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a62)
+                                              variableName: MsgDescr
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: $TSGT_MINGEN_DATA_LOAD_SUCCESS
+                                                variableName: MsgDescr
+                                                variableDescription: Set Success Message Description
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a63)
+                                              variableName: MsgDetails
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: $MsgDescr
+                                                variableName: MsgDetails
+                                                variableDescription: Set Success Message Details
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Route: Otherwise(sc14)
+                                      exprProperties:
+                                        xpathExpression: "true"
+                                        expressionName: Otherwise
+                                      stateInfo: null
+                                      statements:
+                                        - Assignments: ReportGenerationSuccess(l5)
+                                          name: ReportGenerationSuccess
+                                          assignments:
+                                            - Assignment: Assignment(a29)
+                                              variableName: ErrorFlag
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: '''N'''
+                                                variableName: ErrorFlag
+                                                variableDescription: Set Flag to N
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a30)
+                                              variableName: Status
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: '''SUCCESS'''
+                                                variableName: Status
+                                                variableDescription: Set Status to SUCCESS
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a31)
+                                              variableName: MsgCode
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: '''TSGT_MINGEN_REPORT_GENERATION_SUCCESS'''
+                                                variableName: MsgCode
+                                                variableDescription: Set Success Message Code
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a32)
+                                              variableName: MsgDescr
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: $TSGT_MINGEN_REPORT_GENERATION_SUCCESS
+                                                variableName: MsgDescr
+                                                variableDescription: Set Success Message Description
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a33)
+                                              variableName: MsgDetails
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: $CheckReportStatusLockFlagAsN/nssrcmpr:CheckReportStatusLockFlagAsNOutputCollection/nssrcmpr:CheckReportStatusLockFlagAsNOutput/nssrcmpr:MSG_DETAILS
+                                                namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckReportStatusLockFlagAsN_REQUEST/types
+                                                variableName: MsgDetails
+                                                variableDescription: Set Success Message Details
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a36)
+                                              variableName: SftpPath
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: string($CheckLockFlagStatus/nsmpr9:CheckLockFlagStatusOutputCollection/nsmpr9:CheckLockFlagStatusOutput/nsmpr9:FILE_PATH)
+                                                namespaceList: nsmpr9=http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckLockFlagStatus_REQUEST/types
+                                                variableName: SftpPath
+                                                variableDescription: Set Report Sftp Path
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                            - Assignment: Assignment(a37)
+                                              variableName: ObjectStoragePath
+                                              variableType: string
+                                              expressionProperties:
+                                                xpathExpression: string($CheckLockFlagStatus/nsmpr9:CheckLockFlagStatusOutputCollection/nsmpr9:CheckLockFlagStatusOutput/nsmpr9:OBJ_PATH)
+                                                namespaceList: nsmpr9=http://xmlns.oracle.com/cloud/adapter/atpdatabase/CheckLockFlagStatus_REQUEST/types
+                                                variableName: ObjectStoragePath
+                                                variableDescription: Set Report Object Storage Path
+                                                variableType: string
+                                                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                            - Route: Otherwise(sc7)
+                              exprProperties:
+                                xpathExpression: "true"
+                                expressionName: Otherwise
+                              stateInfo: null
+                              statements:
+                                - Assignments: SetInvalidSearch(l10)
+                                  name: SetInvalidSearch
+                                  assignments:
+                                    - Assignment: Assignment(a64)
+                                      variableName: ErrorFlag
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''Y'''
+                                        variableName: ErrorFlag
+                                        variableDescription: Set Flag to Y
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a65)
+                                      variableName: Status
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''ERROR'''
+                                        variableName: Status
+                                        variableDescription: Set Status to ERROR
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a66)
+                                      variableName: MsgCode
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: '''TSGT_MINGEN_INVALID_REPORT_SEARCH'''
+                                        variableName: MsgCode
+                                        variableDescription: Set Error Message Code
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a67)
+                                      variableName: MsgDescr
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $TSGT_MINGEN_INVALID_REPORT_SEARCH
+                                        variableName: MsgDescr
+                                        variableDescription: Set Error Message Description
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                                    - Assignment: Assignment(a68)
+                                      variableName: MsgDetails
+                                      variableType: string
+                                      expressionProperties:
+                                        xpathExpression: $TSGT_MINGEN_INVALID_REPORT_SEARCH
+                                        variableName: MsgDetails
+                                        variableDescription: Set Error Message Details
+                                        variableType: string
+                                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Route: Otherwise(sc3)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements: []
+            - Route: Otherwise(sc1)
+              exprProperties:
+                xpathExpression: "true"
+                expressionName: Otherwise
+              stateInfo: null
+              statements:
+                - Assignments: SetMissingdata(l2)
+                  name: SetMissingdata
+                  assignments:
+                    - Assignment: Assignment(a11)
+                      variableName: ErrorFlag
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''Y'''
+                        variableName: ErrorFlag
+                        variableDescription: Set the Flag to Y
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a12)
+                      variableName: Status
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''ERROR'''
+                        variableName: Status
+                        variableDescription: Set the Statis to ERROR
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a13)
+                      variableName: MsgCode
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: '''TSGT_SYSTEM_ERROR'''
+                        variableName: MsgCode
+                        variableDescription: Set the Error Message Code
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a14)
+                      variableName: MsgDescr
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: concat($TSGT_SYSTEM_ERROR,'Please rerun to check the status')
+                        variableName: MsgDescr
+                        variableDescription: Set the Error Message Description
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Assignment: Assignment(a45)
+                      variableName: MsgDetails
+                      variableType: string
+                      expressionProperties:
+                        xpathExpression: $MsgDescr
+                        variableName: MsgDetails
+                        variableDescription: Set the Error Message Details
+                        variableType: string
+                        variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Assignments: SetFault(l3)
+              name: SetFault
+              assignments:
+                - Assignment: Assignment(a15)
+                  variableName: ErrorFlag
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''Y'''
+                    variableName: ErrorFlag
+                    variableDescription: Set the Flag to Y
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a16)
+                  variableName: Status
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: '''ERROR'''
+                    variableName: Status
+                    variableDescription: Set the Status to ERROR
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a17)
+                  variableName: MsgCode
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: $CheckMingenProcessStatusFaultObject/nsmpr7:fault/nsmpr7:errorCode
+                    namespaceList: nsmpr7=http://www.oracle.com/2014/03/ics/fault
+                    variableName: MsgCode
+                    variableDescription: Set the Error Message Code
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a18)
+                  variableName: MsgDescr
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: ora:getFaultAsString()
+                    namespaceList: ora=http://schemas.oracle.com/xpath/extension
+                    variableName: MsgDescr
+                    variableDescription: Set the Error Message Description
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                - Assignment: Assignment(a44)
+                  variableName: MsgDetails
+                  variableType: string
+                  expressionProperties:
+                    xpathExpression: concat('Error while checking mingen processing status, plesae contact technical team ',$MsgCode,':',$CheckMingenProcessStatusFaultObject/nsmpr7:fault/nsmpr7:reason)
+                    namespaceList: nsmpr7=http://www.oracle.com/2014/03/ics/fault
+                    variableName: MsgDetails
+                    variableDescription: Set the Error Message Details
+                    variableType: string
+                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+          icsfaultfilepath: ../resources/processor_445/resourcegroup_446/ICSFault.xsd
+    - Map: Map(m0)
+      xsltfilepath: ../resources/processor_29/resourcegroup_32/req_32c2351df8094524bddd5a6e918dc23a.xsl
+      mapsentences:
+        - <?xml version = '1.0' encoding = 'UTF-8'?>
+        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetFileFromObjectStorage" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/GetFileFromObjectStorage_REQUEST" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath589955380" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1278657180" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns19="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINREQ" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1957044716" xmlns:ns20="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetFileFromObjectStorage_REQUEST/RESTINRES" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath2060583107" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath190850151" xmlns:ns18="http://xml.oracle.com/adapters/extension" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1828441553" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1439534352" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715020271" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath715584894" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1158067111" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath907620940" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:orajs17="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1001732957" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath282459557" xmlns:ns7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1010510793" xmlns:ns6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath440716342" xmlns:ns39="http://xmlns.oracle.com/procmon" xmlns:ns5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1607396219" xmlns:ns40="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd">
+        - '  <xsl:param name="MsgCode" xml:id="id_18"/>'
+        - '  <xsl:param name="MsgDescr" xml:id="id_19"/>'
+        - '  <xsl:param name="Status" xml:id="id_20"/>'
+        - '  <xsl:param name="MsgDetails" xml:id="id_43"/>'
+        - '  <xsl:param name="ObjectStoragePath" xml:id="id_61"/>'
+        - '  <xsl:param name="SftpPath" xml:id="id_62"/>'
+        - '  <xsl:template match="/" xml:id="id_11">'
+        - '    <nstrgmpr:executeResponse xml:id="id_12">'
+        - '      <nstrgdfl:response-wrapper xml:id="id_28">'
+        - '        <nstrgdfl:Status xml:id="id_29">'
+        - '          <xsl:value-of xml:id="id_30" select="$Status"/>'
+        - '        <nstrgdfl:MsgCode xml:id="id_31">'
+        - '          <xsl:value-of xml:id="id_32" select="$MsgCode"/>'
+        - '        <nstrgdfl:MsgDescr xml:id="id_33">'
+        - '          <xsl:value-of xml:id="id_34" select="$MsgDescr"/>'
+        - '        <nstrgdfl:MsgDetail xml:id="id_53">'
+        - '          <xsl:value-of xml:id="id_54" select="$MsgDetails"/>'
+        - '        <nstrgdfl:ObjStrPath xml:id="id_74">'
+        - '          <xsl:value-of xml:id="id_75" select="$ObjectStoragePath"/>'
+        - '        <nstrgdfl:SftpPath xml:id="id_72">'
+        - '          <xsl:value-of xml:id="id_73" select="$SftpPath"/>'
+        - ""
+    - Reply: Reply(y0)
+      adapterjcareference: null
+      wsdlfilepath: ""

@@ -1,0 +1,105 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_134
+      xsdfilepath: ../resources/processor_134/resourcegroup_135/ICSIntegrationMetadata.xsd
+    - xmlname:
+        space: http://www.oracle.com/2014/03/ics/flow/definition
+        local: subscribe
+      attrs:
+        - name:
+            space: ""
+            local: trackingRefUri
+          value: processor_103
+        - name:
+            space: ""
+            local: id
+          value: sub0
+        - name:
+            space: ""
+            local: refUri
+          value: application_110/outbound_111/output_116
+        - name:
+            space: ""
+            local: name
+          value: EVENT_TSGTPUBLISHEMPLO_SER_2247
+        - name:
+            space: ""
+            local: displayName
+          value: EVENT_TSGTPUBLISHEMPLO_SER_2247
+      content: ""
+      statements: []
+    - Map: Map(m0)
+      xsltfilepath: ../resources/processor_129/resourcegroup_132/req_50cd7e9c080847b6a8f1b581a3e32517.xsl
+      mapsentences:
+        - <xsl:stylesheet version="2.0" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:tgrr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:tgr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" xmlns:empr="http://xmlns.oracle.com/cloud/adapter/REST/PublishEmployees_REQUEST/types" xmlns:emp="http://xmlns.oracle.com/cloud/adapter/REST/PublishEmployees/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:insQr="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:cfg="http://xmlns.oracle.com/cloud/adapter/REST/GetConfig/types" xmlns:cfgr="http://xmlns.oracle.com/cloud/adapter/REST/GetConfig_REQUEST/types" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" ignore01:ignorexmlids="true">
+        - '  <xsl:param name="tracking_var_1"/>'
+        - '  <xsl:param name="tracking_var_2"/>'
+        - '  <xsl:param name="tracking_var_3"/>'
+        - '  <xsl:param name="self"/>'
+        - '  <xsl:variable name="today" select="concat(fn:year-from-dateTime (fn:current-dateTime ()),&apos;-&apos;,fn:month-from-dateTime (fn:current-dateTime()),&apos;-&apos;,fn:day-from-dateTime (fn:current-dateTime ()))"/>'
+        - '  <xsl:template name="changeNamespace">'
+        - '    <xsl:param name="nodes"/>'
+        - '    <xsl:for-each select="$nodes">'
+        - '      <xsl:choose>'
+        - '        <xsl:when test="count(child::*)&gt;0">'
+        - '          <xsl:element name="emp:{local-name()}">'
+        - '            <xsl:call-template name="changeNamespace">'
+        - '              <xsl:with-param name="nodes" select="./child::*"/>'
+        - '        <xsl:otherwise>'
+        - '          <xsl:element name="emp:{local-name()}">'
+        - '            <xsl:if test="@xsi:nil=&apos;true&apos;">'
+        - '              <xsl:attribute name="xsi:nil">true</xsl:attribute>'
+        - '            <xsl:value-of select="."/>'
+        - '  <xsl:template match="/tgrr:execute">'
+        - '    <empr:execute>'
+        - '      <emp:request-wrapper>'
+        - '        <emp:EmployeesBatch>'
+        - '          <emp:BatchID>'
+        - '            <xsl:value-of select="tgr:request-wrapper/tgr:EmployeesBatch/tgr:BatchID"/>'
+        - '          <emp:DateTime>'
+        - '            <xsl:value-of select="tgr:request-wrapper/tgr:EmployeesBatch/tgr:DateTime"/>'
+        - '          <xsl:for-each-group select="tgr:request-wrapper/tgr:EmployeesBatch/tgr:Employees" group-by="tgr:PersonNumber">'
+        - '            <emp:Employees>'
+        - '              <xsl:choose>'
+        - '                <xsl:when test="count(fn:current-group()[tgr:WorkerType=&apos;EMP&apos; and tgr:EffectiveDate &lt;= string($today)]) &gt; 0">'
+        - '                  <xsl:for-each select="fn:current-group()[tgr:WorkerType=&apos;EMP&apos;][1]/child::*">'
+        - '                    <xsl:call-template name="changeNamespace">'
+        - '                      <xsl:with-param name="nodes" select="."/>'
+        - '                  <xsl:for-each select="fn:current-group()[tgr:WorkerType=&apos;EMP&apos; and tgr:EffectiveDate &lt;= string($today)]">'
+        - '                    <xsl:for-each select="tgr:ChangedAttributes">'
+        - '                      <emp:ChangedAttributes>'
+        - '                        <emp:AttributeName>'
+        - '                          <xsl:value-of select="tgr:AttributeName"/>'
+        - '                        <emp:NewValue>'
+        - '                          <xsl:value-of select="tgr:NewValue"/>'
+        - '                        <emp:OldValue>'
+        - '                          <xsl:value-of select="tgr:OldValue"/>'
+        - '          <xsl:call-template name="changeNamespace">'
+        - '            <xsl:with-param name="nodes" select="tgr:request-wrapper/tgr:EmployeesBatch/tgr:Interface"/>'
+        - '          <xsl:call-template name="changeNamespace">'
+        - '            <xsl:with-param name="nodes" select="tgr:request-wrapper/tgr:EmployeesBatch/tgr:Attribute1"/>'
+        - '          <xsl:call-template name="changeNamespace">'
+        - '            <xsl:with-param name="nodes" select="tgr:request-wrapper/tgr:EmployeesBatch/tgr:Attribute2"/>'
+        - '          <xsl:call-template name="changeNamespace">'
+        - '            <xsl:with-param name="nodes" select="tgr:request-wrapper/tgr:EmployeesBatch/tgr:Attribute3"/>'
+        - '          <xsl:call-template name="changeNamespace">'
+        - '            <xsl:with-param name="nodes" select="tgr:request-wrapper/tgr:EmployeesBatch/tgr:Attribute4"/>'
+        - '          <xsl:call-template name="changeNamespace">'
+        - '            <xsl:with-param name="nodes" select="tgr:request-wrapper/tgr:EmployeesBatch/tgr:Attribute5"/>'
+        - ""
+    - Invoke: PublishEmployees(i0)
+      application:
+        Application: PublishEmployees(TSGTRESTOICINVOK_CONN)
+        name: PublishEmployees
+        adapter:
+            code: TSGTRESTOICINVOK_CONN
+        properties:
+            - name: operationPath
+              value: http://xmlns.oracle.com/cloud/adapter/REST/PublishEmployees_REQUEST/execute
+            - name: HttpVerb
+              value: PUT
+            - name: ResourceURI
+              value: /api/integration/v1/flows/rest/TSGTEMPLOYEESCORITYPROCESS/2.0/employeeOutbound
+    - Stop: Stop(st0)

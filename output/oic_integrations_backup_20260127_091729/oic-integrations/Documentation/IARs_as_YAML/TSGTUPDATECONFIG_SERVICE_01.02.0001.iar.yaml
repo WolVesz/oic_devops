@@ -1,0 +1,221 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_41
+      xsdfilepath: ../resources/processor_41/resourcegroup_42/ICSIntegrationMetadata.xsd
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: Interface
+              xpath: /execute/request-wrapper/Configs/Interface
+            - role: tracking_var_2
+              name: Key
+              xpath: /execute/request-wrapper/Configs/Key
+            - role: tracking_var_3
+              name: tracking_var_3
+        - ForLoop: ForLoop(f0)
+          expressionProperties:
+            xpathExpression: /nssrcmpr:execute/nsmpr3:request-wrapper/nsmpr3:Configs
+            namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger/types
+            variableName: Config
+          currentRecordVarName: Config
+          statements:
+            - Map: Map(m0)
+              xsltfilepath: ../resources/processor_108/resourcegroup_111/req_a59a818ecccf428981e68ce0a34ebc6d.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/GetConfig_REQUEST" xmlns:ns6="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/GetConfig_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetConfig" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/UpdateConfigsTrigger" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/GetConfig/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" ns6 oraext plnk xsd xp20 nssrcmpr ora oracle-xsl-mapper nsmpr0 nssrcdfl xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger/types" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns31="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfig_REQUEST/RESTOUTREQ" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfig_REQUEST/RESTOUTRES" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns30="http://xml.oracle.com/types/REST/GetConfig_REQUEST" xmlns:ns24="http://xml.oracle.com/adapters/extension" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateConfigsTrigger_REQUEST/RESTINRES" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateConfigsTrigger_REQUEST/RESTINREQ" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns27="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd">
+                - '  <xsl:param name="Config" xml:id="id_21"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:execute xml:id="id_12">'
+                - '      <nstrgmpr:QueryParameters xml:id="id_26">'
+                - '        <ns30:q xml:id="id_27">'
+                - '          <xsl:value-of xml:id="id_28" select="concat (&quot;interfaceName = &apos;&quot;, $Config/nsmpr1:Configs/nsmpr1:Interface, &quot;&apos; and valueKey = &apos;&quot;, $Config/nsmpr1:Configs/nsmpr1:Key, &quot;&apos;&quot; )"/>'
+                - ""
+            - Invoke: GetConfig(i0)
+              application:
+                Application: GetConfig(TSGTRESTOICINVOK_CONN)
+                name: GetConfig
+                adapter:
+                    code: TSGTRESTOICINVOK_CONN
+                properties:
+                    - name: HttpVerb
+                      value: GET
+                    - name: QueryParameters
+                      value: q
+                    - name: ResourceURI
+                      value: /builder/rt/InterfaceConfigs/live/resources/data/Config
+            - Switch: Switch(s0)
+              routes:
+                - Route: ConfigExist(sc0)
+                  exprProperties:
+                    xpathExpression: count($GetConfig/nsmpr8:executeResponse/nsmpr11:response-wrapper/nsmpr11:items) > 0
+                    namespaceList: nsmpr8=http://xmlns.oracle.com/cloud/adapter/REST/GetConfig_REQUEST/types nsmpr11=http://xmlns.oracle.com/cloud/adapter/REST/GetConfig/types
+                    expressionName: ConfigExist
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: GetConfig
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/REST/GetConfig_REQUEST/types}executeResponse'
+                  statements:
+                    - Map: Map(m4)
+                      xsltfilepath: ../resources/processor_147/resourcegroup_150/req_9bdeb480360f4636b717f04218a0196c.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfig_REQUEST" xmlns:ns6="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/UpdateConfig" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/UpdateConfigsTrigger" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfig_REQUEST/types" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" ns6 oraext plnk xsd xp20 nssrcmpr ora oracle-xsl-mapper nsmpr0 nssrcdfl xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/REST/GetConfig_REQUEST/types" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns32="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfig_REQUEST/RESTOUTREQ" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfig_REQUEST/RESTOUTRES" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns34="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateConfig_REQUEST/RESTOUTREQ" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns35="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateConfig_REQUEST/RESTOUTRES" xmlns:ns30="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetConfig" xmlns:ns31="http://xml.oracle.com/types/REST/GetConfig_REQUEST" xmlns:ns24="http://xml.oracle.com/adapters/extension" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateConfigsTrigger_REQUEST/RESTINRES" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateConfigsTrigger_REQUEST/RESTINREQ" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns36="http://xml.oracle.com/types/REST/UpdateConfig_REQUEST" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns33="http://xmlns.oracle.com/cloud/adapter/REST/GetConfig/types" xmlns:ns27="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns37="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfig/types">
+                        - '  <xsl:param name="GetConfig" xml:id="id_30"/>'
+                        - '  <xsl:param name="Config" xml:id="id_60"/>'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:execute xml:id="id_12">'
+                        - '      <nstrgmpr:TemplateParameters xml:id="id_36">'
+                        - '        <ns36:configId xml:id="id_37">'
+                        - '          <xsl:value-of xml:id="id_38" select="$GetConfig/nsmpr2:executeResponse/ns33:response-wrapper/ns33:items/ns33:id"/>'
+                        - '      <ns37:request-wrapper xml:id="id_39">'
+                        - '        <ns37:id xml:id="id_40">'
+                        - '          <xsl:value-of xml:id="id_41" select="$GetConfig/nsmpr2:executeResponse/ns33:response-wrapper/ns33:items[1]/ns33:id"/>'
+                        - '        <ns37:interfaceName xml:id="id_42">'
+                        - '          <xsl:value-of xml:id="id_43" select="$GetConfig/nsmpr2:executeResponse/ns33:response-wrapper/ns33:items/ns33:interfaceName"/>'
+                        - '        <ns37:valueKey xml:id="id_44">'
+                        - '          <xsl:value-of xml:id="id_45" select="$GetConfig/nsmpr2:executeResponse/ns33:response-wrapper/ns33:items/ns33:valueKey"/>'
+                        - '        <ns37:value xml:id="id_46">'
+                        - '          <xsl:value-of xml:id="id_47" select="$Config/nsmpr1:Configs/nsmpr1:Value"/>'
+                        - ""
+                    - Invoke: UpdateConfig(i2)
+                      application:
+                        Application: UpdateConfig(TSGTRESTOICINVOK_CONN)
+                        name: UpdateConfig
+                        adapter:
+                            code: TSGTRESTOICINVOK_CONN
+                        properties:
+                            - name: HttpVerb
+                              value: PATCH
+                            - name: ResourceURI
+                              value: /builder/rt/InterfaceConfigs/live/resources/data/Config/{configId}
+                - Route: Otherwise(sc1)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: {}
+                  statements:
+                    - Map: Map(m5)
+                      xsltfilepath: ../resources/processor_164/resourcegroup_167/req_c0e2f9e1ce234c62aae6abe485abac53.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet xmlns:ns6="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/CreateConfig" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/CreateConfig_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/UpdateConfigsTrigger" xmlns:nssrcdfl="http://xmlns.oracle.com/procmon" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/CreateConfig_REQUEST" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/REST/GetConfig_REQUEST/types" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns32="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfig_REQUEST/RESTOUTREQ" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:ns28="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/GetConfig_REQUEST/RESTOUTRES" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns37="http://xmlns.oracle.com/cloud/adapter/REST/CreateConfig/types" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns30="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/GetConfig" xmlns:ns31="http://xml.oracle.com/types/REST/GetConfig_REQUEST" xmlns:ns36="http://xml.oracle.com/types/REST/CreateConfig_REQUEST" xmlns:ns24="http://xml.oracle.com/adapters/extension" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateConfigsTrigger_REQUEST/RESTINRES" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateConfigsTrigger_REQUEST/RESTINREQ" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns34="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/CreateConfig_REQUEST/RESTOUTRES" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns33="http://xmlns.oracle.com/cloud/adapter/REST/GetConfig/types" xmlns:ns35="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/CreateConfig_REQUEST/RESTOUTREQ" xmlns:ns27="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" version="2.0" xml:id="id_1" exclude-result-prefixes=" ns6 oraext plnk xsd xp20 nssrcmpr ora oracle-xsl-mapper nsmpr0 nssrcdfl xsi fn xsl ignore01" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+                        - '  <xsl:param name="Config" xml:id="id_60"/>'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:execute xml:id="id_12">'
+                        - '      <ns37:request-wrapper xml:id="id_39">'
+                        - '        <ns37:interfaceName xml:id="id_42">'
+                        - '          <xsl:value-of xml:id="id_43" select="$Config/nsmpr1:Configs/nsmpr1:Interface"/>'
+                        - '        <ns37:valueKey xml:id="id_44">'
+                        - '          <xsl:value-of xml:id="id_45" select="$Config/nsmpr1:Configs/nsmpr1:Key"/>'
+                        - '        <ns37:value xml:id="id_46">'
+                        - '          <xsl:value-of xml:id="id_47" select="$Config/nsmpr1:Configs/nsmpr1:Value"/>'
+                        - ""
+                    - Invoke: CreateConfig(i3)
+                      application:
+                        Application: CreateConfig(TSGTRESTOICINVOK_CONN)
+                        name: CreateConfig
+                        adapter:
+                            code: TSGTRESTOICINVOK_CONN
+                        properties:
+                            - name: HttpVerb
+                              value: POST
+                            - name: ResourceURI
+                              value: /builder/rt/InterfaceConfigs/live/resources/data/Config
+        - Map: Map(m2)
+          xsltfilepath: ../resources/processor_73/resourcegroup_76/req_8681de7e8b2c4fda95c5e7763fdb2806.xsl
+          mapsentences:
+            - <?xml version = '1.0' encoding = 'UTF-8'?>
+            - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns6="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/UpdateConfigsTrigger" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://xmlns.oracle.com/cloud/adapter/database/UpdateConfigs_REQUEST/types" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:ns21="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateConfigsTrigger_REQUEST/RESTINRES" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateConfigsTrigger_REQUEST/RESTINREQ" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:tns="http://xmlns.oracle.com/cloud/adapter/database/UpdateConfigs_REQUEST">
+            - '  <xsl:template match="/" xml:id="id_11">'
+            - '    <nstrgmpr:executeResponse xml:id="id_12">'
+            - '      <nstrgdfl:response-wrapper xml:id="id_26">'
+            - '        <xsl:for-each xml:id="id_28" select="/nstrgmpr:execute/nstrgdfl:request-wrapper/nstrgdfl:Configs">'
+            - '          <nstrgdfl:Configs xml:id="id_29">'
+            - '            <nstrgdfl:Interface xml:id="id_30">'
+            - '              <xsl:value-of xml:id="id_31" select="nstrgdfl:Interface"/>'
+            - '            <nstrgdfl:Key xml:id="id_32">'
+            - '              <xsl:value-of xml:id="id_33" select="nstrgdfl:Key"/>'
+            - '            <nstrgdfl:Value xml:id="id_34">'
+            - '              <xsl:value-of xml:id="id_35" select="nstrgdfl:Value"/>'
+            - ""
+        - Reply: Reply(y0)
+          adapterjcareference: null
+          wsdlfilepath: ""
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Map: Map(m1)
+              xsltfilepath: ../resources/processor_63/resourcegroup_66/req_e344af62170d440cb530fde6cd8e4e60.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet xmlns:audr="http://xmlns.oracle.com/cloud/adapter/collocatedics/PublishAuditing_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" xmlns:fault="http://www.oracle.com/2014/03/ics/fault" xmlns:med="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:oic="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:paw="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Auditing/collocatedics/PublishAuditing_REQUEST" xmlns:pa="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/PublishAuditing_REQUEST" xmlns:req="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger/types" xmlns:src="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger_REQUEST/types" version="2.0" exclude-result-prefixes="oraext xp20 ora oracle-xsl-mapper nssrcdfl xsi fn xsl ignore01" ignore01:ignorexmlids="true">
+                - '  <xsl:param name="GlobalFaultObject"/>'
+                - '  <xsl:param name="self"/>'
+                - '  <xsl:template match="/">'
+                - '    <audr:PUT>'
+                - '      <audr:components.schemas.request-wrapper>'
+                - '        <pa:Auditing>'
+                - '          <paw:AuditingType>'
+                - '            <xsl:value-of select="&apos;Error&apos;"/>'
+                - '          <paw:FlowInstanceID>'
+                - '            <xsl:value-of select="fn:format-number(oic:getFlowId(),&apos;0&apos;)"/>'
+                - '          <paw:TrackingID/>'
+                - '          <paw:ReferenceID>'
+                - '            <xsl:value-of select="concat ($self/med:metadata/med:integration/med:name, &apos;-&apos;, /req:execute/req:request-wrapper/req:EmployeeOutbound/req:StartTime )"/>'
+                - '          <paw:InterfaceName>'
+                - '            <xsl:value-of select="$self/med:metadata/med:integration/med:name"/>'
+                - '          <paw:Title>'
+                - '            <xsl:value-of select="concat($self/med:metadata/med:integration/med:name, &apos; Error - &apos;, fn:format-number(oic:getFlowId(),&apos;0&apos;))"/>'
+                - '          <paw:Details>'
+                - '            <xsl:value-of select="concat(&apos;ErrorCode:&apos;, $GlobalFaultObject/fault:fault/fault:errorCode, &apos;; reason:&apos;, $GlobalFaultObject/fault:fault/fault:reason, &apos;; details:&apos;, $GlobalFaultObject/fault:fault/fault:details )"/>'
+                - '          <paw:Payload>'
+                - '            <xsl:value-of select="oraext:get-content-as-string(/src:execute/req:request-wrapper/req:Configs)"/>'
+                - '          <paw:AuditingID>'
+                - '            <xsl:value-of select="oraext:generate-guid ()"/>'
+                - ""
+            - Invoke: PublishAuditing(i1)
+              application:
+                Application: PublishAuditing(PRESEEDED_COLLOCATED_CONN_1741)
+                name: PublishAuditing
+                adapter:
+                    code: PRESEEDED_COLLOCATED_CONN_1741
+                properties:
+                    - name: operationPath
+                      value: /auditing
+                    - name: HttpVerb
+                      value: PUT
+                    - name: QueryParameters
+                      value: ""
+                    - name: ResourceURI
+                      value: /auditing
+                    - name: integration_id
+                      value: AUDITINGINBOUND|01.00.0000
+                    - name: integration_operation
+                      value: PUT
+                    - name: serviceType
+                      value: REST
+            - Map: Map(m3)
+              xsltfilepath: ../resources/processor_78/resourcegroup_81/req_dacd7396a6684d0e90c1e338a35cd8e7.xsl
+              mapsentences:
+                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns6="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:nstrgdfl="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger/types" xmlns:ns5="http://xmlns.oracle.com/cloud/adapter/REST/UpdateConfigsTrigger_REQUEST/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/generic/rest/fault/REST/UpdateConfigsTrigger" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ics/fault" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/collocatedics/PublishAuditing_REQUEST/types" xmlns:nsmpr2="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:ns28="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Auditing/Notification/collocatedics/PublishAuditing_REQUEST" xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/collocatedics/PublishAuditing_REQUEST" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/collocatedics/PublishAuditing_REQUEST/SKIPOUTREQ" xmlns:connprop="http://xmlns.oracle.com/cloud/adapter/connectivityproperties" xmlns:ns1="http://xml.oracle.com/adapters/extension" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateConfigsTrigger_REQUEST/RESTINRES" xmlns:ns23="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/UpdateConfigsTrigger_REQUEST/RESTINREQ" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:ns29="http://www.oracle.rest.converters.autogeneratedns.com/components.schemas.request-wrapper/Auditing/collocatedics/PublishAuditing_REQUEST" xmlns:ns2="http://xmlns.oracle.com/cloud/generic/rest/fault/collocatedics/PublishAuditing" xmlns:ns30="http://www.oracle.rest.converters.autogeneratedns.com/collocatedics/PublishAuditing_REQUEST">
+                - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                - '  <xsl:param name="GlobalFaultObject" xml:id="id_29"/>'
+                - '  <xsl:template match="/" xml:id="id_11">'
+                - '    <nstrgmpr:APIInvocationError xml:id="id_12">'
+                - '      <nstrgmpr:title xml:id="id_42">'
+                - '        <xsl:value-of xml:id="id_43" select="$GlobalFaultObject/nsmpr0:fault/nsmpr0:reason"/>'
+                - '      <nstrgmpr:detail xml:id="id_40">'
+                - '        <xsl:value-of xml:id="id_41" select="$GlobalFaultObject/nsmpr0:fault/nsmpr0:details"/>'
+                - '      <nstrgmpr:errorCode xml:id="id_36">'
+                - '        <xsl:value-of xml:id="id_37" select="$GlobalFaultObject/nsmpr0:fault/nsmpr0:errorCode"/>'
+                - ""
+            - Reply: Reply(y1)
+              adapterjcareference: null
+              wsdlfilepath: ""
+          icsfaultfilepath: ../resources/processor_46/resourcegroup_47/ICSFault.xsd

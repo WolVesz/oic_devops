@@ -1,0 +1,11 @@
+flowchart LR
+%% Auto-generated from invoke_chain_group_001.csv — root TSGT_TASK_SYNC_WACS_TO_PPM
+classDef integ fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+classDef adapt fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+ TSGT_TASK_SYNC_WACS_TO_PPM["TSGT Task Sync WACS To PPM"]:::integ
+ TSGT_ENTERPRISENOTIFI["TSGT EnterpriseNotificationService"]:::integ
+ TSGT_TASK_SYNC_WACS_TO_PPM -->|sendNotification| TSGT_ENTERPRISENOTIFI
+ OUTL_BRT_APP_ERPPIM_WACSERPPIM{{"Oracle Utilities ERP Cloud for WACS-ERPPIM"}}:::adapt
+ TSGT_TASK_SYNC_WACS_TO_PPM -->|createProjectTaskInPPM| OUTL_BRT_APP_ERPPIM_WACSERPPIM
+ TSGT_TASK_SYNC_WACS_TO_PPM -->|getTaskDetails| OUTL_BRT_APP_ERPPIM_WACSERPPIM
+ TSGT_TASK_SYNC_WACS_TO_PPM -->|updateTaskInPPM| OUTL_BRT_APP_ERPPIM_WACSERPPIM

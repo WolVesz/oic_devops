@@ -1,0 +1,204 @@
+Orchestration: ""
+statements:
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: resource Id
+              xpath: /notify_POST/events.definitions.requestEvent/requestChanges/resourceId
+            - role: tracking_var_2
+              name: wam_pickup_activity_desc1
+              xpath: /notify_POST/events.definitions.requestEvent/requestChanges/wam_pickup_activity_desc1
+            - role: tracking_var_3
+              name: tracking_var_3
+        - Assignments: initializeUserVar(l2)
+          name: initializeUserVar
+          assignments:
+            - Assignment: Assignment(a3)
+              variableName: userIDVar
+              variableType: string
+              expressionProperties:
+                xpathExpression: ''''''
+                variableName: userIDVar
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a2)
+              variableName: defaultUser
+              variableType: string
+              expressionProperties:
+                xpathExpression: ''''''
+                variableName: defaultUser
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - Try: Try(t0)
+          username: globalScope
+          statements:
+            - Switch: Switch(s0)
+              routes:
+                - Route: (sc0)
+                  exprProperties:
+                    xpathExpression: /nssrcmpr:notify_POST/nssrcmpr:events.definitions.requestEvent/nsmpr5:requestChanges/nsmpr3:requestType = "workRequest"
+                    namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/receiveOFSCRequest_REQUEST/types nsmpr3=http://xmlns.oracle.com/cloud/adapter/requestChanges nsmpr5=http://xmlns.oracle.com/cloud/adapter
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: /
+                          rootElement: '{http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/receiveOFSCRequest_REQUEST/types}notify_POST'
+                  statements:
+                    - Switch: Switch(s2)
+                      routes:
+                        - Route: (sc4)
+                          exprProperties:
+                            xpathExpression: dvm:lookupValue("WAMOFSC_ConfigProps", "PropertyName", "default.user.flag", "Value", "false") = "true"
+                            namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                          stateInfo:
+                            referencedLookupData:
+                                - lookup-table-name-with-location: WAMOFSC_ConfigProps
+                                  source: '"PropertyName"'
+                                  target: '"Value"'
+                          statements:
+                            - Assignments: assignDefaultUser(l0)
+                              name: assignDefaultUser
+                              assignments:
+                                - Assignment: Assignment(a1)
+                                  variableName: defaultUser
+                                  variableType: string
+                                  expressionProperties:
+                                    xpathExpression: dvm:lookupValue('WAMOFSC_ConfigProps','PropertyName','default.userId','Value','XXX')
+                                    namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                                    variableName: defaultUser
+                                    variableType: string
+                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                        - Route: Otherwise(sc5)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: null
+                          statements:
+                            - Assignments: assignOFSCUser(l1)
+                              name: assignOFSCUser
+                              assignments:
+                                - Assignment: Assignment(a0)
+                                  variableName: userIDVar
+                                  variableType: string
+                                  expressionProperties:
+                                    xpathExpression: /nssrcmpr:notify_POST/nssrcmpr:events.definitions.requestEvent/nsmpr5:requestDetails/nsmpr6:resourceId
+                                    namespaceList: nssrcmpr=http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/receiveOFSCRequest_REQUEST/types nsmpr6=http://xmlns.oracle.com/cloud/adapter/requestDetails nsmpr5=http://xmlns.oracle.com/cloud/adapter
+                                    variableName: userIDVar
+                                    variableType: string
+                                    variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+                    - Map: Map(m0)
+                      xsltfilepath: ../resources/processor_141/resourcegroup_144/req_8d464deae5d24c35954043e35914e1d4.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/oracleutilities/createWorkRequest_REQUEST" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/receiveOFSCRequest_REQUEST/types" xmlns:ns5="http://xmlns.oracle.com/cloud/adapter/ofsccloudadapter/receiveOFSCRequest_REQUEST" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/oracleutilities/createWorkRequest_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:wssutil="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tns="http://ouaf.oracle.com/webservices/w1/W1-CreMoblWR" xmlns:ouaf="http://ouaf.oracle.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" exclude-result-prefixes=" nssrcmpr ns5 oraext xsd xp20 ora oracle-xsl-mapper xsi fn xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:orajs1="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1635443809" xmlns:orajs11="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1667070767" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.functions.dvm.DVMFunctions" xmlns:orajs14="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath948039040" xmlns:ns22="http://xmlns.oracle.com/cloud/adapter/inventoryDetails" xmlns:ns24="http://xmlns.oracle.com/cloud/adapter/activityDetails" xmlns:orajs4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1681625448" xmlns:orajs0="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath56919032" xmlns:orajs7="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath123170385" xmlns:ns23="http://xml.oracle.com/adapters/extension" xmlns:ns26="http://xmlns.oracle.com/cloud/adapter/requestChanges" xmlns:orajs2="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1396154174" xmlns:orajs10="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1429540732" xmlns:orajs3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1596616741" xmlns:ns25="http://xmlns.oracle.com/cloud/adapter/requestDetails" xmlns:orajs15="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath86288" xmlns:ns2="http://www.oracle.com/XSL/Transform/java/com.bea.wli.sb.resources.icsxpathfunctions.ICSInstanceTrackingFunctions" xmlns:orajs12="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath877648652" xmlns:orajs8="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath761874789" xmlns:orajs13="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1673207123" xmlns:ns0="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:orajs5="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1634410945" xmlns:orajs9="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath673895125" xmlns:ns27="http://xmlns.oracle.com/cloud/adapter" xmlns:orajs6="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1468259163" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:ns48="http://xmlns.oracle.com/procmon" xmlns:ns49="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:ns3="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1693831523" xmlns:ns4="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.JsExecutor_xpath1327743971">
+                        - '  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->'
+                        - '  <xsl:param name="userIDVar" xml:id="id_92"/>'
+                        - '  <xsl:param name="defaultUser" xml:id="id_107"/>'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:W1-CreMoblWR xml:id="id_12">'
+                        - '      <tns:W1-CreMoblWR xml:id="id_21">'
+                        - '        <tns:input xml:id="id_22">'
+                        - '          <tns:followUpActivityId xml:id="id_41">'
+                        - '            <xsl:value-of xml:id="id_42" select="/nssrcmpr:notify_POST/nssrcmpr:events.definitions.requestEvent/ns27:requestChanges/ns26:wam_pickup_related_appt_number1"/>'
+                        - '          <tns:nodeId xml:id="id_23">'
+                        - '            <xsl:value-of xml:id="id_24" select="/nssrcmpr:notify_POST/nssrcmpr:events.definitions.requestEvent/ns27:requestChanges/ns26:wam_pickup_asset_node_id1"/>'
+                        - '          <tns:assetId xml:id="id_25">'
+                        - '            <xsl:value-of xml:id="id_26" select="/nssrcmpr:notify_POST/nssrcmpr:events.definitions.requestEvent/ns27:requestChanges/ns26:wam_pickup_asset_id1"/>'
+                        - '          <tns:description xml:id="id_39">'
+                        - '            <xsl:value-of xml:id="id_43" select="/nssrcmpr:notify_POST/nssrcmpr:events.definitions.requestEvent/ns27:requestChanges/ns26:wam_pickup_activity_desc1"/>'
+                        - '          <tns:longDescription xml:id="id_37">'
+                        - '            <xsl:value-of xml:id="id_38" select="/nssrcmpr:notify_POST/nssrcmpr:events.definitions.requestEvent/ns27:requestChanges/ns26:wam_pickup_activity_long_desc1"/>'
+                        - '          <tns:requiredByDate xml:id="id_65" xsi:nil="{&apos;true&apos;}">'
+                        - '            <xsl:value-of xml:id="id_74" select="/nssrcmpr:notify_POST/nssrcmpr:events.definitions.requestEvent/ns27:requestChanges/ns26:wam_pickup_required_by_date1"/>'
+                        - '          <tns:downTimeStart xml:id="id_27" xsi:nil="{&apos;true&apos;}">'
+                        - '            <xsl:value-of xml:id="id_83" select="/nssrcmpr:notify_POST/nssrcmpr:events.definitions.requestEvent/ns27:requestChanges/ns26:wam_pickup_downtimeDateTime1"/>'
+                        - '          <tns:workPriority xml:id="id_29">'
+                        - '            <xsl:value-of xml:id="id_30" select="/nssrcmpr:notify_POST/nssrcmpr:events.definitions.requestEvent/ns27:requestChanges/ns26:wam_pickup_work_priority1"/>'
+                        - '          <tns:workClass xml:id="id_31">'
+                        - '            <xsl:value-of xml:id="id_32" select="/nssrcmpr:notify_POST/nssrcmpr:events.definitions.requestEvent/ns27:requestChanges/ns26:wam_pickup_work_class1"/>'
+                        - '          <tns:workCategory xml:id="id_33">'
+                        - '            <xsl:value-of xml:id="id_34" select="/nssrcmpr:notify_POST/nssrcmpr:events.definitions.requestEvent/ns27:requestChanges/ns26:wam_pickup_work_category1"/>'
+                        - '          <tns:requestor xml:id="id_52">'
+                        - '            <xsl:value-of xml:id="id_112" select="$defaultUser"/>'
+                        - '          <tns:employeeExternalId xml:id="id_121">'
+                        - '            <xsl:value-of xml:id="id_122" select="$userIDVar"/>'
+                        - ""
+                    - Invoke: createWorkRequest(i0)
+                      application:
+                        Application: createWorkRequest(OUTL-BRT-SOAP-WACS_WACSOFSC)
+                        name: createWorkRequest
+                        adapter:
+                            code: OUTL-BRT-SOAP-WACS_WACSOFSC
+                        properties:
+                            - name: operationPath
+                              value: http://den00tyu.us.oracle.com/webservices/W1-CreMoblWR#W1-CreMoblWR
+                - Route: Otherwise(sc1)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: null
+                  statements:
+                    - Stop: Stop(st1)
+            - CatchAll: CatchAll(ta0)
+              statements:
+                - Stop: EHStop(eh0)
+              icsfaultfilepath: ../resources/processor_65/resourcegroup_66/ICSFault.xsd
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta1)
+          statements:
+            - Logger: Logger(lg0)
+              name: globalFaultLogger
+              description: ""
+              propertyfile: ../resources/processor_190/resourcegroup_197/expr.properties
+              expressionProperties:
+                xpathExpression: '"Error in global Fault"'
+                variableName: globalFaultLogger
+            - Try: Try(t1)
+              username: globalFaultScope
+              statements:
+                - Switch: Switch(s1)
+                  routes:
+                    - Route: (sc2)
+                      exprProperties:
+                        xpathExpression: dvm:lookupValue("WAMOFSC_ConfigProps", "PropertyName", "email.flag", "Value", "false") = "true"
+                        namespaceList: dvm=http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue
+                      stateInfo:
+                        referencedLookupData:
+                            - lookup-table-name-with-location: WAMOFSC_ConfigProps
+                              source: '"PropertyName"'
+                              target: '"Value"'
+                      statements:
+                        - xmlname:
+                            space: http://www.oracle.com/2014/03/ics/flow/definition
+                            local: notification
+                          attrs:
+                            - name:
+                                space: ""
+                                local: id
+                              value: n0
+                            - name:
+                                space: ""
+                                local: refUri
+                              value: processor_173
+                          content: ""
+                          statements: []
+                    - Route: Otherwise(sc3)
+                      exprProperties:
+                        xpathExpression: "true"
+                        expressionName: Otherwise
+                      stateInfo: null
+                      statements: []
+                - CatchAll: CatchAll(ta2)
+                  statements:
+                    - Logger: Logger(lg1)
+                      name: faultScopeLogger
+                      description: ""
+                      propertyfile: ../resources/processor_315/resourcegroup_322/expr.properties
+                      expressionProperties:
+                        xpathExpression: '''In default handler of Global Fault'''
+                        variableName: faultScopeLogger
+                  icsfaultfilepath: ../resources/processor_281/resourcegroup_282/ICSFault.xsd
+            - Stop: EHStop(eh1)
+          icsfaultfilepath: ../resources/processor_152/resourcegroup_153/ICSFault.xsd

@@ -1,0 +1,14 @@
+flowchart LR
+%% Auto-generated from invoke_chain_group_001.csv — root TSGTSUBSCRIBEAUD_SERVICE
+classDef integ fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+classDef adapt fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+ TSGTSUBSCRIBEAUD_SERVICE["TSGTSubscribeAuditing_Service"]:::integ
+ TSGTAUDITINGPROC_SERVICE["TSGTAuditingProcess_Service"]:::integ
+ TSGTGETCONFIGS_SERVICE["TSGTGetConfigs_Service"]:::integ
+ TSGTAUDITINGPROC_SERVICE -->|GetConfigs| TSGTGETCONFIGS_SERVICE
+ TSGTFTP_CONN{{"TSGTFtp_Conn"}}:::adapt
+ TSGTAUDITINGPROC_SERVICE -->|AttechmentFile| TSGTFTP_CONN
+ TSGTAUDITINGPROC_SERVICE -->|attachmentDowonload| TSGTFTP_CONN
+ TSGTRESTOICINVOK_CONN{{"TSGTRestOICInvoke_Conn"}}:::adapt
+ TSGTGETCONFIGS_SERVICE -->|GetConfigs| TSGTRESTOICINVOK_CONN
+ TSGTSUBSCRIBEAUD_SERVICE -->|CallAuditingProcess| TSGTAUDITINGPROC_SERVICE

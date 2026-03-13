@@ -1,0 +1,534 @@
+Orchestration: ""
+statements:
+    - IntegrationMetadata: IntegrationMetadata(im0)
+      id: im0
+      refuri: processor_1
+      xsdfilepath: ../resources/processor_1/resourcegroup_2/ICSIntegrationMetadata.xsd
+    - xmlname:
+        space: http://www.oracle.com/2014/03/ics/flow/definition
+        local: integrationProperties
+      attrs:
+        - name:
+            space: ""
+            local: id
+          value: ip0
+        - name:
+            space: ""
+            local: refUri
+          value: processor_2870
+      content: ""
+      statements: []
+    - GlobalTry: GlobalTry(gt0)
+      statements:
+        - Receive: Receive(r0)
+          trackingvariables:
+            - role: tracking_var_1
+              primary: true
+              name: DOCUMENTID
+              xpath: /onEvent/ErpImportBulkDataEvent/DOCUMENTID
+            - role: tracking_var_2
+              name: JobStatus
+              xpath: /onEvent/ErpImportBulkDataEvent/JOBS/STATUS
+            - role: tracking_var_3
+              name: tracking_var_3
+        - Assignments: DeclareVariables(l0)
+          name: DeclareVariables
+          assignments:
+            - Assignment: Assignment(a0)
+              variableName: P_RequestId
+              variableType: string
+              expressionProperties:
+                xpathExpression: ''''''
+                variableName: P_RequestId
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+            - Assignment: Assignment(a1)
+              variableName: P_ReportRequestId
+              variableType: string
+              expressionProperties:
+                xpathExpression: ''''''
+                variableName: P_ReportRequestId
+                variableType: string
+                variableTypeNamespace: http://www.w3.org/2001/XMLSchema
+        - ForLoop: ForLoop(f0)
+          expressionProperties:
+            xpathExpression: /ns16:onEvent/inp1:ErpImportBulkDataEvent/inp1:JOBS
+            namespaceList: inp1=http://xmlns.oracle.com/apps/financials/commonModules/shared ns16=http://xmlns.oracle.com/cloud/adapter/erp/StartCallBackBIP_REQUEST/types
+            variableName: Current_JOB
+          currentRecordVarName: Current_JOB
+          statements:
+            - Switch: Switch(s0)
+              routes:
+                - Route: SuccessRoute(sc0)
+                  exprProperties:
+                    xpathExpression: $Current_JOB/inp1:JOBS/inp1:JOBNAME = 'Import Project Rate Schedules and Overrides' and $Current_JOB/inp1:JOBS/inp1:STATUS = 'SUCCEEDED'
+                    namespaceList: inp1=http://xmlns.oracle.com/apps/financials/commonModules/shared
+                    expressionName: SuccessRoute
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: Current_JOB
+                          rootElement: '{http://xmlns.oracle.com/apps/financials/commonModules/shared}JOBS'
+                  statements:
+                    - Stitch: Stitch(sh0)
+                      stitchNamespaceResolver:
+                        prefixnamespacemap:
+                            fn: http://www.w3.org/2005/xpath-functions
+                            ns5: http://xmlns.oracle.com/apps/financials/commonModules/shared
+                      stitchVariables:
+                        - name: P_RequestId
+                          datatype:
+                            type: XMLSimple
+                            xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                          access: SOURCE_AND_TARGET
+                        - name: Current_JOB
+                          datatype:
+                            type: XMLComplex
+                            basedOnElement: '{http://xmlns.oracle.com/apps/financials/commonModules/shared}JOBS'
+                            uriToSchema: ../../processor_778/resourcegroup_788/generated.wsdl
+                          access: SOURCE_AND_TARGET
+                      stitchSentences:
+                        - operation: Assign
+                          from:
+                            type: XPathExpression
+                            expression: fn:string($Current_JOB/ns5:JOBS/ns5:REQUESTID)
+                            returnType: XML_TYPE_ATOMIC
+                          to:
+                            type: XPathPath
+                            path: $P_RequestId
+                            isLastStepXsdAnyType: false
+                    - Map: Map(m2)
+                      xsltfilepath: ../resources/processor_877/resourcegroup_880/req_02e415d972f143459bd78bb3e0e5b656.xsl
+                      mapsentences:
+                        - <?xml version = '1.0' encoding = 'UTF-8'?>
+                        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nstrgmpr="http://xmlns.oracle.com/types/RunBIPReport/1753454889337/OutboundSOAPRequestDocument" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/StartCallBackBIP_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" ora oracle-xsl-mapper dvm nssrcmpr oraext xsi xsd fn xp20 xsl ignore01 nsmpr0 nsmpr1" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/apps/financials/commonModules/shared" xmlns:nsmpr1="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:tns="http://xmlns.oracle.com/oxp/service/PublicReportService">
+                        - '  <xsl:param name="P_RequestId" xml:id="id_23"/>'
+                        - '  <xsl:template match="/" xml:id="id_11">'
+                        - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                        - '      <nstrgmpr:Body xml:id="id_28">'
+                        - '        <tns:runReport xml:id="id_29">'
+                        - '          <tns:reportRequest xml:id="id_30">'
+                        - '            <tns:byPassCache xml:id="id_35">'
+                        - '              <xsl:value-of xml:id="id_36" select="true ()"/>'
+                        - '            <tns:parameterNameValues xml:id="id_37">'
+                        - '              <tns:item xml:id="id_38">'
+                        - '                <tns:name xml:id="id_39">'
+                        - '                  <xsl:value-of xml:id="id_40" select="&quot;P_REQUESTID&quot;"/>'
+                        - '                <tns:values xml:id="id_41">'
+                        - '                  <tns:item xml:id="id_42">'
+                        - '                    <xsl:value-of xml:id="id_43" select="$P_RequestId"/>'
+                        - '            <tns:reportAbsolutePath xml:id="id_31">'
+                        - '              <xsl:value-of xml:id="id_32" select="&quot;/Custom/TSGTIntegrations/TSGT HCM Project Person Rate Schedule PPM/Emp_Rate_Report_RPT.xdo&quot;"/>'
+                        - '            <tns:sizeOfDataChunkDownload xml:id="id_33">'
+                        - '              <xsl:value-of xml:id="id_34" select="&quot;-1&quot;"/>'
+                        - ""
+                    - Invoke: RunBIPReport(i1)
+                      application:
+                        Application: RunBIPReport(TSGTSOAPERPBIP_CONN)
+                        name: RunBIPReport
+                        adapter:
+                            code: TSGTSOAPERPBIP_CONN
+                        properties:
+                            - name: operationPath
+                              value: ""
+                    - Switch: Switch(s1)
+                      routes:
+                        - Route: ValidateResponse(sc2)
+                          exprProperties:
+                            xpathExpression: fn:string-length($RunBIPReport/tns:runReportResponse/tns:runReportReturn/tns:reportBytes) > 16
+                            namespaceList: fn=http://www.w3.org/2005/xpath-functions tns=http://xmlns.oracle.com/oxp/service/PublicReportService
+                            expressionName: ValidateResponse
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: RunBIPReport
+                                  rootElement: '{http://xmlns.oracle.com/oxp/service/PublicReportService}runReportResponse'
+                          statements:
+                            - Map: Map(m3)
+                              xsltfilepath: ../resources/processor_959/resourcegroup_962/req_4333459f45f04850bb10daa79cbc03dd.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/StartCallBackBIP_REQUEST/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteCSVFile_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" ora oracle-xsl-mapper dvm nssrcmpr oraext xsi fn xp20 xsl ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/apps/financials/commonModules/shared" xmlns:nsmpr1="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr2="http://xmlns.oracle.com/types/RunBIPReport/1753454889337/OutboundSOAPRequestDocument" xmlns:nsmpr3="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns27="http://xmlns.oracle.com/pcbpel/adapter/opaque/">
+                                - '  <xsl:param name="RunBIPReport" xml:id="id_32"/>'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:Write xml:id="id_12">'
+                                - '      <ns27:opaqueElement xml:id="id_38">'
+                                - '        <xsl:value-of xml:id="id_39" select="$RunBIPReport/nsmpr1:runReportResponse/nsmpr1:runReportReturn/nsmpr1:reportBytes"/>'
+                                - ""
+                            - StageFile: WriteCSVFile(sf1)
+                              operation: Write
+                              expressionProperties:
+                                xpathExpression: '''ReportFile.csv'''
+                              statements: []
+                            - StageFile: ReadCSVFile(sf2)
+                              operation: Read
+                              expressionProperties:
+                                xpathExpression: $WriteCSVFile/ns16:WriteResponse/ns17:WriteResponse/ns3:ICSFile/ns3:FileReference
+                                namespaceList: ns17=http://xmlns.oracle.com/cloud/staging/write ns16=http://xmlns.oracle.com/cloud/adapter/stagefile/WriteCSVFile_REQUEST/types ns3=http://xmlns.oracle.com/cloud/ics/file/v1/types
+                              statements: []
+                            - ForLoop: ForLoop(f1)
+                              expressionProperties:
+                                xpathExpression: $ReadCSVFile/ns29:ReadResponse/ns27:rs/ns27:r
+                                namespaceList: ns27=http://TargetNamespace.com/fileReference/ReadCSVFile ns29=http://xmlns.oracle.com/cloud/adapter/stagefile/ReadCSVFile_REQUEST/types
+                                variableName: CurrentRecord
+                              currentRecordVarName: CurrentRecord
+                              statements:
+                                - Stitch: Stitch(sh1)
+                                  stitchNamespaceResolver:
+                                    prefixnamespacemap:
+                                        ns19: http://TargetNamespace.com/fileReference/ReadCSVFile
+                                  stitchVariables:
+                                    - name: P_ReportRequestId
+                                      datatype:
+                                        type: XMLSimple
+                                        xsdDataType: '{http://www.w3.org/2001/XMLSchema}string'
+                                      access: SOURCE_AND_TARGET
+                                    - name: CurrentRecord
+                                      datatype:
+                                        type: XMLComplex
+                                        basedOnElement: '{http://TargetNamespace.com/fileReference/ReadCSVFile}r'
+                                        uriToSchema: ../../processor_980/resourcegroup_995/generated.wsdl
+                                      access: SOURCE_AND_TARGET
+                                  stitchSentences:
+                                    - operation: Assign
+                                      from:
+                                        type: XPathExpression
+                                        expression: $CurrentRecord/ns19:r/ns19:REQUESTID
+                                        returnType: XML_TYPE_NODE_NODESET
+                                      to:
+                                        type: XPathPath
+                                        path: $P_ReportRequestId
+                                        isLastStepXsdAnyType: false
+                            - Map: Map(m4)
+                              xsltfilepath: ../resources/processor_1046/resourcegroup_1049/req_4aa3f167adf847ca92e47cf23fad5258.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/StartCallBackBIP_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/DownloadReportXMLData_REQUEST/types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" ora oracle-xsl-mapper dvm nssrcmpr oraext xsi xsd fn xp20 xsl ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/apps/financials/commonModules/shared" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadCSVFile_REQUEST/types" xmlns:nsmpr2="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr3="http://xmlns.oracle.com/types/RunBIPReport/1753454889337/OutboundSOAPRequestDocument" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteCSVFile_REQUEST/types" xmlns:nsmpr5="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns35="http://xml.oracle.com/types/REST/DownloadReportXMLData_REQUEST">
+                                - '  <xsl:param name="P_ReportRequestId" xml:id="id_42"/>'
+                                - '  <xsl:param name="Current_JOB" xml:id="id_84"/>'
+                                - '  <xsl:param name="P_RequestId" xml:id="id_85"/>'
+                                - '  <xsl:param name="ReadCSVFile" xml:id="id_86"/>'
+                                - '  <xsl:param name="RunBIPReport" xml:id="id_87"/>'
+                                - '  <xsl:param name="RunBIPReport_REQUEST" xml:id="id_88"/>'
+                                - '  <xsl:param name="WriteCSVFile" xml:id="id_89"/>'
+                                - '  <xsl:param name="WriteCSVFile_REQUEST" xml:id="id_90"/>'
+                                - '  <xsl:param name="self" xml:id="id_91"/>'
+                                - '  <xsl:param name="tracking_var_1" xml:id="id_92"/>'
+                                - '  <xsl:param name="tracking_var_2" xml:id="id_93"/>'
+                                - '  <xsl:param name="tracking_var_3" xml:id="id_94"/>'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:execute xml:id="id_12">'
+                                - '      <nstrgmpr:QueryParameters xml:id="id_53">'
+                                - '        <ns35:finder xml:id="id_54">'
+                                - '          <xsl:value-of xml:id="id_55" select="concat (&quot;ESSJobExecutionDetailsRF;requestId=&quot;, $P_ReportRequestId, &quot;,fileType=OUT&quot; )"/>'
+                                - ""
+                            - Invoke: DownloadReportXMLData(i2)
+                              application:
+                                Application: DownloadReportXMLData(TSGT_ERP_SCM_REST_FOR_WACS_ERP)
+                                name: DownloadReportXMLData
+                                adapter:
+                                    code: TSGT_ERP_SCM_REST_FOR_WACS_ERP
+                                properties:
+                                    - name: HttpVerb
+                                      value: GET
+                                    - name: QueryParameters
+                                      value: finder
+                                    - name: ResourceURI
+                                      value: /erpintegrations
+                            - Map: Map(m5)
+                              xsltfilepath: ../resources/processor_1125/resourcegroup_1128/req_5a10dfa005fb4e7b8b0775c93cd227f5.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/StartCallBackBIP_REQUEST/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteZipFile_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" ora oracle-xsl-mapper dvm nssrcmpr oraext xsi fn xp20 xsl ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/apps/financials/commonModules/shared" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/DownloadReportXMLData_REQUEST/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadCSVFile_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr4="http://xmlns.oracle.com/types/RunBIPReport/1753454889337/OutboundSOAPRequestDocument" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteCSVFile_REQUEST/types" xmlns:nsmpr6="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns39="http://xmlns.oracle.com/pcbpel/adapter/opaque/" xmlns:ns33="http://xmlns.oracle.com/cloud/adapter/REST/DownloadReportXMLData/types">
+                                - '  <xsl:param name="DownloadReportXMLData" xml:id="id_50"/>'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:Write xml:id="id_12">'
+                                - '      <ns39:opaqueElement xml:id="id_63">'
+                                - '        <xsl:value-of xml:id="id_64" select="$DownloadReportXMLData/nsmpr1:executeResponse/ns33:response-wrapper/ns33:items/ns33:DocumentContent"/>'
+                                - ""
+                            - StageFile: WriteZipFile(sf3)
+                              operation: Write
+                              expressionProperties:
+                                xpathExpression: '''ESSJobRateReport.zip'''
+                              statements: []
+                            - StageFile: UnzipFile(sf4)
+                              operation: Unzip
+                              expressionProperties:
+                                xpathExpression: '''ESSJobRateReport.zip'''
+                              statements: []
+                            - StageFile: ReadXMLFile(sf5)
+                              operation: Read
+                              expressionProperties:
+                                xpathExpression: $UnzipFile/ns27:UnzipResponse/ns28:ListFilesResponse/ns28:FileList/ns3:ICSFile/ns3:FileReference
+                                namespaceList: ns28=http://xmlns.oracle.com/cloud/staging/list ns27=http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types ns3=http://xmlns.oracle.com/cloud/ics/file/v1/types
+                              statements: []
+                            - Map: Map(m6)
+                              xsltfilepath: ../resources/processor_1206/resourcegroup_1209/req_8324721903e84f92b3c6e5aee25049f6.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/StartCallBackBIP_REQUEST/types" xmlns:nstrgmpr="http://xmlns.oracle.com/types/GeneratePDFReport/1753466572335/OutboundSOAPRequestDocument" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" ora oracle-xsl-mapper dvm nssrcmpr oraext xsi xsd fn xp20 xsl ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6 nsmpr7 nsmpr8 nsmpr9 nsmpr3 ns39" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/apps/financials/commonModules/shared" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/DownloadReportXMLData_REQUEST/types" xmlns:nsmpr2="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadCSVFile_REQUEST/types" xmlns:nsmpr3="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadXMLFile_REQUEST/types" xmlns:nsmpr4="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr5="http://xmlns.oracle.com/types/RunBIPReport/1753454889337/OutboundSOAPRequestDocument" xmlns:nsmpr6="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types" xmlns:nsmpr7="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteCSVFile_REQUEST/types" xmlns:nsmpr8="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteZipFile_REQUEST/types" xmlns:nsmpr9="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns39="http://xmlns.oracle.com/pcbpel/adapter/opaque/">
+                                - '  <xsl:param name="P_RequestId" xml:id="id_69"/>'
+                                - '  <xsl:param name="ReadXMLFile" xml:id="id_71"/>'
+                                - '  <xsl:param name="Current_JOB" xml:id="id_153"/>'
+                                - '  <xsl:param name="DownloadReportXMLData" xml:id="id_154"/>'
+                                - '  <xsl:param name="DownloadReportXMLData_REQUEST" xml:id="id_155"/>'
+                                - '  <xsl:param name="P_ReportRequestId" xml:id="id_156"/>'
+                                - '  <xsl:param name="ReadCSVFile" xml:id="id_157"/>'
+                                - '  <xsl:param name="RunBIPReport" xml:id="id_158"/>'
+                                - '  <xsl:param name="RunBIPReport_REQUEST" xml:id="id_159"/>'
+                                - '  <xsl:param name="UnzipFile" xml:id="id_160"/>'
+                                - '  <xsl:param name="WriteCSVFile" xml:id="id_161"/>'
+                                - '  <xsl:param name="WriteCSVFile_REQUEST" xml:id="id_162"/>'
+                                - '  <xsl:param name="WriteZipFile" xml:id="id_163"/>'
+                                - '  <xsl:param name="WriteZipFile_REQUEST" xml:id="id_164"/>'
+                                - '  <xsl:param name="self" xml:id="id_165"/>'
+                                - '  <xsl:param name="tracking_var_1" xml:id="id_166"/>'
+                                - '  <xsl:param name="tracking_var_2" xml:id="id_167"/>'
+                                - '  <xsl:param name="tracking_var_3" xml:id="id_168"/>'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:OutboundSOAPRequestDocument xml:id="id_12">'
+                                - '      <nstrgmpr:Body xml:id="id_83">'
+                                - '        <nsmpr4:runReport xml:id="id_84">'
+                                - '          <nsmpr4:reportRequest xml:id="id_85">'
+                                - '            <nsmpr4:byPassCache xml:id="id_86">'
+                                - '              <xsl:value-of xml:id="id_87" select="true ()"/>'
+                                - '            <nsmpr4:flattenXML xml:id="id_88">'
+                                - '              <xsl:value-of xml:id="id_89" select="false ()"/>'
+                                - '            <nsmpr4:parameterNameValues xml:id="id_96">'
+                                - '              <nsmpr4:item xml:id="id_97">'
+                                - '                <nsmpr4:name xml:id="id_98">'
+                                - '                  <xsl:value-of xml:id="id_99" select="&quot;G_REQUEST_ID&quot;"/>'
+                                - '                <nsmpr4:values xml:id="id_100">'
+                                - '                  <nsmpr4:item xml:id="id_103">'
+                                - '                    <xsl:value-of xml:id="id_104" select="$P_RequestId"/>'
+                                - '            <nsmpr4:reportAbsolutePath xml:id="id_90">'
+                                - '              <xsl:value-of xml:id="id_91" select="&quot;/Projects/Projects Maintenance/ImportProjectRateSchedulesReport.xdo&quot;"/>'
+                                - '            <nsmpr4:reportRawData xml:id="id_92">'
+                                - '              <xsl:value-of xml:id="id_93" select="oraext:decodeBase64 ($ReadXMLFile/nsmpr3:ReadResponse/ns39:opaqueElement )"/>'
+                                - '            <nsmpr4:sizeOfDataChunkDownload xml:id="id_94">'
+                                - '              <xsl:value-of xml:id="id_95" select="&quot;-1&quot;"/>'
+                                - ""
+                            - Invoke: GeneratePDFReport(i3)
+                              application:
+                                Application: GeneratePDFReport(TSGTSOAPERPBIP_CONN)
+                                name: GeneratePDFReport
+                                adapter:
+                                    code: TSGTSOAPERPBIP_CONN
+                                properties:
+                                    - name: operationPath
+                                      value: ""
+                            - Map: Map(m7)
+                              xsltfilepath: ../resources/processor_1305/resourcegroup_1308/req_417cb99fec3b4c4a9f920fe0d0599892.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/WritePDFFile_REQUEST/types" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/StartCallBackBIP_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" ora oracle-xsl-mapper dvm nssrcmpr oraext xsi fn xp20 xsl ignore01 nsmpr0 nsmpr1 nsmpr2 nsmpr3 nsmpr4 nsmpr5 nsmpr6 nsmpr7 nsmpr8 nsmpr9 nsmpr10" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://xmlns.oracle.com/apps/financials/commonModules/shared" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/REST/DownloadReportXMLData_REQUEST/types" xmlns:nsmpr2="http://xmlns.oracle.com/oxp/service/PublicReportService" xmlns:nsmpr3="http://xmlns.oracle.com/types/GeneratePDFReport/1753466572335/OutboundSOAPRequestDocument" xmlns:nsmpr4="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadCSVFile_REQUEST/types" xmlns:nsmpr5="http://xmlns.oracle.com/cloud/adapter/stagefile/ReadXMLFile_REQUEST/types" xmlns:nsmpr6="http://xmlns.oracle.com/types/RunBIPReport/1753454889337/OutboundSOAPRequestDocument" xmlns:nsmpr7="http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipFile_REQUEST/types" xmlns:nsmpr8="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteCSVFile_REQUEST/types" xmlns:nsmpr9="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteZipFile_REQUEST/types" xmlns:nsmpr10="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns42="http://xmlns.oracle.com/pcbpel/adapter/opaque/">
+                                - '  <xsl:param name="GeneratePDFReport" xml:id="id_76"/>'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:Write xml:id="id_12">'
+                                - '      <ns42:opaqueElement xml:id="id_93">'
+                                - '        <xsl:value-of xml:id="id_94" select="$GeneratePDFReport/nsmpr2:runReportResponse/nsmpr2:runReportReturn/nsmpr2:reportBytes"/>'
+                                - ""
+                            - StageFile: WritePDFFile(sf6)
+                              operation: Write
+                              expressionProperties:
+                                xpathExpression: '''ImportProjectRateSchedulesReport.pdf'''
+                              statements: []
+                            - Map: Map(m1)
+                              xsltfilepath: ../resources/processor_392/resourcegroup_395/req_ac950dea543f44fd866cde85eae90c52.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/StartCallBackBIP_REQUEST/types" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/erp/ExtractDocument_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" ora oracle-xsl-mapper dvm nssrcmpr oraext xsi xsd fn xp20 xsl ignore01 nsmpr0" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:inp1="http://xmlns.oracle.com/apps/financials/commonModules/shared">
+                                - '  <xsl:param name="P_ReportRequestId" xml:id="id_27"/>'
+                                - '  <xsl:param name="P_RequestId" xml:id="id_28"/>'
+                                - '  <xsl:param name="self" xml:id="id_29"/>'
+                                - '  <xsl:param name="tracking_var_1" xml:id="id_30"/>'
+                                - '  <xsl:param name="tracking_var_2" xml:id="id_31"/>'
+                                - '  <xsl:param name="tracking_var_3" xml:id="id_32"/>'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:getDocumentForDocumentId xml:id="id_12">'
+                                - '      <nstrgmpr:DocumentId xml:id="id_21">'
+                                - '        <xsl:value-of xml:id="id_22" select="/nssrcmpr:onEvent/inp1:ErpImportBulkDataEvent/inp1:DOCUMENTID"/>'
+                                - ""
+                            - Invoke: ExtractDocument(i0)
+                              application:
+                                Application: ExtractDocument(TSGTERPCLOUD_CONN)
+                                name: ExtractDocument
+                                adapter:
+                                    code: TSGTERPCLOUD_CONN
+                                properties:
+                                    - name: operationPath
+                                      value: http://xmlns.oracle.com/apps/financials/commonModules/shared/model/erpIntegrationService/getDocumentForDocumentId
+                                    - name: Host
+                                      value: '%%TSGTERPCLOUD_CONN_Host'
+                            - Map: Map(m0)
+                              xsltfilepath: ../resources/processor_239/resourcegroup_242/req_3cfea1ffee004929b8b0be4960d5611e.xsl
+                              mapsentences:
+                                - <?xml version = '1.0' encoding = 'UTF-8'?>
+                                - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nssrcmpr="http://xmlns.oracle.com/cloud/adapter/erp/StartCallBackBIP_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/stagefile/WriteStageFile_REQUEST/types" exclude-result-prefixes=" ora oracle-xsl-mapper dvm nssrcmpr oraext xsi fn xp20 xsl ignore01 nsmpr0 inp1 nssrcmpr inp1 nssrcmpr inp1 nssrcmpr nsmpr1" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:nsmpr0="http://www.oracle.com/2014/03/ic/integration/metadata" xmlns:ns23="http://xmlns.oracle.com/pcbpel/adapter/opaque/" xmlns:inp1="http://xmlns.oracle.com/apps/financials/commonModules/shared" xmlns:ns15="http://xmlns.oracle.com/cloud/ics/file/v1/types" xmlns:nsmpr1="http://xmlns.oracle.com/cloud/adapter/erp/ExtractDocument_REQUEST/types" xmlns:tns="http://xmlns.oracle.com/apps/financials/commonModules/shared/model/erpIntegrationService/">
+                                - '  <xsl:param name="ExtractDocument" xml:id="id_45"/>'
+                                - '  <xsl:template match="/" xml:id="id_11">'
+                                - '    <nstrgmpr:Write xml:id="id_12">'
+                                - '      <ns23:opaqueElement xml:id="id_51">'
+                                - '        <xsl:value-of xml:id="id_52" select="$ExtractDocument/nsmpr1:getDocumentForDocumentIdResponse/nsmpr1:result/tns:Content"/>'
+                                - ""
+                            - StageFile: WriteStageFile(sf0)
+                              operation: Write
+                              expressionProperties:
+                                xpathExpression: concat('HCMPPM_PjfPersonRateSch_',/ns0:onEvent/inp1:ErpImportBulkDataEvent/inp1:DOCUMENTID,'.zip')
+                                namespaceList: inp1=http://xmlns.oracle.com/apps/financials/commonModules/shared ns0=http://xmlns.oracle.com/cloud/adapter/erp/StartCallBackBIP_REQUEST/types
+                              statements: []
+                            - StageFile: UnzipDocFile(sf7)
+                              operation: Unzip
+                              expressionProperties:
+                                xpathExpression: $WriteStageFile/ns46:WriteResponse/ns44:WriteResponse/ns3:ICSFile/ns3:FileReference
+                                namespaceList: ns46=http://xmlns.oracle.com/cloud/adapter/stagefile/WriteStageFile_REQUEST/types ns44=http://xmlns.oracle.com/cloud/staging/write ns3=http://xmlns.oracle.com/cloud/ics/file/v1/types
+                              statements: []
+                            - ForLoop: ForLoop(f2)
+                              expressionProperties:
+                                xpathExpression: $UnzipDocFile/ns56:UnzipResponse/ns57:ListFilesResponse/ns57:FileList/ns19:ICSFile
+                                namespaceList: ns57=http://xmlns.oracle.com/cloud/staging/list ns56=http://xmlns.oracle.com/cloud/adapter/stagefile/UnzipDocFile_REQUEST/types ns19=http://xmlns.oracle.com/cloud/ics/file/v1/types
+                                variableName: Current_ICSFile
+                              currentRecordVarName: Current_ICSFile
+                              statements:
+                                - Switch: Switch(s2)
+                                  routes:
+                                    - Route: ValidateFileName(sc5)
+                                      exprProperties:
+                                        xpathExpression: $Current_ICSFile/ns19:ICSFile/ns19:Properties/ns19:filename = 'PjfPersonRateSchLinesInt.csv'
+                                        namespaceList: ns19=http://xmlns.oracle.com/cloud/ics/file/v1/types
+                                        expressionName: ValidateFileName
+                                      stateInfo:
+                                        variablesReferenced:
+                                            - VariableName: Current_ICSFile
+                                              rootElement: '{http://xmlns.oracle.com/cloud/ics/file/v1/types}ICSFile'
+                                      statements:
+                                        - Logger: Logger(lg3)
+                                          name: LogReportDetails
+                                          description: ""
+                                          propertyfile: ../resources/processor_2271/resourcegroup_3354/expr.properties
+                                          expressionProperties:
+                                            xpathExpression: 'concat(''DocumentID: '',/ns26:onEvent/inp1:ErpImportBulkDataEvent/inp1:DOCUMENTID,'' SummaryStatus: '',/ns26:onEvent/inp1:ErpImportBulkDataEvent/inp1:SUMMARYSTATUS,'' RequestID: '',$P_RequestId,'' Report RequestID: '',$P_ReportRequestId)'
+                                            namespaceList: inp1=http://xmlns.oracle.com/apps/financials/commonModules/shared ns26=http://xmlns.oracle.com/cloud/adapter/erp/StartCallBackBIP_REQUEST/types
+                                            variableName: LogReportDetails
+                                        - Switch: Switch(s3)
+                                          routes:
+                                            - Route: CheckToSendFYIEmailOrNot(sc6)
+                                              exprProperties:
+                                                xpathExpression: $selfProperties/ns56:properties/ns56:Send_FYI_Emails = "True"
+                                                namespaceList: ns56=http://www.oracle.com/2014/03/ic/integration/properties
+                                                expressionName: CheckToSendFYIEmailOrNot
+                                              stateInfo:
+                                                variablesReferenced:
+                                                    - VariableName: selfProperties
+                                                      rootElement: '{http://www.oracle.com/2014/03/ic/integration/properties}properties'
+                                              statements:
+                                                - xmlname:
+                                                    space: http://www.oracle.com/2014/03/ics/flow/definition
+                                                    local: notification
+                                                  attrs:
+                                                    - name:
+                                                        space: ""
+                                                        local: id
+                                                      value: n0
+                                                    - name:
+                                                        space: ""
+                                                        local: refUri
+                                                      value: processor_20
+                                                  content: ""
+                                                  statements: []
+                        - Route: Otherwise(sc3)
+                          exprProperties:
+                            xpathExpression: "true"
+                            expressionName: Otherwise
+                          stateInfo: {}
+                          statements:
+                            - Logger: Logger(lg1)
+                              name: LogNotFoundDetails
+                              description: ""
+                              propertyfile: ../resources/processor_933/resourcegroup_3358/expr.properties
+                              expressionProperties:
+                                xpathExpression: 'concat(''Data not found for RequstId: '',$P_RequestId)'
+                                variableName: LogNotFoundDetails
+                - Route: ValidateJobName(sc4)
+                  exprProperties:
+                    xpathExpression: $Current_JOB/inp1:JOBS/inp1:JOBNAME = 'Import Project Rate Schedules and Overrides'
+                    namespaceList: inp1=http://xmlns.oracle.com/apps/financials/commonModules/shared
+                    expressionName: ValidateJobName
+                  stateInfo:
+                    variablesReferenced:
+                        - VariableName: Current_JOB
+                          rootElement: '{http://xmlns.oracle.com/apps/financials/commonModules/shared}JOBS'
+                  statements:
+                    - Logger: Logger(lg4)
+                      name: LogReportRequestDetails
+                      description: ""
+                      propertyfile: ../resources/processor_2838/resourcegroup_3370/expr.properties
+                      expressionProperties:
+                        xpathExpression: 'concat(''DocumentID: '',/ns16:onEvent/inp1:ErpImportBulkDataEvent/inp1:DOCUMENTID,''JobName: '',$Current_JOB/inp1:JOBS/inp1:JOBNAME,'' RequestID: '',$Current_JOB/inp1:JOBS/inp1:REQUESTID,'' Status: '',$Current_JOB/inp1:JOBS/inp1:STATUS, ''P_RequestId: '',$P_RequestId,'' P_ReportRequestId: '',$P_ReportRequestId)'
+                        namespaceList: inp1=http://xmlns.oracle.com/apps/financials/commonModules/shared ns16=http://xmlns.oracle.com/cloud/adapter/erp/StartCallBackBIP_REQUEST/types
+                        variableName: LogReportRequestDetails
+                    - Switch: Switch(s4)
+                      routes:
+                        - Route: CheckToSendFYIEmailOrNot(sc7)
+                          exprProperties:
+                            xpathExpression: $selfProperties/ns35:properties/ns35:Send_FYI_Emails = "True"
+                            namespaceList: ns35=http://www.oracle.com/2014/03/ic/integration/properties
+                            expressionName: CheckToSendFYIEmailOrNot
+                          stateInfo:
+                            variablesReferenced:
+                                - VariableName: selfProperties
+                                  rootElement: '{http://www.oracle.com/2014/03/ic/integration/properties}properties'
+                          statements:
+                            - xmlname:
+                                space: http://www.oracle.com/2014/03/ics/flow/definition
+                                local: notification
+                              attrs:
+                                - name:
+                                    space: ""
+                                    local: id
+                                  value: n2
+                                - name:
+                                    space: ""
+                                    local: refUri
+                                  value: processor_1591
+                              content: ""
+                              statements: []
+                - Route: Otherwise(sc1)
+                  exprProperties:
+                    xpathExpression: "true"
+                    expressionName: Otherwise
+                  stateInfo: {}
+                  statements:
+                    - Logger: Logger(lg0)
+                      name: LogInfo
+                      description: ""
+                      propertyfile: ../resources/processor_817/resourcegroup_3420/expr.properties
+                      expressionProperties:
+                        xpathExpression: '''Skip'''
+                        variableName: LogInfo
+        - Stop: Stop(st0)
+        - CatchAll: CatchAll(ta0)
+          statements:
+            - Logger: Logger(lg2)
+              name: LogGlobalFaultDetails
+              description: Logs global fault details.
+              propertyfile: ../resources/processor_2094/resourcegroup_3636/expr.properties
+              expressionProperties:
+                xpathExpression: 'concat(''DocumentID: '',/ns17:onEvent/inp1:ErpImportBulkDataEvent/inp1:DOCUMENTID,'' SummaryStatus: '',/ns17:onEvent/inp1:ErpImportBulkDataEvent/inp1:SUMMARYSTATUS,'' Error Code: '',$GlobalFaultObject/ics:fault/ics:errorCode,'' Reason: '',$GlobalFaultObject/ics:fault/ics:reason)'
+                namespaceList: inp1=http://xmlns.oracle.com/apps/financials/commonModules/shared ns17=http://xmlns.oracle.com/cloud/adapter/erp/StartCallBackBIP_REQUEST/types ics=http://www.oracle.com/2014/03/ics/fault
+                variableName: LogGlobalFaultDetails
+                variableDescription: Logs global fault details.
+            - xmlname:
+                space: http://www.oracle.com/2014/03/ics/flow/definition
+                local: notification
+              attrs:
+                - name:
+                    space: ""
+                    local: id
+                  value: n1
+                - name:
+                    space: ""
+                    local: refUri
+                  value: processor_78
+              content: ""
+              statements: []
+            - Stop: EHStop(eh0)
+          icsfaultfilepath: ../resources/processor_56/resourcegroup_57/ICSFault.xsd

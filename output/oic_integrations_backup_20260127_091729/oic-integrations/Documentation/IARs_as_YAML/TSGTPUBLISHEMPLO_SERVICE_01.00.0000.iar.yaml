@@ -1,0 +1,45 @@
+Orchestration: ""
+statements:
+    - Receive: Receive(r0)
+      trackingvariables:
+        - role: tracking_var_1
+          primary: true
+          name: tracking_var_1
+          xpath: /execute/request-wrapper/EmployeesBatch/BatchID
+        - role: tracking_var_2
+          name: tracking_var_2
+        - role: tracking_var_3
+          name: tracking_var_3
+    - Map: Map(m0)
+      xsltfilepath: ../resources/processor_46/resourcegroup_49/req_7306fae9b0804afcac586b38c19d22ec.xsl
+      mapsentences:
+        - <?xml version = '1.0' encoding = 'UTF-8'?>
+        - <xsl:stylesheet version="2.0" xml:id="id_1" xmlns:ora="http://schemas.oracle.com/xpath/extension" xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas" xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue" xmlns:nstrgmpr="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes=" ora oracle-xsl-mapper dvm oraext xsi xsd fn xp20 xsl ignore01" xmlns:ignore01="http://www.oracle.com/XSL/Transform/java" ignore01:ignorexmlids="true" xmlns:ns0="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger_REQUEST/types" xmlns:ns1="http://xmlns.oracle.com/cloud/adapter/REST/EmployeeTrigger/types" xmlns:ns8="http://xmlns.oracle.com/cloud/adapter/connectivityproperties/REST/EmployeeTrigger_REQUEST/RESTINREQ" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+        - '  <xsl:template match="/" xml:id="id_11">'
+        - '    <nstrgmpr:execute xml:id="id_12">'
+        - '      <xsl:copy-of select="/ns0:execute/ns1:request-wrapper"/>'
+        - '      <xsl:copy-of select="/ns0:execute/ns8:ConnectivityProperties"/>'
+        - ""
+    - xmlname:
+        space: http://www.oracle.com/2014/03/ics/flow/definition
+        local: publish
+      attrs:
+        - name:
+            space: ""
+            local: id
+          value: pub0
+        - name:
+            space: ""
+            local: refUri
+          value: application_38
+        - name:
+            space: ""
+            local: name
+          value: EVENT_TSGTPUBLISHEMPLO_SER_2247
+        - name:
+            space: ""
+            local: displayName
+          value: EVENT_TSGTPUBLISHEMPLO_SER_2247
+      content: ""
+      statements: []
+    - Stop: Stop(st0)

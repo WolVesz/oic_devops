@@ -1,0 +1,13 @@
+flowchart LR
+%% Auto-generated from invoke_chain_group_001.csv — root TSGT_MATER_TRAN_SYNC_WACS_TO_ERP
+classDef integ fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+classDef adapt fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+ TSGT_MATER_TRAN_SYNC_WACS_TO_ERP["TSGT Material Transaction Sync WACS To ERP"]:::integ
+ TSGT_ENTERPRISENOTIFI["TSGT EnterpriseNotificationService"]:::integ
+ TSGT_MATER_TRAN_SYNC_WACS_TO_ERP -->|sendEmailNotification| TSGT_ENTERPRISENOTIFI
+ TSGT_MATER_TRAN_SYNC_WACS_TO_ERP -->|sendNotification| TSGT_ENTERPRISENOTIFI
+ OUTL_BRT_APP_ERPPIM_WACSERPPIM{{"Oracle Utilities ERP Cloud for WACS-ERPPIM"}}:::adapt
+ TSGT_MATER_TRAN_SYNC_WACS_TO_ERP -->|getItemCosts| OUTL_BRT_APP_ERPPIM_WACSERPPIM
+ TSGT_MATER_TRAN_SYNC_WACS_TO_ERP -->|getItemListPrice| OUTL_BRT_APP_ERPPIM_WACSERPPIM
+ TSGT_ERP_SCM_REST_FOR_WACS_ERP{{"TSGT ERP SCM  REST for WACS-ERP"}}:::adapt
+ TSGT_MATER_TRAN_SYNC_WACS_TO_ERP -->|invokeERPSCMInvTranRestEndponts| TSGT_ERP_SCM_REST_FOR_WACS_ERP

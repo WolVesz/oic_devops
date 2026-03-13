@@ -1,0 +1,14 @@
+flowchart LR
+%% Auto-generated from invoke_chain_group_005.csv — root OUTL-BA-FPRC_WACS_BC_SYNC
+classDef integ fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+classDef adapt fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+ OUTL_BA_FPRC_WACS_BC_SYNC["Oracle Utilities FPRC WACS Blanket Contracts Sync"]:::integ
+ OUTL_BRT_SOAP_UCM_WACSFPRC{{"Oracle Utilities SOAP UCM Gen Svc for WACS-FPRC"}}:::adapt
+ OUTL_BA_FPRC_WACS_BC_SYNC -->|GetFileFromUCM| OUTL_BRT_SOAP_UCM_WACSFPRC
+ OUTL_BRT_REST_WACS_WACSFPRC{{"Oracle Utilities REST WACS for WACS-FPRC"}}:::adapt
+ OUTL_BA_FPRC_WACS_BC_SYNC -->|InvokeWACSBCSync| OUTL_BRT_REST_WACS_WACSFPRC
+ OUTL_BA_FPRC_WACS_BC_SYNC -->|invokeWACS_HealthCheck| OUTL_BRT_REST_WACS_WACSFPRC
+ OUTL_BRT_ERPCLOUD_WACSFPRC{{"Oracle Utilities ERP Cloud for WACS-FPRC"}}:::adapt
+ OUTL_BA_FPRC_WACS_BC_SYNC -->|invoke_UOMConversionRest| OUTL_BRT_ERPCLOUD_WACSFPRC
+ OUTL_BA_FPRC_WACS_BC_SYNC -->|remaneFileInUCM| OUTL_BRT_SOAP_UCM_WACSFPRC
+ OUTL_BA_FPRC_WACS_BC_SYNC -->|searchBlanketContractFile| OUTL_BRT_SOAP_UCM_WACSFPRC
