@@ -1,9 +1,12 @@
-
 """
 Password rotation workflow OIC connections.
 """
 from __future__ import annotations
-
+"""
+TODOS:
+1- print out the Connection name, not the code
+2- Validate for locks in Connections and Integrations before stopping schedulers
+"""
 import time
 import os
 import json
