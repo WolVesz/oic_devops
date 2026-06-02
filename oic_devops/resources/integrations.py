@@ -376,8 +376,8 @@ class IntegrationsResource(BaseResource):
             # Write the content to the file
 
             file_path = file_path.replace('|', '-')
-            if not file_path.endswith('.zip'):
-                file_path = file_path + '.zip'
+            if not file_path.endswith('.iar'):
+                file_path = file_path + '.iar'
 
             try:
                 with open(file_path, 'wb') as f:

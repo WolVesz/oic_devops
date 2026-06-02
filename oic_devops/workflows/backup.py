@@ -19,6 +19,27 @@ from oic_devops.exceptions import OICError
 from oic_devops.workflows.base import BaseWorkflow, WorkflowResult
 
 
+def _sanitize_filename(name: str) -> str:
+    """
+    Sanitize a name for use in a filename.
+
+    Args:
+        name: The name to sanitize.
+
+    Returns:
+        str: The sanitized name.
+
+    """
+    # Replace invalid characters with underscores
+    sanitized = re.sub(r'[\\/*?:"<>|]', '_', name)
+
+    # Truncate if too long
+    if len(sanitized) > 50:
+        sanitized = sanitized[:47] + '...'
+
+    return sanitized
+
+
 class BackupWorkflows(BaseWorkflow):
     """
     Workflow operations for backing up OIC resources.
@@ -145,7 +166,7 @@ class BackupWorkflows(BaseWorkflow):
                 export_file = os.path.join(
                     backup_path,
                     'integrations',
-                    f'{self._sanitize_filename(integration_id)}.iar',
+                    f'{_sanitize_filename(integration_id)}.iar',
                 )
 
                 try:
@@ -222,7 +243,7 @@ class BackupWorkflows(BaseWorkflow):
                 export_file = os.path.join(
                     backup_path,
                     'connections',
-                    f'{connection_id}_{self._sanitize_filename(connection_name)}.json',
+                    f'{connection_id}_{_sanitize_filename(connection_name)}.json',
                 )
 
                 try:
@@ -304,7 +325,7 @@ class BackupWorkflows(BaseWorkflow):
                 export_file = os.path.join(
                     backup_path,
                     'lookups',
-                    f'{lookup_id}_{self._sanitize_filename(lookup_name)}.csv',
+                    f'{lookup_id}_{_sanitize_filename(lookup_name)}.csv',
                 )
 
                 try:
@@ -379,7 +400,7 @@ class BackupWorkflows(BaseWorkflow):
                 export_file = os.path.join(
                     backup_path,
                     'libraries',
-                    f'{library_id}_{self._sanitize_filename(library_name)}.jar',
+                    f'{library_id}_{_sanitize_filename(library_name)}.jar',
                 )
 
                 try:
@@ -455,7 +476,7 @@ class BackupWorkflows(BaseWorkflow):
                     export_file = os.path.join(
                         backup_path,
                         'packages',
-                        f'{package_id}_{self._sanitize_filename(package_name)}.par',
+                        f'{package_id}_{_sanitize_filename(package_name)}.par',
                     )
 
                     try:
@@ -709,7 +730,7 @@ class BackupWorkflows(BaseWorkflow):
                     export_file = os.path.join(
                         backup_path,
                         'integrations',
-                        f'{self._sanitize_filename(integration_id)}.iar',
+                        f'{_sanitize_filename(integration_id)}.iar',
                     )
 
                     # Export integration
@@ -768,7 +789,7 @@ class BackupWorkflows(BaseWorkflow):
                     export_file = os.path.join(
                         backup_path,
                         'connections',
-                        f'{connection_id}_{self._sanitize_filename(connection_name)}.json',
+                        f'{connection_id}_{_sanitize_filename(connection_name)}.json',
                     )
 
                     # Save to file
@@ -827,7 +848,7 @@ class BackupWorkflows(BaseWorkflow):
                     export_file = os.path.join(
                         backup_path,
                         'lookups',
-                        f'{lookup_id}_{self._sanitize_filename(lookup_name)}.csv',
+                        f'{lookup_id}_{_sanitize_filename(lookup_name)}.csv',
                     )
 
                     # Export lookup
@@ -882,7 +903,7 @@ class BackupWorkflows(BaseWorkflow):
                     export_file = os.path.join(
                         backup_path,
                         'libraries',
-                        f'{library_id}_{self._sanitize_filename(library_name)}.jar',
+                        f'{library_id}_{_sanitize_filename(library_name)}.jar',
                     )
 
                     # Export library
@@ -937,7 +958,7 @@ class BackupWorkflows(BaseWorkflow):
                     export_file = os.path.join(
                         backup_path,
                         'packages',
-                        f'{package_id}_{self._sanitize_filename(package_name)}.par',
+                        f'{package_id}_{_sanitize_filename(package_name)}.par',
                     )
 
                     # Export package
@@ -1165,7 +1186,7 @@ class BackupWorkflows(BaseWorkflow):
                 export_file = os.path.join(
                     backup_path,
                     'integrations',
-                    f'{self._sanitize_filename(integration_id)}.iar',
+                    f'{_sanitize_filename(integration_id)}.iar',
                 )
 
                 try:
@@ -1269,7 +1290,7 @@ class BackupWorkflows(BaseWorkflow):
                             export_file = os.path.join(
                                 backup_path,
                                 'connections',
-                                f'{connection_id}_{self._sanitize_filename(connection_name)}.json',
+                                f'{connection_id}_{_sanitize_filename(connection_name)}.json',
                             )
 
                             # Save to file
@@ -1319,7 +1340,7 @@ class BackupWorkflows(BaseWorkflow):
                             export_file = os.path.join(
                                 backup_path,
                                 'lookups',
-                                f'{lookup_id}_{self._sanitize_filename(lookup_name)}.csv',
+                                f'{lookup_id}_{_sanitize_filename(lookup_name)}.csv',
                             )
 
                             # Export lookup
@@ -1527,7 +1548,7 @@ class BackupWorkflows(BaseWorkflow):
                 export_file = os.path.join(
                     backup_path,
                     'lookups',
-                    f'{lookup_id}_{self._sanitize_filename(lookup_name)}.csv',
+                    f'{lookup_id}_{_sanitize_filename(lookup_name)}.csv',
                 )
 
                 try:
@@ -1559,7 +1580,7 @@ class BackupWorkflows(BaseWorkflow):
                             data_file = os.path.join(
                                 backup_path,
                                 'lookup_data',
-                                f'{lookup_id}_{self._sanitize_filename(lookup_name)}_data.json',
+                                f'{lookup_id}_{_sanitize_filename(lookup_name)}_data.json',
                             )
 
                             # Save data to file
@@ -1797,7 +1818,7 @@ class BackupWorkflows(BaseWorkflow):
                     export_file = os.path.join(
                         backup_path,
                         'connections',
-                        f'{connection_id}_{self._sanitize_filename(connection_name)}.json',
+                        f'{connection_id}_{_sanitize_filename(connection_name)}.json',
                     )
 
                     # Save to file
@@ -2495,30 +2516,12 @@ class BackupWorkflows(BaseWorkflow):
 
         return result
 
-    def _sanitize_filename(self, name: str) -> str:
-        """
-        Sanitize a name for use in a filename.
-
-        Args:
-            name: The name to sanitize.
-
-        Returns:
-            str: The sanitized name.
-
-        """
-        # Replace invalid characters with underscores
-        sanitized = re.sub(r'[\\/*?:"<>|]', '_', name)
-
-        # Truncate if too long
-        if len(sanitized) > 50:
-            sanitized = sanitized[:47] + '...'
-
-        return sanitized
 
 
-def export_active_integrations_all() -> pd.DataFrame:
+# BELOW IS NOT TESTED YET
+def export_active_integrations_all(profile: str = 'prod') -> pd.DataFrame:
     # Initialize client
-    client = OICClient(profile="prod")
+    client = OICClient(profile=profile)
 
     # Fetch integrations
     df = client.integrations.df()
@@ -2539,7 +2542,7 @@ def export_active_integrations_all() -> pd.DataFrame:
 
         # zipfile_path = os.path.join(extract_to_folder, f"{integration_id}.zip")
         folder_path_integration_id = os.path.join(extract_to_folder, integration_id)
-        code_folder = os.path.join(extract_to_folder, "code")
+
 
         try:
             if item['status'] == "ACTIVATED":
