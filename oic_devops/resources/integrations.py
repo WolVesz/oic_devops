@@ -375,7 +375,7 @@ class IntegrationsResource(BaseResource):
         if 'content' in response and isinstance(response['content'], bytes):
             # Write the content to the file
 
-            file_path = file_path.replace('|', '-')
+            file_path = file_path.replace('|', '_')
             if not file_path.endswith('.iar'):
                 file_path = file_path + '.iar'
 
@@ -423,12 +423,17 @@ class IntegrationsResource(BaseResource):
                 }
 
                 # Make the import request with data as form fields
-                headers = {'Accept': 'application/json'}
+                headers = {'Accept': 'application/json','Content-Type': 'multipart/form-data'}
+                # Make update action which means: import
+                if not params:
+                    params = dict()
+                params["update"]='true'
 
                 # Make a custom request that includes both files and form data
+                endpoint = self._get_endpoint(action='archive')
                 return self.client.request(
                     'POST',
-                    self._get_endpoint(action='import'),
+                    endpoint,
                     data=data,
                     params=params,
                     files=files,
