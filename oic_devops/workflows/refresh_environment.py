@@ -130,12 +130,17 @@ class RefreshEnvironment(BaseWorkflow):
             self.logger.error(f"Failed to export {integration_id}: {e}")
             raise
 
-    def _delete_integration(self, integration_id: str, client: OICClient)-> Dict[str, Any]:
+    def _delete_integration(self, integration_id: str, client: OICClient):
+
         try:
-            return client.integrations.delete(integration_id=integration_id)
+            client.integrations.delete(integration_id=integration_id)
+        except OICResourceNotFoundError as oicExc:
+            # Not a problem. keep moving
+            return
         except Exception as e:
             self.logger.error(f"Failed to delete {integration_id} from {client.config.profile}: {e}")
             raise
+        return
     def _import_integration(self, file_path: str, client: OICClient) -> Dict[str, Any]:
         """Import integration with replace option."""
 
@@ -570,6 +575,7 @@ class RefreshEnvironment(BaseWorkflow):
                 refresh_plan['plan_steps_to_execute'],
                 PlanSteps.IMPORT_INTEGRATIONS
             )
+            integrations_imported_count = 0
             if not activate_integrations_requested:
                 self.logger.info("🚫 Not Requested: Import integrations.")
             else:
@@ -581,31 +587,29 @@ class RefreshEnvironment(BaseWorkflow):
                     integration_name = integration_to_import.get('name')
 
                     # Delete existing in target prior to import, otherwise import fails.
-                    if integration_to_import.get('source_version') == integration_to_import.get('target_version'):
-                        try:
-                            delete_result = self._delete_integration(integration_id=integration_id)
-                        except Exception as exception:
-                            self.logger.error(f"❌  Failed to delete {integration_name} v{source_version}", exception,
-                                              integration_id)
-                            failures.append({'integration_id': integration_id, 'error': str(exception)})
-                            result.add_error(f"❌  Failed to delete {integration_name} v{source_version}", exception,
-                                             integration_id)
-                            return result
+                    try:
+                         self._delete_integration(integration_id=integration_id, client=self.target_client)
+                    except Exception as exception:
+                        self.logger.error(f"❌  Failed to delete {integration_name} v{source_version}", exception,
+                                          integration_id)
+                        failures.append({'integration_id': integration_id, 'error': str(exception)})
+                        result.add_error(f"❌  Failed to delete {integration_name} v{source_version}", exception,
+                                         integration_id)
+                        return result
                     try:
                         # Import to target
                         export_file_name = f"{integration_id}.iar"
                         export_path = os.path.join(self.source_export_dir, export_file_name)
-                        import_result = self._import_integration(export_path, self.target_client)
-                        ## TODO: remove
-                        print(f'{integration_id} import result: {str(import_result)}')
-
+                        self._import_integration(export_path, self.target_client)
+                        integrations_imported_count +=1
+                        self.logger.info(f'Imported: {integration_id}')
                     except Exception as exception:
                         self.logger.error(f"❌  Failed to import {integration_name} v{source_version}", exception, integration_id)
                         failures.append({'integration_id': integration_id, 'error': str(exception)})
                         result.add_error(f"❌  Failed to import {integration_name} v{source_version}", exception, integration_id)
                         return result
                 self.logger.info(
-                    f"✅ Ended importing integrations:  TODO of {len(refresh_plan['integrations_to_refresh'])}")
+                    f"✅ Ended importing integrations. {integrations_imported_count} of {len(refresh_plan['integrations_to_refresh'])}")
 
             # Step 5.4 Update Integration Configuration Properties:  UPDATE_INTEGRATIONS_PROPERTIES
             activate_integrations_requested = is_plan_step_requested(

@@ -177,7 +177,9 @@ class OICClient:
             headers.update(custom_headers)
 
         # multipart/from-data
-        is_multipart_from_data = custom_headers.get('Content-Type', '') == 'multipart/form-data'
+        is_multipart_from_data = False
+        if custom_headers:
+            is_multipart_from_data = custom_headers.get('Content-Type', '') == 'multipart/form-data'
 
         # Clean up prior session headers
         session_headers = dict(self.session.headers)
