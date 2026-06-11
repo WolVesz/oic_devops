@@ -241,6 +241,7 @@ class OICClient:
             json_data = None
             if data is not None:
                 json_data = data
+                data = None
 
             # Make the request
             response = self.session.request(

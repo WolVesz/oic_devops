@@ -73,7 +73,29 @@ client.connections.test("CONNECTION_ID")
 
 # Similar patterns for other resources
 ```
+### Workflows
+#### Refresh Environment
+```
+import os
+from oic_devops.client import OICClient
+from oic_devops.workflows.refresh_environment import RefreshEnvironment
 
+# This scratch is used by refresh_environment run/debug configuration
+target_client = OICClient(profile="dev-1")
+source_client = OICClient(profile="dev-3")
+refresh_plan_dir = "./output/refresh_env" # Optional
+workflow = RefreshEnvironment(target_client, source_client, refresh_plan_dir=refresh_plan_dir)
+# Step 1. Create the plan
+# create_plan_result = workflow.create_plan(integration_name_filter="/Pssw/")
+
+# Step 2. Optional Rename refresh_plan.yaml to other name like refresh_plan_dependencies.yaml 
+refresh_plan_path= os.path.join(refresh_plan_dir, f'refresh_plan_dependencies.yaml')
+# Step 3. Optional - Edit the plan commenting out the actions you do not want to perform
+
+# Step 4. Execute the plan
+result = workflow.execute(skip_backup=True, refresh_plan_path=refresh_plan_path)
+
+```
 ### Command Line Interface
 
 The package also provides a command-line interface for common operations:
