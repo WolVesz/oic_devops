@@ -213,23 +213,27 @@ class IntegrationsResource(BaseResource):
         return super().delete(integration_id, params)
 
     def activate(
-        self, integration_id: str, params: Optional[Dict[str, Any]] = None
+        self, integration_id: str,
+            json_data:Optional[Dict[str, Any]] = None,
+            params: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """
         Activate a specific integration.
 
         Args:
             integration_id: ID of the integration to activate.
-            data: Optional activation data.
+            json_data: Optional activation data.
             params: Optional query parameters.
 
         Returns:
             Dict: The activation result data.
 
         """
-        headers = {'X-HTTP-Method-Override': 'PATCH'}
+        headers = {'X-HTTP-Method-Override': 'PATCH', 'Content-Type': 'application/json'}
 
         body = {'status': 'ACTIVATED'}
+        if json_data:
+            body.update(json_data)
 
         return self.update(integration_id, data=body, params=params, headers=headers)
 
