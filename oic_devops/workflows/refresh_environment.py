@@ -25,7 +25,7 @@ SCHEDULE_ACTIVE_STATE = 'ACTIVE'
 PLAN_STEPS_NAMES = [
     'BACKUP', 'EXPORT_FROM_SOURCE', 'DEACTIVATE_INTEGRATIONS',
     'IMPORT_INTEGRATIONS', 'UPDATE_INTEGRATIONS_PROPERTIES',
-    'ACTIVATE_INTEGRATIONS', 'GENERATE_REPORT', 'DELETE_INTEGRATIONS'
+    'ACTIVATE_INTEGRATIONS','START_SCHEDULER', 'GENERATE_REPORT', 'DELETE_INTEGRATIONS'
 ]
 
 PlanSteps = Enum('PlanSteps', {state: state for state in PLAN_STEPS_NAMES})
@@ -77,6 +77,8 @@ class RefreshEnvironment(BaseWorkflow):
         os.makedirs(self.source_export_dir, exist_ok=True)
         self.logger.info(f"Refresh Plan directory: {self.refresh_plan_dir}")
         self.logger.info(f"Backup directory: {self.backup_dir}")
+
+        self.actions_performed: Dict[str, List[Dict[str, Any]]] = {}
 
     @staticmethod
     def _get_major_version(version: str) -> str:
@@ -136,9 +138,10 @@ class RefreshEnvironment(BaseWorkflow):
             self.logger.error(f"Failed to export {integration_id}: {e}")
             raise
 
-    def _delete_integration(self, integration_id: str, client: OICClient):
+    def _delete_integration(self, integration_id: str, is_scheduler: bool, client: OICClient)->bool:
 
         try:
+            self._prepare_integration_for_import(integration_id, is_scheduler, client)
             client.integrations.delete(integration_id=integration_id)
         except OICResourceNotFoundError as oicExc:
             # Not a problem. keep moving
@@ -146,7 +149,7 @@ class RefreshEnvironment(BaseWorkflow):
         except Exception as e:
             self.logger.error(f"Failed to delete {integration_id} from {client.config.profile}: {e}")
             raise
-        return
+        return True
 
     def _import_integration(self, file_path: str, client: OICClient) -> Dict[str, Any]:
         """Import integration with replace option."""
@@ -181,7 +184,7 @@ class RefreshEnvironment(BaseWorkflow):
             return is_fatal, msg
         except OICResourceNotFoundError as nf:
             msg = f"Schedule not found: {nf}"
-            self.logger.error("%s for %s", msg, integration_id)
+            self.logger.info("%s for %s", msg, integration_id)
             return True, msg
 
     def _prepare_integration_for_import(self, integration_id: str,is_scheduler: bool, client: OICClient) -> Tuple[bool, Optional[str]]:
@@ -224,7 +227,7 @@ class RefreshEnvironment(BaseWorkflow):
             try:
                 integ = self.target_integrations.get(integration_id)
                 current_status = integ.get('status')
-                self.logger.info(f"Integration {integration_id} status: {current_status} (attempt {attempt+1}/{max_attempts})")
+                self.logger.info(f"Waiting for Integration {integration_id} to be at {desired_status} status. Current: {current_status} (attempt {attempt+1}/{max_attempts})")
 
                 if current_status == desired_status:
                     return True
@@ -290,6 +293,13 @@ class RefreshEnvironment(BaseWorkflow):
             integration_id = source_integ.get("id")
             source_pattern = source_integ.get('pattern')
             is_schedule_active_in_source = source_integ.get('schedule', {}).get('state', '') == SCHEDULE_ACTIVE_STATE
+            action = "Replace"
+            if not target_integ:
+                action = "New Integration"
+            else:
+                if target_integ.get('version') != source_version:
+                    action = "New Version"
+
             plan['integrations_to_refresh'].append({
                 'integration_id': integration_id,
                 'composite_key': composite_key,
@@ -301,6 +311,7 @@ class RefreshEnvironment(BaseWorkflow):
                 'is_active_in_target': target_integ is not None, # True when the integration same major version is active in target
                 'is_scheduler': source_pattern == SCHEDULED,
                 'is_schedule_active_in_source': is_schedule_active_in_source,
+                'fyi_action': action,
             })
             if is_schedule_active_in_source:
                 plan['schedulers_to_start'].append({
@@ -345,8 +356,7 @@ class RefreshEnvironment(BaseWorkflow):
 
     def _print_plan(self, plan: dict):
         print("\n=== REFRESH ENVIRONMENT PLAN ===")
-        print(f"Source: {plan['source_environment']}")
-        print(f"Target: {plan['target_environment']}")
+
         print(f"\nIntegrations to import/activate ({len(plan['integrations_to_refresh'])}):")
         for item in plan['integrations_to_refresh']:
             replace_str = f" (replacing active target v{item['target_version']})" if item['is_active_in_target'] else ""
@@ -374,6 +384,8 @@ class RefreshEnvironment(BaseWorkflow):
 
         print(f"\nBackup dir: {self.backup_dir}")
         print(f"Refresh plan: {self.refresh_plan_path}\n")
+        print(f"Source: {plan['source_environment']}")
+        print(f"Target: {plan['target_environment']}")
 
     def _retrieve_plan(self, refresh_plan_file_path: str) -> Dict:
         """
@@ -504,6 +516,12 @@ class RefreshEnvironment(BaseWorkflow):
         """
         result = WorkflowResult()
         abort = False
+        failures = []
+        result.details['failures'] = failures
+        self.actions_performed.clear()
+        result.details['actions_performed'] = self.actions_performed
+
+
         try:
             if refresh_plan_path:
                 refresh_plan = self._retrieve_plan(refresh_plan_path)
@@ -526,26 +544,22 @@ class RefreshEnvironment(BaseWorkflow):
             else:
                 self.logger.info("▶️ Backing up target environment...")
                 self._backup_target_environment()
-                bk_msg = result.add_resource('backup', 'target_environment', {'path': self.backup_integrations_dir})
+                bk_msg = result.add_resource('backup', 'backup_integrations_dir', {'path': self.backup_integrations_dir})
+                self._append_action_performed(step=PlanSteps.BACKUP,integration_id=None, env= self.backup_integrations_dir)
                 self.logger.info(f"✅ Complete backing up target environment. {bk_msg}")
 
             # Step 5: Perform the refresh
-
             activated_success_count = 0
-            failures = []
-            result.details['failures'] = failures
-            actions_performed = [{}]
-            result.details['actions_performed'] = actions_performed
 
             # 5.1 Export from Source
-            export_requested = is_plan_step_requested(
-                refresh_plan['plan_steps_to_execute'],
-                PlanSteps.EXPORT_FROM_SOURCE
-            )
-            if not export_requested:
-                self.logger.info("🚫 Not Requested: Export integrations...")
-            else:
-                if not abort:
+            if not abort:
+                export_requested = is_plan_step_requested(
+                    refresh_plan['plan_steps_to_execute'],
+                    PlanSteps.EXPORT_FROM_SOURCE
+                )
+                if not export_requested:
+                    self.logger.info("🚫 Not Requested: Export integrations...")
+                else:
                     self.logger.info(
                         f"▶️(↓) Start exporting integrations from source environment {refresh_plan['source_environment']}...")
                     export_count = 0
@@ -559,7 +573,7 @@ class RefreshEnvironment(BaseWorkflow):
                             export_file_name = f"{integration_id}.iar"
                             export_path = os.path.join(self.source_export_dir, export_file_name)
                             self._export_integration(integration_id,  self.source_client, export_path)
-                            actions_performed.append({integration_id: f'Exported from {self.source_client.config.profile} to {export_path}'})
+                            self._append_action_performed(PlanSteps.EXPORT_FROM_SOURCE, integration_id, self.source_client.config.profile)
                             export_count +=1
                         except Exception as exception:
                             failures.append({'integration_id': integration_id, 'error': str(exception)})
@@ -575,14 +589,14 @@ class RefreshEnvironment(BaseWorkflow):
                         f"{export_count} of {len(refresh_plan.get('integrations_to_refresh',[]))}")
 
             #5.2 Stop Schedulers and inactivate integrations
-            stop_sched_requested = is_plan_step_requested(
-                refresh_plan['plan_steps_to_execute'],
-                PlanSteps.DEACTIVATE_INTEGRATIONS
-            )
-            if not stop_sched_requested:
-                self.logger.info("🚫 Not Requested: Deactivate integrations.")
-            else:
-                if not abort:
+            if not abort:
+                stop_sched_requested = is_plan_step_requested(
+                    refresh_plan['plan_steps_to_execute'],
+                    PlanSteps.DEACTIVATE_INTEGRATIONS
+                )
+                if not stop_sched_requested:
+                    self.logger.info("🚫 Not Requested: Deactivate integrations.")
+                else:
                     self.logger.info(
                         f"▶️ Deactivating integrations from target environment {refresh_plan['target_environment']}...")
                     done_count = 0
@@ -606,9 +620,10 @@ class RefreshEnvironment(BaseWorkflow):
                             result.add_error(error_msg, exception, integration_id)
                             abort = True
                             break # stop processing
-
-                        actions_performed.append({integration_id: msg})
-                        done_count +=1
+                        else:
+                            self._append_action_performed(PlanSteps.DEACTIVATE_INTEGRATIONS, integration_id,
+                                                          self.target_client.config.profile)
+                            done_count +=1
 
                     self.logger.info(
                         f"✅ Ended deactivating integrations: {done_count} of {len(refresh_plan.get('target_integrations_to_deactivate', []))}")
@@ -627,11 +642,14 @@ class RefreshEnvironment(BaseWorkflow):
                     integration_id = integration_to_refresh.get('integration_id')  # version-specific ID
                     integration_name = integration_to_refresh.get('name')
                     source_version = integration_to_refresh.get('source_version')
+                    is_scheduler = integration_to_refresh.get('is_scheduler', False)
 
                     try:
-                        self._delete_integration(integration_id=integration_id, client=self.target_client)
-                        actions_performed.append({integration_id: f'Deleted in {self.target_client}'})
-                        count += 1
+                        real_delete = self._delete_integration(integration_id=integration_id, is_scheduler= is_scheduler, client=self.target_client)
+                        if real_delete:
+                            count += 1
+                            self._append_action_performed(PlanSteps.DELETE_INTEGRATIONS, integration_id,
+                                                           self.target_client.config.profile)
                     except Exception as exception:
                         failures.append({'integration_id': integration_id, 'error': str(exception)})
                         result.add_error(f"❌  Failed to delete {integration_name} v{source_version}", exception,
@@ -641,27 +659,32 @@ class RefreshEnvironment(BaseWorkflow):
                     f"✅ Ended deleting integrations. {count} of {len(refresh_plan.get('integrations_to_refresh', []))}")
 
             #5.3 Import integrations
-            update_properties_requested = is_plan_step_requested(
-                refresh_plan['plan_steps_to_execute'],
-                PlanSteps.IMPORT_INTEGRATIONS
-            )
-            integrations_imported_count = 0
-            if not update_properties_requested:
-                self.logger.info("🚫 Not Requested: Import integrations.")
-            else:
-                if not abort:
+            if not abort:
+                update_properties_requested = is_plan_step_requested(
+                    refresh_plan['plan_steps_to_execute'],
+                    PlanSteps.IMPORT_INTEGRATIONS
+                )
+                integrations_imported_count = 0
+                if not update_properties_requested:
+                    self.logger.info("🚫 Not Requested: Import integrations.")
+                else:
                     self.logger.info(
                         f"▶️ Importing integrations to target environment {refresh_plan['target_environment']}...")
                     for integration_to_import in refresh_plan['integrations_to_refresh']:
                         integration_id = integration_to_import.get('integration_id')  # version-specific ID
                         source_version = integration_to_import.get('source_version')
                         integration_name = integration_to_import.get('name')
+                        is_scheduler = integration_to_import.get('is_scheduler', False)
 
                         # Delete existing in target prior to import, otherwise import fails.
                         try:
-                             self._delete_integration(integration_id=integration_id, client=self.target_client)
+                             real_delete = self._delete_integration(integration_id=integration_id, is_scheduler=is_scheduler, client=self.target_client)
+                             if real_delete:
+                                 self._append_action_performed(PlanSteps.DELETE_INTEGRATIONS, integration_id,
+                                                               self.target_client.config.profile)
+
                         except Exception as exception:
-                            self.logger.error(f"❌  Failed to delete {integration_name} v{source_version}", exception,
+                            self.logger.error(f"❌  Failed to delete {integration_name} v{source_version}. Error: {str(exception)}", exception,
                                               integration_id)
                             failures.append({'integration_id': integration_id, 'error': str(exception)})
                             result.add_error(f"❌  Failed to delete {integration_name} v{source_version}", exception,
@@ -673,6 +696,8 @@ class RefreshEnvironment(BaseWorkflow):
                             export_file_name = f"{integration_id}.iar"
                             export_path = os.path.join(self.source_export_dir, export_file_name)
                             self._import_integration(export_path, self.target_client)
+                            self._append_action_performed(PlanSteps.IMPORT_INTEGRATIONS, integration_id,
+                                                          self.target_client.config.profile)
                             integrations_imported_count +=1
                             self.logger.info(f'Imported: {integration_id}')
                         except Exception as exception:
@@ -684,14 +709,14 @@ class RefreshEnvironment(BaseWorkflow):
                         f"✅ Ended importing integrations. {integrations_imported_count} of {len(refresh_plan.get('integrations_to_refresh',[]))}")
 
             # Step 5.4 Update Integration Configuration Properties:  UPDATE_INTEGRATIONS_PROPERTIES
-            update_properties_requested = is_plan_step_requested(
-                refresh_plan['plan_steps_to_execute'],
-                PlanSteps.UPDATE_INTEGRATIONS_PROPERTIES
-            )
-            if not update_properties_requested:
-                self.logger.info("🚫 Not Requested: Update integrations Properties.")
-            else:
-                if not abort:
+            if not abort:
+                update_properties_requested = is_plan_step_requested(
+                    refresh_plan['plan_steps_to_execute'],
+                    PlanSteps.UPDATE_INTEGRATIONS_PROPERTIES
+                )
+                if not update_properties_requested:
+                    self.logger.info("🚫 Not Requested: Update integrations Properties.")
+                else:
                     self.logger.info(
                         f" ▶️ Updating integrations properties in target environment: {refresh_plan['target_environment']}...")
                     count = 0
@@ -703,6 +728,8 @@ class RefreshEnvironment(BaseWorkflow):
                         try:
                             print(f'TODO: UPDATE_INTEGRATIONS_PROPERTIES Not implemented yet! {integration_id}')
                             ## TODO: implement
+                            # self._append_action_performed(PlanSteps.UPDATE_INTEGRATIONS_PROPERTIES, integration_id,
+                            #                               self.target_client.config.profile)
                         except Exception as exception:
                             failures.append({'integration_id': integration_id, 'error': str(exception)})
                             result.add_error(f"❌  Failed to refresh {integration_name} v{source_version}", exception,
@@ -712,62 +739,87 @@ class RefreshEnvironment(BaseWorkflow):
                         f"✅ Ended updating properties for integrations. {count} of {len(refresh_plan.get('integrations_to_refresh', []))}")
 
             # STEP 4.6 Activate Integrations
-            activate_requested = is_plan_step_requested(
-                refresh_plan['plan_steps_to_execute'],
-                PlanSteps.ACTIVATE_INTEGRATIONS
-            )
-            if not activate_requested:
-                self.logger.info("🚫 Not Requested: Activate integrations Properties.")
-            else:
-                if not abort:
-                    self.logger.info(
-                        f"▶️ Activating integrations in target environment {refresh_plan['target_environment']}...")
-                    for integration_to_refresh in refresh_plan['integrations_to_refresh']:
-                        integration_id = integration_to_refresh.get('integration_id')                    # version-specific ID
-                        source_version = integration_to_refresh.get('source_version')
-                        integration_name = integration_to_refresh.get('name')
-                        composite_key = integration_to_refresh.get('composite_key')
-                        is_scheduler = integration_to_refresh.get('is_scheduler')
+            if not abort:
+                activate_requested = is_plan_step_requested(
+                    refresh_plan['plan_steps_to_execute'],
+                    PlanSteps.ACTIVATE_INTEGRATIONS
+                )
+                if not activate_requested:
+                    self.logger.info("🚫 Not Requested: Activate integrations Properties.")
+                else:
 
-                        try:
-                            # Activate
-                            self.logger.info(
-                                f"🚀 Activating {integration_name} v{source_version} (major {self._get_major_version(source_version)})")
-                            json_data = {
-                                "tracingEnabledFlag":True,
-                                "payloadTracingEnabledFlag":False,
-                                "recordEnabledFlag":False,
-                                "replay":{"canReplay":False},"payload":{"validate":False},"softDeactivate":False}
-                            activate_response = self.target_integrations.activate(integration_id, json_data=json_data)  # Use version-specific ID
-                            self.logger.info(f'Activate integration {integration_id} Response: {str(activate_response)}') # TODO: is it needed?
+                        self.logger.info(
+                            f"▶️ Activating integrations in target environment {refresh_plan['target_environment']}...")
+                        for integration_to_refresh in refresh_plan['integrations_to_refresh']:
+                            integration_id = integration_to_refresh.get('integration_id')                    # version-specific ID
+                            source_version = integration_to_refresh.get('source_version')
+                            integration_name = integration_to_refresh.get('name')
+                            composite_key = integration_to_refresh.get('composite_key')
+                            is_scheduler = integration_to_refresh.get('is_scheduler')
 
-                            # Wait for activation
-                            activated = self._wait_for_integration_status(integration_id, 'ACTIVATED', max_attempts=5)
+                            try:
+                                # Activate
+                                self.logger.info(
+                                    f"🚀 Activating {integration_name} v{source_version} (major {self._get_major_version(source_version)})")
+                                json_data = {
+                                    "tracingEnabledFlag":True,
+                                    "payloadTracingEnabledFlag":False,
+                                    "recordEnabledFlag":False,
+                                    "replay":{"canReplay":False},"payload":{"validate":False},"softDeactivate":False}
+                                self.target_integrations.activate(integration_id, json_data=json_data)  # Use version-specific ID
 
-                            # Start scheduler if applicable
-                            if is_scheduler and activated:
-                                self.logger.info(f"Starting scheduler for {integration_name} v{source_version}")
-                                start_data = {"parameters": []}
-                                self.target_integrations.start_schedule(integration_id, data=start_data)
 
-                            activated_success_count += 1
-                            result.add_resource('activated_integration', composite_key, {
-                                'status': 'success',
-                                'name': integration_name,
-                                'is_scheduler': is_scheduler,
-                                'version': source_version
-                            })
+                                # Wait for activation
+                                activated = self._wait_for_integration_status(integration_id, 'ACTIVATED', max_attempts=5)
+                                self._append_action_performed(PlanSteps.ACTIVATE_INTEGRATIONS, integration_id,
+                                                              self.target_client.config.profile)
+                                self.logger.info(f'     🟢 Activated integration {integration_id}')
 
-                        except Exception as exception:
-                            failures.append({'integration_id': integration_id, 'error': str(exception)})
-                            result.add_error(f"❌  Failed to activate {integration_name} v{source_version}", exception,
-                                                 integration_id)
-                            abort = True
-                self.logger.info(
-                    f"✅ Ended activating integrations. {activated_success_count} of {len(refresh_plan.get('integrations_to_refresh', []))}")
+                                # Start scheduler if applicable
+                                if is_scheduler and activated:
+                                    self.logger.info(f"Starting scheduler for {integration_name} v{source_version}")
+                                    start_data = {"parameters": []}
+                                    self.target_integrations.start_schedule(integration_id, data=start_data)
+                                    self._append_action_performed(PlanSteps.START_SCHEDULER, integration_id,
+                                                                  self.target_client.config.profile)
+                                    self.logger.info(
+                                        f'⏲ Started Scheduler for integration {integration_id}')
 
+                                activated_success_count += 1
+                                result.add_resource('activated_integration', composite_key, {
+                                    'status': 'success',
+                                    'name': integration_name,
+                                    'is_scheduler': is_scheduler,
+                                    'version': source_version
+                                })
+
+                            except Exception as exception:
+                                failures.append({'integration_id': integration_id, 'error': str(exception)})
+                                result.add_error(f"❌  Failed to activate {integration_name} v{source_version}", exception,
+                                                     integration_id)
+                                abort = True
+                        self.logger.info(
+                            f"✅ Ended activating integrations. {activated_success_count} of {len(refresh_plan.get('integrations_to_refresh', []))}")
 
             # Step 6: Generate report
+            if not abort:
+                is_requested = is_plan_step_requested(
+                    refresh_plan['plan_steps_to_execute'],
+                    PlanSteps.GENERATE_REPORT
+                )
+                if not is_requested:
+                    self.logger.info("🚫 Not Requested: Generate Report.")
+                else:
+                    self.logger.info(
+                        f"▶️ Generating report...")
+
+                    # for integration_to_refresh in refresh_plan['integrations_to_refresh']:
+                    #     integration_id = integration_to_refresh.get('integration_id')  # version-specific ID
+                    #     activated_integration = result.resources.get('activated_integration',{}).get('integration_id',{})
+                    #
+                self.logger.info(
+                    f"✅ Ended Generating report.")
+
             result.details['refreshed_count'] = activated_success_count
 
             result.message = f"Refresh completed: {activated_success_count} integrations refreshed, {len(failures)} failures."
@@ -819,4 +871,19 @@ class RefreshEnvironment(BaseWorkflow):
             result.message = f"Rollback failed: {e}"
             result.add_error("Rollback failed", e)
             return result
+
+    def _append_action_performed(
+            self,
+            step: PlanSteps,
+            integration_id: str = None,
+            env: str = None,
+    ):
+
+        if step.name not in self.actions_performed:
+            self.actions_performed[step.name] = []
+
+        action = self.actions_performed[step.name]
+        action.append({"integration_id":integration_id, "environment":env})
+
+
 
