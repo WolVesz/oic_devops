@@ -465,9 +465,10 @@ class RefreshEnvironment(BaseWorkflow):
         print(f"\nBackup dir: {self.backup_dir}")
         print(f"Refresh plan: {self.refresh_plan_path}\n")
 
-        print(f"\nTotalIntegrations to deactivate ({len(plan['target_integrations_to_deactivate'])}):")
-        print(f"Total Integrations to import and activate ({len(plan['integrations_to_refresh'])}):")
-        print(f"Total Schedulers to start ({active_schedulers_count}):")
+        print(f"\nTotal Libraries to import: ({len(plan['libraries_to_refresh'])})")
+        print(f"Total Integrations to deactivate: ({len(plan['target_integrations_to_deactivate'])})")
+        print(f"Total Integrations to import and activate: ({len(plan['integrations_to_refresh'])})")
+        print(f"Total Schedulers to start: ({active_schedulers_count})")
         print(f"Source: {plan['source_environment']}")
         print(f"Target: {plan['target_environment']}")
 
