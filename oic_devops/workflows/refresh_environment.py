@@ -23,12 +23,20 @@ SCHEDULE_ACTIVE_STATE = 'ACTIVE'
 
 ##
 PLAN_STEPS_NAMES = [
-    'BACKUP', 'EXPORT_FROM_SOURCE', 'DEACTIVATE_INTEGRATIONS',
-    'IMPORT_INTEGRATIONS', 'UPDATE_INTEGRATIONS_PROPERTIES',
-    'ACTIVATE_INTEGRATIONS','START_SCHEDULER', 'GENERATE_REPORT', 'DELETE_INTEGRATIONS'
-]
+    'BACKUP', 'BACKUP_LIBRARIES', 'EXPORT_FROM_SOURCE', 'EXPORT_LIBRARIES_FROM_SOURCE','DEACTIVATE_INTEGRATIONS',
+    'IMPORT_LIBRARIES', 'IMPORT_INTEGRATIONS', 'UPDATE_INTEGRATIONS_PROPERTIES',
+    'ACTIVATE_INTEGRATIONS','START_SCHEDULER', 'GENERATE_REPORT',
 
+]
 PlanSteps = Enum('PlanSteps', {state: state for state in PLAN_STEPS_NAMES})
+
+# Utility Steps can be manually added to plan. Become handy for reprocessing and debugging
+UTILITY_STEPS_NAMES = [
+    # Delete integrations is a convenient step that will delete the integrations listed in the plan from the target environment
+    'DELETE_INTEGRATIONS',
+    'SKIP_VALIDATION'
+]
+UtilitySteps = Enum('UtilitySteps', {state: state for state in UTILITY_STEPS_NAMES})
 
 def is_plan_step_requested(plan_steps_to_execute: List[PlanSteps], step: PlanSteps):
     return step.name in plan_steps_to_execute
@@ -38,6 +46,7 @@ IGNORE_ERRORS = ['is not active', 'resource not found']
 def should_ignore_error(e: Exception) -> bool:
     msg = str(e).lower()
     return any(p in msg for p in IGNORE_ERRORS)
+
 
 
 class RefreshEnvironment(BaseWorkflow):
@@ -68,13 +77,17 @@ class RefreshEnvironment(BaseWorkflow):
 
         self.backup_dir = backup_dir or os.path.join(refresh_plan_dir, f'refresh_backup')
         self.backup_integrations_dir = os.path.join(self.backup_dir, 'integrations_backup')
+        self.backup_libraries_dir = os.path.join(self.backup_dir, 'libraries_backup')
         self.original_state_path = os.path.join(self.backup_dir,
                                                 f'original_state_{target_client.config.profile}_{ts}.yaml')
         self.source_export_dir = os.path.join(self.refresh_plan_dir, 'integrations_source')
+        self.source_export_lib_dir = os.path.join(self.refresh_plan_dir, 'library_source')
 
         os.makedirs(self.refresh_plan_dir, exist_ok=True)
         os.makedirs(self.backup_integrations_dir, exist_ok=True)
+        os.makedirs(self.backup_libraries_dir, exist_ok=True)
         os.makedirs(self.source_export_dir, exist_ok=True)
+        os.makedirs(self.source_export_lib_dir, exist_ok=True)
         self.logger.info(f"Refresh Plan directory: {self.refresh_plan_dir}")
         self.logger.info(f"Backup directory: {self.backup_dir}")
 
@@ -137,11 +150,19 @@ class RefreshEnvironment(BaseWorkflow):
         except Exception as e:
             self.logger.error(f"Failed to export {integration_id}: {e}")
             raise
+    def _export_library(self, lib_id: str, client: OICClient, file_path: str) -> str:
+        """Export library from client to file_path."""
+        try:
+            file_path = file_path.replace('|', '_')
+            return client.libraries.export(library_id=lib_id, file_path=file_path)
+        except Exception as e:
+            self.logger.error(f"Failed to export {lib_id}: {e}")
+            raise
 
     def _delete_integration(self, integration_id: str, is_scheduler: bool, client: OICClient)->bool:
 
         try:
-            self._prepare_integration_for_import(integration_id, is_scheduler, client)
+            self._stop_and_deactivate_integrations(integration_id, is_scheduler, client)
             client.integrations.delete(integration_id=integration_id)
         except OICResourceNotFoundError as oicExc:
             # Not a problem. keep moving
@@ -157,6 +178,14 @@ class RefreshEnvironment(BaseWorkflow):
         file_path = file_path.replace('|', '_')
         try:
             return client.integrations.import_integration(file_path)
+        except Exception as e:
+            self.logger.error(f"Failed to import from {file_path}: {e}")
+            raise
+
+    def _import_library(self, file_path: str, client: OICClient )->Dict[str,Any]:
+        """ import libraries """
+        try:
+            return client.libraries.import_library(file_path)
         except Exception as e:
             self.logger.error(f"Failed to import from {file_path}: {e}")
             raise
@@ -187,7 +216,7 @@ class RefreshEnvironment(BaseWorkflow):
             self.logger.info("%s for %s", msg, integration_id)
             return True, msg
 
-    def _prepare_integration_for_import(self, integration_id: str,is_scheduler: bool, client: OICClient) -> Tuple[bool, Optional[str]]:
+    def _stop_and_deactivate_integrations(self, integration_id: str, is_scheduler: bool, client: OICClient) -> Tuple[bool, Optional[str]]:
         """Stop schedule and deactivate if necessary before import."""
         try:
             success = True
@@ -240,12 +269,13 @@ class RefreshEnvironment(BaseWorkflow):
         self.logger.error(f"Timeout waiting for {integration_id} to reach status {desired_status}")
         return False
 
-    def _create_original_state(self, active_integrations: List[Dict[str, Any]], original_state_path: str = None) -> str:
+    def _create_original_state(self, active_integrations: List[Dict[str, Any]], client: OICClient, original_state_path: str = None) -> str:
         """Create YAML file with original state for rollback."""
 
         if not original_state_path:
             original_state_path = self.original_state_path
 
+        libraries = client.libraries.list_all()
         state = {
             'timestamp': datetime.now().isoformat(),
             'integrations': [
@@ -257,10 +287,23 @@ class RefreshEnvironment(BaseWorkflow):
                     'major_version': self._get_major_version(integ.get('version')),
                     'status': integ.get('status'),
                     'pattern': integ.get('pattern'),
-                    'schedule': integ.get('schedule', None)
+                    'schedule': integ.get('schedule', None),
+                    'lockedFlag': integ.get('lockedFlag')
                     ## TODO: add integration properties values
                 }
                 for integ in active_integrations
+            ],
+            'libraries':[
+                {
+                    'id': library.get('id'),
+                    'code': library.get('code'),
+                    'displayName': library.get('displayName'),
+                    'version': library.get('version'),
+                    'status': library.get('status'),
+                    'lockedFlag': library.get('lockedFlag'),
+                    'usage': library.get('usage'),
+                }
+                for library in libraries
             ]
         }
         with open(original_state_path, 'w') as f:
@@ -275,6 +318,7 @@ class RefreshEnvironment(BaseWorkflow):
             'source_environment': getattr(self.source_client.config, 'identity_domain', 'SOURCE'),
             'target_environment': getattr(self.target_client.config, 'identity_domain', 'TARGET'),
             'integrations_to_refresh': [],
+            'libraries_to_refresh':[],
             'target_integrations_to_deactivate': [],
             'schedulers_to_start': [],
             'plan_steps_to_execute': [step.name for step in PlanSteps],
@@ -330,13 +374,38 @@ class RefreshEnvironment(BaseWorkflow):
                     'is_scheduler': is_scheduler,
                     'is_scheduler_active': is_scheduler_active,
                 })
-            
+        # get the libraries from the source
+        libraries = self.source_client.libraries.list_all()
+        for library in libraries:
+            plan['libraries_to_refresh'].append(
+                {
+                    'id': library.get('id'),
+                    'code': library.get('code'),
+                    'displayName': library.get('displayName'),
+                    'version': library.get('version'),
+                    'status': library.get('status'),
+                    'lockedFlag': library.get('lockedFlag'),
+                    'usage': library.get('usage'),
+                }
+
+            )
+
         with open(self.refresh_plan_path, 'w') as f:
             yaml.safe_dump(plan, f, default_flow_style=False)
 
         return plan
 
 
+    def _backup_libraries_target_environment(self)->str:
+        """Backup libraries """
+        libraries = self.target_client.libraries.list_all()
+        for lib in libraries:
+            lib_id = lib.get('id')
+            backup_path = os.path.join(self.backup_libraries_dir, f"{lib_id}.zip")
+            self._export_library(lib_id=lib_id, file_path=backup_path, client=self.target_client)
+
+        self.logger.info(f"Target environment libraries backed up to {self.backup_libraries_dir}")
+        return self.backup_integrations_dir
 
     def _backup_target_environment(self) -> str:
         """Backup active integrations in target environment."""
@@ -345,8 +414,15 @@ class RefreshEnvironment(BaseWorkflow):
             integ_id = integ.get('id')
             backup_path = os.path.join(self.backup_integrations_dir, f"{integ_id}.iar")
             self._export_integration(integ_id, self.target_client, backup_path)
+        libraries = self.target_client.libraries.list_all()
+        for lib in libraries:
+            lib_id = lib.get('id')
+            backup_path = os.path.join(self.backup_libraries_dir, f"{lib_id}.zip")
+            self._export_library(lib_id=lib_id, file_path=backup_path, client=self.target_client)
+
         self.logger.info(f"Target environment backed up to {self.backup_integrations_dir}")
         return self.backup_integrations_dir
+
 
     def _approve_plan(self, plan: Dict) -> bool:
         """Display plan and ask for user approval."""
@@ -365,7 +441,7 @@ class RefreshEnvironment(BaseWorkflow):
             print(f"  - {item['name']} v{item['source_version']} \t\t{replace_str}{sched_str}")
 
         if plan['target_integrations_to_deactivate']:
-            print(f"\nSchedulers to stop ({len(plan['target_integrations_to_deactivate'])}):")
+            print(f"\nIntegrations to deactivate ({len(plan['target_integrations_to_deactivate'])}):")
             for sched in plan['target_integrations_to_deactivate']:
                 print(f"  - {sched['name']} ({sched.get('version')})")
 
@@ -378,12 +454,20 @@ class RefreshEnvironment(BaseWorkflow):
                 print(f"  - {sched['name']} ({sched.get(
                     'source_version')})")
 
+        print(f"\nLibraries to refresh ({len(plan['libraries_to_refresh'])}):")
+        for lib in plan['libraries_to_refresh']:
+            print(f"  - {lib['displayName']} ({lib.get('version')})")
+
         print(f'\nSteps to execute: ')
         for action in plan['plan_steps_to_execute']:
             print(f"   - {action}")
 
         print(f"\nBackup dir: {self.backup_dir}")
         print(f"Refresh plan: {self.refresh_plan_path}\n")
+
+        print(f"\nTotalIntegrations to deactivate ({len(plan['target_integrations_to_deactivate'])}):")
+        print(f"Total Integrations to import and activate ({len(plan['integrations_to_refresh'])}):")
+        print(f"Total Schedulers to start ({active_schedulers_count}):")
         print(f"Source: {plan['source_environment']}")
         print(f"Target: {plan['target_environment']}")
 
@@ -448,6 +532,7 @@ class RefreshEnvironment(BaseWorkflow):
 
         return filename
 
+
     def create_plan(self, integration_name_filter: str = None,
                     backup_dir: Optional[str] = None,
                     refresh_plan_dir: Optional[str] = None,
@@ -491,7 +576,7 @@ class RefreshEnvironment(BaseWorkflow):
             target_active = self._get_active_integrations(self.target_client, integration_name_filter)
 
             # Step 2: Create original state for rollback
-            self._create_original_state(target_active)
+            self._create_original_state(active_integrations=target_active, client=self.target_client, original_state_path=self.original_state_path)
             result.add_resource('original_state', 'yaml', {'path': self.original_state_path})
 
             # Step 3: Create refresh plan (major version aware)
@@ -500,6 +585,8 @@ class RefreshEnvironment(BaseWorkflow):
             print(f"Original state backup: {self.original_state_path}")
 
             result.details['refresh_plan'] = self.refresh_plan_path
+
+            print(f"✅ Success. Plan create: {self.refresh_plan_path}")
 
         except Exception as e:
             result.success = False
@@ -521,13 +608,13 @@ class RefreshEnvironment(BaseWorkflow):
         self.actions_performed.clear()
         result.details['actions_performed'] = self.actions_performed
 
-
         try:
             if refresh_plan_path:
                 refresh_plan = self._retrieve_plan(refresh_plan_path)
             else:
                 refresh_plan = self._retrieve_plan(self.refresh_plan_path)
 
+            ## Request plan approval
             if not self._approve_plan(refresh_plan):
                 result.success = False
                 result.message = "User declined the refresh plan"
@@ -544,21 +631,61 @@ class RefreshEnvironment(BaseWorkflow):
             else:
                 self.logger.info("▶️ Backing up target environment...")
                 self._backup_target_environment()
-                bk_msg = result.add_resource('backup', 'backup_integrations_dir', {'path': self.backup_integrations_dir})
+                result.add_resource('backup', 'backup_integrations_dir', {'path': self.backup_integrations_dir})
                 self._append_action_performed(step=PlanSteps.BACKUP,integration_id=None, env= self.backup_integrations_dir)
-                self.logger.info(f"✅ Complete backing up target environment. {bk_msg}")
+                self.logger.info(f"✅ Complete backing up target environment.")
+
+            step_requested = is_plan_step_requested(
+                refresh_plan['plan_steps_to_execute'],
+                PlanSteps.BACKUP_LIBRARIES
+            )
+            if skip_backup or not step_requested:
+                self.logger.info("🚫 Not Requested: Backing up Libraries for target environment...")
+            else:
+                self.logger.info("▶️ Backing up libraries for target environment...")
+                self._backup_libraries_target_environment()
+                result.add_resource('backup_library', 'backup_libraries_dir',
+                                             {'path': self.backup_libraries_dir})
+                self._append_action_performed(step=PlanSteps.BACKUP, integration_id=None,
+                                              env=self.backup_libraries_dir)
+                self.logger.info(f"✅ Complete backing up Libraries  for target environment.")
+
+            if skip_backup or not backup_requested:
+                self.logger.info("🚫 Not Requested: Backing up target environment...")
+            else:
+                self.logger.info("▶️ Backing up target environment...")
+            # Step Verify realtime there are no locked integrations, libraries in target environment
+            step_requested = is_plan_step_requested(
+                refresh_plan['plan_steps_to_execute'],
+                UtilitySteps.SKIP_VALIDATION
+            )
+            if step_requested:
+                self.logger.info("🚫 Skip Lock Verification in target environment...")
+            else:
+                self.logger.info("▶️ Verifying no locks in target environment...")
+                locked_list = self.validate_any_locks(refresh_plan, self.target_client)
+
+                if len(locked_list) > 0:
+                    result.success = False
+                    message = f'LOCKED artifacts to refresh prevent plan execution: {len(locked_list)}'
+                    result.message = message
+                    print(f"\n❌ {message}")
+                    for obj_id in locked_list:
+                        print(f'\t🔒 {obj_id}')
+
+                    return result
 
             # Step 5: Perform the refresh
             activated_success_count = 0
 
-            # 5.1 Export from Source
+            # 5.1 Export Integrations from Source
             if not abort:
-                export_requested = is_plan_step_requested(
+                step_requested = is_plan_step_requested(
                     refresh_plan['plan_steps_to_execute'],
                     PlanSteps.EXPORT_FROM_SOURCE
                 )
-                if not export_requested:
-                    self.logger.info("🚫 Not Requested: Export integrations...")
+                if not step_requested:
+                    self.logger.info("🚫 Not Requested: Export from source...")
                 else:
                     self.logger.info(
                         f"▶️(↓) Start exporting integrations from source environment {refresh_plan['source_environment']}...")
@@ -577,24 +704,58 @@ class RefreshEnvironment(BaseWorkflow):
                             export_count +=1
                         except Exception as exception:
                             failures.append({'integration_id': integration_id, 'error': str(exception)})
-                            error_msg = f"❌ Failed to export {integration_name} v{source_version}"
+                            error_msg = f"❌ Failed to export integration: {integration_name} v{source_version}"
                             result.add_error(error_msg, exception, integration_id)
                             logging.error(f'{error_msg}. Error: {str(exception)}')
                             print(f'{error_msg}. Error: {str(exception)}')
                             abort = True
                             # No break needed
-
                     self.logger.info(
                         f"✅(↓) Ended exporting integrations from source environment {refresh_plan['source_environment']}: "
-                        f"{export_count} of {len(refresh_plan.get('integrations_to_refresh',[]))}")
+                        f"{export_count} of {len(refresh_plan.get('integrations_to_refresh', []))}")
+                    self.logger.info(
+                        f"▶️(↓) Start exporting integrations from source environment {refresh_plan['source_environment']}...")
+
+            # 5.1 Export Integrations from Source
+            if not abort:
+                step_requested = is_plan_step_requested(
+                    refresh_plan['plan_steps_to_execute'],
+                    PlanSteps.EXPORT_LIBRARIES_FROM_SOURCE
+                )
+                if not step_requested:
+                    self.logger.info("🚫 Not Requested: Export Library from source...")
+                else:
+                    self.logger.info(
+                        f"▶️(↓) Start exporting Libraries from source environment {refresh_plan['source_environment']}...")
+                    export_count = 0
+
+                    for library_to_refresh in refresh_plan['libraries_to_refresh']:
+                        lib_id = library_to_refresh['id']
+                        export_file_name = library_to_refresh['displayName'] + '_' +  library_to_refresh['version'] + '.zip'
+                        export_path = os.path.join(self.source_export_lib_dir, export_file_name)
+                        try:
+                            self._export_library(lib_id, self.source_client, export_path)
+                            self._append_action_performed(PlanSteps.EXPORT_FROM_SOURCE, lib_id, self.source_client.config.profile)
+                            export_count += 1
+                        except Exception as exception:
+                            failures.append({'library_id': lib_id, 'error': str(exception)})
+                            error_msg = f"❌ Failed to export library: {export_file_name} "
+                            result.add_error(error_msg, exception, lib_id)
+                            logging.error(f'{error_msg}. Error: {str(exception)}')
+                            print(f'{error_msg}. Error: {str(exception)}')
+                            abort = True
+                            # No break needed
+                    self.logger.info(
+                        f"✅(↓) Ended exporting libraries from source environment {refresh_plan['source_environment']}: "
+                        f"{export_count} of {len(refresh_plan.get('libraries_to_refresh',[]))}")
 
             #5.2 Stop Schedulers and inactivate integrations
             if not abort:
-                stop_sched_requested = is_plan_step_requested(
+                step_requested = is_plan_step_requested(
                     refresh_plan['plan_steps_to_execute'],
                     PlanSteps.DEACTIVATE_INTEGRATIONS
                 )
-                if not stop_sched_requested:
+                if not step_requested:
                     self.logger.info("🚫 Not Requested: Deactivate integrations.")
                 else:
                     self.logger.info(
@@ -609,7 +770,7 @@ class RefreshEnvironment(BaseWorkflow):
 
                         # Prepare target (deactivate matching major version if exists)
                         target_integration_id =  f'{code}|{target_version}'
-                        prepared_for_import_successful, msg = self._prepare_integration_for_import(
+                        prepared_for_import_successful, msg = self._stop_and_deactivate_integrations(
                             integration_id=target_integration_id,
                             is_scheduler=is_scheduler,
                             client=self.target_client)  # Use specific ID
@@ -629,12 +790,12 @@ class RefreshEnvironment(BaseWorkflow):
                         f"✅ Ended deactivating integrations: {done_count} of {len(refresh_plan.get('target_integrations_to_deactivate', []))}")
 
             # Delete integration to import
-            del_requested = is_plan_step_requested(
+            action_requested = is_plan_step_requested(
                 refresh_plan['plan_steps_to_execute'],
-                PlanSteps.DELETE_INTEGRATIONS
+                UtilitySteps.DELETE_INTEGRATIONS
             )
             count = 0
-            if del_requested and not abort:
+            if action_requested and not abort:
                 self.logger.info(
                     f" ▶️ Deleting integrations in target environment: {refresh_plan['target_environment']}...")
                 count = 0
@@ -648,7 +809,7 @@ class RefreshEnvironment(BaseWorkflow):
                         real_delete = self._delete_integration(integration_id=integration_id, is_scheduler= is_scheduler, client=self.target_client)
                         if real_delete:
                             count += 1
-                            self._append_action_performed(PlanSteps.DELETE_INTEGRATIONS, integration_id,
+                            self._append_action_performed(UtilitySteps.DELETE_INTEGRATIONS, integration_id,
                                                            self.target_client.config.profile)
                     except Exception as exception:
                         failures.append({'integration_id': integration_id, 'error': str(exception)})
@@ -658,14 +819,14 @@ class RefreshEnvironment(BaseWorkflow):
                 self.logger.info(
                     f"✅ Ended deleting integrations. {count} of {len(refresh_plan.get('integrations_to_refresh', []))}")
 
-            #5.3 Import integrations
+            #5 Import integrations
             if not abort:
-                update_properties_requested = is_plan_step_requested(
+                step_requested = is_plan_step_requested(
                     refresh_plan['plan_steps_to_execute'],
                     PlanSteps.IMPORT_INTEGRATIONS
                 )
                 integrations_imported_count = 0
-                if not update_properties_requested:
+                if not step_requested:
                     self.logger.info("🚫 Not Requested: Import integrations.")
                 else:
                     self.logger.info(
@@ -680,7 +841,7 @@ class RefreshEnvironment(BaseWorkflow):
                         try:
                              real_delete = self._delete_integration(integration_id=integration_id, is_scheduler=is_scheduler, client=self.target_client)
                              if real_delete:
-                                 self._append_action_performed(PlanSteps.DELETE_INTEGRATIONS, integration_id,
+                                 self._append_action_performed(UtilitySteps.DELETE_INTEGRATIONS, integration_id,
                                                                self.target_client.config.profile)
 
                         except Exception as exception:
@@ -708,13 +869,40 @@ class RefreshEnvironment(BaseWorkflow):
                     self.logger.info(
                         f"✅ Ended importing integrations. {integrations_imported_count} of {len(refresh_plan.get('integrations_to_refresh',[]))}")
 
-            # Step 5.4 Update Integration Configuration Properties:  UPDATE_INTEGRATIONS_PROPERTIES
+            # Step  Import Libraries
             if not abort:
-                update_properties_requested = is_plan_step_requested(
+                step_requested = is_plan_step_requested(
+                    refresh_plan['plan_steps_to_execute'],
+                    PlanSteps.IMPORT_LIBRARIES
+                )
+                if not step_requested:
+                    self.logger.info("🚫 Not Requested: Import Libraries.")
+                else:
+                    self.logger.info(
+                        f"▶️ Importing Libraries in target environment {refresh_plan['target_environment']}...")
+                    for lib_to_import in refresh_plan['libraries_to_refresh']:
+                        lib_name = lib_to_import.get("displayName")
+                        liv_version = lib_to_import.get("version")
+                        lib_file_name = f"{lib_name}_{liv_version}.zip"
+                        export_path = os.path.join(self.source_export_lib_dir, lib_file_name)
+                        try:
+                            self._import_library(file_path=export_path, client=self.target_client)
+                        except Exception as exception:
+                            lib_id = lib_to_import.get('id')
+                            failures.append({'library_id': lib_id, 'error': str(exception)})
+                            result.add_error(f"❌  Failed to refresh library: {lib_name} v{liv_version}", exception, lib_id)
+                            abort = True
+                    self.logger.info(
+                        f"✅ Ended importing libraries: {len(refresh_plan['libraries_to_refresh'])}")
+
+            # Step 5.4 Update Integration Configuration Properties:  UPDATE_INTEGRATIONS_PROPERTIES
+            # TODO: implement
+            if True == False and not abort:
+                action_requested = is_plan_step_requested(
                     refresh_plan['plan_steps_to_execute'],
                     PlanSteps.UPDATE_INTEGRATIONS_PROPERTIES
                 )
-                if not update_properties_requested:
+                if not action_requested:
                     self.logger.info("🚫 Not Requested: Update integrations Properties.")
                 else:
                     self.logger.info(
@@ -738,18 +926,19 @@ class RefreshEnvironment(BaseWorkflow):
                     self.logger.info(
                         f"✅ Ended updating properties for integrations. {count} of {len(refresh_plan.get('integrations_to_refresh', []))}")
 
+
             # STEP 4.6 Activate Integrations
             if not abort:
-                activate_requested = is_plan_step_requested(
+                step_requested = is_plan_step_requested(
                     refresh_plan['plan_steps_to_execute'],
                     PlanSteps.ACTIVATE_INTEGRATIONS
                 )
-                if not activate_requested:
+                if not step_requested:
                     self.logger.info("🚫 Not Requested: Activate integrations Properties.")
                 else:
-
                         self.logger.info(
                             f"▶️ Activating integrations in target environment {refresh_plan['target_environment']}...")
+
                         for integration_to_refresh in refresh_plan['integrations_to_refresh']:
                             integration_id = integration_to_refresh.get('integration_id')                    # version-specific ID
                             source_version = integration_to_refresh.get('source_version')
@@ -803,11 +992,11 @@ class RefreshEnvironment(BaseWorkflow):
 
             # Step 6: Generate report
             if not abort:
-                is_requested = is_plan_step_requested(
+                step_requested = is_plan_step_requested(
                     refresh_plan['plan_steps_to_execute'],
                     PlanSteps.GENERATE_REPORT
                 )
-                if not is_requested:
+                if not step_requested:
                     self.logger.info("🚫 Not Requested: Generate Report.")
                 else:
                     self.logger.info(
@@ -884,6 +1073,58 @@ class RefreshEnvironment(BaseWorkflow):
 
         action = self.actions_performed[step.name]
         action.append({"integration_id":integration_id, "environment":env})
+
+    def _is_any_integration_locked(self, refresh_plan: Dict, client: OICClient) -> Tuple[int, List]:
+        locked = []
+        for integration in refresh_plan.get('integrations_to_refresh', []):
+            integration_id = integration.get('integration_id')
+            try:
+                integration_now = client.integrations.get(integration_id=integration_id)
+                if integration_now.get('lockedFlag'):
+                    locked.append(integration_id)
+                    self.logger.warning(f'Locked integration in {client.config.profile}: {integration_id}')
+            except OICResourceNotFoundError as e:
+                self.logger.debug(f'str{e}')  # Eat the exception
+
+        return len(locked), locked
+
+    def _is_any_library_locked(self, refresh_plan: Dict, client: OICClient) -> Tuple[int, List]:
+
+        locked = []
+        for library in refresh_plan.get('libraries_to_refresh', []):
+            library_id = library.get('id')
+            try:
+                library_now = client.libraries.get(library_id=library_id)
+                if library_now.get('lockedFlag'):
+                    locked.append(library_id)
+                    self.logger.warning(f'️Locked library in {client.config.profile}: {library_id}')
+            except OICResourceNotFoundError as e:
+                self.logger.debug(f'str{e}')  # Eat the exception
+        return len(locked), locked
+
+    def validate_any_locks(self, refresh_plan, target_client)-> List[str]:
+        message = ''
+        locked_list = []
+        ## Verify realtime there are no integrations locked
+        locked_count, integrations_locked = self._is_any_integration_locked(refresh_plan, self.target_client)
+        if locked_count > 0:
+            for locked_id in integrations_locked:
+                locked_list.append(f'integration_id: {locked_id}')
+
+        ## TODO: Verify any Connection is locked
+
+        ## Verify realtime there are no libraries locked
+        locked_count, libraries_locked = self._is_any_library_locked(refresh_plan, self.target_client)
+
+        if locked_count > 0:
+            for locked_id in libraries_locked:
+                locked_list.append(f'library_id: {locked_id}')
+
+
+        return locked_list
+
+
+
 
 
 
